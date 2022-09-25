@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0xfd6b0e1866f11ff34a55158fa914c8d7143550db64cf1e6aa1a8d370a1bf3a64"
+    "txHash": "0xdbf1e8ce15490a274c702b285dffbf2f5ab4a4fd2f34b58c3287ddf2ce5c390d"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x2c66cf2453d58949c790141eedae79c066414701e80c6cb351529bca9489ee1b",
+      "txHash": "0xfb946b619759e80f4c569e2973d84d4943018b8982a19096f4abdec398a26bdb",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "1ffa81857a08c4cd14ea220b847df51685b323e94692b28da7f60ab17b4ffe33": {
+    "9c2fb3fa71590ecaf44ceaa7cde317aa8a00bc4fd96aa257ceb4bda36ec464c3": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xaff42283bf698e6fcc372759278b5823d012c51e8040add09100f2caf9cf11c0",
+      "txHash": "0xff6e610f307706fa5ce4985f795529d2f042c294637b9edf05f6edec9fae2dfe",
       "layout": {
         "storage": [
           {
@@ -127,7 +127,7 @@
             "offset": 0,
             "slot": "201",
             "type": "t_uint256",
-            "contract": "UjjwalNFT",
+            "contract": "OSNFT",
             "src": "contracts/os_nft.sol:8"
           },
           {
@@ -135,8 +135,16 @@
             "offset": 0,
             "slot": "202",
             "type": "t_string_storage",
-            "contract": "UjjwalNFT",
+            "contract": "OSNFT",
             "src": "contracts/os_nft.sol:9"
+          },
+          {
+            "label": "projects",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "contract": "OSNFT",
+            "src": "contracts/os_nft.sol:10"
           }
         ],
         "types": {
@@ -160,6 +168,10 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
           "t_mapping(t_address,t_bool)": {
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
@@ -170,6 +182,10 @@
           },
           "t_mapping(t_address,t_uint256)": {
             "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
             "numberOfBytes": "32"
           },
           "t_mapping(t_uint256,t_address)": {
