@@ -5,6 +5,13 @@ import { ethers, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { OSNFT } from "../typechain-types";
 
+
+function getProjectId(projectUrl: string) {
+    return ethers.utils.keccak256(
+        toUtf8Bytes(projectUrl)
+    );
+}
+
 describe("ujjwal NFT", () => {
     let signer1: SignerWithAddress,
         signer2: SignerWithAddress,
@@ -12,6 +19,9 @@ describe("ujjwal NFT", () => {
         operator: SignerWithAddress;
 
     let nft: OSNFT;
+
+    const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
+
     before(async () => {
         [signer1, signer2, signer3, operator] = await ethers.getSigners();
         const ct = await ethers.getContractFactory('OSNFT');
@@ -49,7 +59,7 @@ describe("ujjwal NFT", () => {
 
             it('estimate gas', async () => {
                 const value = await nft.estimateGas.setBaseTokenURI('https://ujjwalnft.com/metadata/')
-                expect(value).equal(37255);
+                expect(value).equal(37256);
             })
 
             it('transaction', async () => {
@@ -67,48 +77,36 @@ describe("ujjwal NFT", () => {
             })
         })
 
-        const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
 
 
         describe('mint', async () => {
 
             it('estimate gas', async () => {
                 const gas = await nft.estimateGas.mint(projectUrl, signer1.address);
-                expect(gas).equal(195491);
+                // expect(gas).equal(195491);
+                expect(gas).equal(149566);
             })
 
             it('transaction', async () => {
-
+                const expectedTokenId = ethers.utils.keccak256(
+                    toUtf8Bytes(projectUrl)
+                );
                 const tx = nft.mint(projectUrl, signer1.address);
                 await expect(tx).emit(nft, 'Transfer').withArgs(
-                    ethers.constants.AddressZero, signer1.address, 1
+                    ethers.constants.AddressZero, signer1.address, expectedTokenId
                 );
 
                 let balance = await nft.balanceOf(signer1.address);
                 expect(balance).equal(1);
             })
 
-            it('tokenIdByProject', async () => {
-                let url = await nft.tokenIdByProject(
-                    projectUrl
-                );
-                // let url = await nft.tokenIdByProject(
-                //     keccak256(
-                //         toUtf8Bytes(projectUrl)
-                //     )
-                // );
-                expect(url).equal(1);
-            })
-
             it('projectUrlByTokenId', async () => {
-                let projectUrlFromContract = await nft.projectUrlByTokenId(
-                    1
+                const expectedTokenId = ethers.utils.keccak256(
+                    toUtf8Bytes(projectUrl)
                 );
-                // let url = await nft.tokenIdByProject(
-                //     keccak256(
-                //         toUtf8Bytes(projectUrl)
-                //     )
-                // );
+                let projectUrlFromContract = await nft.projectUrlByTokenId(
+                    expectedTokenId
+                );
                 expect(projectUrlFromContract).equal(projectUrl);
             })
         })
@@ -235,17 +233,19 @@ describe("ujjwal NFT", () => {
         })
 
         it('transfer to zero address should be reverted', async () => {
-            const tx = nft.transferFrom(signer1.address, ethers.constants.AddressZero, 1);
+            const tx = nft.transferFrom(signer1.address, ethers.constants.AddressZero,
+                getProjectId(projectUrl)
+            );
             await expect(tx).to.be.revertedWith('ERC721: transfer to the zero address')
         })
 
         it('transfer from incorrect owner should be reverted', async () => {
-            const tx = nft.transferFrom(signer2.address, ethers.constants.AddressZero, 1);
+            const tx = nft.transferFrom(signer2.address, ethers.constants.AddressZero, getProjectId(projectUrl));
             await expect(tx).to.be.revertedWith('ERC721: transfer from incorrect owner')
         })
 
         it('transfer on another behalf when not approved', async () => {
-            const tx = nft.connect(signer2).transferFrom(signer1.address, ethers.constants.AddressZero, 1);
+            const tx = nft.connect(signer2).transferFrom(signer1.address, ethers.constants.AddressZero, getProjectId(projectUrl));
             await expect(tx).to.be.revertedWith('ERC721: caller is not token owner or approved');
         })
 
@@ -255,19 +255,23 @@ describe("ujjwal NFT", () => {
         })
 
         it('fetching tokenURI of invalid token', async () => {
-            let tx = nft.tokenURI(0);
+            let tx = nft.tokenURI(
+                getProjectId('invalid projectUrl')
+            );
             await expect(tx).to.be.revertedWith('ERC721: invalid token ID')
         })
 
         it('owner of invalid token', async () => {
-            let tx = nft.ownerOf(12345);
+            let tx = nft.ownerOf(
+                getProjectId('projectUrl')
+            );
             await expect(tx).to.be.revertedWith('ERC721: invalid token ID')
         })
 
         it('mint existing project', async () => {
             const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
             const tx = nft.mint(projectUrl, signer2.address);
-            await expect(tx).revertedWith('Project already minted')
+            await expect(tx).revertedWith('ERC721: token already minted')
         })
 
         it('mint other than admin project', async () => {
