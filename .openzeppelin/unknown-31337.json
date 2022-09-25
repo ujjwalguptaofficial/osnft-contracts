@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x480906fd8b516bc1467e1d09be72b520a41f9d9f90d8b5551f55c1d72f2264bf"
+    "txHash": "0x857e2d5db6719d63d65363f81ff90b76d8f38f4356b1fc244609755851c3adcd"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xc1122c873eae8eda9a4cee1d6e35baa6d3f9f8d7b06d2a097f5489bebc79a37a",
+      "txHash": "0xed8edb5e92152f2da260f646620c265b927e10218f6ee1435776aab79c7a0dd5",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "93fdf2c917e1067efa474b174921178361b52d555722d7f21b908de1cabd2460": {
+    "e39550f6e82afc01d1d31b794c9c4c18ee6484877b66884056b2a2b6000b5fd7": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x556808e8858699793e6923e3a024cfa2c5f4e372ddda14e4f8085c8aa95f04d6",
+      "txHash": "0x6f2dd81a0518a8fa05fc9c82c3ec450ad7506aec52c551b23c362e6627a25fbf",
       "layout": {
         "storage": [
           {
@@ -145,6 +145,14 @@
             "type": "t_mapping(t_bytes32,t_uint256)",
             "contract": "OSNFT",
             "src": "contracts/os_nft.sol:10"
+          },
+          {
+            "label": "_metadata",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_mapping(t_uint256,t_string_storage)",
+            "contract": "OSNFT",
+            "src": "contracts/os_nft.sol:11"
           }
         ],
         "types": {
@@ -190,6 +198,10 @@
           },
           "t_mapping(t_uint256,t_address)": {
             "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_string_storage)": {
+            "label": "mapping(uint256 => string)",
             "numberOfBytes": "32"
           },
           "t_string_storage": {

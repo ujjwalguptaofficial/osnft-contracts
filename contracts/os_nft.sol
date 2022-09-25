@@ -8,8 +8,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
     uint256 private _tokenId;
     string public baseTokenURI;
     mapping(bytes32 => uint256) private _projects;
-
-    // mapping(uint256 => string) private _metadata;
+    mapping(uint256 => string) private _metadata;
 
     function initialize(
         string calldata name,
@@ -30,6 +29,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
 
         require(_projects[projectUrlHash] == 0, "Project already minted");
         _projects[projectUrlHash] = _tokenId;
+        _metadata[_tokenId] = projectUrl;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -46,5 +46,13 @@ contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
         returns (uint256)
     {
         return _projects[keccak256(abi.encodePacked(projectUrl))];
+    }
+
+    function projectUrlByTokenId(uint256 tokenId)
+        external
+        view
+        returns (string memory)
+    {
+        return _metadata[tokenId];
     }
 }

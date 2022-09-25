@@ -49,7 +49,7 @@ describe("ujjwal NFT", () => {
 
             it('estimate gas', async () => {
                 const value = await nft.estimateGas.setBaseTokenURI('https://ujjwalnft.com/metadata/')
-                expect(value).equal(37231);
+                expect(value).equal(37255);
             })
 
             it('transaction', async () => {
@@ -74,7 +74,7 @@ describe("ujjwal NFT", () => {
 
             it('estimate gas', async () => {
                 const gas = await nft.estimateGas.mint(projectUrl, signer1.address);
-                expect(gas).equal(127152);
+                expect(gas).equal(195491);
             })
 
             it('transaction', async () => {
@@ -86,7 +86,9 @@ describe("ujjwal NFT", () => {
 
                 let balance = await nft.balanceOf(signer1.address);
                 expect(balance).equal(1);
+            })
 
+            it('tokenIdByProject', async () => {
                 let url = await nft.tokenIdByProject(
                     projectUrl
                 );
@@ -96,6 +98,18 @@ describe("ujjwal NFT", () => {
                 //     )
                 // );
                 expect(url).equal(1);
+            })
+
+            it('projectUrlByTokenId', async () => {
+                let projectUrlFromContract = await nft.projectUrlByTokenId(
+                    1
+                );
+                // let url = await nft.tokenIdByProject(
+                //     keccak256(
+                //         toUtf8Bytes(projectUrl)
+                //     )
+                // );
+                expect(projectUrlFromContract).equal(projectUrl);
             })
         })
     })
