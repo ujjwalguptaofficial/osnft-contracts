@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
     uint256 private _tokenId;
     string public baseTokenURI;
-    mapping(bytes32 => uint256) public projects;
+    mapping(bytes32 => uint256) private _projects;
 
     // mapping(uint256 => string) private _metadata;
 
@@ -28,8 +28,8 @@ contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
         _mint(projectOwner, ++_tokenId);
         bytes32 projectUrlHash = keccak256(abi.encodePacked(projectUrl));
 
-        require(projects[projectUrlHash] == 0, "Project already minted");
-        projects[projectUrlHash] = _tokenId;
+        require(_projects[projectUrlHash] == 0, "Project already minted");
+        _projects[projectUrlHash] = _tokenId;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -38,5 +38,13 @@ contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
 
     function setBaseTokenURI(string calldata _baseTokenURI) external onlyOwner {
         baseTokenURI = _baseTokenURI;
+    }
+
+    function tokenIdByProject(string calldata projectUrl)
+        external
+        view
+        returns (uint256)
+    {
+        return _projects[keccak256(abi.encodePacked(projectUrl))];
     }
 }

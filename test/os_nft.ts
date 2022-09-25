@@ -87,11 +87,14 @@ describe("ujjwal NFT", () => {
                 let balance = await nft.balanceOf(signer1.address);
                 expect(balance).equal(1);
 
-                let url = await nft.projects(
-                    keccak256(
-                        toUtf8Bytes(projectUrl)
-                    )
+                let url = await nft.tokenIdByProject(
+                    projectUrl
                 );
+                // let url = await nft.tokenIdByProject(
+                //     keccak256(
+                //         toUtf8Bytes(projectUrl)
+                //     )
+                // );
                 expect(url).equal(1);
             })
         })

@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x9b70cc2c5a1eb7ed57c32cc283f9af5c7f13301560a035ed88f4eef7f6d7f65d"
+    "txHash": "0x480906fd8b516bc1467e1d09be72b520a41f9d9f90d8b5551f55c1d72f2264bf"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x2712f21df1e8aa144114e211cb68cad99cc9b8f094cf6a2312dee9a216426869",
+      "txHash": "0xc1122c873eae8eda9a4cee1d6e35baa6d3f9f8d7b06d2a097f5489bebc79a37a",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "ccf958201e1384fb77b7768cbf21d0d28aef9ca7a01b5c3a7adc9f9f75e6e64d": {
+    "93fdf2c917e1067efa474b174921178361b52d555722d7f21b908de1cabd2460": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x4227da19fe2026333f9be68839032e6194e4e6717a4d8100088d72234d8c1958",
+      "txHash": "0x556808e8858699793e6923e3a024cfa2c5f4e372ddda14e4f8085c8aa95f04d6",
       "layout": {
         "storage": [
           {
@@ -139,7 +139,7 @@
             "src": "contracts/os_nft.sol:9"
           },
           {
-            "label": "projects",
+            "label": "_projects",
             "offset": 0,
             "slot": "203",
             "type": "t_mapping(t_bytes32,t_uint256)",
