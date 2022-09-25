@@ -39,6 +39,7 @@ describe("ujjwal NFT", () => {
     })
 
     describe('owner', () => {
+
         it('owner address', async () => {
             const ownerAddress = await nft.owner();
             expect(ownerAddress).equal(signer1.address);
@@ -48,7 +49,7 @@ describe("ujjwal NFT", () => {
 
             it('estimate gas', async () => {
                 const value = await nft.estimateGas.setBaseTokenURI('https://ujjwalnft.com/metadata/')
-                expect(value).equal(37207);
+                expect(value).equal(37231);
             })
 
             it('transaction', async () => {
@@ -72,12 +73,13 @@ describe("ujjwal NFT", () => {
         describe('mint', async () => {
 
             it('estimate gas', async () => {
-                const gas = await nft.estimateGas.mint(projectUrl);
-                expect(gas).equal(126560);
+                const gas = await nft.estimateGas.mint(projectUrl, signer1.address);
+                expect(gas).equal(127152);
             })
 
             it('transaction', async () => {
-                const tx = nft.mint(projectUrl);
+
+                const tx = nft.mint(projectUrl, signer1.address);
                 await expect(tx).emit(nft, 'Transfer').withArgs(
                     ethers.constants.AddressZero, signer1.address, 1
                 );
@@ -225,6 +227,11 @@ describe("ujjwal NFT", () => {
             await expect(tx).to.be.revertedWith('ERC721: transfer from incorrect owner')
         })
 
+        it('transfer on another behalf when not approved', async () => {
+            const tx = nft.connect(signer2).transferFrom(signer1.address, ethers.constants.AddressZero, 1);
+            await expect(tx).to.be.revertedWith('ERC721: caller is not token owner or approved');
+        })
+
         it('setBaseTokenURI not by owner', async () => {
             const tx = nft.connect(signer2).setBaseTokenURI('https://ujjwalnft.com/metadata/')
             await expect(tx).to.be.revertedWith('Ownable: caller is not the owner')
@@ -242,13 +249,13 @@ describe("ujjwal NFT", () => {
 
         it('mint existing project', async () => {
             const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
-            const tx = nft.mint(projectUrl);
+            const tx = nft.mint(projectUrl, signer2.address);
             await expect(tx).revertedWith('Project already minted')
         })
 
         it('mint other than admin project', async () => {
-            const projectUrl = `github.com/ujjwalguptaofficial/jsstore`;
-            const tx = nft.connect(signer2).mint(projectUrl);
+            const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
+            const tx = nft.connect(signer2).mint(projectUrl, signer1.address);
             await expect(tx).revertedWith('Ownable: caller is not the owner')
         })
     })

@@ -21,14 +21,14 @@ contract OSNFT is Initializable, OwnableUpgradeable, ERC721Upgradeable {
         baseTokenURI = _baseTokenURI;
     }
 
-    function mint(string calldata projectUrl) external onlyOwner {
-        _mint(_msgSender(), ++_tokenId);
+    function mint(string calldata projectUrl, address projectOwner)
+        external
+        onlyOwner
+    {
+        _mint(projectOwner, ++_tokenId);
         bytes32 projectUrlHash = keccak256(abi.encodePacked(projectUrl));
 
-        require(
-            projects[projectUrlHash] == 0,
-            "Project already minted"
-        );
+        require(projects[projectUrlHash] == 0, "Project already minted");
         projects[projectUrlHash] = _tokenId;
     }
 
