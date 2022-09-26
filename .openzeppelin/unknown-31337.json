@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x5c1b2d6f654814f9bca9a83c6b774e8d320326eb4334457db764fa1aa7f17078"
+    "txHash": "0x82088bb5fa6dc1b8ce8bbe5343bdcddd6806f5b0f79cf9b58cea1562ef635d60"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xd2a331f673800ac6b5cc001d50b933b524e6ceea5bf0b41aa3de053f56a70b71",
+      "txHash": "0xc4f8c28796ab47b4fcefc6ba82d140f93a21115dac995142fe26e274e2e368d4",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "81f621d86ad8220f33aa5b3c72f3c8bdc126629711357fbc5586dc9dc71f281b": {
+    "efdf13809f6c095888830d494a7e7704bf95396c46e3d7f1052795774553cf53": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x4de8989f302476d36bd6d8939a6c1cdbfd62edb4279b90ad664d2e8242c4b478",
+      "txHash": "0x00646f90ccd64d6858bad8abef1ff515335d4012b53bed43699c2e88a4ca9c83",
       "layout": {
         "storage": [
           {
@@ -64,7 +64,7 @@
             "slot": "101",
             "type": "t_string_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:11"
+            "src": "contracts/os_nft_base.sol:12"
           },
           {
             "label": "_symbol",
@@ -72,7 +72,7 @@
             "slot": "102",
             "type": "t_string_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:14"
+            "src": "contracts/os_nft_base.sol:15"
           },
           {
             "label": "_owners",
@@ -80,7 +80,7 @@
             "slot": "103",
             "type": "t_mapping(t_bytes32,t_address)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:17"
+            "src": "contracts/os_nft_base.sol:18"
           },
           {
             "label": "_balances",
@@ -88,7 +88,7 @@
             "slot": "104",
             "type": "t_mapping(t_address,t_uint256)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:20"
+            "src": "contracts/os_nft_base.sol:21"
           },
           {
             "label": "_tokenApprovals",
@@ -96,7 +96,7 @@
             "slot": "105",
             "type": "t_mapping(t_bytes32,t_address)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:23"
+            "src": "contracts/os_nft_base.sol:24"
           },
           {
             "label": "_operatorApprovals",
@@ -104,7 +104,7 @@
             "slot": "106",
             "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:26"
+            "src": "contracts/os_nft_base.sol:27"
           },
           {
             "label": "_metadata",
@@ -112,7 +112,7 @@
             "slot": "107",
             "type": "t_mapping(t_bytes32,t_string_storage)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:28"
+            "src": "contracts/os_nft_base.sol:29"
           },
           {
             "label": "_tokenId",
