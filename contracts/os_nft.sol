@@ -5,9 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./os_nft_base.sol";
 
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
-    uint256 private _tokenId;
     string public baseTokenURI;
-    mapping(bytes32 => uint256) private _projects;
 
     function initialize(
         string calldata name,
@@ -40,5 +38,46 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
         returns (string memory)
     {
         return _metadata[tokenId];
+    }
+
+    function setApprovalForAll(address operator, bool approved) external {
+        _setApprovalForAll(_msgSender(), operator, approved);
+    }
+
+    /**
+     * @dev See {IERC721-ownerOf}.
+     */
+    function ownerOf(bytes32 tokenId) external view returns (address) {
+        address owner = _ownerOf(tokenId);
+        require(owner != address(0), "ERC721: invalid token ID");
+        return owner;
+    }
+
+    /**
+     * @dev See {IERC721-transferFrom}.
+     */
+    function transferFrom(
+        address from,
+        address to,
+        bytes32 tokenId
+    ) external {
+        //solhint-disable-next-line max-line-length
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner or approved"
+        );
+
+        _transfer(from, to, tokenId);
+    }
+
+    /**
+     * @dev See {IERC721-balanceOf}.
+     */
+    function balanceOf(address owner) public view returns (uint256) {
+        require(
+            owner != address(0),
+            "ERC721: address zero is not a valid owner"
+        );
+        return _balances[owner];
     }
 }

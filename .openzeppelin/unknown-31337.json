@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x82088bb5fa6dc1b8ce8bbe5343bdcddd6806f5b0f79cf9b58cea1562ef635d60"
+    "txHash": "0x73caba828036fddfbff2fa6417bae9c989039096ab15581e2b453b1265850b4c"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xc4f8c28796ab47b4fcefc6ba82d140f93a21115dac995142fe26e274e2e368d4",
+      "txHash": "0x3d5e8c119c87039fff79e80a404ee3955312cc17fdd463f81296835a78d40c80",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "efdf13809f6c095888830d494a7e7704bf95396c46e3d7f1052795774553cf53": {
+    "5d2f7b0c235ac1724dc10e1dcdbf055e2fc44b739e392bcb5cf68d35cc70945e": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x00646f90ccd64d6858bad8abef1ff515335d4012b53bed43699c2e88a4ca9c83",
+      "txHash": "0x3977075dfeba1adb0ea709e5931b1f1803ab8d5035c2dfddefe651db6f8b2a78",
       "layout": {
         "storage": [
           {
@@ -115,28 +115,12 @@
             "src": "contracts/os_nft_base.sol:29"
           },
           {
-            "label": "_tokenId",
-            "offset": 0,
-            "slot": "108",
-            "type": "t_uint256",
-            "contract": "OSNFT",
-            "src": "contracts/os_nft.sol:8"
-          },
-          {
             "label": "baseTokenURI",
             "offset": 0,
-            "slot": "109",
+            "slot": "108",
             "type": "t_string_storage",
             "contract": "OSNFT",
-            "src": "contracts/os_nft.sol:9"
-          },
-          {
-            "label": "_projects",
-            "offset": 0,
-            "slot": "110",
-            "type": "t_mapping(t_bytes32,t_uint256)",
-            "contract": "OSNFT",
-            "src": "contracts/os_nft.sol:10"
+            "src": "contracts/os_nft.sol:8"
           }
         ],
         "types": {
@@ -178,10 +162,6 @@
           },
           "t_mapping(t_bytes32,t_string_storage)": {
             "label": "mapping(bytes32 => string)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_bytes32,t_uint256)": {
-            "label": "mapping(bytes32 => uint256)",
             "numberOfBytes": "32"
           },
           "t_string_storage": {

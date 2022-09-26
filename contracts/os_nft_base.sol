@@ -18,7 +18,7 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
     mapping(bytes32 => address) internal _owners;
 
     // Mapping owner address to token count
-    mapping(address => uint256) private _balances;
+    mapping(address => uint256) internal _balances;
 
     // Mapping from token ID to approved address
     mapping(bytes32 => address) private _tokenApprovals;
@@ -35,6 +35,15 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
         address indexed from,
         address indexed to,
         bytes32 indexed tokenId
+    );
+
+    /**
+     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
+     */
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
     );
 
     /**
@@ -86,58 +95,19 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
         emit Transfer(address(0), to, tokenId);
     }
 
-    function toHex(bytes32 data) public pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    "0x",
-                    toHex16(bytes16(data)),
-                    toHex16(bytes16(data << 128))
-                )
-            );
-    }
-
-    function toHex16(bytes16 data) internal pure returns (bytes32 result) {
-        result =
-            (bytes32(data) &
-                0xFFFFFFFFFFFFFFFF000000000000000000000000000000000000000000000000) |
-            ((bytes32(data) &
-                0x0000000000000000FFFFFFFFFFFFFFFF00000000000000000000000000000000) >>
-                64);
-        result =
-            (result &
-                0xFFFFFFFF000000000000000000000000FFFFFFFF000000000000000000000000) |
-            ((result &
-                0x00000000FFFFFFFF000000000000000000000000FFFFFFFF0000000000000000) >>
-                32);
-        result =
-            (result &
-                0xFFFF000000000000FFFF000000000000FFFF000000000000FFFF000000000000) |
-            ((result &
-                0x0000FFFF000000000000FFFF000000000000FFFF000000000000FFFF00000000) >>
-                16);
-        result =
-            (result &
-                0xFF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000) |
-            ((result &
-                0x00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000) >>
-                8);
-        result =
-            ((result &
-                0xF000F000F000F000F000F000F000F000F000F000F000F000F000F000F000F000) >>
-                4) |
-            ((result &
-                0x0F000F000F000F000F000F000F000F000F000F000F000F000F000F000F000F00) >>
-                8);
-        result = bytes32(
-            0x3030303030303030303030303030303030303030303030303030303030303030 +
-                uint256(result) +
-                (((uint256(result) +
-                    0x0606060606060606060606060606060606060606060606060606060606060606) >>
-                    4) &
-                    0x0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F) *
-                7
-        );
+    /**
+     * @dev Approve `operator` to operate on all of `owner` tokens
+     *
+     * Emits an {ApprovalForAll} event.
+     */
+    function _setApprovalForAll(
+        address owner,
+        address operator,
+        bool approved
+    ) internal virtual {
+        require(owner != operator, "ERC721: approve to caller");
+        _operatorApprovals[owner][operator] = approved;
+        emit ApprovalForAll(owner, operator, approved);
     }
 
     /**
@@ -207,19 +177,62 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
         return "";
     }
 
-    /**
-     * @dev See {IERC721-balanceOf}.
-     */
-    function balanceOf(address owner) public view returns (uint256) {
-        require(
-            owner != address(0),
-            "ERC721: address zero is not a valid owner"
+    function toHex(bytes32 data) internal pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    "0x",
+                    toHex16(bytes16(data)),
+                    toHex16(bytes16(data << 128))
+                )
+            );
+    }
+
+    function toHex16(bytes16 data) internal pure returns (bytes32 result) {
+        result =
+            (bytes32(data) &
+                0xFFFFFFFFFFFFFFFF000000000000000000000000000000000000000000000000) |
+            ((bytes32(data) &
+                0x0000000000000000FFFFFFFFFFFFFFFF00000000000000000000000000000000) >>
+                64);
+        result =
+            (result &
+                0xFFFFFFFF000000000000000000000000FFFFFFFF000000000000000000000000) |
+            ((result &
+                0x00000000FFFFFFFF000000000000000000000000FFFFFFFF0000000000000000) >>
+                32);
+        result =
+            (result &
+                0xFFFF000000000000FFFF000000000000FFFF000000000000FFFF000000000000) |
+            ((result &
+                0x0000FFFF000000000000FFFF000000000000FFFF000000000000FFFF00000000) >>
+                16);
+        result =
+            (result &
+                0xFF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000) |
+            ((result &
+                0x00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000) >>
+                8);
+        result =
+            ((result &
+                0xF000F000F000F000F000F000F000F000F000F000F000F000F000F000F000F000) >>
+                4) |
+            ((result &
+                0x0F000F000F000F000F000F000F000F000F000F000F000F000F000F000F000F00) >>
+                8);
+        result = bytes32(
+            0x3030303030303030303030303030303030303030303030303030303030303030 +
+                uint256(result) +
+                (((uint256(result) +
+                    0x0606060606060606060606060606060606060606060606060606060606060606) >>
+                    4) &
+                    0x0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F) *
+                7
         );
-        return _balances[owner];
     }
 
     function bytes32ToString(bytes32 _bytes32)
-        public
+        internal
         pure
         returns (string memory)
     {
@@ -234,29 +247,14 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
     }
 
     /**
-     * @dev See {IERC721-ownerOf}.
+     * @dev See {IERC721-isApprovedForAll}.
      */
-    function ownerOf(bytes32 tokenId) external view returns (address) {
-        address owner = _ownerOf(tokenId);
-        require(owner != address(0), "ERC721: invalid token ID");
-        return owner;
-    }
-
-    /**
-     * @dev See {IERC721-transferFrom}.
-     */
-    function transferFrom(
-        address from,
-        address to,
-        bytes32 tokenId
-    ) external {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner or approved"
-        );
-
-        _transfer(from, to, tokenId);
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        returns (bool)
+    {
+        return _operatorApprovals[owner][operator];
     }
 
     /**
@@ -285,17 +283,6 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
         _requireMinted(tokenId);
 
         return _tokenApprovals[tokenId];
-    }
-
-    /**
-     * @dev See {IERC721-isApprovedForAll}.
-     */
-    function isApprovedForAll(address owner, address operator)
-        public
-        view
-        returns (bool)
-    {
-        return _operatorApprovals[owner][operator];
     }
 
     /**
