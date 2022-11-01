@@ -17,11 +17,12 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
         baseTokenURI = _baseTokenURI;
     }
 
-    function mintTo(address projectOwner, string calldata projectUrl)
-        external
-        onlyOwner
-    {
-        _mint(projectOwner, projectUrl);
+    function mintTo(
+        address projectOwner,
+        string calldata projectUrl,
+        uint32 shares
+    ) external onlyOwner {
+        _mint(projectOwner, projectUrl, shares);
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -30,14 +31,6 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
 
     function setBaseTokenURI(string calldata _baseTokenURI) external onlyOwner {
         baseTokenURI = _baseTokenURI;
-    }
-
-    function projectUrlByTokenId(bytes32 tokenId)
-        external
-        view
-        returns (string memory)
-    {
-        return _metadata[tokenId];
     }
 
     function setApprovalForAll(address operator, bool approved) external {
@@ -59,7 +52,8 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     function transferFrom(
         address from,
         address to,
-        bytes32 tokenId
+        bytes32 tokenId,
+        uint32 shares
     ) external {
         //solhint-disable-next-line max-line-length
         require(
@@ -67,7 +61,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
             "ERC721: caller is not token owner or approved"
         );
 
-        _transfer(from, to, tokenId);
+        _transfer(from, to, tokenId, shares);
     }
 
     /**
@@ -79,5 +73,40 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
             "ERC721: address zero is not a valid owner"
         );
         return _balances[owner];
+    }
+
+    // percentage methods
+
+    function creatorOf(bytes32 tokenId) external view returns (address) {
+        require(_exists(tokenId), "token does not exist");
+
+        return _percentageTokens[tokenId].creator;
+    }
+
+    function creatorCut(bytes32 tokenId) external view returns (uint8) {
+        require(_exists(tokenId), "token does not exist");
+
+        return _percentageTokens[tokenId].creatorCut;
+    }
+
+    // equity methods
+
+    function shareOf(address owner, bytes32 tokenId)
+        external
+        view
+        returns (uint32)
+    {
+        require(
+            owner != address(0),
+            "ERC721: address zero is not a valid owner"
+        );
+
+        return _equityTokens[tokenId].shares[owner];
+    }
+
+    function totalShareOf(bytes32 tokenId) external view returns (uint32) {
+        require(_exists(tokenId), "token does not exist");
+
+        return _equityTokens[tokenId].totalNoOfShare;
     }
 }

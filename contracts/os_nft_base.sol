@@ -5,7 +5,18 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "hardhat/console.sol";
 
-contract OSNFTBase is Initializable, ContextUpgradeable {
+contract OSNFTBase is ContextUpgradeable {
+    struct EquityTokenInfo {
+        uint32 totalNoOfShare;
+        mapping(address => uint32) shares;
+    }
+
+    struct PercentageTokenInfo {
+        uint8 creatorCut;
+        address owner;
+        address creator;
+    }
+
     using StringsUpgradeable for uint256;
 
     // Token name
@@ -14,8 +25,9 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
     // Token symbol
     string private _symbol;
 
-    // Mapping from token ID to owner address
-    mapping(bytes32 => address) internal _owners;
+    mapping(bytes32 => EquityTokenInfo) _equityTokens;
+
+    mapping(bytes32 => PercentageTokenInfo) _percentageTokens;
 
     // Mapping owner address to token count
     mapping(address => uint256) internal _balances;
@@ -26,16 +38,20 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
     // Mapping from owner to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-    mapping(bytes32 => string) internal _metadata;
-
     /**
      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
      */
     event Transfer(
         address indexed from,
         address indexed to,
-        bytes32 indexed tokenId
+        bytes32 indexed tokenId,
+        uint32 share
     );
+
+    /**
+     * @dev Emitted when new project id is created.
+     */
+    event NewProject(string indexed projectUrl);
 
     /**
      * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
@@ -76,7 +92,11 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
      *
      * Emits a {Transfer} event.
      */
-    function _mint(address to, string calldata projectUrl) internal virtual {
+    function _mint(
+        address to,
+        string calldata projectUrl,
+        uint32 totalShare
+    ) internal virtual {
         bytes32 tokenId = keccak256(abi.encodePacked(projectUrl));
 
         require(to != address(0), "ERC721: mint to the zero address");
@@ -90,9 +110,24 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
             _balances[to] += 1;
         }
 
-        _owners[tokenId] = to;
-        _metadata[tokenId] = projectUrl;
-        emit Transfer(address(0), to, tokenId);
+        address owner = address(0);
+        // equity
+        if (totalShare > 0) {
+            EquityTokenInfo storage token = _equityTokens[tokenId];
+            token.totalNoOfShare = totalShare;
+            token.shares[to] = totalShare;
+
+            owner = address(this);
+        } else {
+            _percentageTokens[tokenId] = PercentageTokenInfo({
+                creator: to,
+                creatorCut: 100,
+                owner: to
+            });
+        }
+
+        emit Transfer(owner, to, tokenId, totalShare);
+        emit NewProject(projectUrl);
     }
 
     /**
@@ -125,8 +160,15 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
     /**
      * @dev Returns the owner of the `tokenId`. Does NOT revert if token doesn't exist
      */
-    function _ownerOf(bytes32 tokenId) internal view virtual returns (address) {
-        return _owners[tokenId];
+    function _ownerOf(bytes32 tokenId) internal view returns (address) {
+        PercentageTokenInfo memory percentageToken = _percentageTokens[tokenId];
+        if (percentageToken.owner != address(0)) {
+            return percentageToken.owner;
+        }
+        if (_equityTokens[tokenId].totalNoOfShare > 0) {
+            return address(this);
+        }
+        return address(0);
     }
 
     /**
@@ -299,28 +341,61 @@ contract OSNFTBase is Initializable, ContextUpgradeable {
     function _transfer(
         address from,
         address to,
-        bytes32 tokenId
+        bytes32 tokenId,
+        uint32 share
     ) internal virtual {
         require(
             _ownerOf(tokenId) == from,
             "ERC721: transfer from incorrect owner"
         );
+
         require(to != address(0), "ERC721: transfer to the zero address");
 
-        // Clear approvals from the previous owner
-        delete _tokenApprovals[tokenId];
+        PercentageTokenInfo memory token = _percentageTokens[tokenId];
 
-        unchecked {
-            // `_balances[from]` cannot overflow for the same reason as described in `_burn`:
-            // `from`'s balance is the number of token held, which is at least one before the current
-            // transfer.
-            // `_balances[to]` could overflow in the conditions described in `_mint`. That would require
-            // all 2**256 token ids to be minted, which in practice is impossible.
-            _balances[from] -= 1;
-            _balances[to] += 1;
+        // if token is percentage
+        if (token.owner != address(0)) {
+            // Clear approvals from the previous owner
+            delete _tokenApprovals[tokenId];
+
+            unchecked {
+                // `_balances[from]` cannot overflow for the same reason as described in `_burn`:
+                // `from`'s balance is the number of token held, which is at least one before the current
+                // transfer.
+                // `_balances[to]` could overflow in the conditions described in `_mint`. That would require
+                // all 2**256 token ids to be minted, which in practice is impossible.
+                _balances[from] -= 1;
+                _balances[to] += 1;
+            }
+            _percentageTokens[tokenId].owner = to;
+        } else {
+            EquityTokenInfo storage equityToken = _equityTokens[tokenId];
+
+            require(
+                equityToken.shares[from] >= share,
+                "Shares of owner are less than requested share"
+            );
+
+            // if to does not own any share then increase the balance
+            if (equityToken.shares[to] == 0) {
+                unchecked {
+                    _balances[to] += 1;
+                }
+            }
+
+            unchecked {
+                equityToken.shares[to] += share;
+                equityToken.shares[from] -= share;
+            }
+
+            // if from does not have any share left then decrease the balance
+            if (equityToken.shares[from] == 0) {
+                unchecked {
+                    _balances[from] -= 1;
+                }
+            }
         }
-        _owners[tokenId] = to;
 
-        emit Transfer(from, to, tokenId);
+        emit Transfer(from, to, tokenId, share);
     }
 }
