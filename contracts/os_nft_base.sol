@@ -2,10 +2,23 @@
 pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "./interfaces/erc721_metadata_upgradable.sol";
+import "./interfaces/erc721_receiver_upgradable.sol";
+
 import "hardhat/console.sol";
 
-contract OSNFTBase is ContextUpgradeable {
+contract OSNFTBase is
+    Initializable,
+    ContextUpgradeable,
+    ERC165Upgradeable,
+    IERC721MetadataUpgradeable
+{
+    using AddressUpgradeable for address;
+    using StringsUpgradeable for uint256;
+
     struct EquityTokenInfo {
         uint32 totalNoOfShare;
         mapping(address => uint32) shares;
@@ -16,8 +29,6 @@ contract OSNFTBase is ContextUpgradeable {
         address owner;
         address creator;
     }
-
-    using StringsUpgradeable for uint256;
 
     // Token name
     string private _name;
@@ -39,30 +50,6 @@ contract OSNFTBase is ContextUpgradeable {
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     /**
-     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
-     */
-    event Transfer(
-        address indexed from,
-        address indexed to,
-        bytes32 indexed tokenId,
-        uint32 share
-    );
-
-    /**
-     * @dev Emitted when new project id is created.
-     */
-    event NewProject(string indexed projectUrl);
-
-    /**
-     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
-     */
-    event ApprovalForAll(
-        address indexed owner,
-        address indexed operator,
-        bool approved
-    );
-
-    /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
     function __ERC721_init(string memory name_, string memory symbol_)
@@ -78,6 +65,26 @@ contract OSNFTBase is ContextUpgradeable {
     {
         _name = name_;
         _symbol = symbol_;
+    }
+
+    /**
+     * @dev See {IERC721-ownerOf}.
+     */
+    function ownerOf(bytes32 tokenId) public view returns (address) {
+        address owner = _ownerOf(tokenId);
+        require(owner != address(0), "ERC721: invalid token ID");
+        return owner;
+    }
+
+    /**
+     * @dev See {IERC721-balanceOf}.
+     */
+    function balanceOf(address owner) public view returns (uint256) {
+        require(
+            owner != address(0),
+            "ERC721: address zero is not a valid owner"
+        );
+        return _balances[owner];
     }
 
     /**
@@ -128,6 +135,17 @@ contract OSNFTBase is ContextUpgradeable {
 
         emit Transfer(owner, to, tokenId, totalShare);
         emit NewProject(projectUrl);
+    }
+
+    /**
+     * @dev See {IERC721-setApprovalForAll}.
+     */
+    function setApprovalForAll(address operator, bool approved)
+        public
+        virtual
+        override
+    {
+        _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
@@ -312,10 +330,35 @@ contract OSNFTBase is ContextUpgradeable {
         virtual
         returns (bool)
     {
-        address owner = _ownerOf(tokenId);
+        address owner = ownerOf(tokenId);
         return (spender == owner ||
             isApprovedForAll(owner, spender) ||
             getApproved(tokenId) == spender);
+    }
+
+    /**
+     * @dev See {IERC721-approve}.
+     */
+    function approve(address to, bytes32 tokenId) public virtual override {
+        address owner = ownerOf(tokenId);
+        require(to != owner, "ERC721: approval to current owner");
+
+        require(
+            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
+            "ERC721: approve caller is not token owner nor approved for all"
+        );
+
+        _approve(to, tokenId);
+    }
+
+    /**
+     * @dev Approve `to` to operate on `tokenId`
+     *
+     * Emits an {Approval} event.
+     */
+    function _approve(address to, bytes32 tokenId) internal virtual {
+        _tokenApprovals[tokenId] = to;
+        emit Approval(ownerOf(tokenId), to, tokenId);
     }
 
     /**
@@ -343,9 +386,9 @@ contract OSNFTBase is ContextUpgradeable {
         address to,
         bytes32 tokenId,
         uint32 share
-    ) internal virtual {
+    ) internal {
         require(
-            _ownerOf(tokenId) == from,
+            ownerOf(tokenId) == from,
             "ERC721: transfer from incorrect owner"
         );
 
@@ -398,4 +441,137 @@ contract OSNFTBase is ContextUpgradeable {
 
         emit Transfer(from, to, tokenId, share);
     }
+
+    /**
+     * @dev See {IERC721-transferFrom}.
+     */
+    function transferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share
+    ) public virtual override {
+        //solhint-disable-next-line max-line-length
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
+
+        _transfer(from, to, tokenId, share);
+    }
+
+    /**
+     * @dev See {IERC721-safeTransferFrom}.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share
+    ) public virtual override {
+        safeTransferFrom(from, to, tokenId, share, "");
+    }
+
+    /**
+     * @dev See {IERC721-safeTransferFrom}.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share,
+        bytes memory data
+    ) public virtual override {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
+        _safeTransfer(from, to, tokenId, share, data);
+    }
+
+    /**
+     * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
+     * are aware of the ERC721 protocol to prevent tokens from being forever locked.
+     *
+     * `data` is additional data, it has no specified format and it is sent in call to `to`.
+     *
+     * This internal function is equivalent to {safeTransferFrom}, and can be used to e.g.
+     * implement alternative mechanisms to perform token transfer, such as signature-based.
+     *
+     * Requirements:
+     *
+     * - `from` cannot be the zero address.
+     * - `to` cannot be the zero address.
+     * - `tokenId` token must exist and be owned by `from`.
+     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
+     *
+     * Emits a {Transfer} event.
+     */
+    function _safeTransfer(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share,
+        bytes memory data
+    ) internal virtual {
+        _transfer(from, to, tokenId, share);
+        require(
+            _checkOnERC721Received(from, to, tokenId, share, data),
+            "ERC721: transfer to non ERC721Receiver implementer"
+        );
+    }
+
+    /**
+     * @dev Internal function to invoke {IERC721Receiver-onERC721Received} on a target address.
+     * The call is not executed if the target address is not a contract.
+     *
+     * @param from address representing the previous owner of the given token ID
+     * @param to target address that will receive the tokens
+     * @param tokenId uint256 ID of the token to be transferred
+     * @param data bytes optional data to send along with the call
+     * @return bool whether the call correctly returned the expected magic value
+     */
+    function _checkOnERC721Received(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share,
+        bytes memory data
+    ) private returns (bool) {
+        if (to.isContract()) {
+            try
+                IERC721ReceiverUpgradeable(to).onERC721Received(
+                    _msgSender(),
+                    from,
+                    tokenId,
+                    share,
+                    data
+                )
+            returns (bytes4 retval) {
+                return
+                    retval ==
+                    IERC721ReceiverUpgradeable.onERC721Received.selector;
+            } catch (bytes memory reason) {
+                if (reason.length == 0) {
+                    revert(
+                        "ERC721: transfer to non ERC721Receiver implementer"
+                    );
+                } else {
+                    /// @solidity memory-safe-assembly
+                    assembly {
+                        revert(add(32, reason), mload(reason))
+                    }
+                }
+            }
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[44] private __gap;
 }

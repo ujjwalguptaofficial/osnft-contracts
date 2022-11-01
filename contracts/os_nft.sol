@@ -33,48 +33,6 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
         baseTokenURI = _baseTokenURI;
     }
 
-    function setApprovalForAll(address operator, bool approved) external {
-        _setApprovalForAll(_msgSender(), operator, approved);
-    }
-
-    /**
-     * @dev See {IERC721-ownerOf}.
-     */
-    function ownerOf(bytes32 tokenId) external view returns (address) {
-        address owner = _ownerOf(tokenId);
-        require(owner != address(0), "ERC721: invalid token ID");
-        return owner;
-    }
-
-    /**
-     * @dev See {IERC721-transferFrom}.
-     */
-    function transferFrom(
-        address from,
-        address to,
-        bytes32 tokenId,
-        uint32 shares
-    ) external {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner or approved"
-        );
-
-        _transfer(from, to, tokenId, shares);
-    }
-
-    /**
-     * @dev See {IERC721-balanceOf}.
-     */
-    function balanceOf(address owner) public view returns (uint256) {
-        require(
-            owner != address(0),
-            "ERC721: address zero is not a valid owner"
-        );
-        return _balances[owner];
-    }
-
     // percentage methods
 
     function creatorOf(bytes32 tokenId) external view returns (address) {
