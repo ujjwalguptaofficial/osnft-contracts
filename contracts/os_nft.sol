@@ -21,7 +21,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
         address projectOwner,
         string calldata projectUrl,
         uint32 shares
-    ) external onlyOwner {
+    ) external {
         _mint(projectOwner, projectUrl, shares);
     }
 
@@ -36,34 +36,31 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     // percentage methods
 
     function creatorOf(bytes32 tokenId) external view returns (address) {
-        require(_exists(tokenId), "token does not exist");
+        _requireMinted(tokenId);
 
         return _percentageTokens[tokenId].creator;
     }
 
     function creatorCut(bytes32 tokenId) external view returns (uint8) {
-        require(_exists(tokenId), "token does not exist");
+        _requireMinted(tokenId);
 
         return _percentageTokens[tokenId].creatorCut;
     }
 
     // equity methods
 
-    function shareOf(address owner, bytes32 tokenId)
+    function shareOf(bytes32 tokenId, address owner)
         external
         view
         returns (uint32)
     {
-        require(
-            owner != address(0),
-            "ERC721: address zero is not a valid owner"
-        );
+        _requireMinted(tokenId);
 
         return _equityTokens[tokenId].shares[owner];
     }
 
     function totalShareOf(bytes32 tokenId) external view returns (uint32) {
-        require(_exists(tokenId), "token does not exist");
+        _requireMinted(tokenId);
 
         return _equityTokens[tokenId].totalNoOfShare;
     }

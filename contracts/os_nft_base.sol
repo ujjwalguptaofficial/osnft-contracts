@@ -5,16 +5,18 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/erc721_metadata_upgradable.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
-
-import "hardhat/console.sol";
+import "./string_helper.sol";
 
 contract OSNFTBase is
     Initializable,
     ContextUpgradeable,
+    OwnableUpgradeable,
     ERC165Upgradeable,
-    IERC721MetadataUpgradeable
+    IERC721MetadataUpgradeable,
+    StringHelper
 {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
@@ -36,12 +38,14 @@ contract OSNFTBase is
     // Token symbol
     string private _symbol;
 
-    mapping(bytes32 => EquityTokenInfo) _equityTokens;
+    mapping(bytes32 => EquityTokenInfo) internal _equityTokens;
 
-    mapping(bytes32 => PercentageTokenInfo) _percentageTokens;
+    mapping(bytes32 => PercentageTokenInfo) internal _percentageTokens;
 
     // Mapping owner address to token count
     mapping(address => uint256) internal _balances;
+
+    mapping(address => bool) internal _minters;
 
     // Mapping from token ID to approved address
     mapping(bytes32 => address) private _tokenApprovals;
@@ -50,21 +54,17 @@ contract OSNFTBase is
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     /**
-     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
+     * @dev See {IERC721Metadata-name}.
      */
-    function __ERC721_init(string memory name_, string memory symbol_)
-        internal
-        onlyInitializing
-    {
-        __ERC721_init_unchained(name_, symbol_);
+    function name() external view virtual returns (string memory) {
+        return _name;
     }
 
-    function __ERC721_init_unchained(string memory name_, string memory symbol_)
-        internal
-        onlyInitializing
-    {
-        _name = name_;
-        _symbol = symbol_;
+    /**
+     * @dev See {IERC721Metadata-symbol}.
+     */
+    function symbol() external view virtual returns (string memory) {
+        return _symbol;
     }
 
     /**
@@ -88,6 +88,151 @@ contract OSNFTBase is
     }
 
     /**
+     * @dev See {IERC721-setApprovalForAll}.
+     */
+    function setApprovalForAll(address operator, bool approved)
+        public
+        virtual
+        override
+    {
+        _setApprovalForAll(_msgSender(), operator, approved);
+    }
+
+    /**
+     * @dev See {IERC721Metadata-tokenURI}.
+     */
+    function tokenURI(bytes32 tokenId)
+        public
+        view
+        virtual
+        returns (string memory)
+    {
+        _requireMinted(tokenId);
+
+        string memory baseURI = _baseURI();
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, bytes32ToString(tokenId)))
+                : "";
+    }
+
+    /**
+     * @dev See {IERC721-isApprovedForAll}.
+     */
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        returns (bool)
+    {
+        return _operatorApprovals[owner][operator];
+    }
+
+    /**
+     * @dev See {IERC721-getApproved}.
+     */
+    function getApproved(bytes32 tokenId) public view returns (address) {
+        _requireMinted(tokenId);
+
+        return _tokenApprovals[tokenId];
+    }
+
+    /**
+     * @dev See {IERC721-approve}.
+     */
+    function approve(address to, bytes32 tokenId) public virtual override {
+        address owner = ownerOf(tokenId);
+        require(to != owner, "ERC721: approval to current owner");
+
+        require(
+            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
+            "ERC721: approve caller is not token owner nor approved for all"
+        );
+
+        _approve(to, tokenId);
+    }
+
+    /**
+     * @dev See {IERC721-transferFrom}.
+     */
+    function transferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share
+    ) public virtual override {
+        //solhint-disable-next-line max-line-length
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
+
+        _transfer(from, to, tokenId, share);
+    }
+
+    /**
+     * @dev See {IERC721-safeTransferFrom}.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share
+    ) public virtual override {
+        safeTransferFrom(from, to, tokenId, share, "");
+    }
+
+    /**
+     * @dev See {IERC721-safeTransferFrom}.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share,
+        bytes memory data
+    ) public virtual override {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
+        _safeTransfer(from, to, tokenId, share, data);
+    }
+
+    // minting methods
+
+    function isMinter(address account) external view returns (bool) {
+        return _minters[account];
+    }
+
+    function addMinter(address account) external onlyOwner {
+        _minters[account] = true;
+        emit MinterAdded(account);
+    }
+
+    function removeMinter(address account) external onlyOwner {
+        delete _minters[account];
+        emit MinterRemoved(account);
+    }
+
+    /**
+     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
+     */
+    function __ERC721_init(string memory name_, string memory symbol_)
+        internal
+        onlyInitializing
+    {
+        __ERC721_init_unchained(name_, symbol_);
+    }
+
+    function __ERC721_init_unchained(string memory name_, string memory symbol_)
+        internal
+        onlyInitializing
+    {
+        _name = name_;
+        _symbol = symbol_;
+    }
+
+    /**
      * @dev Mints `tokenId` and transfers it to `to`.
      *
      * WARNING: Usage of this method is discouraged, use {_safeMint} whenever possible
@@ -104,6 +249,8 @@ contract OSNFTBase is
         string calldata projectUrl,
         uint32 totalShare
     ) internal virtual {
+        require(_minters[_msgSender()], "only minters allowed");
+
         bytes32 tokenId = keccak256(abi.encodePacked(projectUrl));
 
         require(to != address(0), "ERC721: mint to the zero address");
@@ -117,7 +264,7 @@ contract OSNFTBase is
             _balances[to] += 1;
         }
 
-        address owner = address(0);
+        address owner = to;
         // equity
         if (totalShare > 0) {
             EquityTokenInfo storage token = _equityTokens[tokenId];
@@ -133,19 +280,8 @@ contract OSNFTBase is
             });
         }
 
-        emit Transfer(owner, to, tokenId, totalShare);
-        emit NewProject(projectUrl);
-    }
-
-    /**
-     * @dev See {IERC721-setApprovalForAll}.
-     */
-    function setApprovalForAll(address operator, bool approved)
-        public
-        virtual
-        override
-    {
-        _setApprovalForAll(_msgSender(), operator, approved);
+        emit Transfer(address(0), owner, tokenId, totalShare);
+        emit ProjectAdded(projectUrl);
     }
 
     /**
@@ -190,38 +326,6 @@ contract OSNFTBase is
     }
 
     /**
-     * @dev See {IERC721Metadata-name}.
-     */
-    function name() public view virtual returns (string memory) {
-        return _name;
-    }
-
-    /**
-     * @dev See {IERC721Metadata-symbol}.
-     */
-    function symbol() public view virtual returns (string memory) {
-        return _symbol;
-    }
-
-    /**
-     * @dev See {IERC721Metadata-tokenURI}.
-     */
-    function tokenURI(bytes32 tokenId)
-        public
-        view
-        virtual
-        returns (string memory)
-    {
-        _requireMinted(tokenId);
-
-        string memory baseURI = _baseURI();
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, bytes32ToString(tokenId)))
-                : "";
-    }
-
-    /**
      * @dev Reverts if the `tokenId` has not been minted yet.
      */
     function _requireMinted(bytes32 tokenId) internal view virtual {
@@ -235,86 +339,6 @@ contract OSNFTBase is
      */
     function _baseURI() internal view virtual returns (string memory) {
         return "";
-    }
-
-    function toHex(bytes32 data) internal pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    "0x",
-                    toHex16(bytes16(data)),
-                    toHex16(bytes16(data << 128))
-                )
-            );
-    }
-
-    function toHex16(bytes16 data) internal pure returns (bytes32 result) {
-        result =
-            (bytes32(data) &
-                0xFFFFFFFFFFFFFFFF000000000000000000000000000000000000000000000000) |
-            ((bytes32(data) &
-                0x0000000000000000FFFFFFFFFFFFFFFF00000000000000000000000000000000) >>
-                64);
-        result =
-            (result &
-                0xFFFFFFFF000000000000000000000000FFFFFFFF000000000000000000000000) |
-            ((result &
-                0x00000000FFFFFFFF000000000000000000000000FFFFFFFF0000000000000000) >>
-                32);
-        result =
-            (result &
-                0xFFFF000000000000FFFF000000000000FFFF000000000000FFFF000000000000) |
-            ((result &
-                0x0000FFFF000000000000FFFF000000000000FFFF000000000000FFFF00000000) >>
-                16);
-        result =
-            (result &
-                0xFF000000FF000000FF000000FF000000FF000000FF000000FF000000FF000000) |
-            ((result &
-                0x00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000) >>
-                8);
-        result =
-            ((result &
-                0xF000F000F000F000F000F000F000F000F000F000F000F000F000F000F000F000) >>
-                4) |
-            ((result &
-                0x0F000F000F000F000F000F000F000F000F000F000F000F000F000F000F000F00) >>
-                8);
-        result = bytes32(
-            0x3030303030303030303030303030303030303030303030303030303030303030 +
-                uint256(result) +
-                (((uint256(result) +
-                    0x0606060606060606060606060606060606060606060606060606060606060606) >>
-                    4) &
-                    0x0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F) *
-                7
-        );
-    }
-
-    function bytes32ToString(bytes32 _bytes32)
-        internal
-        pure
-        returns (string memory)
-    {
-        return
-            string(
-                abi.encodePacked(
-                    "0x",
-                    toHex16(bytes16(_bytes32)),
-                    toHex16(bytes16(_bytes32 << 128))
-                )
-            );
-    }
-
-    /**
-     * @dev See {IERC721-isApprovedForAll}.
-     */
-    function isApprovedForAll(address owner, address operator)
-        public
-        view
-        returns (bool)
-    {
-        return _operatorApprovals[owner][operator];
     }
 
     /**
@@ -337,21 +361,6 @@ contract OSNFTBase is
     }
 
     /**
-     * @dev See {IERC721-approve}.
-     */
-    function approve(address to, bytes32 tokenId) public virtual override {
-        address owner = ownerOf(tokenId);
-        require(to != owner, "ERC721: approval to current owner");
-
-        require(
-            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
-            "ERC721: approve caller is not token owner nor approved for all"
-        );
-
-        _approve(to, tokenId);
-    }
-
-    /**
      * @dev Approve `to` to operate on `tokenId`
      *
      * Emits an {Approval} event.
@@ -359,15 +368,6 @@ contract OSNFTBase is
     function _approve(address to, bytes32 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
         emit Approval(ownerOf(tokenId), to, tokenId);
-    }
-
-    /**
-     * @dev See {IERC721-getApproved}.
-     */
-    function getApproved(bytes32 tokenId) public view returns (address) {
-        _requireMinted(tokenId);
-
-        return _tokenApprovals[tokenId];
     }
 
     /**
@@ -440,53 +440,6 @@ contract OSNFTBase is
         }
 
         emit Transfer(from, to, tokenId, share);
-    }
-
-    /**
-     * @dev See {IERC721-transferFrom}.
-     */
-    function transferFrom(
-        address from,
-        address to,
-        bytes32 tokenId,
-        uint32 share
-    ) public virtual override {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
-
-        _transfer(from, to, tokenId, share);
-    }
-
-    /**
-     * @dev See {IERC721-safeTransferFrom}.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        bytes32 tokenId,
-        uint32 share
-    ) public virtual override {
-        safeTransferFrom(from, to, tokenId, share, "");
-    }
-
-    /**
-     * @dev See {IERC721-safeTransferFrom}.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        bytes32 tokenId,
-        uint32 share,
-        bytes memory data
-    ) public virtual override {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
-        _safeTransfer(from, to, tokenId, share, data);
     }
 
     /**

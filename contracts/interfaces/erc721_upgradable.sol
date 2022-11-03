@@ -40,7 +40,7 @@ interface IERC721Upgradeable is IERC165Upgradeable {
     /**
      * @dev Emitted when new project id is created.
      */
-    event NewProject(string indexed projectUrl);
+    event ProjectAdded(string indexed projectUrl);
 
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
