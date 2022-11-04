@@ -11,7 +11,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gas).equal(110214);
+        expect(gas).equal(110236);
     });
 
     describe('percentage cut', async () => {

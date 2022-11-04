@@ -79,19 +79,6 @@ describe("os NFT", () => {
 
     // describe('users method', () => {
 
-    //     it('balance of', async () => {
-    //         let balance = await nft.balanceOf(signer3.address);
-    //         expect(balance).equal(0);
-    //     });
-
-    //     it('tokenURI', async () => {
-    //         const projectId = getProjectId(projectUrl);
-    //         const value = await nft.tokenURI(
-    //             projectId
-    //         );
-    //         expect(value.toLowerCase()).equal('https://ujjwalnft.com/metadata/' + projectId.toLowerCase());
-    //     })
-
     //     describe('transfer from', async () => {
 
     //         const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'

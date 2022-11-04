@@ -83,6 +83,13 @@ interface IERC721Upgradeable is IERC165Upgradeable {
         address from,
         address to,
         bytes32 tokenId,
+        bytes calldata data
+    ) external;
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
         uint32 share,
         bytes calldata data
     ) external;
@@ -101,6 +108,12 @@ interface IERC721Upgradeable is IERC165Upgradeable {
      *
      * Emits a {Transfer} event.
      */
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId
+    ) external;
+
     function safeTransferFrom(
         address from,
         address to,
@@ -124,6 +137,12 @@ interface IERC721Upgradeable is IERC165Upgradeable {
      *
      * Emits a {Transfer} event.
      */
+    function transferFrom(
+        address from,
+        address to,
+        bytes32 tokenId
+    ) external;
+
     function transferFrom(
         address from,
         address to,

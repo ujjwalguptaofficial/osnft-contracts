@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0xcd17ca89af9bc512f089802e5fba15cafa531d50ba96f02e2009bd8fedda5da2"
+    "txHash": "0x0f9fcdd59639613cad71184634bc220979db04848a4a5e79e1fda241d5421e2c"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xfba4cc95b149e160e09c1ff42c4e53e70f39d14bfb0103e7312da9609378da26",
+      "txHash": "0xe6c65b889f98c8bbee7f6d1d6291aa37007ad27378e3a452698b97b5b3d8511a",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "e96ace66f71b6aa897191b5ec396dcc3c8a9dc80fd26cab775b5b969f68bf5a8": {
+    "447b49bb42a6b01168d428156653c613fd9a472d24c0996c61bcfc71713ee051": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x48dba3676e1115b01992ba7182942bb0fd196b57fa5c8ccf4aef10effec489f9",
+      "txHash": "0x3e5230cbbb8612a816b93e802b13a0dfee51b135a7a893aff5269ac51634463e",
       "layout": {
         "storage": [
           {
@@ -86,7 +86,7 @@
             "label": "_equityTokens",
             "offset": 0,
             "slot": "153",
-            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)2120_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)2149_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:41"
           },
@@ -94,7 +94,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "154",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)2127_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)2156_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:43"
           },
@@ -136,7 +136,7 @@
             "slot": "159",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:532"
+            "src": "contracts/os_nft_base.sol:567"
           },
           {
             "label": "baseTokenURI",
@@ -192,11 +192,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(EquityTokenInfo)2120_storage)": {
+          "t_mapping(t_bytes32,t_struct(EquityTokenInfo)2149_storage)": {
             "label": "mapping(bytes32 => struct OSNFTBase.EquityTokenInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)2127_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)2156_storage)": {
             "label": "mapping(bytes32 => struct OSNFTBase.PercentageTokenInfo)",
             "numberOfBytes": "32"
           },
@@ -204,7 +204,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(EquityTokenInfo)2120_storage": {
+          "t_struct(EquityTokenInfo)2149_storage": {
             "label": "struct OSNFTBase.EquityTokenInfo",
             "members": [
               {
@@ -222,7 +222,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(PercentageTokenInfo)2127_storage": {
+          "t_struct(PercentageTokenInfo)2156_storage": {
             "label": "struct OSNFTBase.PercentageTokenInfo",
             "members": [
               {

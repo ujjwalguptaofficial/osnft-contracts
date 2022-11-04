@@ -157,6 +157,20 @@ contract OSNFTBase is
     function transferFrom(
         address from,
         address to,
+        bytes32 tokenId
+    ) public virtual override {
+        //solhint-disable-next-line max-line-length
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
+
+        _transfer(from, to, tokenId, 0);
+    }
+
+    function transferFrom(
+        address from,
+        address to,
         bytes32 tokenId,
         uint32 share
     ) public virtual override {
@@ -175,6 +189,14 @@ contract OSNFTBase is
     function safeTransferFrom(
         address from,
         address to,
+        bytes32 tokenId
+    ) public virtual override {
+        safeTransferFrom(from, to, tokenId, 0, "");
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
         bytes32 tokenId,
         uint32 share
     ) public virtual override {
@@ -184,6 +206,19 @@ contract OSNFTBase is
     /**
      * @dev See {IERC721-safeTransferFrom}.
      */
+    function safeTransferFrom(
+        address from,
+        address to,
+        bytes32 tokenId,
+        bytes memory data
+    ) public virtual override {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
+        _safeTransfer(from, to, tokenId, 0, data);
+    }
+
     function safeTransferFrom(
         address from,
         address to,
