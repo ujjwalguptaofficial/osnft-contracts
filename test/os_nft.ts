@@ -7,6 +7,8 @@ import { OSNFT } from "../typechain-types";
 import { IDeployedPayload } from "./interfaces";
 import { testMint } from "./mint";
 import { testMinters } from "./minters";
+import { testOwnerOf } from "./owner_of";
+import { testProjectMeta } from "./project_meta";
 import { runPublicState } from "./public_state";
 import { setBaseTokenURI } from "./set_base_token_uri";
 
@@ -23,7 +25,9 @@ describe("os NFT", () => {
 
     const payload = {
         projects: {
-            "jsstore-example": `github.com/ujjwalguptaofficial/jsstore-examples`
+            "jsstore-example": `github.com/ujjwalguptaofficial/jsstore-examples`,
+            "mahal-example": 'github.com/ujjwalguptaofficial/mahal-examples',
+            "mahal": 'github.com/ujjwalguptaofficial/mahal'
         },
         getProjectId
     } as IDeployedPayload;
@@ -62,6 +66,14 @@ describe("os NFT", () => {
 
     describe('mint', async () => {
         testMint(payload);
+    })
+
+    describe('owner of', async () => {
+        testOwnerOf(payload);
+    })
+
+    describe('project meta', async () => {
+        testProjectMeta(payload);
     })
 
 

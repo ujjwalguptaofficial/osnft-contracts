@@ -247,6 +247,7 @@ contract OSNFTBase is
     function _mint(
         address to,
         string calldata projectUrl,
+        NFT_TYPE nftType,
         uint32 totalShare
     ) internal virtual {
         require(_minters[_msgSender()], "only minters allowed");
@@ -266,7 +267,7 @@ contract OSNFTBase is
 
         address owner = to;
         // equity
-        if (totalShare > 0) {
+        if (nftType == NFT_TYPE.Share) {
             EquityTokenInfo storage token = _equityTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
@@ -275,13 +276,13 @@ contract OSNFTBase is
         } else {
             _percentageTokens[tokenId] = PercentageTokenInfo({
                 creator: to,
-                creatorCut: 100,
+                creatorCut: uint8(totalShare),
                 owner: to
             });
         }
 
-        emit Transfer(address(0), owner, tokenId, totalShare);
-        emit ProjectAdded(projectUrl);
+        emit Transfer(address(0), owner, tokenId);
+        emit ProjectAdded(projectUrl, nftType, totalShare);
     }
 
     /**
@@ -437,9 +438,11 @@ contract OSNFTBase is
                     _balances[from] -= 1;
                 }
             }
+
+            emit TransferShare(share);
         }
 
-        emit Transfer(from, to, tokenId, share);
+        emit Transfer(from, to, tokenId);
     }
 
     /**

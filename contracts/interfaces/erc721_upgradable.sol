@@ -9,15 +9,21 @@ import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeabl
  * @dev Required interface of an ERC721 compliant contract.
  */
 interface IERC721Upgradeable is IERC165Upgradeable {
+    enum NFT_TYPE {
+        PercentageCut,
+        Share
+    }
+
     /**
      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
      */
     event Transfer(
         address indexed from,
         address indexed to,
-        bytes32 indexed tokenId,
-        uint32 share
+        bytes32 indexed tokenId
     );
+
+    event TransferShare(uint32 share);
 
     /**
      * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
@@ -40,7 +46,11 @@ interface IERC721Upgradeable is IERC165Upgradeable {
     /**
      * @dev Emitted when new project id is created.
      */
-    event ProjectAdded(string indexed projectUrl);
+    event ProjectAdded(
+        string indexed projectUrl,
+        NFT_TYPE nftType,
+        uint32 share
+    );
 
     /**
      * @dev Returns the number of tokens in ``owner``'s account.

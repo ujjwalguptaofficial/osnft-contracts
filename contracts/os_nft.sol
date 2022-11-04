@@ -20,9 +20,10 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     function mintTo(
         address projectOwner,
         string calldata projectUrl,
+        NFT_TYPE nftType,
         uint32 shares
     ) external {
-        _mint(projectOwner, projectUrl, shares);
+        _mint(projectOwner, projectUrl, nftType, shares);
     }
 
     function _baseURI() internal view override returns (string memory) {

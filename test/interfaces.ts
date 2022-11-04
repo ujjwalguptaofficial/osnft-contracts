@@ -8,7 +8,9 @@ export interface IDeployedPayload {
     operator: SignerWithAddress;
     nft: OSNFT,
     projects: {
-        'jsstore-example': string
+        'jsstore-example': string;
+        'mahal-example': string;
+        'mahal': string;
     },
     getProjectId: (projectUrl: string) => string
 }
