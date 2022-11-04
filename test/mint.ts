@@ -11,7 +11,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gas).equal(110236);
+        expect(gas).equal(110223);
     });
 
     describe('percentage cut', async () => {
@@ -124,7 +124,7 @@ export function testMint(payload: IDeployedPayload) {
             const tx = nft.mintTo(address, projectUrl1, 1, 10000);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero,
-                payload.nft.address,
+                address,
                 expectedTokenId
             );
             await expect(tx).emit(nft, 'ProjectAdded').withArgs(

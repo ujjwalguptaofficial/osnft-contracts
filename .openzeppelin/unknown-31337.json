@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x0f9fcdd59639613cad71184634bc220979db04848a4a5e79e1fda241d5421e2c"
+    "txHash": "0xbcccc66c9923ac2687be94c14699aa656417778ec9e7451fb409216197361872"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xe6c65b889f98c8bbee7f6d1d6291aa37007ad27378e3a452698b97b5b3d8511a",
+      "txHash": "0xddfff45020593eef3f6cbd077f6e36b881dd7d98f143405f1c0465e5ec45f4b5",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "447b49bb42a6b01168d428156653c613fd9a472d24c0996c61bcfc71713ee051": {
+    "9371b422f3dd4fbf478e43c63bd87b2b5acbd441ae79bb29a66fae6af1bcea93": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x3e5230cbbb8612a816b93e802b13a0dfee51b135a7a893aff5269ac51634463e",
+      "txHash": "0x386603f8a59964f69ae14dda5dcf38c116c8093d7929fdec5e685c562a0dd306",
       "layout": {
         "storage": [
           {
@@ -72,7 +72,7 @@
             "slot": "151",
             "type": "t_string_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:36"
+            "src": "contracts/os_nft_base.sol:37"
           },
           {
             "label": "_symbol",
@@ -80,7 +80,7 @@
             "slot": "152",
             "type": "t_string_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:39"
+            "src": "contracts/os_nft_base.sol:40"
           },
           {
             "label": "_equityTokens",
@@ -88,7 +88,7 @@
             "slot": "153",
             "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)2149_storage)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:41"
+            "src": "contracts/os_nft_base.sol:42"
           },
           {
             "label": "_percentageTokens",
@@ -96,7 +96,7 @@
             "slot": "154",
             "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)2156_storage)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:43"
+            "src": "contracts/os_nft_base.sol:44"
           },
           {
             "label": "_balances",
@@ -104,7 +104,7 @@
             "slot": "155",
             "type": "t_mapping(t_address,t_uint256)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:46"
+            "src": "contracts/os_nft_base.sol:47"
           },
           {
             "label": "_minters",
@@ -112,7 +112,7 @@
             "slot": "156",
             "type": "t_mapping(t_address,t_bool)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:48"
+            "src": "contracts/os_nft_base.sol:49"
           },
           {
             "label": "_tokenApprovals",
@@ -120,7 +120,7 @@
             "slot": "157",
             "type": "t_mapping(t_bytes32,t_address)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:51"
+            "src": "contracts/os_nft_base.sol:52"
           },
           {
             "label": "_operatorApprovals",
@@ -128,7 +128,7 @@
             "slot": "158",
             "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:54"
+            "src": "contracts/os_nft_base.sol:55"
           },
           {
             "label": "__gap",
@@ -136,7 +136,7 @@
             "slot": "159",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:567"
+            "src": "contracts/os_nft_base.sol:586"
           },
           {
             "label": "baseTokenURI",
@@ -218,9 +218,15 @@
                 "type": "t_mapping(t_address,t_uint32)",
                 "offset": 0,
                 "slot": "1"
+              },
+              {
+                "label": "allShareOwner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
               }
             ],
-            "numberOfBytes": "64"
+            "numberOfBytes": "96"
           },
           "t_struct(PercentageTokenInfo)2156_storage": {
             "label": "struct OSNFTBase.PercentageTokenInfo",

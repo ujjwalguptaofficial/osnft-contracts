@@ -24,6 +24,7 @@ contract OSNFTBase is
     struct EquityTokenInfo {
         uint32 totalNoOfShare;
         mapping(address => uint32) shares;
+        address allShareOwner;
     }
 
     struct PercentageTokenInfo {
@@ -158,7 +159,7 @@ contract OSNFTBase is
         address from,
         address to,
         bytes32 tokenId
-    ) public virtual override {
+    ) external virtual override {
         //solhint-disable-next-line max-line-length
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
@@ -173,11 +174,17 @@ contract OSNFTBase is
         address to,
         bytes32 tokenId,
         uint32 share
-    ) public virtual override {
+    ) external virtual override {
         //solhint-disable-next-line max-line-length
+
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
             "ERC721: caller is not token owner nor approved"
+        );
+
+        require(
+            _shareOf(tokenId, from) >= share,
+            "ERC721: owner share is less than requested"
         );
 
         _transfer(from, to, tokenId, share);
@@ -300,14 +307,12 @@ contract OSNFTBase is
             _balances[to] += 1;
         }
 
-        address owner = to;
         // equity
         if (nftType == NFT_TYPE.Share) {
             EquityTokenInfo storage token = _equityTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
-
-            owner = address(this);
+            token.allShareOwner = to;
         } else {
             _percentageTokens[tokenId] = PercentageTokenInfo({
                 creator: to,
@@ -316,7 +321,7 @@ contract OSNFTBase is
             });
         }
 
-        emit Transfer(address(0), owner, tokenId);
+        emit Transfer(address(0), to, tokenId);
         emit ProjectAdded(projectUrl, nftType, totalShare);
     }
 
@@ -356,7 +361,7 @@ contract OSNFTBase is
             return percentageToken.owner;
         }
         if (_equityTokens[tokenId].totalNoOfShare > 0) {
-            return address(this);
+            return _equityTokens[tokenId].allShareOwner;
         }
         return address(0);
     }
@@ -396,6 +401,14 @@ contract OSNFTBase is
             getApproved(tokenId) == spender);
     }
 
+    function _shareOf(bytes32 tokenId, address owner)
+        internal
+        view
+        returns (uint32)
+    {
+        return _equityTokens[tokenId].shares[owner];
+    }
+
     /**
      * @dev Approve `to` to operate on `tokenId`
      *
@@ -423,17 +436,17 @@ contract OSNFTBase is
         bytes32 tokenId,
         uint32 share
     ) internal {
-        require(
-            ownerOf(tokenId) == from,
-            "ERC721: transfer from incorrect owner"
-        );
-
         require(to != address(0), "ERC721: transfer to the zero address");
 
         PercentageTokenInfo memory token = _percentageTokens[tokenId];
 
         // if token is percentage
         if (token.owner != address(0)) {
+            require(
+                ownerOf(tokenId) == from,
+                "ERC721: transfer from incorrect owner"
+            );
+
             // Clear approvals from the previous owner
             delete _tokenApprovals[tokenId];
 
@@ -448,6 +461,8 @@ contract OSNFTBase is
             }
             _percentageTokens[tokenId].owner = to;
         } else {
+            require(share > 0, "share should be greater than zero");
+
             EquityTokenInfo storage equityToken = _equityTokens[tokenId];
 
             require(
@@ -472,6 +487,10 @@ contract OSNFTBase is
                 unchecked {
                     _balances[from] -= 1;
                 }
+            }
+
+            if (from == equityToken.allShareOwner) {
+                equityToken.allShareOwner = address(this);
             }
 
             emit TransferShare(share);

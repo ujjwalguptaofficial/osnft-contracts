@@ -13,7 +13,7 @@ export function testOwnerOf(payload: IDeployedPayload) {
         const projectUrl = 'github.com/ujjwalguptaofficial/mahal'
         const expectedTokenId = payload.getProjectId(projectUrl);
         const value = await payload.nft.ownerOf(expectedTokenId);
-        expect(value).to.equal(payload.nft.address);
+        expect(value).to.equal(payload.signer2.address);
     })
 
     it('owner of jsstore examples', async () => {

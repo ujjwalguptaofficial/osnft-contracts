@@ -4,6 +4,7 @@ import { toUtf8Bytes } from "ethers/lib/utils";
 import { ethers, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { OSNFT } from "../typechain-types";
+import { testApprove } from "./approve";
 import { IDeployedPayload } from "./interfaces";
 import { testMint } from "./mint";
 import { testMinters } from "./minters";
@@ -11,6 +12,7 @@ import { testOwnerOf } from "./owner_of";
 import { testProjectMeta } from "./project_meta";
 import { runPublicState } from "./public_state";
 import { setBaseTokenURI } from "./set_base_token_uri";
+import { testTransferFrom } from "./transfer_from";
 
 
 function getProjectId(projectUrl: string) {
@@ -74,6 +76,14 @@ describe("os NFT", () => {
 
     describe('project meta', async () => {
         testProjectMeta(payload);
+    })
+
+    describe('approve', async () => {
+        testApprove(payload);
+    })
+
+    describe('transfer from', async () => {
+        testTransferFrom(payload);
     })
 
 
