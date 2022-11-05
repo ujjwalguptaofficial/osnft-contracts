@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x96cf0a3c4999303ea61a47f523bb5684170bb41d6dcd7500c143140c8e70a3f1"
+    "txHash": "0x7bc66a09964029631ce1789eff5e518898e5ac9f985eb1f1299da0191e8eb173"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xae23b57908cbfaf5e1e19fa5da98e8e5b3c53ca8e3bd4065d5da37050abe2ace",
+      "txHash": "0xcbab964c1da4e34333b5077c98592b9ad4c8d6ad64063bad7013da61eeacd28c",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "47f096197c12117e4558a511f7b76871f62a38ebe042d19b50e93ed52633083e": {
+    "6e638ac0cdf55ff1d22552d723efab1e86efac7ac32a203576bfb073a6fd975c": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xddac240d33e445e0faf4ff46cee3633313381a869caac35417aea5f7fd3296ac",
+      "txHash": "0xd278c596f0254b16162a936c8d2edc9dde4e9b94173dabe83ea68be7538b0dc5",
       "layout": {
         "storage": [
           {
@@ -144,7 +144,7 @@
             "slot": "160",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:604"
+            "src": "contracts/os_nft_base.sol:610"
           },
           {
             "label": "baseTokenURI",

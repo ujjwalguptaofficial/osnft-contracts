@@ -187,13 +187,8 @@ contract OSNFTBase is
         //solhint-disable-next-line max-line-length
 
         require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
-
-        require(
-            _shareOf(tokenId, from) >= share,
-            "ERC721: owner share is less than requested"
+            _isApprovedOrShareOwner(_msgSender(), tokenId, share),
+            "ERC721: caller is not token share owner nor approved"
         );
 
         _transfer(from, to, tokenId, share);
@@ -243,8 +238,8 @@ contract OSNFTBase is
         bytes memory data
     ) public virtual override {
         require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
+            _isApprovedOrShareOwner(_msgSender(), tokenId, share),
+            "ERC721: caller is not token share owner nor approved"
         );
         _safeTransfer(from, to, tokenId, share, data);
     }
@@ -410,6 +405,17 @@ contract OSNFTBase is
             getApproved(tokenId) == spender);
     }
 
+    function _isApprovedOrShareOwner(
+        address spender,
+        bytes32 tokenId,
+        uint32 share
+    ) internal view virtual returns (bool) {
+        address owner = ownerOf(tokenId);
+        return (isApprovedForAll(owner, spender) ||
+            getApproved(tokenId) == spender ||
+            _shareOf(tokenId, spender) >= share);
+    }
+
     function _shareOf(bytes32 tokenId, address owner)
         internal
         view
@@ -476,7 +482,7 @@ contract OSNFTBase is
 
             require(
                 equityToken.shares[from] >= share,
-                "Shares of owner are less than requested share"
+                "ERC721: owner share is less than requested"
             );
 
             // if to does not own any share then increase the balance

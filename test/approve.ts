@@ -31,7 +31,7 @@ export function testApprove(payload: IDeployedPayload) {
 
     })
 
-    it('approve a token to not token owner', async () => {
+    it('approve a token by not token owner', async () => {
         const projectUrl = payload.projects["jsstore-example"];
         const expectedTokenId = payload.getProjectId(projectUrl);
 
