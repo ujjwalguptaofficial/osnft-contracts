@@ -45,6 +45,42 @@ export function testTransferFrom(payload: IDeployedPayload) {
             );
             await expect(value).to.revertedWith('ERC721: invalid token ID');
         })
+
+        it('transfer to signer3 from deployer as owner', async () => {
+            const projectUrl = payload.projects["jsstore-example"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+            const from = payload.deployer.address;
+            const to = payload.signer3.address;
+
+            const balanceOfFrom = await payload.nft.balanceOf(from);
+            expect(balanceOfFrom).equal(1);
+
+            const balanceOfTo = await payload.nft.balanceOf(to);
+            expect(balanceOfTo).equal(0);
+
+            let owner = await payload.nft.ownerOf(expectedTokenId);
+            expect(owner).equal(from);
+
+            const value = payload.nft["transferFrom(address,address,bytes32)"](
+                from,
+                to,
+                expectedTokenId
+            );
+            await expect(value).to.emit(payload.nft, 'Transfer').withArgs(
+                from,
+                to,
+                expectedTokenId
+            )
+
+            const balanceOfFromAfterTransfer = await payload.nft.balanceOf(from);
+            expect(balanceOfFromAfterTransfer).equal(balanceOfFrom.sub(1));
+
+            const balanceOfToAfterTransfer = await payload.nft.balanceOf(to);
+            expect(balanceOfToAfterTransfer).equal(balanceOfTo.add(1));
+
+            owner = await payload.nft.ownerOf(expectedTokenId);
+            expect(owner).equal(to);
+        })
     })
 
     describe('shares', () => {
@@ -80,7 +116,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(101047);
+            expect(value).equal(83387);
 
             // by marketplace
             const value2 = await payload.nft.connect(payload.defaultMarketPlace).estimateGas["transferFrom(address,address,bytes32,uint32)"](
@@ -89,7 +125,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value2).equal(103317);
+            expect(value2).equal(85648);
         });
 
         it('invalid project', async () => {
@@ -115,5 +151,65 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             await expect(value).to.revertedWith('ERC721: owner share is less than requested');
         });
+
+        it('transferring zero share', async () => {
+
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
+                payload.signer2.address,
+                payload.signer3.address,
+                projectId,
+                0
+            );
+
+            await expect(value).to.revertedWith('share should be greater than zero');
+        });
+
+        it('transfer to signer3 from signer2 as owner', async () => {
+            const projectUrl = payload.projects["mahal"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+            const from = payload.signer2.address;
+            const to = payload.signer3.address;
+
+            const balanceOfFrom = await payload.nft.balanceOf(from);
+            expect(balanceOfFrom).equal(2);
+
+            const balanceOfTo = await payload.nft.balanceOf(to);
+            expect(balanceOfTo).equal(1);
+
+            let owner = await payload.nft.ownerOf(expectedTokenId);
+            expect(owner).equal(from);
+
+            const shareOfFrom = await payload.nft.shareOf(expectedTokenId, from);
+
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
+                from,
+                to,
+                expectedTokenId,
+                100
+            );
+            await expect(value).to.emit(payload.nft, 'Transfer').withArgs(
+                from,
+                to,
+                expectedTokenId
+            )
+            await expect(value).to.emit(payload.nft, 'TransferShare').withArgs(
+                100
+            )
+
+            const balanceOfFromAfterTransfer = await payload.nft.balanceOf(from);
+            expect(balanceOfFromAfterTransfer).equal(balanceOfFrom);
+
+            const balanceOfToAfterTransfer = await payload.nft.balanceOf(to);
+            expect(balanceOfToAfterTransfer).equal(balanceOfTo.add(1));
+
+            owner = await payload.nft.ownerOf(expectedTokenId);
+            expect(owner).equal(payload.nft.address);
+
+            const shareOfFromAfterTransfer = await payload.nft.shareOf(expectedTokenId, from);
+            expect(shareOfFromAfterTransfer).equal(shareOfFrom - 100);
+
+            const shareOfToAfterTransfer = await payload.nft.shareOf(expectedTokenId, to);
+            expect(shareOfToAfterTransfer).equal(100);
+        })
     })
 }

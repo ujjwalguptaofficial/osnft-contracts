@@ -470,7 +470,7 @@ contract OSNFTBase is
             }
             _percentageTokens[tokenId].owner = to;
         } else {
-            // require(share > 0, "share should be greater than zero");
+            require(share > 0, "share should be greater than zero");
 
             EquityTokenInfo storage equityToken = _equityTokens[tokenId];
 
