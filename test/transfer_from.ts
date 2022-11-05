@@ -46,6 +46,19 @@ export function testTransferFrom(payload: IDeployedPayload) {
             await expect(value).to.revertedWith('ERC721: invalid token ID');
         })
 
+        it('transferring share project using percentage cut', async () => {
+            const projectUrl = payload.projects["mahal"];
+            const projectId = payload.getProjectId(projectUrl);
+
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32)"](
+                payload.signer2.address,
+                payload.signer3.address,
+                projectId,
+            );
+
+            await expect(value).to.revertedWith('share should be greater than zero');
+        });
+
         it('transfer to signer3 from deployer as owner', async () => {
             const projectUrl = payload.projects["jsstore-example"];
             const expectedTokenId = payload.getProjectId(projectUrl);

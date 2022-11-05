@@ -313,6 +313,8 @@ contract OSNFTBase is
 
         // equity
         if (nftType == NFT_TYPE.Share) {
+            require(totalShare > 0, "total share should not be zero");
+
             EquityTokenInfo storage token = _equityTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
@@ -456,7 +458,7 @@ contract OSNFTBase is
         PercentageTokenInfo memory token = _percentageTokens[tokenId];
 
         // if token is percentage
-        if (token.owner != address(0)) {
+        if (token.creator != address(0)) {
             require(
                 ownerOf(tokenId) == from,
                 "ERC721: transfer from incorrect owner"

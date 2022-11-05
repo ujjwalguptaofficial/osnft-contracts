@@ -90,7 +90,7 @@ export function testMint(payload: IDeployedPayload) {
     })
 
     describe('shares', async () => {
-        it('mint a project with shares more than allowed', async () => {
+        it('mint a project with shares more than uint32 max value', async () => {
             const nft = payload.nft;
             const address = payload.signer2.address;
 
@@ -100,6 +100,14 @@ export function testMint(payload: IDeployedPayload) {
             } catch (error: any) {
                 expect(error.message.includes('value out-of-bounds')).equal(true)
             }
+        })
+
+        it('mint a project with zero shares', async () => {
+            const nft = payload.nft;
+            const address = payload.signer2.address;
+            const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
+            const tx = nft.mintTo(address, projectUrl1, 1, 0);
+            await expect(tx).to.revertedWith('total share should not be zero')
         })
 
         it('mint a percentage cut project with shares', async () => {
