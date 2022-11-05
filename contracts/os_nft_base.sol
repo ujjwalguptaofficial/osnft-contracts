@@ -54,6 +54,12 @@ contract OSNFTBase is
     // Mapping from owner to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
+    address public defaultMarketPlace;
+
+    function setDefaultMarketPlace(address value) external onlyOwner {
+        defaultMarketPlace = value;
+    }
+
     /**
      * @dev See {IERC721Metadata-name}.
      */
@@ -125,6 +131,9 @@ contract OSNFTBase is
         view
         returns (bool)
     {
+        if (operator == defaultMarketPlace) {
+            return true;
+        }
         return _operatorApprovals[owner][operator];
     }
 
@@ -461,7 +470,7 @@ contract OSNFTBase is
             }
             _percentageTokens[tokenId].owner = to;
         } else {
-            require(share > 0, "share should be greater than zero");
+            // require(share > 0, "share should be greater than zero");
 
             EquityTokenInfo storage equityToken = _equityTokens[tokenId];
 
@@ -489,8 +498,17 @@ contract OSNFTBase is
                 }
             }
 
-            if (from == equityToken.allShareOwner) {
-                equityToken.allShareOwner = address(this);
+            uint32 totalShare = equityToken.totalNoOfShare;
+
+            address totalShareOwner = address(this);
+            if (equityToken.shares[to] == totalShare) {
+                totalShareOwner = to;
+            } else if (equityToken.shares[from] == totalShare) {
+                totalShareOwner = from;
+            }
+
+            if (equityToken.allShareOwner != totalShareOwner) {
+                equityToken.allShareOwner = totalShareOwner;
             }
 
             emit TransferShare(share);

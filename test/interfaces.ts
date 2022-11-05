@@ -3,6 +3,7 @@ import { OSNFT } from "../typechain-types";
 
 export interface IDeployedPayload {
     deployer: SignerWithAddress;
+    defaultMarketPlace: SignerWithAddress;
     signer2: SignerWithAddress;
     signer3: SignerWithAddress;
     operator: SignerWithAddress;

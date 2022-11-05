@@ -12,6 +12,7 @@ import { testOwnerOf } from "./owner_of";
 import { testProjectMeta } from "./project_meta";
 import { runPublicState } from "./public_state";
 import { setBaseTokenURI } from "./set_base_token_uri";
+import { testSetMarketPlace } from "./set_makrketplace";
 import { testTransferFrom } from "./transfer_from";
 
 
@@ -37,7 +38,7 @@ describe("os NFT", () => {
     const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
 
     before(async () => {
-        const [signer1, signer2, signer3, operator] = await ethers.getSigners();
+        const [signer1, signer2, signer3, operator, defaultMarketPlace] = await ethers.getSigners();
         const ct = await ethers.getContractFactory('OSNFT');
         const deployedContract = await upgrades.deployProxy(ct, ['OpenSourceNFT', 'OS', 'https://ujjwalnft.com/metadata/'], {
             initializer: 'initialize',
@@ -47,6 +48,7 @@ describe("os NFT", () => {
         payload.signer2 = signer2;
         payload.signer3 = signer3;
         payload.operator = operator;
+        payload.defaultMarketPlace = defaultMarketPlace;
 
         payload.nft = deployedContract;
 
@@ -80,6 +82,10 @@ describe("os NFT", () => {
 
     describe('approve', async () => {
         testApprove(payload);
+    })
+
+    describe('setDefaultMarketPlace', async () => {
+        testSetMarketPlace(payload);
     })
 
     describe('transfer from', async () => {

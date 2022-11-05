@@ -80,7 +80,16 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(99977);
+            expect(value).equal(101047);
+
+            // by marketplace
+            const value2 = await payload.nft.connect(payload.defaultMarketPlace).estimateGas["transferFrom(address,address,bytes32,uint32)"](
+                payload.signer2.address,
+                payload.signer3.address,
+                projectId,
+                1
+            );
+            expect(value2).equal(103317);
         });
 
         it('invalid project', async () => {
@@ -106,18 +115,5 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             await expect(value).to.revertedWith('ERC721: owner share is less than requested');
         });
-
-        it('transferring zero share', async () => {
-
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
-                payload.signer2.address,
-                payload.signer3.address,
-                projectId,
-                0
-            );
-
-            await expect(value).to.revertedWith('share should be greater than zero');
-        });
-
     })
 }
