@@ -1,17 +1,34 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "ethers";
 import { IDeployedPayload } from "./interfaces";
 
 export function testMint(payload: IDeployedPayload) {
 
+    const signMessage = async (user: SignerWithAddress, project: string) => {
+        const message = `
+        Hi! 
+        
+        I am requesting to mint the project - ${project} 
+        
+        `;
+        // const data = ethers.utils.solidityKeccak256(["bytes"], [message]);
+        const data = payload.getProjectId(message);
+        const hashedMessage = await user.signMessage(ethers.utils.arrayify(data));
+        return { data: data, signature: hashedMessage };
+    }
+
     it('estimate gas', async () => {
         const nft = payload.nft;
+        const { data, signature } = await signMessage(payload.deployer, payload.projects["jsstore-example"]);
+
         const gas = await nft.estimateGas.mintTo(
+            data, signature,
             payload.deployer.address, payload.projects["jsstore-example"],
             0,
             30
         );
-        expect(gas).equal(110223);
+        expect(gas).equal(117946);
     });
 
     describe('percentage cut', async () => {
@@ -28,7 +45,9 @@ export function testMint(payload: IDeployedPayload) {
                 projectUrl
             );
 
-            const tx = nft.mintTo(deployerAddress, projectUrl, 0, 30);
+            const { data, signature } = await signMessage(payload.deployer, projectUrl);
+
+            const tx = nft.mintTo(data, signature, deployerAddress, projectUrl, 0, 30);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero, deployerAddress, expectedTokenId
             );
@@ -56,7 +75,9 @@ export function testMint(payload: IDeployedPayload) {
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
             const expectedTokenId = payload.getProjectId(projectUrl1);
-            const tx = nft.mintTo(address, projectUrl1, 0, 40);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 0, 40);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero, address, expectedTokenId
             );
@@ -74,7 +95,11 @@ export function testMint(payload: IDeployedPayload) {
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-exampless'
-            const tx = nft.connect(payload.signer2).mintTo(address, projectUrl1, 0, 30);
+            const { data, signature } = await signMessage(payload.deployer, projectUrl1);
+
+            const tx = nft.connect(payload.signer2).mintTo(
+                data, signature, address, projectUrl1, 0, 30
+            );
             await expect(tx).rejectedWith('only minters allowed')
         })
 
@@ -83,7 +108,8 @@ export function testMint(payload: IDeployedPayload) {
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
-            const tx = nft.mintTo(address, projectUrl1, 0, 30);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 0, 30);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
         })
@@ -95,8 +121,10 @@ export function testMint(payload: IDeployedPayload) {
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
             try {
-                const tx = await nft.mintTo(address, projectUrl1, 1, 4294967295 + 1);
+                const tx = await nft.mintTo(data, signature, address, projectUrl1, 1, 4294967295 + 1);
             } catch (error: any) {
                 expect(error.message.includes('value out-of-bounds')).equal(true)
             }
@@ -106,7 +134,9 @@ export function testMint(payload: IDeployedPayload) {
             const nft = payload.nft;
             const address = payload.signer2.address;
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
-            const tx = nft.mintTo(address, projectUrl1, 1, 0);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 0);
             await expect(tx).to.revertedWith('total share should not be zero')
         })
 
@@ -115,7 +145,9 @@ export function testMint(payload: IDeployedPayload) {
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
-            const tx = nft.mintTo(address, projectUrl1, 1, 10000);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 10000);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
         })
@@ -129,7 +161,9 @@ export function testMint(payload: IDeployedPayload) {
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
             const expectedTokenId = payload.getProjectId(projectUrl1);
-            const tx = nft.mintTo(address, projectUrl1, 1, 10000);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 10000);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero,
                 address,
@@ -149,7 +183,10 @@ export function testMint(payload: IDeployedPayload) {
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
             const expectedTokenId = payload.getProjectId(projectUrl1);
-            const tx = nft.mintTo(address, projectUrl1, 1, 10000);
+
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 10000);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
 
@@ -161,7 +198,11 @@ export function testMint(payload: IDeployedPayload) {
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
             const expectedTokenId = payload.getProjectId(projectUrl1);
-            const tx = nft.mintTo(address, projectUrl1, 1, 0);
+
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+
+
+            const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 0);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
 

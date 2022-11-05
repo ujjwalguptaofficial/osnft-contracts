@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/erc721_metadata_upgradable.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
 import "./string_helper.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 
 contract OSNFTBase is
     Initializable,
@@ -20,6 +21,7 @@ contract OSNFTBase is
 {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
+    using ECDSAUpgradeable for bytes32;
 
     struct EquityTokenInfo {
         uint32 totalNoOfShare;
@@ -291,6 +293,8 @@ contract OSNFTBase is
      * Emits a {Transfer} event.
      */
     function _mint(
+        bytes32 data,
+        bytes memory signature,
         address to,
         string calldata projectUrl,
         NFT_TYPE nftType,
@@ -302,6 +306,11 @@ contract OSNFTBase is
 
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
+
+        require(
+            data.toEthSignedMessageHash().recover(signature) == to,
+            "signature not valid"
+        );
 
         unchecked {
             // Will not overflow unless all 2**256 token ids are minted to the same owner.
