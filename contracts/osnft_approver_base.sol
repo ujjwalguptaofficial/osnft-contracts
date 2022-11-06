@@ -11,18 +11,18 @@ contract OSNFTApproverBase is
     IOSNFTApproverUpgradeable
 {
     mapping(address => bool) internal _approvers;
-    mapping(bytes32 => bool) internal _projectsApproved;
+    mapping(bytes32 => address) internal _projectsApproved;
 
-    function approveProject(bytes32 tokenId) external {
+    function approveProject(bytes32 tokenId, address account) external {
         require(_approvers[_msgSender()], "only approvers allowed");
-        _projectsApproved[tokenId] = true;
+        _projectsApproved[tokenId] = account;
     }
 
-    function isProjectApproved(bytes32 tokenId)
+    function getProjectApproved(bytes32 tokenId)
         external
         view
         override
-        returns (bool)
+        returns (address)
     {
         return _projectsApproved[tokenId];
     }

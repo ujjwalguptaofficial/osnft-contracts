@@ -17,7 +17,10 @@ interface IOSNFTApproverUpgradeable {
 
     function removeApprover(address account) external;
 
-    function approveProject(bytes32 tokenId) external;
+    function approveProject(bytes32 tokenId, address account) external;
 
-    function isProjectApproved(bytes32 tokenId) external view returns (bool);
+    function getProjectApproved(bytes32 tokenId)
+        external
+        view
+        returns (address);
 }

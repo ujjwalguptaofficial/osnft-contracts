@@ -326,6 +326,29 @@ contract OSNFTBase is
         _symbol = symbol_;
     }
 
+    function mintTo(
+        bytes32 data,
+        bytes memory signature,
+        address to,
+        string calldata projectUrl,
+        NFT_TYPE nftType,
+        uint32 shares
+    ) external {
+        require(
+            data.toEthSignedMessageHash().recover(signature) == to,
+            "invalid signature"
+        );
+        _mint(to, projectUrl, nftType, shares);
+    }
+
+    function mint(
+        string calldata projectUrl,
+        NFT_TYPE nftType,
+        uint32 shares
+    ) external {
+        _mint(_msgSender(), projectUrl, nftType, shares);
+    }
+
     /**
      * @dev Mints `tokenId` and transfers it to `to`.
      *
@@ -338,22 +361,6 @@ contract OSNFTBase is
      *
      * Emits a {Transfer} event.
      */
-
-    function _mint(
-        bytes32 data,
-        bytes memory signature,
-        address to,
-        string calldata projectUrl,
-        NFT_TYPE nftType,
-        uint32 totalShare
-    ) internal virtual {
-        require(
-            data.toEthSignedMessageHash().recover(signature) == to,
-            "invalid signature"
-        );
-        _mint(to, projectUrl, nftType, totalShare);
-    }
-
     function _mint(
         address to,
         string calldata projectUrl,
