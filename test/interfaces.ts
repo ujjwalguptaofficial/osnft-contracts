@@ -1,5 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { OSNFT } from "../typechain-types";
+import { OSNFT, OSNFTApprover } from "../typechain-types";
 
 export interface IDeployedPayload {
     deployer: SignerWithAddress;
@@ -9,6 +9,7 @@ export interface IDeployedPayload {
     signer4: SignerWithAddress;
     operator: SignerWithAddress;
     nft: OSNFT,
+    approver: OSNFTApprover,
     projects: {
         'jsstore-example': string;
         'mahal-example': string;

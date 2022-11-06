@@ -15,48 +15,8 @@ import { setBaseTokenURI } from "./set_base_token_uri";
 import { testSetMarketPlace } from "./set_makrketplace";
 import { testTransferFrom } from "./transfer_from";
 
+export function testNFT(payload: IDeployedPayload) {
 
-function getProjectId(projectUrl: string) {
-    return ethers.utils.keccak256(
-        toUtf8Bytes(projectUrl)
-    );
-}
-
-
-
-describe("os NFT", () => {
-
-    const payload = {
-        projects: {
-            "jsstore-example": `github.com/ujjwalguptaofficial/jsstore-examples`,
-            "mahal-example": 'github.com/ujjwalguptaofficial/mahal-examples',
-            "mahal": 'github.com/ujjwalguptaofficial/mahal',
-            "jsstore": 'github.com/ujjwalguptaofficial/jsstore'
-        },
-        getProjectId
-    } as IDeployedPayload;
-
-    const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
-
-    before(async () => {
-        const [signer1, signer2, signer3, operator, defaultMarketPlace, signer4] = await ethers.getSigners();
-        const ct = await ethers.getContractFactory('OSNFT');
-        const deployedContract = await upgrades.deployProxy(ct, ['OpenSourceNFT', 'OS', 'https://ujjwalnft.com/metadata/'], {
-            initializer: 'initialize',
-        }) as any;
-        await deployedContract.deployed();
-        payload.deployer = signer1;
-        payload.signer2 = signer2;
-        payload.signer3 = signer3;
-        payload.signer4 = signer4;
-        payload.operator = operator;
-        payload.defaultMarketPlace = defaultMarketPlace;
-
-        payload.nft = deployedContract;
-
-        console.log('nft deployed');
-
-    })
 
     describe('meta data', () => {
         runPublicState(payload);
@@ -246,4 +206,4 @@ describe("os NFT", () => {
     //     })
     // })
 
-})
+}
