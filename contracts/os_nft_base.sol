@@ -148,19 +148,67 @@ contract OSNFTBase is
         return _tokenApprovals[tokenId];
     }
 
+    function getApproved(bytes32 tokenId, address shareOwner)
+        public
+        view
+        returns (address)
+    {
+        _requireMinted(tokenId);
+        if (_isShareToken(tokenId)) {
+            tokenId = _getTokenId(tokenId, shareOwner);
+        }
+        return _tokenApprovals[tokenId];
+    }
+
+    function approve(address to, bytes32 tokenId) public virtual override {
+        approve(to, tokenId, _msgSender());
+    }
+
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, bytes32 tokenId) public virtual override {
-        address owner = ownerOf(tokenId);
-        require(to != owner, "ERC721: approval to current owner");
+    function approve(
+        address to,
+        bytes32 tokenId,
+        address shareOwner
+    ) public {
+        if (_isShareToken(tokenId)) {
+            // in case it is called by approved all address
+            if (_msgSender() != shareOwner) {
+                require(
+                    _shareOf(tokenId, shareOwner) > 0,
+                    "ERC721: invalid share owner"
+                );
+            }
+            require(
+                _shareOf(tokenId, _msgSender()) > 0 ||
+                    isApprovedForAll(shareOwner, _msgSender()),
+                "ERC721: approve caller is not token owner nor approved for all"
+            );
+            _approve(to, tokenId, shareOwner);
+        } else {
+            address owner = ownerOf(tokenId);
+            require(to != owner, "ERC721: approval to current owner");
 
-        require(
-            _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
-            "ERC721: approve caller is not token owner nor approved for all"
-        );
+            require(
+                _msgSender() == owner || isApprovedForAll(owner, _msgSender()),
+                "ERC721: approve caller is not token owner nor approved for all"
+            );
+            _approve(to, tokenId);
+        }
+    }
 
-        _approve(to, tokenId);
+    function _getTokenId(bytes32 tokenId, address shareOwner)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return
+            keccak256(abi.encodePacked(bytes32ToString(tokenId), shareOwner));
+    }
+
+    function _isShareToken(bytes32 tokenId) private view returns (bool) {
+        return _equityTokens[tokenId].totalNoOfShare > 0;
     }
 
     /**
@@ -423,8 +471,8 @@ contract OSNFTBase is
         uint32 share
     ) internal view virtual returns (bool) {
         return (isApprovedForAll(owner, spender) ||
-            getApproved(tokenId) == spender ||
-            _shareOf(tokenId, owner) >= share);
+            getApproved(tokenId, owner) == spender ||
+            _shareOf(tokenId, spender) >= share);
     }
 
     function _shareOf(bytes32 tokenId, address owner)
@@ -442,8 +490,23 @@ contract OSNFTBase is
      */
     function _approve(address to, bytes32 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
+
         emit Approval(ownerOf(tokenId), to, tokenId);
     }
+
+    function _approve(
+        address to,
+        bytes32 tokenId,
+        address shareOwner
+    ) internal virtual {
+        _tokenApprovals[_getTokenId(tokenId, shareOwner)] = to;
+        emit Approval(shareOwner, to, tokenId);
+    }
+
+    // function _approve(address to, bytes32 tokenId) internal virtual {
+    //     _tokenApprovals[tokenId] = to;
+    //     emit Approval(ownerOf(tokenId), to, tokenId);
+    // }
 
     /**
      * @dev Transfers `tokenId` from `from` to `to`.

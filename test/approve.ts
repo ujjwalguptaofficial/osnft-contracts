@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { constants } from "ethers";
+import { ethers } from "hardhat";
 import { IDeployedPayload } from "./interfaces";
 
 export function testApprove(payload: IDeployedPayload) {
@@ -37,7 +38,7 @@ export function testApprove(payload: IDeployedPayload) {
 
         const owner = await payload.nft.ownerOf(expectedTokenId);
 
-        const tx = payload.nft.connect(payload.signer2).approve(
+        const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32)"](
             payload.signer3.address,
             expectedTokenId
         );
@@ -49,15 +50,17 @@ export function testApprove(payload: IDeployedPayload) {
         const projectUrl = payload.projects.mahal;
         const expectedTokenId = payload.getProjectId(projectUrl);
 
-        let approvedAddress = await payload.nft.getApproved(expectedTokenId);
+        let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
         expect(approvedAddress).equal(constants.AddressZero);
 
 
         const owner = await payload.nft.ownerOf(expectedTokenId);
+        expect(owner).equal(payload.signer2.address);
 
-        const tx = payload.nft.connect(payload.signer2).approve(
+        const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32,address)"](
             payload.signer3.address,
-            expectedTokenId
+            expectedTokenId,
+            payload.signer2.address
         );
         await expect(tx).to.emit(payload.nft, "Approval").withArgs(
             owner,
@@ -65,7 +68,7 @@ export function testApprove(payload: IDeployedPayload) {
             expectedTokenId
         );
 
-        approvedAddress = await payload.nft.getApproved(expectedTokenId);
+        approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
         expect(approvedAddress).equal(payload.signer3.address);
     })
 
@@ -73,15 +76,16 @@ export function testApprove(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const expectedTokenId = payload.getProjectId(projectUrl);
 
-        let approvedAddress = await payload.nft.getApproved(expectedTokenId);
+        let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
         expect(approvedAddress).equal(constants.AddressZero);
 
 
         const owner = await payload.nft.ownerOf(expectedTokenId);
 
-        const tx = payload.nft.approve(
+        const tx = payload.nft["approve(address,bytes32,address)"](
             payload.signer4.address,
-            expectedTokenId
+            expectedTokenId,
+            payload.deployer.address
         );
         await expect(tx).to.emit(payload.nft, "Approval").withArgs(
             owner,
@@ -89,7 +93,11 @@ export function testApprove(payload: IDeployedPayload) {
             expectedTokenId
         );
 
-        approvedAddress = await payload.nft.getApproved(expectedTokenId);
+        approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
         expect(approvedAddress).equal(payload.signer4.address);
+
+        const approvedValueWithoutShare = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+        expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
+
     })
 }

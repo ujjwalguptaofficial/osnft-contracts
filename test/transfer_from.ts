@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { ethers } from "hardhat";
 import { IDeployedPayload } from "./interfaces";
 
 export function testTransferFrom(payload: IDeployedPayload) {
@@ -32,7 +33,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 payload.signer3.address,
                 projectId,
             );
-            expect(value).equal(73008);
+            expect(value).equal(72941);
         });
 
         it('invalid project', async () => {
@@ -108,7 +109,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            await expect(value).to.revertedWith('ERC721: caller is not token share owner nor approved');
+            await expect(value).to.revertedWith('ERC721: owner share is less than requested');
             // await expect(value).to.revertedWith('ERC721: owner share is less than requested');
         });
 
@@ -130,7 +131,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(90269);
+            expect(value).equal(94546);
 
             // by marketplace
             const value2 = await payload.nft.connect(payload.defaultMarketPlace).estimateGas["transferFrom(address,address,bytes32,uint32)"](
@@ -285,7 +286,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             // approve to operator
 
-            await payload.nft.connect(payload.signer3).approve(payload.operator.address, expectedTokenId);
+            await payload.nft.connect(payload.signer3)["approve(address,bytes32)"](payload.operator.address, expectedTokenId);
 
             const value = payload.nft.connect(payload.operator)["transferFrom(address,address,bytes32,uint32)"](
                 from,
@@ -465,9 +466,10 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 expect(shareOfToAfterTransfer).equal(shareToTransfer + shareOfTo);
             })
 
-            it('transfer to signer3 from signer2', async () => {
+            it('transfer to signer3 from signer2 - signer4 is not approved by signer2', async () => {
                 const projectUrl = payload.projects["jsstore"];
                 const expectedTokenId = payload.getProjectId(projectUrl);
+
                 const from = payload.signer2.address;
                 const to = payload.signer3.address;
 
@@ -477,18 +479,37 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
                 const shareToTransfer = 1000;
 
+
+
                 // for this test - its important that owner is nft
                 const ownerValue = await payload.nft.ownerOf(expectedTokenId);
                 expect(ownerValue).equal(payload.nft.address);
 
-                const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,bytes32,uint32)"](
+                const nftWithSigner4 = payload.nft.connect(payload.signer4);
+
+                const approvedValueWithoutShare = await nftWithSigner4["getApproved(bytes32)"](expectedTokenId);
+                expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
+
+                const approvedValueWithShare = await nftWithSigner4["getApproved(bytes32,address)"](expectedTokenId,
+                    from
+                );
+                expect(approvedValueWithShare).equal(ethers.constants.AddressZero);
+
+                const isApprovedForAll = await nftWithSigner4.isApprovedForAll(
+                    from,
+                    payload.signer4.address
+                );
+                expect(isApprovedForAll).equal(false);
+
+
+                const value = nftWithSigner4["transferFrom(address,address,bytes32,uint32)"](
                     from,
                     to,
                     expectedTokenId,
                     shareToTransfer
                 );
 
-                await expect(value).to.revertedWith('')
+                await expect(value).to.revertedWith('ERC721: caller is not token share owner nor approved')
             })
         })
     })
