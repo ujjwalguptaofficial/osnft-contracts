@@ -10,14 +10,13 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     function initialize(
         string calldata name,
         string calldata symbol,
-        string calldata _baseTokenURI
+        string calldata _baseTokenURI,
+        address approver
     ) external initializer {
-        __ERC721_init(name, symbol);
+        __ERC721_init(name, symbol, approver);
         __Ownable_init();
         baseTokenURI = _baseTokenURI;
     }
-
-    
 
     function _baseURI() internal view override returns (string memory) {
         return baseTokenURI;

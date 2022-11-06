@@ -7,6 +7,8 @@ pragma solidity ^0.8.0;
  * @dev Required interface of an approver contract
  */
 interface IOSNFTApproverUpgradeable {
+    event ProjectApproved(bytes32 indexed tokenId, address indexed account);
+
     event ApproverAdded(address account);
 
     event ApproverRemoved(address account);

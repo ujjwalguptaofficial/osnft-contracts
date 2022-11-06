@@ -3,7 +3,7 @@ import { describe } from "mocha";
 import { testApprove } from "./approve";
 import { IDeployedPayload } from "../interfaces";
 import { testMint } from "./mint";
-import { testMinters } from "./minters";
+// import { testMinters } from "./minters";
 import { testOwnerOf } from "./owner_of";
 import { testProjectMeta } from "./project_meta";
 import { runPublicState } from "./public_state";
@@ -22,13 +22,11 @@ export function testNFT(payload: IDeployedPayload) {
         setBaseTokenURI(payload);
     })
 
-    describe('minters', async () => {
-        testMinters(payload);
-    })
-
     describe('mint', async () => {
         testMint(payload);
     })
+
+    // return;
 
     describe('owner of', async () => {
         testOwnerOf(payload);

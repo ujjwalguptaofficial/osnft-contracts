@@ -22,13 +22,20 @@ export function testMint(payload: IDeployedPayload) {
         const nft = payload.nft;
         const { data, signature } = await signMessage(payload.deployer, payload.projects["jsstore-example"]);
 
-        const gas = await nft.estimateGas.mintTo(
+        const gasForMintingWithSign = await nft.estimateGas.mintTo(
             data, signature,
             payload.deployer.address, payload.projects["jsstore-example"],
             0,
             30
         );
-        expect(gas).equal(117981);
+        expect(gasForMintingWithSign).equal(133236);
+
+        const gasForMintingWithoutSign = await nft.estimateGas.mint(
+            payload.projects["jsstore-example"],
+            0,
+            30
+        );
+        expect(gasForMintingWithoutSign).equal(123213);
     });
 
     describe('percentage cut', async () => {
@@ -90,7 +97,7 @@ export function testMint(payload: IDeployedPayload) {
             expect(balance).equal(1);
         });
 
-        it('mint by not owner', async () => {
+        it('mint by not approver', async () => {
             const nft = payload.nft;
             const address = payload.signer2.address;
 
@@ -100,7 +107,7 @@ export function testMint(payload: IDeployedPayload) {
             const tx = nft.connect(payload.signer2).mintTo(
                 data, signature, address, projectUrl1, 0, 30
             );
-            await expect(tx).revertedWith('only minters allowed')
+            await expect(tx).revertedWith('Ownable: caller is not the owner')
         })
 
         it('mint already minted', async () => {
@@ -221,30 +228,56 @@ export function testMint(payload: IDeployedPayload) {
 
         });
 
-        it('mint jsstore', async () => {
+        describe('mint jsstore without signature', () => {
+
+            it('to not approved address', async () => {
+
+                const nft = payload.nft;
+                const projectUrl = payload.projects.jsstore;
+
+
+                const tx = nft.connect(payload.signer2).mint(projectUrl, 1, 10000);
+
+                await expect(tx).revertedWith('project not approved')
+
+            });
+
+            it('to approved address', async () => {
+
+                const nft = payload.nft;
+                const address = payload.deployer.address;
+
+                let balance = await nft.balanceOf(address);
+                expect(balance).equal(1);
+
+                const projectUrl = payload.projects.jsstore;
+
+                const expectedTokenId = payload.getProjectId(projectUrl);
+
+                const tx = nft.mint(projectUrl, 1, 10000);
+                await expect(tx).emit(nft, 'Transfer').withArgs(
+                    ethers.constants.AddressZero,
+                    address,
+                    expectedTokenId
+                );
+                await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+                    projectUrl, 1, 10000
+                );
+
+                balance = await nft.balanceOf(address);
+                expect(balance).equal(2);
+            });
+        });
+
+        it('project without approval by contract owner should revert', async () => {
+
             const nft = payload.nft;
-            const address = payload.deployer.address;
+            const projectUrl = "payload.projects.jsstore";
 
-            let balance = await nft.balanceOf(address);
-            expect(balance).equal(1);
+            const tx = nft.mint(projectUrl, 1, 10000);
 
-            const projectUrl = payload.projects.jsstore;
+            await expect(tx).revertedWith('project not approved')
 
-            const expectedTokenId = payload.getProjectId(projectUrl);
-            const { data, signature } = await signMessage(payload.deployer, projectUrl);
-
-            const tx = nft.mintTo(data, signature, address, projectUrl, 1, 10000);
-            await expect(tx).emit(nft, 'Transfer').withArgs(
-                ethers.constants.AddressZero,
-                address,
-                expectedTokenId
-            );
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
-                projectUrl, 1, 10000
-            );
-
-            balance = await nft.balanceOf(address);
-            expect(balance).equal(2);
         });
     })
 

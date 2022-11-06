@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeabl
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/erc721_metadata_upgradable.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
+import "./interfaces/osnft_approver.sol";
 import "./string_helper.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 
@@ -48,8 +49,6 @@ contract OSNFTBase is
     // Mapping owner address to token count
     mapping(address => uint256) internal _balances;
 
-    mapping(address => bool) internal _minters;
-
     // Mapping from token ID to approved address
     mapping(bytes32 => address) private _tokenApprovals;
 
@@ -57,6 +56,8 @@ contract OSNFTBase is
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     address public defaultMarketPlace;
+
+    IOSNFTApproverUpgradeable _approver;
 
     function setDefaultMarketPlace(address value) external onlyOwner {
         defaultMarketPlace = value;
@@ -292,30 +293,16 @@ contract OSNFTBase is
         _safeTransfer(from, to, tokenId, share, data);
     }
 
-    // minting methods
-
-    function isMinter(address account) external view returns (bool) {
-        return _minters[account];
-    }
-
-    function addMinter(address account) external onlyOwner {
-        _minters[account] = true;
-        emit MinterAdded(account);
-    }
-
-    function removeMinter(address account) external onlyOwner {
-        delete _minters[account];
-        emit MinterRemoved(account);
-    }
-
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    function __ERC721_init(string memory name_, string memory symbol_)
-        internal
-        onlyInitializing
-    {
+    function __ERC721_init(
+        string memory name_,
+        string memory symbol_,
+        address approver_
+    ) internal onlyInitializing {
         __ERC721_init_unchained(name_, symbol_);
+        _approver = IOSNFTApproverUpgradeable(approver_);
     }
 
     function __ERC721_init_unchained(string memory name_, string memory symbol_)
@@ -333,7 +320,7 @@ contract OSNFTBase is
         string calldata projectUrl,
         NFT_TYPE nftType,
         uint32 shares
-    ) external {
+    ) external onlyOwner {
         require(
             data.toEthSignedMessageHash().recover(signature) == to,
             "invalid signature"
@@ -367,9 +354,12 @@ contract OSNFTBase is
         NFT_TYPE nftType,
         uint32 totalShare
     ) internal virtual {
-        require(_minters[_msgSender()], "only minters allowed");
-
         bytes32 tokenId = keccak256(abi.encodePacked(projectUrl));
+
+        require(
+            _approver.getProjectApproved(tokenId) == to,
+            "project not approved"
+        );
 
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");

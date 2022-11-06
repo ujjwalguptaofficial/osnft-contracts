@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
 
 export function testApprover(payload: IDeployedPayload) {
@@ -39,6 +40,111 @@ export function testApprover(payload: IDeployedPayload) {
     it('remove minter other than owner', async () => {
         const tx = payload.approver.connect(payload.signer2).removeApprover(payload.deployer.address);
 
-        await expect(tx).revertedWith('Ownable: caller is not the owner')
+        await expect(tx).revertedWith('Ownable: caller is not the owner');
     });
+
+    it('add project jsstore-example', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const address = payload.deployer.address;
+
+        let approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            tokenId, address
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(address);
+    })
+
+    it('add project mahal-example', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["mahal-example"]
+        );
+        const address = payload.signer2.address;
+
+        let approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            tokenId, address
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(address);
+    })
+
+    it('add project mahal', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["mahal"]
+        );
+        const address = payload.signer2.address;
+
+        let approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            tokenId, address
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(address);
+    })
+
+    it('add project jsstore', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const address = payload.deployer.address;
+
+        let approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            tokenId, address
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(address);
+    })
+
 }

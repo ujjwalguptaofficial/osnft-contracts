@@ -24,14 +24,4 @@ interface IERC721MetadataUpgradeable is IERC721Upgradeable {
      * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
     function tokenURI(bytes32 tokenId) external view returns (string memory);
-
-    event MinterAdded(address account);
-
-    event MinterRemoved(address account);
-
-    function isMinter(address account) external view returns (bool);
-
-    function addMinter(address account) external;
-
-    function removeMinter(address account) external;
 }

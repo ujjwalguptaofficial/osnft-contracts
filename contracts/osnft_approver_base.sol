@@ -16,6 +16,7 @@ contract OSNFTApproverBase is
     function approveProject(bytes32 tokenId, address account) external {
         require(_approvers[_msgSender()], "only approvers allowed");
         _projectsApproved[tokenId] = account;
+        emit ProjectApproved(tokenId, account);
     }
 
     function getProjectApproved(bytes32 tokenId)
