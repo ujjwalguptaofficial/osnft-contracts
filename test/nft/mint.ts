@@ -82,9 +82,12 @@ export function testMint(payload: IDeployedPayload) {
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
             const expectedTokenId = payload.getProjectId(projectUrl1);
-            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
 
-            const tx = nft.mintTo(data, signature, address, projectUrl1, 0, 40);
+            const txToFail = nft.connect(payload.signer3).mint(projectUrl1, 0, 40);
+
+            await expect(txToFail).revertedWith('project not approved');
+
+            const tx = nft.connect(payload.signer2).mint(projectUrl1, 0, 40);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero, address, expectedTokenId
             );
