@@ -30,7 +30,8 @@ describe("os NFT", () => {
         projects: {
             "jsstore-example": `github.com/ujjwalguptaofficial/jsstore-examples`,
             "mahal-example": 'github.com/ujjwalguptaofficial/mahal-examples',
-            "mahal": 'github.com/ujjwalguptaofficial/mahal'
+            "mahal": 'github.com/ujjwalguptaofficial/mahal',
+            "jsstore": 'github.com/ujjwalguptaofficial/jsstore'
         },
         getProjectId
     } as IDeployedPayload;
@@ -38,7 +39,7 @@ describe("os NFT", () => {
     const projectUrl = `github.com/ujjwalguptaofficial/jsstore-examples`;
 
     before(async () => {
-        const [signer1, signer2, signer3, operator, defaultMarketPlace] = await ethers.getSigners();
+        const [signer1, signer2, signer3, operator, defaultMarketPlace, signer4] = await ethers.getSigners();
         const ct = await ethers.getContractFactory('OSNFT');
         const deployedContract = await upgrades.deployProxy(ct, ['OpenSourceNFT', 'OS', 'https://ujjwalnft.com/metadata/'], {
             initializer: 'initialize',
@@ -47,6 +48,7 @@ describe("os NFT", () => {
         payload.deployer = signer1;
         payload.signer2 = signer2;
         payload.signer3 = signer3;
+        payload.signer4 = signer4;
         payload.operator = operator;
         payload.defaultMarketPlace = defaultMarketPlace;
 

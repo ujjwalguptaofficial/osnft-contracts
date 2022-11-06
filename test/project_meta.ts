@@ -74,26 +74,4 @@ export function testProjectMeta(payload: IDeployedPayload) {
         );
         expect(value.toLowerCase()).equal('https://ujjwalnft.com/metadata/' + projectId.toLowerCase());
     })
-
-
-    // it('owner of mahal', async () => {
-    //     const projectUrl = 'github.com/ujjwalguptaofficial/mahal'
-    //     const expectedTokenId = payload.getProjectId(projectUrl);
-    //     const value = await payload.nft.ownerOf(expectedTokenId);
-    //     expect(value).to.equal(payload.nft.address);
-    // })
-
-    // it('owner of jsstore examples', async () => {
-    //     const projectUrl = payload.projects["jsstore-example"];
-    //     const expectedTokenId = payload.getProjectId(projectUrl);
-    //     const value = await payload.nft.ownerOf(expectedTokenId);
-    //     expect(value).to.equal(payload.deployer.address);
-    // })
-
-    // it('owner of mahal examples', async () => {
-    //     const projectUrl = 'github.com/ujjwalguptaofficial/mahal-examples';
-    //     const expectedTokenId = payload.getProjectId(projectUrl);
-    //     const value = await payload.nft.ownerOf(expectedTokenId);
-    //     expect(value).to.equal(payload.signer2.address);
-    // });
 }

@@ -45,7 +45,7 @@ export function testApprove(payload: IDeployedPayload) {
         await expect(tx).to.revertedWith('ERC721: approve caller is not token owner nor approved for all')
     })
 
-    it('approve mahal to deployer', async () => {
+    it('approve mahal to signer3', async () => {
         const projectUrl = payload.projects.mahal;
         const expectedTokenId = payload.getProjectId(projectUrl);
 
@@ -67,5 +67,29 @@ export function testApprove(payload: IDeployedPayload) {
 
         approvedAddress = await payload.nft.getApproved(expectedTokenId);
         expect(approvedAddress).equal(payload.signer3.address);
+    })
+
+    it('approve jsstore to signer4', async () => {
+        const projectUrl = payload.projects.jsstore;
+        const expectedTokenId = payload.getProjectId(projectUrl);
+
+        let approvedAddress = await payload.nft.getApproved(expectedTokenId);
+        expect(approvedAddress).equal(constants.AddressZero);
+
+
+        const owner = await payload.nft.ownerOf(expectedTokenId);
+
+        const tx = payload.nft.approve(
+            payload.signer4.address,
+            expectedTokenId
+        );
+        await expect(tx).to.emit(payload.nft, "Approval").withArgs(
+            owner,
+            payload.signer4.address,
+            expectedTokenId
+        );
+
+        approvedAddress = await payload.nft.getApproved(expectedTokenId);
+        expect(approvedAddress).equal(payload.signer4.address);
     })
 }

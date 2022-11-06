@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 contract StringHelper {
-    function toHex(bytes32 data) internal pure returns (string memory) {
+    function toHex(bytes32 data) private pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
@@ -13,7 +13,7 @@ contract StringHelper {
             );
     }
 
-    function toHex16(bytes16 data) internal pure returns (bytes32 result) {
+    function toHex16(bytes16 data) private pure returns (bytes32 result) {
         result =
             (bytes32(data) &
                 0xFFFFFFFFFFFFFFFF000000000000000000000000000000000000000000000000) |

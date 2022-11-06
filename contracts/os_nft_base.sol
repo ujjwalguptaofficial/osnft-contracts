@@ -189,7 +189,7 @@ contract OSNFTBase is
         //solhint-disable-next-line max-line-length
 
         require(
-            _isApprovedOrShareOwner(_msgSender(), tokenId, share),
+            _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
             "ERC721: caller is not token share owner nor approved"
         );
 
@@ -240,7 +240,7 @@ contract OSNFTBase is
         bytes memory data
     ) public virtual override {
         require(
-            _isApprovedOrShareOwner(_msgSender(), tokenId, share),
+            _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
             "ERC721: caller is not token share owner nor approved"
         );
         _safeTransfer(from, to, tokenId, share, data);
@@ -309,7 +309,7 @@ contract OSNFTBase is
 
         require(
             data.toEthSignedMessageHash().recover(signature) == to,
-            "signature not valid"
+            "invalid signature"
         );
 
         unchecked {
@@ -419,12 +419,12 @@ contract OSNFTBase is
     function _isApprovedOrShareOwner(
         address spender,
         bytes32 tokenId,
+        address owner,
         uint32 share
     ) internal view virtual returns (bool) {
-        address owner = ownerOf(tokenId);
         return (isApprovedForAll(owner, spender) ||
             getApproved(tokenId) == spender ||
-            _shareOf(tokenId, spender) >= share);
+            _shareOf(tokenId, owner) >= share);
     }
 
     function _shareOf(bytes32 tokenId, address owner)
