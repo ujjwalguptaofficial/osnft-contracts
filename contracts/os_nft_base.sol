@@ -338,9 +338,23 @@ contract OSNFTBase is
      *
      * Emits a {Transfer} event.
      */
+
     function _mint(
         bytes32 data,
         bytes memory signature,
+        address to,
+        string calldata projectUrl,
+        NFT_TYPE nftType,
+        uint32 totalShare
+    ) internal virtual {
+        require(
+            data.toEthSignedMessageHash().recover(signature) == to,
+            "invalid signature"
+        );
+        _mint(to, projectUrl, nftType, totalShare);
+    }
+
+    function _mint(
         address to,
         string calldata projectUrl,
         NFT_TYPE nftType,
@@ -352,11 +366,6 @@ contract OSNFTBase is
 
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
-
-        require(
-            data.toEthSignedMessageHash().recover(signature) == to,
-            "invalid signature"
-        );
 
         unchecked {
             // Will not overflow unless all 2**256 token ids are minted to the same owner.

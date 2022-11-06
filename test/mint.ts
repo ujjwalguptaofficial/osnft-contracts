@@ -28,7 +28,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gas).equal(117968);
+        expect(gas).equal(118018);
     });
 
     describe('percentage cut', async () => {
@@ -95,7 +95,7 @@ export function testMint(payload: IDeployedPayload) {
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-exampless'
-            const { data, signature } = await signMessage(payload.deployer, projectUrl1);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
 
             const tx = nft.connect(payload.signer2).mintTo(
                 data, signature, address, projectUrl1, 0, 30

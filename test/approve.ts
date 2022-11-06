@@ -46,30 +46,44 @@ export function testApprove(payload: IDeployedPayload) {
         await expect(tx).to.revertedWith('ERC721: approve caller is not token owner nor approved for all')
     })
 
-    it('approve mahal to signer3', async () => {
+    describe('approve mahal to signer3', async () => {
+
         const projectUrl = payload.projects.mahal;
         const expectedTokenId = payload.getProjectId(projectUrl);
 
-        let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
-        expect(approvedAddress).equal(constants.AddressZero);
+        it('estimate gas', async () => {
+            const gas = await payload.nft.connect(payload.signer2).estimateGas["approve(address,bytes32,address)"](
+                payload.signer3.address,
+                expectedTokenId,
+                payload.signer2.address
+            );
+
+            expect(gas).equal(64511);
+        });
+
+        it('transaction', async () => {
+
+            let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            expect(approvedAddress).equal(constants.AddressZero);
 
 
-        const owner = await payload.nft.ownerOf(expectedTokenId);
-        expect(owner).equal(payload.signer2.address);
+            const owner = await payload.nft.ownerOf(expectedTokenId);
+            expect(owner).equal(payload.signer2.address);
 
-        const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32,address)"](
-            payload.signer3.address,
-            expectedTokenId,
-            payload.signer2.address
-        );
-        await expect(tx).to.emit(payload.nft, "Approval").withArgs(
-            owner,
-            payload.signer3.address,
-            expectedTokenId
-        );
+            const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32,address)"](
+                payload.signer3.address,
+                expectedTokenId,
+                payload.signer2.address
+            );
+            await expect(tx).to.emit(payload.nft, "Approval").withArgs(
+                owner,
+                payload.signer3.address,
+                expectedTokenId
+            );
 
-        approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
-        expect(approvedAddress).equal(payload.signer3.address);
+            approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+            expect(approvedAddress).equal(payload.signer3.address);
+        })
     })
 
     it('approve jsstore to signer4', async () => {
