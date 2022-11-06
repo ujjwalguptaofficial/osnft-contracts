@@ -143,9 +143,7 @@ contract OSNFTBase is
      * @dev See {IERC721-getApproved}.
      */
     function getApproved(bytes32 tokenId) public view returns (address) {
-        _requireMinted(tokenId);
-
-        return _tokenApprovals[tokenId];
+        return getApproved(tokenId, _msgSender());
     }
 
     function getApproved(bytes32 tokenId, address shareOwner)
