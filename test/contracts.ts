@@ -4,7 +4,7 @@ import { ethers, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { testApprover } from "./approver";
 import { IDeployedPayload } from "./interfaces";
-import { testNFT } from "./os_nft";
+import { testNFT } from "./nft";
 
 
 

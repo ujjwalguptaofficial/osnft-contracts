@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 
 export function testMinters(payload: IDeployedPayload) {
 

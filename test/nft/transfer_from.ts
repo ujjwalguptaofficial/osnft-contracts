@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 
 export function testTransferFrom(payload: IDeployedPayload) {
 

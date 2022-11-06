@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { constants } from "ethers";
 import { ethers } from "hardhat";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 
 export function testApprove(payload: IDeployedPayload) {
 

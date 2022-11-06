@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { constants } from "ethers";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 
 export function testSetMarketPlace(payload: IDeployedPayload) {
 

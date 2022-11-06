@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 
 export function testOwnerOf(payload: IDeployedPayload) {
     it('owner of invalid project', async () => {

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 
 export function runPublicState(payload: IDeployedPayload) {
     it('name', async () => {

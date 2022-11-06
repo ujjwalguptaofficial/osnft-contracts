@@ -1,11 +1,7 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { expect } from "chai";
-import { toUtf8Bytes } from "ethers/lib/utils";
-import { ethers, upgrades } from "hardhat"
+
 import { describe } from "mocha";
-import { OSNFT } from "../typechain-types";
 import { testApprove } from "./approve";
-import { IDeployedPayload } from "./interfaces";
+import { IDeployedPayload } from "../interfaces";
 import { testMint } from "./mint";
 import { testMinters } from "./minters";
 import { testOwnerOf } from "./owner_of";
