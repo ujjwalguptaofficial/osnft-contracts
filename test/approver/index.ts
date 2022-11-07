@@ -43,6 +43,30 @@ export function testApprover(payload: IDeployedPayload) {
         await expect(tx).revertedWith('Ownable: caller is not the owner');
     });
 
+    it('add project by user who is not approver', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const address = payload.deployer.address;
+
+        const tx = payload.approver.connect(payload.signer4).approveProject(
+            tokenId, address
+        );
+        await expect(tx).revertedWith('only approvers allowed');
+    })
+
+    it('add project estimate gas', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const address = payload.deployer.address;
+
+        const tx = await payload.approver.estimateGas.approveProject(
+            tokenId, address
+        );
+        await expect(tx).equal(56402);
+    })
+
     it('add project jsstore-example', async () => {
         const tokenId = payload.getProjectId(
             payload.projects["jsstore-example"]
