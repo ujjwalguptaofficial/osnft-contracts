@@ -57,7 +57,7 @@ contract OSNFTBase is
 
     address public defaultMarketPlace;
 
-    IOSNFTApproverUpgradeable _approver;
+    IOSNFTApproverUpgradeable private _approver;
 
     function setDefaultMarketPlace(address value) external onlyOwner {
         defaultMarketPlace = value;
@@ -95,6 +95,15 @@ contract OSNFTBase is
             "ERC721: address zero is not a valid owner"
         );
         return _balances[owner];
+    }
+
+    function shareOf(bytes32 tokenId, address owner)
+        external
+        view
+        returns (uint32)
+    {
+        _requireMinted(tokenId);
+        return _shareOf(tokenId, owner);
     }
 
     /**
@@ -153,7 +162,7 @@ contract OSNFTBase is
         returns (address)
     {
         _requireMinted(tokenId);
-        if (_isShareToken(tokenId)) {
+        if (isShareToken(tokenId)) {
             tokenId = _getTokenId(tokenId, shareOwner);
         }
         return _tokenApprovals[tokenId];
@@ -171,7 +180,7 @@ contract OSNFTBase is
         bytes32 tokenId,
         address shareOwner
     ) public {
-        if (_isShareToken(tokenId)) {
+        if (isShareToken(tokenId)) {
             // in case it is called by approved all address
             if (_msgSender() != shareOwner) {
                 require(
@@ -195,19 +204,6 @@ contract OSNFTBase is
             );
             _approve(to, tokenId);
         }
-    }
-
-    function _getTokenId(bytes32 tokenId, address shareOwner)
-        internal
-        pure
-        returns (bytes32)
-    {
-        return
-            keccak256(abi.encodePacked(bytes32ToString(tokenId), shareOwner));
-    }
-
-    function _isShareToken(bytes32 tokenId) private view returns (bool) {
-        return _equityTokens[tokenId].totalNoOfShare > 0;
     }
 
     /**
@@ -293,26 +289,6 @@ contract OSNFTBase is
         _safeTransfer(from, to, tokenId, share, data);
     }
 
-    /**
-     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
-     */
-    function __ERC721_init(
-        string memory name_,
-        string memory symbol_,
-        address approver_
-    ) internal onlyInitializing {
-        __ERC721_init_unchained(name_, symbol_);
-        _approver = IOSNFTApproverUpgradeable(approver_);
-    }
-
-    function __ERC721_init_unchained(string memory name_, string memory symbol_)
-        internal
-        onlyInitializing
-    {
-        _name = name_;
-        _symbol = symbol_;
-    }
-
     function mintTo(
         bytes32 data,
         bytes memory signature,
@@ -334,6 +310,39 @@ contract OSNFTBase is
         uint32 shares
     ) external {
         _mint(_msgSender(), projectUrl, nftType, shares);
+    }
+
+    /**
+     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
+     */
+    function __ERC721_init(
+        string memory name_,
+        string memory symbol_,
+        address approver_
+    ) internal onlyInitializing {
+        __ERC721_init_unchained(name_, symbol_);
+        _approver = IOSNFTApproverUpgradeable(approver_);
+    }
+
+    function __ERC721_init_unchained(string memory name_, string memory symbol_)
+        internal
+        onlyInitializing
+    {
+        _name = name_;
+        _symbol = symbol_;
+    }
+
+    function _getTokenId(bytes32 tokenId, address shareOwner)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return
+            keccak256(abi.encodePacked(bytes32ToString(tokenId), shareOwner));
+    }
+
+    function isShareToken(bytes32 tokenId) public view returns (bool) {
+        return _equityTokens[tokenId].totalNoOfShare > 0;
     }
 
     /**
@@ -506,11 +515,6 @@ contract OSNFTBase is
         _tokenApprovals[_getTokenId(tokenId, shareOwner)] = to;
         emit Approval(shareOwner, to, tokenId);
     }
-
-    // function _approve(address to, bytes32 tokenId) internal virtual {
-    //     _tokenApprovals[tokenId] = to;
-    //     emit Approval(ownerOf(tokenId), to, tokenId);
-    // }
 
     /**
      * @dev Transfers `tokenId` from `from` to `to`.

@@ -42,14 +42,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
 
     // equity methods
 
-    function shareOf(bytes32 tokenId, address owner)
-        external
-        view
-        returns (uint32)
-    {
-        _requireMinted(tokenId);
-        return _shareOf(tokenId, owner);
-    }
+    
 
     function totalShareOf(bytes32 tokenId) external view returns (uint32) {
         _requireMinted(tokenId);

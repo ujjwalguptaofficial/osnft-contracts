@@ -198,4 +198,11 @@ interface IERC721Upgradeable is IERC165Upgradeable {
         external
         view
         returns (bool);
+
+    function isShareToken(bytes32 tokenId) external view returns (bool);
+
+    function shareOf(bytes32 tokenId, address owner)
+        external
+        view
+        returns (uint32);
 }
