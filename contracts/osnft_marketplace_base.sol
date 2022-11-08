@@ -449,19 +449,20 @@ contract OSNFTMarketPlaceBase is
     }
 
     function refund(bytes32 auctionId) external {
-        delete _auctions[auctionId];
         _requireAuctioned(auctionId);
 
         // Check if the auction is closed
         require(!isAuctionOpen(auctionId), "Auction is still open");
 
         // Get auction
-        Auction storage auction = _auctions[auctionId];
+        Auction memory auction = _auctions[auctionId];
 
         require(
             auction.currentBidOwner == address(0),
             "Bider exist for this auction"
         );
+
+        delete _auctions[auctionId];
 
         // Transfer NFT back from marketplace contract
         // to the creator of the auction
@@ -472,6 +473,21 @@ contract OSNFTMarketPlaceBase is
         );
 
         emit NFTRefunded(auctionId, auction.tokenId);
+    }
+
+    function withdrawPayment(address tokenAddress, uint256 amount)
+        external
+        onlyOwner
+    {
+        withdrawPayment(tokenAddress, amount, owner());
+    }
+
+    function withdrawPayment(
+        address tokenAddress,
+        uint256 amount,
+        address accountTo
+    ) public onlyOwner {
+        _processPayment(tokenAddress, address(this), accountTo, amount);
     }
 
     /**
