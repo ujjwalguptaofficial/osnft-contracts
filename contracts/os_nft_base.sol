@@ -97,6 +97,22 @@ contract OSNFTBase is
         return _balances[owner];
     }
 
+    // percentage methods
+
+    function creatorOf(bytes32 tokenId) external view returns (address) {
+        _requireMinted(tokenId);
+
+        return _percentageTokens[tokenId].creator;
+    }
+
+    function creatorCut(bytes32 tokenId) external view returns (uint8) {
+        _requireMinted(tokenId);
+
+        return _percentageTokens[tokenId].creatorCut;
+    }
+
+    // equity methods
+
     function shareOf(bytes32 tokenId, address owner)
         external
         view
@@ -104,6 +120,12 @@ contract OSNFTBase is
     {
         _requireMinted(tokenId);
         return _shareOf(tokenId, owner);
+    }
+
+    function totalShareOf(bytes32 tokenId) external view returns (uint32) {
+        _requireMinted(tokenId);
+
+        return _equityTokens[tokenId].totalNoOfShare;
     }
 
     /**

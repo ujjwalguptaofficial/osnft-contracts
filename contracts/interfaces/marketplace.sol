@@ -12,6 +12,33 @@ interface IOSNFTMarketPlaceUpgradeable {
         address payableTokenAddress;
     }
 
+    // Structure to define auction properties
+    struct Auction {
+        bytes32 tokenId;
+        uint32 share;
+        address seller;
+        address paymentTokenAddress; // Address of the ERC20 Payment Token contract
+        address currentBidOwner; // Address of the highest bider
+        uint256 currentBidPrice; // Current highest bid for the auction
+        uint256 endAuction; // Timestamp for the end day&time of the auction
+        uint256 bidCount; // Number of bid placed on the auction
+    }
+
+    enum SELL_TYPE {
+        Buy,
+        Bid
+    }
+
+    struct NftSellData {
+        bytes32 tokenId;
+        uint32 share;
+        address seller;
+        address paymentTokenAddress;
+        address buyer;
+        uint256 price;
+        SELL_TYPE sellType;
+    }
+
     event ItemListed(
         address indexed seller,
         bytes32 indexed tokenId,

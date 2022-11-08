@@ -205,4 +205,8 @@ interface IERC721Upgradeable is IERC165Upgradeable {
         external
         view
         returns (uint32);
+
+    function creatorCut(bytes32 tokenId) external view returns (uint8);
+
+    function creatorOf(bytes32 tokenId) external view returns (address);
 }

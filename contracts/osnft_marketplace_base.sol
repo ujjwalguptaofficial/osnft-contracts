@@ -24,6 +24,8 @@ contract OSNFTMarketPlaceBase is
 
     IERC721Upgradeable private _nftContract;
 
+    uint8 public marketPlaceRoyality = 2;
+
     /**
      * @dev Initializes the contract
      */
@@ -128,6 +130,14 @@ contract OSNFTMarketPlaceBase is
         emit ItemCanceled(_msgSender(), tokenId);
     }
 
+    function _percentageOf(uint256 value, uint8 percentage)
+        internal
+        pure
+        returns (uint256)
+    {
+        return (value / 100) * (percentage);
+    }
+
     function buyItem(
         bytes32 tokenId,
         uint32 share,
@@ -143,20 +153,101 @@ contract OSNFTMarketPlaceBase is
         }
 
         delete (_sellListings[tokenId][seller]);
-        _nftContract.safeTransferFrom(
-            listedItem.seller,
-            seller,
-            tokenId,
-            share
-        );
 
-        ERC20Upgradeable erc20Token = ERC20Upgradeable(
-            listedItem.payableTokenAddress
+        _processNFTSell(
+            NftSellData({
+                tokenId: tokenId,
+                share: share,
+                buyer: buyer,
+                seller: seller,
+                price: price,
+                paymentTokenAddress: listedItem.payableTokenAddress,
+                sellType: SELL_TYPE.Buy
+            })
         );
-
-        erc20Token.transferFrom(buyer, seller, price);
 
         emit ItemBought(_msgSender(), tokenId, listedItem.price);
+    }
+
+    function _processNFTSell(NftSellData memory sellData) internal {
+        address fundOwner = sellData.sellType == SELL_TYPE.Buy
+            ? sellData.seller
+            : address(this);
+
+        // transfer nft from nft owner to buyer
+        _nftContract.safeTransferFrom(
+            fundOwner,
+            sellData.buyer,
+            sellData.tokenId,
+            sellData.share
+        );
+
+        address tokenCreator = _nftContract.creatorOf(sellData.tokenId);
+
+        uint256 amountForMarketplace = _percentageOf(
+            sellData.price,
+            marketPlaceRoyality
+        );
+        uint256 amountForSeller = sellData.price - amountForMarketplace;
+
+        if (sellData.sellType == SELL_TYPE.Buy) {
+            // transfer marketplace royality amount from buyer to marketplace
+            _processPayment(
+                sellData.paymentTokenAddress,
+                sellData.buyer,
+                address(this),
+                amountForMarketplace
+            );
+        }
+
+        if (
+            sellData.seller != tokenCreator &&
+            !_nftContract.isShareToken(sellData.tokenId)
+        ) {
+            uint8 percentageOfCreator = _nftContract.creatorCut(
+                sellData.tokenId
+            );
+            if (percentageOfCreator > 0) {
+                uint256 amountForCreator = _percentageOf(
+                    sellData.price,
+                    percentageOfCreator
+                );
+                amountForSeller = amountForSeller - amountForCreator;
+
+                // process payment to creator of token in percentage cut mode
+                _processPayment(
+                    sellData.paymentTokenAddress,
+                    sellData.buyer,
+                    sellData.seller,
+                    amountForCreator
+                );
+            }
+            // process payment to seller(owner) of token
+            _processPayment(
+                sellData.paymentTokenAddress,
+                sellData.buyer,
+                sellData.seller,
+                amountForSeller
+            );
+        } else {
+            // process payment to seller of token
+            _processPayment(
+                sellData.paymentTokenAddress,
+                fundOwner,
+                sellData.seller,
+                sellData.price
+            );
+        }
+    }
+
+    function _processPayment(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 price
+    ) internal {
+        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
+        require(paymentToken.transferFrom(from, to, price), "payment failed");
     }
 
     function updateListing(
@@ -176,17 +267,6 @@ contract OSNFTMarketPlaceBase is
         returns (Listing memory)
     {
         return _sellListings[tokenId][seller];
-    }
-
-    // Structure to define auction properties
-    struct Auction {
-        bytes32 tokenId;
-        address seller;
-        address paymentTokenAddress; // Address of the ERC20 Payment Token contract
-        address currentBidOwner; // Address of the highest bider
-        uint256 currentBidPrice; // Current highest bid for the auction
-        uint256 endAuction; // Timestamp for the end day&time of the auction
-        uint256 bidCount; // Number of bid placed on the auction
     }
 
     mapping(bytes32 => Auction) _auctions;
@@ -243,6 +323,7 @@ contract OSNFTMarketPlaceBase is
         // Create new Auction object
         Auction memory newAuction = Auction({
             tokenId: _nftId,
+            share: share,
             seller: seller,
             paymentTokenAddress: _addressPaymentToken,
             currentBidOwner: currentBidOwner,
@@ -317,8 +398,6 @@ contract OSNFTMarketPlaceBase is
             auction.paymentTokenAddress
         );
 
-        // new bid is better than current bid!
-
         // transfer token from new bider account to the marketplace account
         // to lock the tokens
         require(
@@ -354,21 +433,17 @@ contract OSNFTMarketPlaceBase is
 
         delete _auctions[auctionId];
 
-        // Transfer NFT from marketplace contract
-        // to the winner address
-        _nftContract.transferFrom(
-            address(this),
-            auction.currentBidOwner,
-            auction.tokenId
+        _processNFTSell(
+            NftSellData({
+                tokenId: auction.tokenId,
+                share: auction.share,
+                buyer: auction.currentBidOwner,
+                seller: auction.seller,
+                price: auction.currentBidPrice,
+                paymentTokenAddress: auction.paymentTokenAddress,
+                sellType: SELL_TYPE.Bid
+            })
         );
-
-        // Get ERC20 Payment token contract
-        ERC20Upgradeable paymentToken = ERC20Upgradeable(
-            auction.paymentTokenAddress
-        );
-        // Transfer locked token from the marketplace
-        // contract to the auction creator address
-        paymentToken.transfer(auction.seller, auction.currentBidPrice);
 
         emit NFTClaimed(auctionId, auction.tokenId);
     }

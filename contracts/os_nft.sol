@@ -25,28 +25,4 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     function setBaseTokenURI(string calldata _baseTokenURI) external onlyOwner {
         baseTokenURI = _baseTokenURI;
     }
-
-    // percentage methods
-
-    function creatorOf(bytes32 tokenId) external view returns (address) {
-        _requireMinted(tokenId);
-
-        return _percentageTokens[tokenId].creator;
-    }
-
-    function creatorCut(bytes32 tokenId) external view returns (uint8) {
-        _requireMinted(tokenId);
-
-        return _percentageTokens[tokenId].creatorCut;
-    }
-
-    // equity methods
-
-    
-
-    function totalShareOf(bytes32 tokenId) external view returns (uint32) {
-        _requireMinted(tokenId);
-
-        return _equityTokens[tokenId].totalNoOfShare;
-    }
 }
