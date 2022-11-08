@@ -17,12 +17,12 @@ contract OSNFTBase is
     ContextUpgradeable,
     OwnableUpgradeable,
     ERC165Upgradeable,
-    IERC721MetadataUpgradeable,
-    StringHelper
+    IERC721MetadataUpgradeable
 {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
     using ECDSAUpgradeable for bytes32;
+    using StringHelper for bytes32;
 
     struct EquityTokenInfo {
         uint32 totalNoOfShare;
@@ -131,7 +131,7 @@ contract OSNFTBase is
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, bytes32ToString(tokenId)))
+                ? string(abi.encodePacked(baseURI, tokenId.toString()))
                 : "";
     }
 
@@ -337,8 +337,7 @@ contract OSNFTBase is
         pure
         returns (bytes32)
     {
-        return
-            keccak256(abi.encodePacked(bytes32ToString(tokenId), shareOwner));
+        return keccak256(abi.encodePacked(tokenId.toString(), shareOwner));
     }
 
     function isShareToken(bytes32 tokenId) public view returns (bool) {

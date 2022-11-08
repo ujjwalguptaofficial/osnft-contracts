@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.17;
 
-contract StringHelper {
+library StringHelper {
     function toHex(bytes32 data) private pure returns (string memory) {
         return
             string(
@@ -56,11 +56,7 @@ contract StringHelper {
         );
     }
 
-    function bytes32ToString(bytes32 _bytes32)
-        internal
-        pure
-        returns (string memory)
-    {
+    function toString(bytes32 _bytes32) internal pure returns (string memory) {
         return
             string(
                 abi.encodePacked(

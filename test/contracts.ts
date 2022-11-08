@@ -40,17 +40,20 @@ describe("contracts", () => {
         const ct = await ethers.getContractFactory('OSNFT');
         const deployedContract = await upgrades.deployProxy(ct, ['OpenSourceNFT', 'OS', 'https://ujjwalnft.com/metadata/', payload.approver.address], {
             initializer: 'initialize',
-        }) as any;
+        });
 
         await deployedContract.deployed();
-        payload.deployer = signer1;
+
+        deployedContract.
+
+            payload.deployer = signer1;
         payload.signer2 = signer2;
         payload.signer3 = signer3;
         payload.signer4 = signer4;
         payload.operator = operator;
         payload.defaultMarketPlace = defaultMarketPlace;
 
-        payload.nft = deployedContract;
+        payload.nft = deployedContract as any;
 
         console.log('nft deployed');
 
