@@ -1,4 +1,5 @@
 
+import { expect } from "chai";
 import { toUtf8Bytes } from "ethers/lib/utils";
 import { ethers, upgrades } from "hardhat"
 import { describe } from "mocha";
@@ -38,15 +39,25 @@ describe("contracts", () => {
 
 
         const ct = await ethers.getContractFactory('OSNFT');
-        const deployedContract = await upgrades.deployProxy(ct, ['OpenSourceNFT', 'OS', 'https://ujjwalnft.com/metadata/', payload.approver.address], {
+        const constructorArguments = ['OpenSourceNFT', 'OS', 'https://ujjwalnft.com/metadata/', payload.approver.address];
+
+
+        // const deploymentData = ct.interface.encodeDeploy(constructorArguments);
+        const deploymentData = ct.getDeployTransaction({
+
+        });
+        const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
+
+        expect(estimatedGas).equal(4771530)
+
+
+        const deployedContract = await upgrades.deployProxy(ct, constructorArguments, {
             initializer: 'initialize',
         });
 
         await deployedContract.deployed();
 
-        deployedContract.
-
-            payload.deployer = signer1;
+        payload.deployer = signer1;
         payload.signer2 = signer2;
         payload.signer3 = signer3;
         payload.signer4 = signer4;

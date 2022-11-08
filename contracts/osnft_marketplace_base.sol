@@ -291,7 +291,7 @@ contract OSNFTMarketPlaceBase is
         return auction.currentBidPrice;
     }
 
-    function bid(bytes32 auctionId, uint256 bidAmount) external {
+    function placeBid(bytes32 auctionId, uint256 bidAmount) external {
         _requireAuctioned(auctionId);
         Auction storage auction = _auctions[auctionId];
 
