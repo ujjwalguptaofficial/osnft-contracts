@@ -17,7 +17,7 @@ function getProjectId(projectUrl: string) {
 }
 function getSellId(tokenId: string, from: string) {
     return ethers.utils.keccak256(
-        ethers.utils.solidityPack(['bytes32', 'address'], [tokenId, from])
+        ethers.utils.defaultAbiCoder.encode(['bytes32', 'address'], [tokenId, from])
     );
 }
 

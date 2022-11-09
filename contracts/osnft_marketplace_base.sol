@@ -36,7 +36,7 @@ contract OSNFTMarketPlaceBase is
 
     function _requireNotListed(bytes32 sellId) internal view {
         Listing memory listing = _sellListings[sellId];
-        require(listing.price <= 0, "already listed");
+        require(listing.price <= 0, "Already on sale");
     }
 
     function _requireListed(bytes32 sellId)
@@ -49,12 +49,15 @@ contract OSNFTMarketPlaceBase is
         return listing;
     }
 
-    function _requireNftOwner(bytes32 tokenId, address spender) internal view {
+    function _requireNftOwner(
+        bytes32 tokenId,
+        address spender,
+        uint32 share
+    ) internal view {
         if (_nftContract.isShareToken(tokenId)) {
-            require(
-                _nftContract.shareOf(tokenId, spender) > 0,
-                "Require NFT share ownerership"
-            );
+            require(share > 0, "Require input share to be above zero");
+            uint32 shareOfOwner = _nftContract.shareOf(tokenId, spender);
+            require(shareOfOwner >= share, "Owns less share than input");
         } else {
             address owner = _nftContract.ownerOf(tokenId);
             require(spender == owner, "Require NFT ownership");
@@ -81,19 +84,21 @@ contract OSNFTMarketPlaceBase is
     ) external {
         address caller = _msgSender();
 
+        bytes32 sellId = _getSellId(tokenId, caller);
+
         //  should not be listed before
-        _requireNotListed(tokenId);
+        _requireNotListed(sellId);
 
         // should be owner
-        _requireNftOwner(tokenId, caller);
+        _requireNftOwner(tokenId, caller, share);
 
-        bytes32 sellId = _listItem(tokenId, share, price, erc20token);
+        _listItem(tokenId, share, price, erc20token);
 
         emit NFTSaleAdded(tokenId, caller, sellId, share, price, erc20token);
     }
 
     function _requirePayableToken(address payableToken) internal view {
-        require(isPayableToken(payableToken), "token is not payable");
+        require(isPayableToken(payableToken), "Invalid payment token");
     }
 
     function _requireTokenApproved(bytes32 tokenId) internal view {
@@ -112,12 +117,13 @@ contract OSNFTMarketPlaceBase is
         uint32 share,
         uint256 price,
         address paymentTokenAddress
-    ) internal returns (bytes32) {
+    ) internal {
         require(price > 0, "Price must be above zero");
 
         _requirePayableToken(paymentTokenAddress);
 
         _requireTokenApproved(tokenId);
+
         bytes32 sellId = _getSellId(tokenId, _msgSender());
         _sellListings[sellId] = Listing({
             tokenId: tokenId,
@@ -126,7 +132,6 @@ contract OSNFTMarketPlaceBase is
             share: share,
             paymentTokenAddress: paymentTokenAddress
         });
-        return sellId;
     }
 
     function removeNFTSale(bytes32 sellId) external {
@@ -134,7 +139,7 @@ contract OSNFTMarketPlaceBase is
         Listing memory listing = _requireListed(sellId);
 
         // should be owner
-        _requireNftOwner(listing.tokenId, _msgSender());
+        _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
 
         delete (_sellListings[sellId]);
         emit NftSaleCanceled(_msgSender(), listing.tokenId);
@@ -306,7 +311,7 @@ contract OSNFTMarketPlaceBase is
     {
         // encodePacked can have hashed collision with multiple arguments,
         // encode is safe
-        return keccak256(abi.encodePacked(nftId, seller));
+        return keccak256(abi.encode(nftId, seller));
     }
 
     function createAuction(
@@ -324,7 +329,7 @@ contract OSNFTMarketPlaceBase is
 
         address seller = _msgSender();
 
-        _requireNftOwner(_nftId, seller);
+        _requireNftOwner(_nftId, seller, share);
 
         _requireTokenApproved(_nftId);
 
