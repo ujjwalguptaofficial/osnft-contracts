@@ -88,14 +88,17 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint256 price
     ) external;
 
-    function updateListing(
+    function updateNFTOnSale(
         bytes32 tokenId,
         uint32 share,
         uint256 price,
         address erc20token
     ) external;
 
-    function getListing(bytes32 sellId) external view returns (Listing memory);
+    function getNFTFromSale(bytes32 sellId)
+        external
+        view
+        returns (Listing memory);
 
     function addPayableToken(address token) external;
 

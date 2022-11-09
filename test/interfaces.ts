@@ -20,4 +20,5 @@ export interface IDeployedPayload {
         'jsstore': string;
     },
     getProjectId: (projectUrl: string) => string
+    getSellId: (tokenId: string, from: string) => string
 }

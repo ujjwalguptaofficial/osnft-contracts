@@ -15,6 +15,11 @@ function getProjectId(projectUrl: string) {
         toUtf8Bytes(projectUrl)
     );
 }
+function getSellId(tokenId: string, from: string) {
+    return ethers.utils.keccak256(
+        ethers.utils.solidityPack(['bytes32', 'address'], [tokenId, from])
+    );
+}
 
 describe("contracts", () => {
 
@@ -25,7 +30,8 @@ describe("contracts", () => {
             "mahal": 'github.com/ujjwalguptaofficial/mahal',
             "jsstore": 'github.com/ujjwalguptaofficial/jsstore'
         },
-        getProjectId
+        getProjectId,
+        getSellId
     } as IDeployedPayload;
 
     before(async () => {

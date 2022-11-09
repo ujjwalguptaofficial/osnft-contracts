@@ -79,22 +79,17 @@ contract OSNFTMarketPlaceBase is
         uint256 price,
         address erc20token
     ) external {
+        address caller = _msgSender();
+
         //  should not be listed before
         _requireNotListed(tokenId);
 
         // should be owner
-        _requireNftOwner(tokenId, _msgSender());
+        _requireNftOwner(tokenId, caller);
 
         bytes32 sellId = _listItem(tokenId, share, price, erc20token);
 
-        emit NFTSaleAdded(
-            tokenId,
-            _msgSender(),
-            sellId,
-            share,
-            price,
-            erc20token
-        );
+        emit NFTSaleAdded(tokenId, caller, sellId, share, price, erc20token);
     }
 
     function _requirePayableToken(address payableToken) internal view {
@@ -264,7 +259,7 @@ contract OSNFTMarketPlaceBase is
         require(paymentToken.transferFrom(from, to, price), "payment failed");
     }
 
-    function updateListing(
+    function updateNFTOnSale(
         bytes32 sellId,
         uint32 share,
         uint256 price,
@@ -275,7 +270,11 @@ contract OSNFTMarketPlaceBase is
         emit NFTSaleUpdated(sellId, share, price, paymentTokenAddress);
     }
 
-    function getListing(bytes32 sellId) external view returns (Listing memory) {
+    function getNFTFromSale(bytes32 sellId)
+        external
+        view
+        returns (Listing memory)
+    {
         return _sellListings[sellId];
     }
 
@@ -305,7 +304,9 @@ contract OSNFTMarketPlaceBase is
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(nftId.toString(), seller));
+        // encodePacked can have hashed collision with multiple arguments,
+        // encode is safe
+        return keccak256(abi.encodePacked(nftId, seller));
     }
 
     function createAuction(

@@ -13,6 +13,7 @@ export function testSetMarketPlace(payload: IDeployedPayload) {
     })
 
     it('set marketplace', async () => {
+        expect(payload.defaultMarketPlace.address).not.null;
         let isApprovedForAll = await payload.nft.isApprovedForAll(
             payload.deployer.address, payload.defaultMarketPlace.address
         );
