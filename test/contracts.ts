@@ -5,6 +5,7 @@ import { ethers, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { testApprover } from "./approver";
 import { IDeployedPayload } from "./interfaces";
+import { testMarketplace } from "./marketplace";
 import { testNFT } from "./nft";
 
 
@@ -78,5 +79,9 @@ describe("contracts", () => {
 
     describe('OSNFT', () => {
         testNFT(payload);
+    });
+
+    describe('Marketplace', () => {
+        testMarketplace(payload);
     });
 })

@@ -9,7 +9,8 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint256 price;
         address seller;
         uint32 share;
-        address payableTokenAddress;
+        address paymentTokenAddress;
+        bytes32 tokenId;
     }
 
     // Structure to define auction properties
@@ -39,14 +40,23 @@ interface IOSNFTMarketPlaceUpgradeable {
         SELL_TYPE sellType;
     }
 
-    event ItemListed(
-        address indexed seller,
+    event NFTSaleAdded(
         bytes32 indexed tokenId,
-        uint32 indexed share,
-        uint256 price
+        address indexed seller,
+        bytes32 sellId,
+        uint32 share,
+        uint256 price,
+        address paymentTokenAddress
     );
 
-    event ItemCanceled(address indexed seller, bytes32 indexed tokenId);
+    event NFTSaleUpdated(
+        bytes32 sellId,
+        uint32 share,
+        uint256 price,
+        address paymentTokenAddress
+    );
+
+    event NftSaleCanceled(address indexed seller, bytes32 indexed tokenId);
 
     event ItemBought(
         address indexed buyer,
@@ -63,20 +73,19 @@ interface IOSNFTMarketPlaceUpgradeable {
     error NotApprovedForMarketplace();
     error PriceMustBeAboveZero();
 
-    function listItem(
+    function listNFTOnSale(
         bytes32 tokenId,
         uint32 share,
         uint256 price,
         address erc20token
     ) external;
 
-    function cancelListing(bytes32 tokenId) external;
+    function removeNFTSale(bytes32 tokenId) external;
 
-    function buyItem(
-        bytes32 tokenId,
+    function buyNFT(
+        bytes32 sellId,
         uint32 share,
-        uint256 price,
-        address seller
+        uint256 price
     ) external;
 
     function updateListing(
@@ -86,10 +95,7 @@ interface IOSNFTMarketPlaceUpgradeable {
         address erc20token
     ) external;
 
-    function getListing(bytes32 tokenId, address seller)
-        external
-        view
-        returns (Listing memory);
+    function getListing(bytes32 sellId) external view returns (Listing memory);
 
     function addPayableToken(address token) external;
 

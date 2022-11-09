@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { OSNFT, OSNFTApprover } from "../typechain-types";
+import { OSNFT, OSNFTApprover, OSNFTMarketPlace } from "../typechain-types";
+import { MyToken } from "../typechain-types/contracts/erc20.sol";
 
 export interface IDeployedPayload {
     deployer: SignerWithAddress;
@@ -10,6 +11,8 @@ export interface IDeployedPayload {
     operator: SignerWithAddress;
     nft: OSNFT,
     approver: OSNFTApprover,
+    marketplace: OSNFTMarketPlace,
+    erc20Token1: MyToken,
     projects: {
         'jsstore-example': string;
         'mahal-example': string;

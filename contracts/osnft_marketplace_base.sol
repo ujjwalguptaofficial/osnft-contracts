@@ -18,43 +18,46 @@ contract OSNFTMarketPlaceBase is
     using StringHelper for bytes32;
 
     // tokenId -> { shareOwner: Listing }
-    mapping(bytes32 => mapping(address => Listing)) private _sellListings;
+    mapping(bytes32 => Listing) private _sellListings;
 
     mapping(address => bool) private _erc20TokensAllowed;
 
     IERC721Upgradeable private _nftContract;
 
-    uint8 public marketPlaceRoyality = 2;
+    uint8 public marketPlaceRoyality;
 
     /**
      * @dev Initializes the contract
      */
-    function __MarketPlace_init__(address nft_) internal onlyInitializing {
+    function __MarketPlace_init(address nft_) internal onlyInitializing {
         _nftContract = IERC721Upgradeable(nft_);
+        marketPlaceRoyality = 2;
     }
 
-    function _requireNotListed(bytes32 tokenId, address shareOwner)
-        internal
-        view
-    {
-        Listing memory listing = _sellListings[tokenId][shareOwner];
+    function _requireNotListed(bytes32 sellId) internal view {
+        Listing memory listing = _sellListings[sellId];
         require(listing.price <= 0, "already listed");
     }
 
-    function _requireListed(bytes32 tokenId, address shareOwner) internal view {
-        Listing memory listing = _sellListings[tokenId][shareOwner];
-        require(listing.price > 0, "not listed");
+    function _requireListed(bytes32 sellId)
+        internal
+        view
+        returns (Listing memory)
+    {
+        Listing memory listing = _sellListings[sellId];
+        require(listing.price > 0, "Require NFT listed");
+        return listing;
     }
 
     function _requireNftOwner(bytes32 tokenId, address spender) internal view {
         if (_nftContract.isShareToken(tokenId)) {
             require(
                 _nftContract.shareOf(tokenId, spender) > 0,
-                "not share owner"
+                "Require NFT share ownerership"
             );
         } else {
             address owner = _nftContract.ownerOf(tokenId);
-            require(spender == owner, "not owner");
+            require(spender == owner, "Require NFT ownership");
         }
     }
 
@@ -70,19 +73,28 @@ contract OSNFTMarketPlaceBase is
         return _erc20TokensAllowed[token];
     }
 
-    function listItem(
+    function listNFTOnSale(
         bytes32 tokenId,
         uint32 share,
         uint256 price,
         address erc20token
     ) external {
         //  should not be listed before
-        _requireNotListed(tokenId, _msgSender());
+        _requireNotListed(tokenId);
 
         // should be owner
         _requireNftOwner(tokenId, _msgSender());
 
-        _listItem(tokenId, share, price, erc20token);
+        bytes32 sellId = _listItem(tokenId, share, price, erc20token);
+
+        emit NFTSaleAdded(
+            tokenId,
+            _msgSender(),
+            sellId,
+            share,
+            price,
+            erc20token
+        );
     }
 
     function _requirePayableToken(address payableToken) internal view {
@@ -105,29 +117,32 @@ contract OSNFTMarketPlaceBase is
         uint32 share,
         uint256 price,
         address paymentTokenAddress
-    ) internal {
+    ) internal returns (bytes32) {
         require(price > 0, "Price must be above zero");
 
         _requirePayableToken(paymentTokenAddress);
 
         _requireTokenApproved(tokenId);
-
-        _sellListings[tokenId][_msgSender()] = Listing(
-            price,
-            _msgSender(),
-            share,
-            paymentTokenAddress
-        );
+        bytes32 sellId = _getSellId(tokenId, _msgSender());
+        _sellListings[sellId] = Listing({
+            tokenId: tokenId,
+            price: price,
+            seller: _msgSender(),
+            share: share,
+            paymentTokenAddress: paymentTokenAddress
+        });
+        return sellId;
     }
 
-    function cancelListing(bytes32 tokenId) external {
-        // should be owner
-        _requireNftOwner(tokenId, _msgSender());
+    function removeNFTSale(bytes32 sellId) external {
         // nft should be listed
-        _requireListed(tokenId, _msgSender());
+        Listing memory listing = _requireListed(sellId);
 
-        delete (_sellListings[tokenId][_msgSender()]);
-        emit ItemCanceled(_msgSender(), tokenId);
+        // should be owner
+        _requireNftOwner(listing.tokenId, _msgSender());
+
+        delete (_sellListings[sellId]);
+        emit NftSaleCanceled(_msgSender(), listing.tokenId);
     }
 
     function _percentageOf(uint256 value, uint8 percentage)
@@ -138,30 +153,29 @@ contract OSNFTMarketPlaceBase is
         return (value / 100) * (percentage);
     }
 
-    function buyItem(
-        bytes32 tokenId,
+    function buyNFT(
+        bytes32 sellId,
         uint32 share,
-        uint256 price,
-        address seller
+        uint256 price
     ) external nonReentrant {
         address buyer = _msgSender();
-        _requireListed(tokenId, seller);
+        Listing memory listedItem = _requireListed(sellId);
 
-        Listing memory listedItem = _sellListings[tokenId][seller];
+        bytes32 tokenId = listedItem.tokenId;
         if (price < listedItem.price) {
             revert PriceNotMet(tokenId, listedItem.price);
         }
 
-        delete (_sellListings[tokenId][seller]);
+        delete (_sellListings[sellId]);
 
         _processNFTSell(
             NftSellData({
                 tokenId: tokenId,
                 share: share,
                 buyer: buyer,
-                seller: seller,
+                seller: listedItem.seller,
                 price: price,
-                paymentTokenAddress: listedItem.payableTokenAddress,
+                paymentTokenAddress: listedItem.paymentTokenAddress,
                 sellType: SELL_TYPE.Buy
             })
         );
@@ -251,22 +265,18 @@ contract OSNFTMarketPlaceBase is
     }
 
     function updateListing(
-        bytes32 tokenId,
+        bytes32 sellId,
         uint32 share,
         uint256 price,
-        address erc20token
+        address paymentTokenAddress
     ) external {
-        _requireListed(tokenId, _msgSender());
-        _listItem(tokenId, share, price, erc20token);
-        emit ItemListed(_msgSender(), tokenId, share, price);
+        Listing memory listedNft = _requireListed(sellId);
+        _listItem(listedNft.tokenId, share, price, paymentTokenAddress);
+        emit NFTSaleUpdated(sellId, share, price, paymentTokenAddress);
     }
 
-    function getListing(bytes32 tokenId, address seller)
-        external
-        view
-        returns (Listing memory)
-    {
-        return _sellListings[tokenId][seller];
+    function getListing(bytes32 sellId) external view returns (Listing memory) {
+        return _sellListings[sellId];
     }
 
     mapping(bytes32 => Auction) _auctions;
@@ -290,6 +300,14 @@ contract OSNFTMarketPlaceBase is
     // creator of an auction
     event NFTRefunded(bytes32 auctionid, bytes32 tokenId);
 
+    function _getSellId(bytes32 nftId, address seller)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return keccak256(abi.encodePacked(nftId.toString(), seller));
+    }
+
     function createAuction(
         bytes32 _nftId,
         uint32 share,
@@ -309,8 +327,10 @@ contract OSNFTMarketPlaceBase is
 
         _requireTokenApproved(_nftId);
 
+        bytes32 auctionId = _getSellId(_nftId, _msgSender());
+
         // not listed for sells
-        _requireNotListed(_nftId, seller);
+        _requireNotListed(auctionId);
 
         _requirePayableToken(_addressPaymentToken);
 
@@ -331,13 +351,7 @@ contract OSNFTMarketPlaceBase is
             endAuction: _endAuction,
             bidCount: 0
         });
-
-        bytes32 auctionId = keccak256(
-            abi.encodePacked(_nftId.toString(), seller)
-        );
-
-        // add auction to list
-        _auctions[auctionId] = newAuction;
+        _auctions[auctionId] = newAuction; // add auction to list
 
         // Trigger event and return index of new auction
         emit NewAuction(_nftId, currentBidOwner, _initialBid, _endAuction);
@@ -428,8 +442,15 @@ contract OSNFTMarketPlaceBase is
         // Check if the auction is closed
         require(!isAuctionOpen(auctionId), "Auction is still open");
 
+        address caller = _msgSender();
+
         // Get auction
         Auction storage auction = _auctions[auctionId];
+
+        require(
+            caller == auction.seller || caller == auction.currentBidOwner,
+            "claimable by seller or bidowner"
+        );
 
         delete _auctions[auctionId];
 
