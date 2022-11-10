@@ -162,9 +162,8 @@ contract OSNFTMarketPlaceBase is
         Listing memory listedItem = _requireListed(sellId);
 
         bytes32 tokenId = listedItem.tokenId;
-        if (price < listedItem.price) {
-            revert PriceNotMet(tokenId, listedItem.price);
-        }
+
+        require(price >= listedItem.price, "Price not met");
 
         delete (_sellListings[sellId]);
 
@@ -180,17 +179,17 @@ contract OSNFTMarketPlaceBase is
             })
         );
 
-        emit ItemBought(_msgSender(), tokenId, listedItem.price);
+        emit NFTBought(buyer, tokenId, listedItem.price, share);
     }
 
     function _processNFTSell(NftSellData memory sellData) internal {
-        address fundOwner = sellData.sellType == SELL_TYPE.Buy
+        address nftOwner = sellData.sellType == SELL_TYPE.Buy
             ? sellData.seller
             : address(this);
 
         // transfer nft from nft owner to buyer
         _nftContract.safeTransferFrom(
-            fundOwner,
+            nftOwner,
             sellData.buyer,
             sellData.tokenId,
             sellData.share
@@ -232,7 +231,7 @@ contract OSNFTMarketPlaceBase is
                 _processPayment(
                     sellData.paymentTokenAddress,
                     sellData.buyer,
-                    sellData.seller,
+                    tokenCreator,
                     amountForCreator
                 );
             }
@@ -247,9 +246,9 @@ contract OSNFTMarketPlaceBase is
             // process payment to seller of token
             _processPayment(
                 sellData.paymentTokenAddress,
-                fundOwner,
+                sellData.buyer,
                 sellData.seller,
-                sellData.price
+                amountForSeller
             );
         }
     }

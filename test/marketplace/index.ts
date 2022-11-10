@@ -1,6 +1,7 @@
 import { ethers, upgrades } from "hardhat";
 import { describe } from "mocha";
 import { IDeployedPayload } from "../interfaces";
+import { testNFTBuy } from "./buy_nft";
 import { testPayableToken } from "./payable_token";
 import { testNFTSale } from "./sell_nft";
 
@@ -24,6 +25,9 @@ export function testMarketplace(payload: IDeployedPayload) {
             initializer: 'initialize',
         }) as any;
         payload.erc20Token1 = deployedContract;
+
+        await payload.erc20Token1.mint(payload.deployer.address, 900000000000);
+        await payload.erc20Token1.mint(payload.signer4.address, 900000000000);
     })
 
     describe('payable token', () => {
@@ -32,5 +36,9 @@ export function testMarketplace(payload: IDeployedPayload) {
 
     describe('sale nft', () => {
         testNFTSale(payload);
+    });
+
+    describe('buy nft', () => {
+        testNFTBuy(payload);
     });
 }

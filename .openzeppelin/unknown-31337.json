@@ -17,12 +17,12 @@
     },
     {
       "address": "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
-      "txHash": "0xc2dd627d902666bc4d068679c832e9ae8db57b2127fc1bdb3e31b192e226cb74",
+      "txHash": "0x84008d3052459a5e14fc3d145a0925d980e556186477279e60155a49807481c9",
       "kind": "transparent"
     },
     {
       "address": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
-      "txHash": "0x419cb64c56381114b1eac5dc814e79c5e472d49194ce4a77b03efc827410ce1c",
+      "txHash": "0xcd46153ff2c5fbee9d752caff0eebbe74c0e7df775385ae39461d6db9536a45c",
       "kind": "transparent"
     }
   ],
@@ -407,7 +407,7 @@
     },
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
-      "txHash": "0xbfff343818ff0f6909ac23ffd052e24cbef3dbd576d8fc87fa92aa09124dab43",
+      "txHash": "0x6c08fc3442f6fd46878e19f35b14d303c185940c8eb47743e9e7a12bacef5830",
       "layout": {
         "storage": [
           {
@@ -544,9 +544,9 @@
         }
       }
     },
-    "b7411ce2fd80b096439e13a923588dd207e739ae09b237a5517873e289ea5238": {
+    "0f0471925283a3d81dda99a3012060ce68e7b0685b18fc10dcf08d7e83528647": {
       "address": "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
-      "txHash": "0x5f5959dbbbe7dd79aeae463fc4052354b32ac58e66a28892f803234766a8c8a0",
+      "txHash": "0x9bab46ce1d2aeada3f6723043d00582b64211def3d97575d0febd27a89e16a6e",
       "layout": {
         "storage": [
           {
@@ -644,7 +644,7 @@
             "slot": "154",
             "type": "t_mapping(t_bytes32,t_struct(Auction)1699_storage)",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:286"
+            "src": "contracts/osnft_marketplace_base.sol:285"
           },
           {
             "label": "__gap",
@@ -652,7 +652,7 @@
             "slot": "155",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:525"
+            "src": "contracts/osnft_marketplace_base.sol:524"
           }
         ],
         "types": {

@@ -58,10 +58,11 @@ interface IOSNFTMarketPlaceUpgradeable {
 
     event NftSaleCanceled(address indexed seller, bytes32 indexed tokenId);
 
-    event ItemBought(
+    event NFTBought(
         address indexed buyer,
         bytes32 indexed tokenId,
-        uint256 price
+        uint256 price,
+        uint32 share
     );
 
     error PriceNotMet(bytes32 tokenId, uint256 price);
