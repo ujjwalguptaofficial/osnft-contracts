@@ -53,7 +53,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
 
-        expect(tx).equal(157520);
+        expect(tx).equal(157542);
     });
 
     it("price zero", async () => {

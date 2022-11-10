@@ -22,6 +22,8 @@ contract OSNFTMarketPlaceBase is
 
     mapping(address => bool) private _erc20TokensAllowed;
 
+    mapping(address => mapping(address => uint256)) private _balance;
+
     IERC721Upgradeable private _nftContract;
 
     uint8 public marketPlaceRoyality;
@@ -183,11 +185,23 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _processNFTSell(NftSellData memory sellData) internal {
+        address seller = sellData.seller;
+
         address nftOwner = sellData.sellType == SELL_TYPE.Buy
-            ? sellData.seller
+            ? seller
             : address(this);
 
-        // transfer nft from nft owner to buyer
+        // transfer price amount from buyer to marketplace
+
+        address paymentTokenAddress = sellData.paymentTokenAddress;
+        _requirePayment(
+            paymentTokenAddress,
+            sellData.buyer,
+            address(this),
+            sellData.price
+        );
+
+        // transfer nft from owner to buyer
         _nftContract.safeTransferFrom(
             nftOwner,
             sellData.buyer,
@@ -203,18 +217,8 @@ contract OSNFTMarketPlaceBase is
         );
         uint256 amountForSeller = sellData.price - amountForMarketplace;
 
-        if (sellData.sellType == SELL_TYPE.Buy) {
-            // transfer marketplace royality amount from buyer to marketplace
-            _processPayment(
-                sellData.paymentTokenAddress,
-                sellData.buyer,
-                address(this),
-                amountForMarketplace
-            );
-        }
-
         if (
-            sellData.seller != tokenCreator &&
+            seller != tokenCreator &&
             !_nftContract.isShareToken(sellData.tokenId)
         ) {
             uint8 percentageOfCreator = _nftContract.creatorCut(
@@ -227,40 +231,23 @@ contract OSNFTMarketPlaceBase is
                 );
                 amountForSeller = amountForSeller - amountForCreator;
 
-                // process payment to creator of token in percentage cut mode
-                _processPayment(
-                    sellData.paymentTokenAddress,
-                    sellData.buyer,
-                    tokenCreator,
-                    amountForCreator
-                );
+                // store creator money
+                _balance[tokenCreator][paymentTokenAddress] = amountForCreator;
             }
-            // process payment to seller(owner) of token
-            _processPayment(
-                sellData.paymentTokenAddress,
-                sellData.buyer,
-                sellData.seller,
-                amountForSeller
-            );
-        } else {
-            // process payment to seller of token
-            _processPayment(
-                sellData.paymentTokenAddress,
-                sellData.buyer,
-                sellData.seller,
-                amountForSeller
-            );
         }
+
+        // store seller money
+        _balance[seller][paymentTokenAddress] = amountForSeller;
     }
 
-    function _processPayment(
+    function _requirePayment(
         address tokenAddress,
         address from,
         address to,
         uint256 price
     ) internal {
         ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
-        require(paymentToken.transferFrom(from, to, price), "payment failed");
+        require(paymentToken.transferFrom(from, to, price), "Payment failed");
     }
 
     function updateNFTOnSale(
@@ -501,19 +488,36 @@ contract OSNFTMarketPlaceBase is
         emit NFTRefunded(auctionId, auction.tokenId);
     }
 
-    function withdrawPayment(address tokenAddress, uint256 amount)
+    function balanceOf(address user, address tokenAddress)
+        public
+        view
+        returns (uint256)
+    {
+        return _balance[user][tokenAddress];
+    }
+
+    function withdrawToken(address tokenAddress) external {
+        _requirePayment(
+            tokenAddress,
+            address(this),
+            _msgSender(),
+            balanceOf(_msgSender(), tokenAddress)
+        );
+    }
+
+    function withdrawPaymentByOwner(address tokenAddress, uint256 amount)
         external
         onlyOwner
     {
-        withdrawPayment(tokenAddress, amount, owner());
+        withdrawPaymentByOwner(tokenAddress, amount, owner());
     }
 
-    function withdrawPayment(
+    function withdrawPaymentByOwner(
         address tokenAddress,
         uint256 amount,
         address accountTo
     ) public onlyOwner {
-        _processPayment(tokenAddress, address(this), accountTo, amount);
+        _requirePayment(tokenAddress, address(this), accountTo, amount);
     }
 
     /**

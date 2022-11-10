@@ -106,4 +106,10 @@ interface IOSNFTMarketPlaceUpgradeable {
     function removePayableToken(address token) external;
 
     function isPayableToken(address token) external view returns (bool);
+
+    function balanceOf(address user, address tokenAddress)
+        external
+        returns (uint256);
+
+    function withdrawToken(address tokenAddress) external;
 }

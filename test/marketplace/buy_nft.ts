@@ -83,7 +83,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 0,
                 price
             );
-            expect(gas).equal(236482);
+            expect(gas).equal(242129);
 
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
 
@@ -104,25 +104,25 @@ export function testNFTBuy(payload: IDeployedPayload) {
             const earningForMarketplace = getPercentage(price, 2);
             const earningForCreator = getPercentage(price, percentageOfCreator);
             const earningForSeller = getPercentage(price, 100 - percentageOfCreator - 2);
+            const paymentTokenAddress = payload.erc20Token1.address;
 
             // check marketplace money
 
             const balanceOfMarketPlace = await payload.erc20Token1.balanceOf(payload.marketplace.address);
             expect(balanceOfMarketPlace).equal(
-                earningForMarketplace
+                price
             );
 
 
-            const balanceOfSeller = await payload.erc20Token1.balanceOf(seller);
+            const balanceOfSeller = await marketplace.balanceOf(seller, paymentTokenAddress);
             expect(balanceOfSeller).equal(
                 earningForSeller
             );
 
-            const balanceOfCreatorAfterSale = await payload.erc20Token1.balanceOf(creatorOf);
-            console.log('balanceOfCreatorBeforeSale', balanceOfCreatorBeforeSale);
-            console.log('balanceOfCreatorAfterSale', balanceOfCreatorAfterSale);
+            const balanceOfCreatorAfterSale = await marketplace.balanceOf(creatorOf, paymentTokenAddress);
+
             expect(balanceOfCreatorAfterSale).equal(
-                earningForCreator.add(balanceOfCreatorBeforeSale)
+                earningForCreator
             );
 
             // buyer balance should be deducted
@@ -168,11 +168,12 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 0,
                 price
             );
-            expect(gas).equal(163977);
+            expect(gas).equal(157801);
 
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
             const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(payload.marketplace.address);
             const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
+            const paymentTokenAddress = payload.erc20Token1.address;
 
             const tx = marketplace.buyNFT(
                 sellId,
@@ -197,17 +198,17 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
             const balanceOfMarketPlace = await payload.erc20Token1.balanceOf(payload.marketplace.address);
             expect(balanceOfMarketPlace).equal(
-                earningForMarketplace.add(balanceOfMarketPlaceBeforeSale)
+                price.add(balanceOfMarketPlaceBeforeSale)
             );
 
-            const balanceOfSeller = await payload.erc20Token1.balanceOf(seller);
+            const balanceOfSeller = await marketplace.balanceOf(seller, paymentTokenAddress);
 
             console.log('balanceOfSellerBeforeSale', balanceOfSellerBeforeSale);
             console.log('balanceOfSeller', balanceOfSeller);
             console.log('earningForSeller', earningForSeller);
 
             expect(balanceOfSeller).equal(
-                earningForSeller.add(balanceOfSellerBeforeSale)
+                earningForSeller
             );
 
 
