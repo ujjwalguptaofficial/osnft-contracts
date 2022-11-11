@@ -300,7 +300,6 @@ export function testNFTBuy(payload: IDeployedPayload) {
             tokenId,
             seller
         );
-        const ownerOf = await payload.nft.ownerOf(tokenId);
         expect(buyer).not.equal(seller);
 
         const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
@@ -316,6 +315,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const paymentTokenAddress = payload.erc20Token1.address;
         const shareToBuy = 10;
         const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
+        const shareOfSellerBeforeSale = await payload.nft.shareOf(tokenId, seller);
 
         const tx = marketplace.buyNFT(
             sellId,
@@ -332,6 +332,12 @@ export function testNFTBuy(payload: IDeployedPayload) {
         expect(sellInfoAfterSale.share).equal(
             sellInfoBeforeSale.share - shareToBuy
         )
+
+        // seller share should be deducted
+        const shareOfSellerAfterSale = await payload.nft.shareOf(tokenId, seller);
+        expect(shareOfSellerAfterSale).equal(
+            shareOfSellerBeforeSale - shareToBuy
+        );
 
         // check nft owner
 
@@ -354,13 +360,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         const balanceOfSeller = await marketplace.balanceOf(seller, paymentTokenAddress);
 
-
-
         expect(balanceOfSeller).equal(
             earningForSeller.mul(shareToBuy)
         );
-
-
 
         // buyer balance should be deducted
 
