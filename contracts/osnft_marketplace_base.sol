@@ -164,7 +164,8 @@ contract OSNFTMarketPlaceBase is
         Listing memory listedItem = _requireListed(sellId);
 
         bytes32 tokenId = listedItem.tokenId;
-        if (listedItem.share > 0) {
+        bool isShareToken = listedItem.share > 0;
+        if (isShareToken) {
             require(
                 share <= listedItem.share,
                 "Input share is greater than listed"
@@ -174,7 +175,15 @@ contract OSNFTMarketPlaceBase is
         }
         require(price >= listedItem.price, "Price not met");
 
-        delete (_sellListings[sellId]);
+        if (isShareToken) {
+            // will no overflow  as input share is already checked
+            // share will be always less than or equal to stored share
+            unchecked {
+                _sellListings[sellId].share -= share;
+            }
+        } else {
+            delete (_sellListings[sellId]);
+        }
 
         _processNFTSell(
             NftSellData({
@@ -236,15 +245,33 @@ contract OSNFTMarketPlaceBase is
                     sellData.price,
                     percentageOfCreator
                 );
-                amountForSeller = amountForSeller - amountForCreator;
+
+                // will not oveflow/ underflow
+                // no underflow - amount for creator will be always less than amountForSeller
+                // no overflow as substraction and amountForCreator will be always positive as uint
+                unchecked {
+                    amountForSeller = amountForSeller - amountForCreator;
+                }
 
                 // store creator money
-                _balance[tokenCreator][paymentTokenAddress] = amountForCreator;
+                _updateBalance(
+                    tokenCreator,
+                    amountForCreator,
+                    paymentTokenAddress
+                );
             }
         }
 
         // store seller money
-        _balance[seller][paymentTokenAddress] = amountForSeller;
+        _updateBalance(seller, amountForSeller, paymentTokenAddress);
+    }
+
+    function _updateBalance(
+        address account,
+        uint256 amount,
+        address paymentTokenAddress
+    ) internal {
+        _balance[account][paymentTokenAddress] += amount;
     }
 
     function _requirePayment(
