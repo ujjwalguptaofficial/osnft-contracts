@@ -79,7 +79,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 0,
                 price
             );
-            expect(gas).equal(189747);
+            expect(gas).equal(182562);
 
             const paymentTokenAddress = payload.erc20Token1.address;
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
@@ -164,7 +164,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 0,
                 price
             );
-            expect(gas).equal(158178);
+            expect(gas).equal(150748);
 
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
             const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(payload.marketplace.address);
@@ -241,7 +241,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(188486);
+        expect(gas).equal(163689);
     })
 
     it('buy with zero share', async () => {
