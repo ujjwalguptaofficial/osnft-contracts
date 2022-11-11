@@ -164,7 +164,14 @@ contract OSNFTMarketPlaceBase is
         Listing memory listedItem = _requireListed(sellId);
 
         bytes32 tokenId = listedItem.tokenId;
+        if (listedItem.share > 0) {
+            require(
+                share <= listedItem.share,
+                "Input share is greater than listed"
+            );
 
+            price = price * share;
+        }
         require(price >= listedItem.price, "Price not met");
 
         delete (_sellListings[sellId]);

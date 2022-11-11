@@ -61,7 +61,6 @@ export function testNFTSale(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(
             payload.projects["jsstore-example"]
         );
-        const price = 10000000000;
         const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale(
             tokenId,
             0,

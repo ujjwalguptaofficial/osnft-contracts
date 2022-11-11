@@ -57,7 +57,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
             );
 
-            await expect(value).to.revertedWith('share should be greater than zero');
+            await expect(value).to.revertedWith('Input share should be above zero');
         });
 
         it('transfer to signer3 from deployer as owner', async () => {
@@ -176,7 +176,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 0
             );
 
-            await expect(value).to.revertedWith('share should be greater than zero');
+            await expect(value).to.revertedWith('Input share should be above zero');
         });
 
         it('transfer to signer3 from signer2 as owner', async () => {
