@@ -4,8 +4,8 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./interfaces/marketplace.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "./interfaces/erc721_upgradable.sol";
+import "./interfaces/erc721_receiver_upgradable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "./string_helper.sol";
 
@@ -13,7 +13,7 @@ contract OSNFTMarketPlaceBase is
     Initializable,
     OwnableUpgradeable,
     IOSNFTMarketPlaceUpgradeable,
-    ReentrancyGuardUpgradeable
+    IERC721ReceiverUpgradeable
 {
     using StringHelper for bytes32;
 
@@ -76,6 +76,16 @@ contract OSNFTMarketPlaceBase is
 
     function isPayableToken(address token) public view returns (bool) {
         return _erc20TokensAllowed[token];
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        bytes32 tokenId,
+        uint32 share,
+        bytes calldata data
+    ) external returns (bytes4) {
+        return IERC721ReceiverUpgradeable.onERC721Received.selector;
     }
 
     function listNFTOnSale(
@@ -305,25 +315,6 @@ contract OSNFTMarketPlaceBase is
 
     mapping(bytes32 => Auction) _auctions;
 
-    // Public event to notify that a new auction has been created
-    event NewAuction(
-        bytes32 indexed tokenId,
-        address seller,
-        uint256 bidPrice,
-        uint256 endAuction
-    );
-
-    // Public event to notify that a new bid has been placed
-    event NewBidOnAuction(bytes32 tokenId, uint256 bidAmount);
-
-    // Public event to notif that winner of an
-    // auction claim for his reward
-    event NFTClaimed(bytes32 auctionid, bytes32 tokenId);
-
-    // Public event to notify that an NFT has been refunded to the
-    // creator of an auction
-    event NFTRefunded(bytes32 auctionid, bytes32 tokenId);
-
     function _getSellId(bytes32 nftId, address seller)
         internal
         pure
@@ -345,7 +336,7 @@ contract OSNFTMarketPlaceBase is
         require(_endAuction > block.timestamp, "Invalid end date for auction");
 
         // Check if the initial bid price is > 0
-        require(_initialBid > 0, "Invalid initial bid price");
+        require(_initialBid > 0, "Require bid price above zero");
 
         address seller = _msgSender();
 
@@ -363,16 +354,13 @@ contract OSNFTMarketPlaceBase is
         // Lock NFT in Marketplace contract
         _nftContract.safeTransferFrom(seller, address(this), _nftId, share);
 
-        //Casting from address to address payable
-        address payable currentBidOwner = payable(address(0));
-
         // Create new Auction object
         Auction memory newAuction = Auction({
             tokenId: _nftId,
             share: share,
             seller: seller,
             paymentTokenAddress: _addressPaymentToken,
-            currentBidOwner: currentBidOwner,
+            currentBidOwner: address(0),
             currentBidPrice: _initialBid,
             endAuction: _endAuction,
             bidCount: 0
@@ -380,7 +368,15 @@ contract OSNFTMarketPlaceBase is
         _auctions[auctionId] = newAuction; // add auction to list
 
         // Trigger event and return index of new auction
-        emit NewAuction(_nftId, currentBidOwner, _initialBid, _endAuction);
+        emit NewAuction(
+            _nftId,
+            seller,
+            auctionId,
+            share,
+            _initialBid,
+            _endAuction,
+            _addressPaymentToken
+        );
     }
 
     function isAuctionOpen(bytes32 auctionId) public view returns (bool) {
@@ -475,7 +471,7 @@ contract OSNFTMarketPlaceBase is
 
         require(
             caller == auction.seller || caller == auction.currentBidOwner,
-            "claimable by seller or bidowner"
+            "Claimable by seller or bid owner"
         );
 
         delete _auctions[auctionId];

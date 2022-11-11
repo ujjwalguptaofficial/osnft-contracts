@@ -1,6 +1,8 @@
+import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { describe } from "mocha";
 import { IDeployedPayload } from "../interfaces";
+import { testNFTAuction } from "./auction_nft";
 import { testNFTBuy } from "./buy_nft";
 import { testPayableToken } from "./payable_token";
 import { testNFTSale } from "./sell_nft";
@@ -14,7 +16,20 @@ export function testMarketplace(payload: IDeployedPayload) {
         const deployedContract = await upgrades.deployProxy(contract, [payload.nft.address], {
             initializer: 'initialize',
         }) as any;
+
+
         payload.marketplace = deployedContract;
+    })
+
+    it('check for gas in deployed', async () => {
+        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
+        const deploymentData = contract.getDeployTransaction({
+
+        });
+        const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
+
+        expect(estimatedGas).equal(4132455);
+
     })
 
     it('deploy erc20 token', async () => {
@@ -40,5 +55,9 @@ export function testMarketplace(payload: IDeployedPayload) {
 
     describe('buy nft', () => {
         testNFTBuy(payload);
+    });
+
+    describe('auction nft', () => {
+        testNFTAuction(payload);
     });
 }

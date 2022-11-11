@@ -65,6 +65,28 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 share
     );
 
+    // Public event to notify that a new auction has been created
+    event NewAuction(
+        bytes32 indexed tokenId,
+        address indexed seller,
+        bytes32 auctionId,
+        uint32 share,
+        uint256 bidPrice,
+        uint256 endAuction,
+        address paymentToken
+    );
+
+    // Public event to notify that a new bid has been placed
+    event NewBidOnAuction(bytes32 tokenId, uint256 bidAmount);
+
+    // Public event to notif that winner of an
+    // auction claim for his reward
+    event NFTClaimed(bytes32 auctionid, bytes32 tokenId);
+
+    // Public event to notify that an NFT has been refunded to the
+    // creator of an auction
+    event NFTRefunded(bytes32 auctionid, bytes32 tokenId);
+
     error PriceNotMet(bytes32 tokenId, uint256 price);
     error ItemNotForSale(address nftAddress, bytes32 tokenId);
     error NotListed(address nftAddress, bytes32 tokenId);

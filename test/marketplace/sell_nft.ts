@@ -53,7 +53,22 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
 
-        expect(tx).equal(157542);
+        expect(tx).equal(157453);
+    });
+
+    it('not existing token', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            "ffgg"
+        );
+
+        const tx = marketplace.listNFTOnSale(
+            projectId,
+            0,
+            10,
+            payload.deployer.address
+        );
+        await expect(tx).revertedWith('ERC721: invalid token ID');
     });
 
     it("price zero", async () => {
