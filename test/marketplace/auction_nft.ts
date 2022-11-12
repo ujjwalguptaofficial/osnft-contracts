@@ -169,7 +169,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(237623)
+        expect(gas).equal(237646)
         const tx = marketplace.connect(payload.signer4).createAuction(
             projectId,
             0,
@@ -191,11 +191,11 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const newOwner = await payload.nft.ownerOf(projectId);
         expect(newOwner).equal(marketplace.address);
 
-        const bidOwner = await marketplace.getCurrentBidOwner(auctionId);
+        const bidOwner = await marketplace.getBidOwner(auctionId);
         expect(bidOwner).equal(ethers.constants.AddressZero);
 
 
-        const bidPrice = await marketplace.getCurrentBidPrice(auctionId);
+        const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(1000);
     });
 
@@ -262,7 +262,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(243317)
+        expect(gas).equal(243339)
 
         const tx = marketplace.createAuction(
             projectId,
@@ -285,11 +285,11 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
         expect(shareOfMarketPlace).equal(100);
 
-        const bidOwner = await marketplace.getCurrentBidOwner(auctionId);
+        const bidOwner = await marketplace.getBidOwner(auctionId);
         expect(bidOwner).equal(ethers.constants.AddressZero);
 
 
-        const bidPrice = await marketplace.getCurrentBidPrice(auctionId);
+        const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(10000);
     });
 }

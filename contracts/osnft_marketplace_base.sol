@@ -394,20 +394,12 @@ contract OSNFTMarketPlaceBase is
         return auction;
     }
 
-    function getCurrentBidOwner(bytes32 auctionId)
-        public
-        view
-        returns (address)
-    {
+    function getBidOwner(bytes32 auctionId) external view returns (address) {
         Auction memory auction = _requireAuctioned(auctionId);
         return auction.currentBidOwner;
     }
 
-    function getCurrentBidPrice(bytes32 auctionId)
-        public
-        view
-        returns (uint256)
-    {
+    function getBidPrice(bytes32 auctionId) external view returns (uint256) {
         Auction memory auction = _requireAuctioned(auctionId);
         return auction.currentBidPrice;
     }
