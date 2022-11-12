@@ -91,7 +91,11 @@ interface IOSNFTMarketPlaceUpgradeable {
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction
-    event NFTRefunded(bytes32 auctionid, bytes32 tokenId);
+    event NFTRefunded(
+        bytes32 indexed auctionid,
+        bytes32 indexed tokenId,
+        uint32 share
+    );
 
     error PriceNotMet(bytes32 tokenId, uint256 price);
     error ItemNotForSale(address nftAddress, bytes32 tokenId);

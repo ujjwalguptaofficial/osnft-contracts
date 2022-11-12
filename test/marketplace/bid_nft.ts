@@ -203,13 +203,41 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 await expect(tx).to.revertedWith('Auction is still open');
             });
 
+            it('expire auction', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+                const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+                const isAuctionOpen = await marketplace.isAuctionOpen(auctionId);
+                expect(isAuctionOpen).equal(true);
+                console.log("timestamp of latest block", await time.latest());
+                await mine(100);
+                console.log("timestamp of latest block", await time.latest());
+
+                const isAuctionOpenAfter = await marketplace.isAuctionOpen(auctionId);
+                expect(isAuctionOpenAfter).equal(false);
+            });
+
+            it('refund when bidder exist', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+                const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.refundAuction(auctionId);
+                await expect(tx).to.revertedWith('Bider exist for this auction');
+            });
+
             it('successful claim', async () => {
 
                 const erc20Token = payload.erc20Token1;
 
-                console.log("timestamp of latest block", await time.latest());
-                await mine(100);
-                console.log("timestamp of latest block", await time.latest());
 
                 const marketplace = payload.marketplace;
                 const nftId = payload.getProjectId(payload.projects["jsstore-example"]);

@@ -6,6 +6,7 @@ import { testNFTAuction } from "./auction_nft";
 import { testBidNFTAuction } from "./bid_nft";
 import { testNFTBuy } from "./buy_nft";
 import { testPayableToken } from "./payable_token";
+import { testRefundAuction } from "./refund_auction";
 import { testNFTSale } from "./sell_nft";
 
 
@@ -29,7 +30,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(3954904);
+        expect(estimatedGas).equal(3873298);
 
     })
 
@@ -65,5 +66,9 @@ export function testMarketplace(payload: IDeployedPayload) {
 
     describe('bid nft', () => {
         testBidNFTAuction(payload);
+    });
+
+    describe('refund auction nft', () => {
+        testRefundAuction(payload);
     });
 }

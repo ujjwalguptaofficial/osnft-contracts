@@ -484,13 +484,10 @@ contract OSNFTMarketPlaceBase is
     }
 
     function refundAuction(bytes32 auctionId) external {
-        _requireAuctioned(auctionId);
+        Auction memory auction = _requireAuctioned(auctionId);
 
         // Check if the auction is closed
         require(!isAuctionOpen(auctionId), "Auction is still open");
-
-        // Get auction
-        Auction memory auction = _auctions[auctionId];
 
         require(
             auction.currentBidOwner == address(0),
@@ -507,7 +504,7 @@ contract OSNFTMarketPlaceBase is
             auction.tokenId
         );
 
-        emit NFTRefunded(auctionId, auction.tokenId);
+        emit NFTRefunded(auctionId, auction.tokenId, auction.share);
     }
 
     function _requireTransferFromMarketplace(
