@@ -77,6 +77,43 @@ export function testRefundAuction(payload: IDeployedPayload) {
         await expect(tx).to.revertedWith('Auction is still open');
     })
 
+    it('successful share auction for jsstore', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const seller = payload.deployer.address;
+        // const endAuction = addHours(new Date(), 24).getTime();
+        const endAuction = (await time.latest()) + 10;
+        const tx = marketplace.createAuction(
+            projectId,
+            100,
+            10000,
+            endAuction,
+            payload.erc20Token1.address
+        );
+        const auctionId = payload.getSellId(projectId, seller);
+        await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+            projectId,
+            seller,
+            auctionId,
+            100,
+            10000,
+            endAuction,
+            payload.erc20Token1.address
+        )
+
+        const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
+        expect(shareOfMarketPlace).equal(100);
+
+        const bidOwner = await marketplace.getBidOwner(auctionId);
+        expect(bidOwner).equal(ethers.constants.AddressZero);
+
+
+        const bidPrice = await marketplace.getBidPrice(auctionId);
+        expect(bidPrice).equal(10000);
+    });
+
     it('expire auction', async () => {
         const marketplace = payload.marketplace;
         const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
@@ -95,7 +132,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         expect(isAuctionOpenAfter).equal(false);
     });
 
-    it('successful refund', async () => {
+    it('successful refund for jsstore example', async () => {
         const marketplace = payload.marketplace;
         const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
         const seller = payload.signer2.address;
@@ -114,7 +151,27 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         const newOwner = await payload.nft.ownerOf(nftId);
         expect(newOwner).equal(seller);
-
-
     })
+
+    it('successful refund for jsstore example', async () => {
+        const marketplace = payload.marketplace;
+        const nftId = payload.getProjectId(payload.projects["jsstore"]);
+        const seller = payload.deployer.address;
+        const auctionId = payload.getSellId(
+            nftId,
+            seller
+        );
+
+        const oldShare = await payload.nft.shareOf(nftId, seller);
+
+        const tx = marketplace.refundAuction(auctionId);
+        await expect(tx).emit(marketplace, 'NFTRefunded').withArgs(
+            auctionId, nftId, 100
+        )
+
+        const newShare = await payload.nft.shareOf(nftId, seller);
+        expect(newShare).equal(oldShare + 100);
+    })
+
+
 }

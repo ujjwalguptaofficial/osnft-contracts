@@ -501,7 +501,8 @@ contract OSNFTMarketPlaceBase is
         _nftContract.transferFrom(
             address(this),
             auction.seller,
-            auction.tokenId
+            auction.tokenId,
+            auction.share
         );
 
         emit NFTRefunded(auctionId, auction.tokenId, auction.share);
