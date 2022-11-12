@@ -3,6 +3,7 @@ import { ethers, upgrades } from "hardhat";
 import { describe } from "mocha";
 import { IDeployedPayload } from "../interfaces";
 import { testNFTAuction } from "./auction_nft";
+import { testBidNFTAuction } from "./bid_nft";
 import { testNFTBuy } from "./buy_nft";
 import { testPayableToken } from "./payable_token";
 import { testNFTSale } from "./sell_nft";
@@ -28,7 +29,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(4132455);
+        expect(estimatedGas).equal(4132359);
 
     })
 
@@ -59,5 +60,9 @@ export function testMarketplace(payload: IDeployedPayload) {
 
     describe('auction nft', () => {
         testNFTAuction(payload);
+    });
+
+    describe('bid nft', () => {
+        testBidNFTAuction(payload);
     });
 }

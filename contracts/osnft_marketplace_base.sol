@@ -403,7 +403,11 @@ contract OSNFTMarketPlaceBase is
         return auction.currentBidOwner;
     }
 
-    function getCurrentBid(bytes32 auctionId) public view returns (uint256) {
+    function getCurrentBidPrice(bytes32 auctionId)
+        public
+        view
+        returns (uint256)
+    {
         Auction memory auction = _requireAuctioned(auctionId);
         return auction.currentBidPrice;
     }
@@ -418,7 +422,7 @@ contract OSNFTMarketPlaceBase is
         // check if new bid price is higher than the current one
         require(
             bidAmount > auction.currentBidPrice,
-            "New bid price must be higher than the current bid"
+            "New bid price must be higher than current bid"
         );
 
         address buyer = _msgSender();
@@ -426,7 +430,7 @@ contract OSNFTMarketPlaceBase is
         // check if new bider is not the owner
         require(
             buyer != auction.seller,
-            "Creator of the auction cannot place new bid"
+            "Creator of auction cannot place new bid"
         );
 
         // get ERC20 token contract

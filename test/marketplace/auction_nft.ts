@@ -177,14 +177,119 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
+        const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'NewAuction').withArgs(
             projectId,
             seller,
-            payload.getSellId(projectId, seller),
+            auctionId,
             0,
             1000,
             endAuction,
             payload.erc20Token1.address
         )
+
+        const newOwner = await payload.nft.ownerOf(projectId);
+        expect(newOwner).equal(marketplace.address);
+
+        const bidOwner = await marketplace.getCurrentBidOwner(auctionId);
+        expect(bidOwner).equal(ethers.constants.AddressZero);
+
+
+        const bidPrice = await marketplace.getCurrentBidPrice(auctionId);
+        expect(bidPrice).equal(1000);
+    });
+
+    it('require share greater than zero', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+
+        const tx = marketplace.createAuction(
+            projectId,
+            0,
+            1000,
+            new Date().getTime(),
+            payload.deployer.address
+        );
+        await expect(tx).revertedWith('Require input share to be above zero');
+    });
+
+    it('Placing share by not owner', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+
+        const tx = marketplace.connect(payload.signer4).createAuction(
+            projectId,
+            1,
+            1000,
+            new Date().getTime(),
+            payload.deployer.address
+        );
+        await expect(tx).revertedWith('Owns less share than input');
+    });
+
+    it('Placing share greater than own', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+
+        const tx = marketplace.createAuction(
+            projectId,
+            10000,
+            1000,
+            new Date().getTime(),
+            payload.erc20Token1.address
+        );
+        await expect(tx).revertedWith('Owns less share than input');
+    });
+
+    it('successful share auction', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const seller = payload.deployer.address;
+        const endAuction = addHours(new Date(), 24).getTime();
+
+        const gas = await marketplace.estimateGas.createAuction(
+            projectId,
+            100,
+            10000,
+            endAuction,
+            payload.erc20Token1.address
+        );
+        expect(gas).equal(243317)
+
+        const tx = marketplace.createAuction(
+            projectId,
+            100,
+            10000,
+            endAuction,
+            payload.erc20Token1.address
+        );
+        const auctionId = payload.getSellId(projectId, seller);
+        await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+            projectId,
+            seller,
+            auctionId,
+            100,
+            10000,
+            endAuction,
+            payload.erc20Token1.address
+        )
+
+        const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
+        expect(shareOfMarketPlace).equal(100);
+
+        const bidOwner = await marketplace.getCurrentBidOwner(auctionId);
+        expect(bidOwner).equal(ethers.constants.AddressZero);
+
+
+        const bidPrice = await marketplace.getCurrentBidPrice(auctionId);
+        expect(bidPrice).equal(10000);
     });
 }
