@@ -179,12 +179,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
         );
         const seller = payload.signer4.address;
 
-        console.log('blockTimeStamp', await marketplace.geTimeStamp());
 
         const endAuction = (await time.latest()) + 100; // Math.floor(Date.now() / 1000) + 10000;
         //        (await time.latest()) + 100000000; // new Date().getTime(); //+ 1000; //addHours(, 24).getTime();
         console.log('endAuction', endAuction);
-        console.log('blockTimeStamp', await marketplace.geTimeStamp());
         const tx = marketplace.connect(payload.signer4).createAuction(
             projectId,
             0,

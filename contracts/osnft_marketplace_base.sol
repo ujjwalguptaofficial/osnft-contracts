@@ -323,10 +323,6 @@ contract OSNFTMarketPlaceBase is
         return keccak256(abi.encode(nftId, seller));
     }
 
-    function geTimeStamp() external view returns (uint256) {
-        return block.timestamp;
-    }
-
     function createAuction(
         bytes32 _nftId,
         uint32 share,
