@@ -147,7 +147,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 seller
             );
             const bidAmount = 1002;
-            const buyer = await payload.signer2.address;
+            const buyer = payload.signer2.address;
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
                 buyer
             );
@@ -218,6 +218,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                     nftId,
                     seller
                 );
+                const buyer = payload.signer2.address;
                 const tokenCreator = await payload.nft.creatorOf(nftId);
                 const currentBidAmount = await marketplace.getBidPrice(auctionId);
                 const balanceOfMarketplaceBeforeSale = await erc20Token.balanceOf(marketplace.address);
@@ -263,6 +264,9 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 expect(balanceOfCreatorAfterSale).equal(
                     balanceOfCreatorBeforeSale.add(earningForCreator)
                 )
+
+                const newOwnerOfNft = await payload.nft.ownerOf(nftId);
+                expect(newOwnerOfNft).equal(buyer);
 
             });
 
@@ -321,7 +325,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 seller
             );
             const bidAmount = 100001;
-            const buyer = await payload.signer2.address;
+            const buyer = payload.signer2.address;
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
                 buyer
             );
@@ -402,14 +406,17 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                     nftId,
                     seller
                 );
+                const buyer = payload.signer2.address;
                 const currentBidAmount = await marketplace.getBidPrice(auctionId);
                 const balanceOfMarketplaceBeforeSale = await erc20Token.balanceOf(marketplace.address);
                 const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
+                const shareOfBuyerBeforeSale = await payload.nft.shareOf(nftId, buyer);
 
                 const tx = marketplace.claimNFT(auctionId);
+                const shareToTransfer = 100;
                 await expect(tx).emit(marketplace, 'NFTClaimed').withArgs(
                     auctionId, nftId,
-                    100,
+                    shareToTransfer,
                     currentBidAmount,
                     payload.erc20Token1.address
                 );
@@ -439,6 +446,9 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 expect(balanceOfSellerAfterSale).equal(
                     balanceOfSellerBeforeSale.add(earningForSeller)
                 )
+
+                const shareOfBuyerAfterSale = await payload.nft.shareOf(nftId, buyer);
+                expect(shareOfBuyerAfterSale).equal(shareToTransfer + shareOfBuyerBeforeSale);
 
             });
 
