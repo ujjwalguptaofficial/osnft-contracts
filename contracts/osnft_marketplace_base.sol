@@ -22,8 +22,6 @@ contract OSNFTMarketPlaceBase is
 
     mapping(address => bool) private _erc20TokensAllowed;
 
-    mapping(address => mapping(address => uint256)) private _balance;
-
     IERC721Upgradeable private _nftContract;
 
     uint8 public marketPlaceRoyality;
@@ -162,7 +160,10 @@ contract OSNFTMarketPlaceBase is
         pure
         returns (uint256)
     {
-        return (value / 100) * (percentage);
+        unchecked {
+            value = (value / 100);
+        }
+        return value * (percentage);
     }
 
     function buyNFT(
@@ -217,6 +218,9 @@ contract OSNFTMarketPlaceBase is
             ? seller
             : address(this);
 
+        uint256 price = sellData.price;
+        bytes32 nftId = sellData.tokenId;
+
         // transfer price amount from buyer to marketplace
 
         address paymentTokenAddress = sellData.paymentTokenAddress;
@@ -224,37 +228,29 @@ contract OSNFTMarketPlaceBase is
             paymentTokenAddress,
             sellData.buyer,
             address(this),
-            sellData.price
+            price
         );
 
         // transfer nft from owner to buyer
         _nftContract.safeTransferFrom(
             nftOwner,
             sellData.buyer,
-            sellData.tokenId,
+            nftId,
             sellData.share
         );
 
-        address tokenCreator = _nftContract.creatorOf(sellData.tokenId);
+        address tokenCreator = _nftContract.creatorOf(nftId);
 
         uint256 amountForMarketplace = _percentageOf(
-            sellData.price,
+            price,
             marketPlaceRoyality
         );
-        uint256 amountForSeller = sellData.price - amountForMarketplace;
-
-        if (
-            seller != tokenCreator &&
-            !_nftContract.isShareToken(sellData.tokenId)
-        ) {
-            uint8 percentageOfCreator = _nftContract.creatorCut(
-                sellData.tokenId
-            );
+        uint256 amountForSeller = price - amountForMarketplace;
+        uint256 amountForCreator;
+        if (seller != tokenCreator && !_nftContract.isShareToken(nftId)) {
+            uint8 percentageOfCreator = _nftContract.creatorCut(nftId);
             if (percentageOfCreator > 0) {
-                uint256 amountForCreator = _percentageOf(
-                    sellData.price,
-                    percentageOfCreator
-                );
+                amountForCreator = _percentageOf(price, percentageOfCreator);
 
                 // will not oveflow/ underflow
                 // no underflow - amount for creator will be always less than amountForSeller
@@ -263,8 +259,8 @@ contract OSNFTMarketPlaceBase is
                     amountForSeller = amountForSeller - amountForCreator;
                 }
 
-                // store creator money
-                _updateBalance(
+                // transfer creator money
+                _requireTransferFromMarketplace(
                     tokenCreator,
                     amountForCreator,
                     paymentTokenAddress
@@ -272,16 +268,12 @@ contract OSNFTMarketPlaceBase is
             }
         }
 
-        // store seller money
-        _updateBalance(seller, amountForSeller, paymentTokenAddress);
-    }
-
-    function _updateBalance(
-        address account,
-        uint256 amount,
-        address paymentTokenAddress
-    ) internal {
-        _balance[account][paymentTokenAddress] += amount;
+        // transfer seller money
+        _requireTransferFromMarketplace(
+            seller,
+            amountForSeller,
+            paymentTokenAddress
+        );
     }
 
     function _requirePayment(
@@ -513,14 +505,6 @@ contract OSNFTMarketPlaceBase is
         emit NFTRefunded(auctionId, auction.tokenId);
     }
 
-    function balanceOf(address user, address tokenAddress)
-        public
-        view
-        returns (uint256)
-    {
-        return _balance[user][tokenAddress];
-    }
-
     function _requireTransferFromMarketplace(
         address to,
         uint256 amount,
@@ -528,15 +512,6 @@ contract OSNFTMarketPlaceBase is
     ) internal {
         ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
         require(paymentToken.transfer(to, amount), "Payment failed");
-    }
-
-    function withdrawToken(address tokenAddress) external {
-        _requirePayment(
-            tokenAddress,
-            address(this),
-            _msgSender(),
-            balanceOf(_msgSender(), tokenAddress)
-        );
     }
 
     function withdrawPaymentByOwner(address tokenAddress, uint256 amount)
