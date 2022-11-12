@@ -546,7 +546,7 @@
     },
     "f4b2f68c381f52a1589044e73caf49a0bdc9db157336239e90e7a993dfcf27b4": {
       "address": "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
-      "txHash": "0xcc82a6a990a115d484544d4489742ac29729e5ea74a8bbfc3f806f541d5f5325",
+      "txHash": "0x22472a70e60f8cac6d3c8723e7a4ec202ccf1e6151056a8975f4eb1c0e6e5ed6",
       "layout": {
         "storage": [
           {
@@ -596,7 +596,7 @@
             "slot": "101",
             "type": "t_mapping(t_bytes32,t_struct(Listing)1629_storage)",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:21"
+            "src": "contracts/osnft_marketplace_base.sol:22"
           },
           {
             "label": "_erc20TokensAllowed",
@@ -604,7 +604,7 @@
             "slot": "102",
             "type": "t_mapping(t_address,t_bool)",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:23"
+            "src": "contracts/osnft_marketplace_base.sol:24"
           },
           {
             "label": "_nftContract",
@@ -612,7 +612,7 @@
             "slot": "103",
             "type": "t_contract(IERC721Upgradeable)1615",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:25"
+            "src": "contracts/osnft_marketplace_base.sol:26"
           },
           {
             "label": "marketPlaceRoyality",
@@ -620,7 +620,7 @@
             "slot": "103",
             "type": "t_uint8",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:27"
+            "src": "contracts/osnft_marketplace_base.sol:28"
           },
           {
             "label": "_auctions",
@@ -628,7 +628,7 @@
             "slot": "104",
             "type": "t_mapping(t_bytes32,t_struct(Auction)1646_storage)",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:313"
+            "src": "contracts/osnft_marketplace_base.sol:314"
           },
           {
             "label": "__gap",
@@ -636,7 +636,7 @@
             "slot": "105",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:545"
+            "src": "contracts/osnft_marketplace_base.sol:546"
           }
         ],
         "types": {

@@ -173,7 +173,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             );
         })
 
-        describe('claim nft', async () => {
+        describe('claim nft jsstore example', async () => {
             it('when auction is still open', async () => {
                 const marketplace = payload.marketplace;
                 const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
@@ -187,7 +187,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 await expect(tx).to.revertedWith('Auction is still open');
             });
 
-            it('when auction end', async () => {
+            it('successful claim', async () => {
 
                 const erc20Token = payload.erc20Token1;
 
@@ -202,9 +202,11 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                     nftId,
                     seller
                 );
+                const tokenCreator = await payload.nft.creatorOf(nftId);
                 const currentBidAmount = await marketplace.getBidPrice(auctionId);
                 const balanceOfMarketplaceBeforeSale = await erc20Token.balanceOf(marketplace.address);
                 const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
+                const balanceOfCreatorBeforeSale = await erc20Token.balanceOf(tokenCreator);
 
 
                 const tx = marketplace.claimNFT(auctionId);
@@ -218,19 +220,33 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 // check for marketplace earning
 
                 const earningForMarketplace = getPercentage(currentBidAmount, 2);
+                const earningForCreator = getPercentage(currentBidAmount,
+                    await payload.nft.creatorCut(
+                        nftId
+                    )
+                );
+                const earningForSeller = currentBidAmount.sub(earningForMarketplace.add(
+                    earningForCreator
+                ));
+
                 const balanceOfMarketplaceAfterSale = await erc20Token.balanceOf(marketplace.address);
                 const balanceOfSellerAfterSale = await erc20Token.balanceOf(seller);
+                const balanceOfCreatorAfterSale = await erc20Token.balanceOf(tokenCreator);
 
-                console.log('earningForMarketplace', earningForMarketplace);
-                console.log('balanceOfMarketplaceBeforeSale', balanceOfMarketplaceBeforeSale);
-                console.log('balanceOfMarketplaceAfterSale', balanceOfMarketplaceAfterSale);
+                expect(balanceOfMarketplaceAfterSale).equal(
+                    balanceOfMarketplaceBeforeSale.sub(
+                        earningForCreator
+                            .add(earningForSeller)
+                    )
+                );
 
-                // expect(balanceOfMarketplaceAfterSale).equal(
-                //     balanceOfMarketplaceBeforeSale.add(earningForMarketplace)
-                // )
+                expect(balanceOfSellerAfterSale).equal(
+                    balanceOfSellerBeforeSale.add(earningForSeller)
+                )
 
-                console.log('marketplace earning', balanceOfMarketplaceAfterSale.sub(balanceOfMarketplaceBeforeSale))
-                console.log('seller earning', balanceOfSellerAfterSale.sub(balanceOfSellerBeforeSale))
+                expect(balanceOfCreatorAfterSale).equal(
+                    balanceOfCreatorBeforeSale.add(earningForCreator)
+                )
 
             });
 

@@ -51,7 +51,64 @@ export function testNFTBuy(payload: IDeployedPayload) {
         await expect(tx).revertedWith('ERC20: insufficient allowance');
     });
 
+    it('seller is not creator gas estimate', async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(payload.projects["jsstore-example"]);
+        const seller = payload.signer3.address;
+        const sellId = payload.getSellId(
+            tokenId,
+            seller
+        );
+        const creatorOf = await payload.nft.creatorOf(tokenId);
+        expect(creatorOf).not.equal(seller);
+        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const buyer = payload.signer4.address;
 
+        expect(creatorOf).not.equal(buyer);
+
+        await payload.erc20Token1.connect(payload.signer4).approve(
+            marketplace.address, ethers.constants.MaxUint256,
+        )
+        const gas = await marketplace.connect(payload.signer4).estimateGas.buyNFT(
+            sellId,
+            0,
+            price
+        );
+        expect(gas).equal(209900);
+
+    });
+
+    it('seller is creator gas estimate', async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(payload.projects["mahal-example"]);
+        const seller = payload.signer2.address;
+        const buyer = payload.deployer.address;
+
+        const sellId = payload.getSellId(
+            tokenId,
+            seller
+        );
+        const creatorOf = await payload.nft.creatorOf(tokenId);
+        const ownerOf = await payload.nft.ownerOf(tokenId);
+        expect(creatorOf).equal(ownerOf);
+        expect(creatorOf).equal(seller);
+
+        expect(buyer).not.equal(seller);
+
+        const price = (await marketplace.getNFTFromSale(sellId)).price;
+
+        await payload.erc20Token1.approve(
+            marketplace.address, ethers.constants.MaxUint256,
+        )
+
+        const gas = await marketplace.estimateGas.buyNFT(
+            sellId,
+            0,
+            price
+        );
+        expect(gas).equal(155810);
+
+    });
 
     describe('buy with same price', async () => {
         it('seller is not creator', async () => {
@@ -73,13 +130,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
             await payload.erc20Token1.connect(payload.signer4).approve(
                 marketplace.address, ethers.constants.MaxUint256,
-            )
-            const gas = await marketplace.connect(payload.signer4).estimateGas.buyNFT(
-                sellId,
-                0,
-                price
             );
-            expect(gas).equal(174548);
 
             const paymentTokenAddress = payload.erc20Token1.address;
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
@@ -159,13 +210,6 @@ export function testNFTBuy(payload: IDeployedPayload) {
             await payload.erc20Token1.approve(
                 marketplace.address, ethers.constants.MaxUint256,
             )
-
-            const gas = await marketplace.estimateGas.buyNFT(
-                sellId,
-                0,
-                price
-            );
-            expect(gas).equal(138261);
 
             const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);

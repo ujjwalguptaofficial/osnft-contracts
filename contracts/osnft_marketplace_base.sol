@@ -8,6 +8,7 @@ import "./interfaces/erc721_upgradable.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "./string_helper.sol";
+import "hardhat/console.sol";
 
 contract OSNFTMarketPlaceBase is
     Initializable,
