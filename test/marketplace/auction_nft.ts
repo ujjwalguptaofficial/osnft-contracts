@@ -292,4 +292,5 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(10000);
     });
+
 }

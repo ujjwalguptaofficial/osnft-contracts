@@ -58,40 +58,113 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
         await expect(tx).revertedWith('Creator of auction cannot place new bid');
     })
 
-    it('successful bid', async () => {
-        const marketplace = payload.marketplace;
-        const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
-        const seller = payload.signer4.address;
-        const auctionId = payload.getSellId(
-            nftId,
-            seller
-        );
-        const bidAmount = 1001;
-        const buyer = await payload.deployer.address;
-        const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
-            buyer
-        );
-        const tx = marketplace.placeBid(
-            auctionId,
-            bidAmount
-        );
-        await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
-            auctionId,
-            bidAmount
-        );
+    describe('successful bid', async () => {
 
-        // balance of buyer should be deducted
-        const balanceOfBuyerAfterSale = await payload.erc20Token1.balanceOf(
-            buyer
-        );
-        expect(balanceOfBuyerAfterSale).equal(
-            balanceOfBuyerBeforeSale.sub(bidAmount)
-        );
+        it('bid1', async () => {
 
-        const bidOwner = await marketplace.getBidOwner(auctionId);
-        expect(bidOwner).equal(buyer);
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer4.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+            const bidAmount = 1001;
+            const buyer = await payload.deployer.address;
+            const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
+                buyer
+            );
+            const tx = marketplace.placeBid(
+                auctionId,
+                bidAmount
+            );
+            await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
+                auctionId,
+                bidAmount
+            );
 
-        const bidPrice = await marketplace.getBidPrice(auctionId);
-        expect(bidPrice).equal(bidAmount);
+            // balance of buyer should be deducted
+            const balanceOfBuyerAfterSale = await payload.erc20Token1.balanceOf(
+                buyer
+            );
+            expect(balanceOfBuyerAfterSale).equal(
+                balanceOfBuyerBeforeSale.sub(bidAmount)
+            );
+
+            const bidOwner = await marketplace.getBidOwner(auctionId);
+            expect(bidOwner).equal(buyer);
+
+            const bidPrice = await marketplace.getBidPrice(auctionId);
+            expect(bidPrice).equal(bidAmount);
+        })
+
+        it('bid with same price', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer4.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+            const bidAmount = 1001;
+            const tx = marketplace.placeBid(
+                auctionId,
+                bidAmount
+            );
+            await expect(tx).to.revertedWith('New bid price must be higher than current bid');
+        })
+
+        it('bid 2', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer4.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+            const bidAmount = 1002;
+            const buyer = await payload.signer2.address;
+            const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
+                buyer
+            );
+
+            await payload.erc20Token1.connect(payload.signer2).approve(payload.marketplace.address, ethers.constants.MaxUint256)
+
+            const previousBidOwner = await marketplace.getBidOwner(auctionId);
+            const previousBidAmount = await marketplace.getBidPrice(auctionId);
+            const previousBidOwnerBalance = await payload.erc20Token1.balanceOf(previousBidOwner);
+
+            const tx = marketplace.connect(payload.signer2).placeBid(
+                auctionId,
+                bidAmount
+            );
+            await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
+                auctionId,
+                bidAmount
+            );
+
+            // balance of buyer should be deducted
+            const balanceOfBuyerAfterSale = await payload.erc20Token1.balanceOf(
+                buyer
+            );
+            expect(balanceOfBuyerAfterSale).equal(
+                balanceOfBuyerBeforeSale.sub(bidAmount)
+            );
+
+            const bidOwner = await marketplace.getBidOwner(auctionId);
+            expect(bidOwner).equal(buyer);
+
+            const bidPrice = await marketplace.getBidPrice(auctionId);
+            expect(bidPrice).equal(bidAmount);
+
+            // check for refund of previousBidOwner
+
+            const previousBidOwnerBalanceAfterSale = await payload.erc20Token1.balanceOf(previousBidOwner);
+            expect(previousBidOwnerBalanceAfterSale).equal(
+                previousBidOwnerBalance.add(previousBidAmount)
+            );
+        })
     })
+
+
 }

@@ -417,37 +417,36 @@ contract OSNFTMarketPlaceBase is
             "New bid price must be higher than current bid"
         );
 
-        address buyer = _msgSender();
+        address newBidder = _msgSender();
 
         // check if new bider is not the owner
         require(
-            buyer != auction.seller,
+            newBidder != auction.seller,
             "Creator of auction cannot place new bid"
-        );
-
-        // get ERC20 token contract
-        ERC20Upgradeable paymentToken = ERC20Upgradeable(
-            auction.paymentTokenAddress
         );
 
         // transfer token from new bider account to the marketplace account
         // to lock the tokens
-        require(
-            paymentToken.transferFrom(buyer, address(this), bidAmount),
-            "Tranfer of token failed"
+
+        _requirePayment(
+            auction.paymentTokenAddress,
+            newBidder,
+            address(this),
+            bidAmount
         );
 
         // new bid is valid so must refund the current bid owner (if there is one!)
         if (auction.bidCount > 0) {
-            paymentToken.transfer(
+            _requireTransferFromMarketplace(
                 auction.currentBidOwner,
-                auction.currentBidPrice
+                auction.currentBidPrice,
+                auction.paymentTokenAddress
             );
         }
 
         // update auction info
-        address payable newBidOwner = payable(msg.sender);
-        auction.currentBidOwner = newBidOwner;
+
+        auction.currentBidOwner = newBidder;
         auction.currentBidPrice = bidAmount;
         auction.bidCount++;
 
@@ -520,6 +519,15 @@ contract OSNFTMarketPlaceBase is
         returns (uint256)
     {
         return _balance[user][tokenAddress];
+    }
+
+    function _requireTransferFromMarketplace(
+        address to,
+        uint256 amount,
+        address tokenAddress
+    ) internal {
+        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
+        require(paymentToken.transfer(to, amount), "Payment failed");
     }
 
     function withdrawToken(address tokenAddress) external {

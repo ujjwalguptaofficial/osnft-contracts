@@ -29,7 +29,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(4132347);
+        expect(estimatedGas).equal(4093786);
 
     })
 
@@ -44,6 +44,7 @@ export function testMarketplace(payload: IDeployedPayload) {
 
         await payload.erc20Token1.mint(payload.deployer.address, 900000000000);
         await payload.erc20Token1.mint(payload.signer4.address, 900000000000);
+        await payload.erc20Token1.mint(payload.signer2.address, 900000000000);
     })
 
     describe('payable token', () => {
