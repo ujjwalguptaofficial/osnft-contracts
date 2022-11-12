@@ -214,9 +214,8 @@ contract OSNFTMarketPlaceBase is
     function _processNFTSell(NftSellData memory sellData) internal {
         address seller = sellData.seller;
 
-        address nftOwner = sellData.sellType == SELL_TYPE.Buy
-            ? seller
-            : address(this);
+        bool isBuySell = sellData.sellType == SELL_TYPE.Buy;
+        address nftOwner = isBuySell ? seller : address(this);
 
         uint256 price = sellData.price;
         bytes32 nftId = sellData.tokenId;
@@ -225,7 +224,7 @@ contract OSNFTMarketPlaceBase is
 
         // transfer price amount from buyer to marketplace
         // in case of BID - amount is already taken to marketplace
-        if (sellData.sellType == SELL_TYPE.Buy) {
+        if (isBuySell) {
             _requirePayment(
                 paymentTokenAddress,
                 sellData.buyer,
