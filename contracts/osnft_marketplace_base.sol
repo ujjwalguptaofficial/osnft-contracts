@@ -248,11 +248,14 @@ contract OSNFTMarketPlaceBase is
             marketPlaceRoyality
         );
         uint256 amountForSeller = price - amountForMarketplace;
-        uint256 amountForCreator;
+
         if (seller != tokenCreator && !_nftContract.isShareToken(nftId)) {
             uint8 percentageOfCreator = _nftContract.creatorCut(nftId);
             if (percentageOfCreator > 0) {
-                amountForCreator = _percentageOf(price, percentageOfCreator);
+                uint256 amountForCreator = _percentageOf(
+                    price,
+                    percentageOfCreator
+                );
 
                 // will not oveflow/ underflow
                 // no underflow - amount for creator will be always less than amountForSeller
@@ -483,7 +486,7 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
-    function refund(bytes32 auctionId) external {
+    function refundAuction(bytes32 auctionId) external {
         _requireAuctioned(auctionId);
 
         // Check if the auction is closed

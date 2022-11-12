@@ -2,6 +2,13 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
 import { mine, time } from "@nomicfoundation/hardhat-network-helpers";
+import { BigNumber, BigNumberish } from "ethers";
+
+const getPercentage = (value: BigNumber, percentage: BigNumberish) => {
+    return value.div(
+        100
+    ).mul(percentage)
+}
 
 export function testBidNFTAuction(payload: IDeployedPayload) {
     it('require valid auction id', async () => {
@@ -182,6 +189,8 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
             it('when auction end', async () => {
 
+                const erc20Token = payload.erc20Token1;
+
                 console.log("timestamp of latest block", await time.latest());
                 await mine(100);
                 console.log("timestamp of latest block", await time.latest());
@@ -193,14 +202,36 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                     nftId,
                     seller
                 );
+                const currentBidAmount = await marketplace.getBidPrice(auctionId);
+                const balanceOfMarketplaceBeforeSale = await erc20Token.balanceOf(marketplace.address);
+                const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
+
 
                 const tx = marketplace.claimNFT(auctionId);
                 await expect(tx).emit(marketplace, 'NFTClaimed').withArgs(
                     auctionId, nftId,
                     0,
-                    1002,
+                    currentBidAmount,
                     payload.erc20Token1.address
-                )
+                );
+
+                // check for marketplace earning
+
+                const earningForMarketplace = getPercentage(currentBidAmount, 2);
+                const balanceOfMarketplaceAfterSale = await erc20Token.balanceOf(marketplace.address);
+                const balanceOfSellerAfterSale = await erc20Token.balanceOf(seller);
+
+                console.log('earningForMarketplace', earningForMarketplace);
+                console.log('balanceOfMarketplaceBeforeSale', balanceOfMarketplaceBeforeSale);
+                console.log('balanceOfMarketplaceAfterSale', balanceOfMarketplaceAfterSale);
+
+                // expect(balanceOfMarketplaceAfterSale).equal(
+                //     balanceOfMarketplaceBeforeSale.add(earningForMarketplace)
+                // )
+
+                console.log('marketplace earning', balanceOfMarketplaceAfterSale.sub(balanceOfMarketplaceBeforeSale))
+                console.log('seller earning', balanceOfSellerAfterSale.sub(balanceOfSellerBeforeSale))
+
             });
 
             it('when auction no exist', async () => {
@@ -213,6 +244,19 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).to.revertedWith('No auction found');
+            });
+
+            it('refund when claimed', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+                const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.refundAuction(auctionId);
                 await expect(tx).to.revertedWith('No auction found');
             });
         })
