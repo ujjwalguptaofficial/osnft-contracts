@@ -517,19 +517,19 @@ contract OSNFTMarketPlaceBase is
         require(paymentToken.transfer(to, amount), "Payment failed");
     }
 
-    function withdrawPaymentByOwner(address tokenAddress, uint256 amount)
+    function withdrawEarning(address tokenAddress, uint256 amount)
         external
         onlyOwner
     {
-        withdrawPaymentByOwner(tokenAddress, amount, owner());
+        withdrawEarningTo(owner(), tokenAddress, amount);
     }
 
-    function withdrawPaymentByOwner(
+    function withdrawEarningTo(
+        address accountTo,
         address tokenAddress,
-        uint256 amount,
-        address accountTo
+        uint256 amount
     ) public onlyOwner {
-        _requirePayment(tokenAddress, address(this), accountTo, amount);
+        _requireTransferFromMarketplace(accountTo, amount, tokenAddress);
     }
 
     /**
