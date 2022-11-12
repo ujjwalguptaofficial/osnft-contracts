@@ -285,8 +285,8 @@ export function testNFTAuction(payload: IDeployedPayload) {
             payload.projects["jsstore"]
         );
         const seller = payload.deployer.address;
-        const endAuction = addHours(new Date(), 24).getTime();
-
+        // const endAuction = addHours(new Date(), 24).getTime();
+        const endAuction = (await time.latest()) + 200;
         const tx = marketplace.createAuction(
             projectId,
             100,

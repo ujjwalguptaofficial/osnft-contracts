@@ -68,6 +68,22 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
     describe('successful bid', async () => {
 
+        it('bid with zero price', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer4.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+            const bidAmount = 0;
+            const tx = marketplace.placeBid(
+                auctionId,
+                bidAmount
+            );
+            await expect(tx).to.revertedWith('New bid price must be higher than current bid');
+        })
+
         it('bid1', async () => {
 
             const marketplace = payload.marketplace;
@@ -267,6 +283,182 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 const marketplace = payload.marketplace;
                 const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
                 const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.refundAuction(auctionId);
+                await expect(tx).to.revertedWith('No auction found');
+            });
+        })
+    });
+
+    describe('successful bid', async () => {
+
+        it('bid with zero price', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.deployer.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+            const bidAmount = 0;
+            const tx = marketplace.placeBid(
+                auctionId,
+                bidAmount
+            );
+            await expect(tx).to.revertedWith('New bid price must be higher than current bid');
+        })
+
+        it('bid1', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.deployer.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+            const bidAmount = 100001;
+            const buyer = await payload.signer2.address;
+            const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
+                buyer
+            );
+            const balanceOfMarketplaceBeforeSale = await payload.erc20Token1.balanceOf(
+                marketplace.address
+            );
+            const tx = marketplace.connect(payload.signer2).placeBid(
+                auctionId,
+                bidAmount
+            );
+            await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
+                auctionId,
+                bidAmount
+            );
+
+            // balance of buyer should be deducted
+            const balanceOfBuyerAfterSale = await payload.erc20Token1.balanceOf(
+                buyer
+            );
+            expect(balanceOfBuyerAfterSale).equal(
+                balanceOfBuyerBeforeSale.sub(bidAmount)
+            );
+
+            const bidOwner = await marketplace.getBidOwner(auctionId);
+            expect(bidOwner).equal(buyer);
+
+            const bidPrice = await marketplace.getBidPrice(auctionId);
+            expect(bidPrice).equal(bidAmount);
+
+
+            const balanceOfMarketplaceAfterSale = await payload.erc20Token1.balanceOf(
+                marketplace.address
+            );
+            expect(balanceOfMarketplaceAfterSale).equal(
+                balanceOfMarketplaceBeforeSale.add(bidAmount)
+            )
+        })
+
+        it('refund when auction is open', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.deployer.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+
+            const tx = marketplace.refundAuction(auctionId);
+            await expect(tx).to.revertedWith('Auction is still open');
+        });
+
+        describe('claim nft jsstore', async () => {
+            it('when auction is still open', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore"]);
+                const seller = payload.deployer.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).to.revertedWith('Auction is still open');
+            });
+
+            it('successful claim', async () => {
+
+                const erc20Token = payload.erc20Token1;
+
+                console.log("timestamp of latest block", await time.latest());
+                await mine(100);
+                console.log("timestamp of latest block", await time.latest());
+
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore"]);
+                const seller = payload.deployer.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+                const currentBidAmount = await marketplace.getBidPrice(auctionId);
+                const balanceOfMarketplaceBeforeSale = await erc20Token.balanceOf(marketplace.address);
+                const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
+
+                const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).emit(marketplace, 'NFTClaimed').withArgs(
+                    auctionId, nftId,
+                    100,
+                    currentBidAmount,
+                    payload.erc20Token1.address
+                );
+
+                // check for marketplace earning
+
+                const earningForMarketplace = getPercentage(currentBidAmount, 2);
+                const earningForCreator = getPercentage(currentBidAmount,
+                    await payload.nft.creatorCut(
+                        nftId
+                    )
+                );
+                const earningForSeller = currentBidAmount.sub(earningForMarketplace.add(
+                    earningForCreator
+                ));
+
+                const balanceOfMarketplaceAfterSale = await erc20Token.balanceOf(marketplace.address);
+                const balanceOfSellerAfterSale = await erc20Token.balanceOf(seller);
+
+                expect(balanceOfMarketplaceAfterSale).equal(
+                    balanceOfMarketplaceBeforeSale.sub(
+                        earningForCreator
+                            .add(earningForSeller)
+                    )
+                );
+
+                expect(balanceOfSellerAfterSale).equal(
+                    balanceOfSellerBeforeSale.add(earningForSeller)
+                )
+
+            });
+
+            it('when auction no exist', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore"]);
+                const seller = payload.deployer.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).to.revertedWith('No auction found');
+            });
+
+            it('refund when claimed', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore"]);
+                const seller = payload.deployer.address;
                 const auctionId = payload.getSellId(
                     nftId,
                     seller
