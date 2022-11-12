@@ -81,7 +81,13 @@ interface IOSNFTMarketPlaceUpgradeable {
 
     // Public event to notif that winner of an
     // auction claim for his reward
-    event NFTClaimed(bytes32 auctionid, bytes32 tokenId);
+    event NFTClaimed(
+        bytes32 indexed auctionid,
+        bytes32 indexed tokenId,
+        uint32 share,
+        uint256 price,
+        address paymentToken
+    );
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction

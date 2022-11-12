@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
+import { mine, time } from "@nomicfoundation/hardhat-network-helpers";
 
 export function testBidNFTAuction(payload: IDeployedPayload) {
     it('require valid auction id', async () => {
@@ -164,7 +165,56 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 previousBidOwnerBalance.add(previousBidAmount)
             );
         })
-    })
 
+        describe('claim nft', async () => {
+            it('when auction is still open', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+                const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
 
+                const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).to.revertedWith('Auction is still open');
+            });
+
+            it('when auction end', async () => {
+
+                console.log("timestamp of latest block", await time.latest());
+                await mine(100);
+                console.log("timestamp of latest block", await time.latest());
+
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+                const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).emit(marketplace, 'NFTClaimed').withArgs(
+                    auctionId, nftId,
+                    0,
+                    1002,
+                    payload.erc20Token1.address
+                )
+            });
+
+            it('when auction no exist', async () => {
+                const marketplace = payload.marketplace;
+                const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+                const seller = payload.signer4.address;
+                const auctionId = payload.getSellId(
+                    nftId,
+                    seller
+                );
+
+                const tx = marketplace.claimNFT(auctionId);
+                await expect(tx).to.revertedWith('No auction found');
+            });
+        })
+    });
 }

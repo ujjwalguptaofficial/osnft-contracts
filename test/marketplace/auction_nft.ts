@@ -1,3 +1,4 @@
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
@@ -155,13 +156,12 @@ export function testNFTAuction(payload: IDeployedPayload) {
         await expect(tx).revertedWith('ERC721: invalid token ID');
     });
 
-    it('successful auction for jsstore example', async () => {
+    it('estimate gas for successful auction', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
             payload.projects["jsstore-example"]
         );
-        const seller = payload.signer4.address;
-        const endAuction = addHours(new Date(), 24).getTime();
+        const endAuction = new Date().getTime(); //+ 1000; //addHours(, 24).getTime();
         const gas = await marketplace.connect(payload.signer4).estimateGas.createAuction(
             projectId,
             0,
@@ -170,6 +170,21 @@ export function testNFTAuction(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
         expect(gas).equal(237646)
+    })
+
+    it('successful auction for jsstore example', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const seller = payload.signer4.address;
+
+        console.log('blockTimeStamp', await marketplace.geTimeStamp());
+
+        const endAuction = (await time.latest()) + 100; // Math.floor(Date.now() / 1000) + 10000;
+        //        (await time.latest()) + 100000000; // new Date().getTime(); //+ 1000; //addHours(, 24).getTime();
+        console.log('endAuction', endAuction);
+        console.log('blockTimeStamp', await marketplace.geTimeStamp());
         const tx = marketplace.connect(payload.signer4).createAuction(
             projectId,
             0,
@@ -247,12 +262,11 @@ export function testNFTAuction(payload: IDeployedPayload) {
         await expect(tx).revertedWith('Owns less share than input');
     });
 
-    it('successful share auction', async () => {
+    it('estimate gas for successful share auction', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
             payload.projects["jsstore"]
         );
-        const seller = payload.deployer.address;
         const endAuction = addHours(new Date(), 24).getTime();
 
         const gas = await marketplace.estimateGas.createAuction(
@@ -263,6 +277,15 @@ export function testNFTAuction(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
         expect(gas).equal(243339)
+    })
+
+    it('successful share auction', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const seller = payload.deployer.address;
+        const endAuction = addHours(new Date(), 24).getTime();
 
         const tx = marketplace.createAuction(
             projectId,

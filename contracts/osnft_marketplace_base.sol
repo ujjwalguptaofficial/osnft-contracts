@@ -221,15 +221,18 @@ contract OSNFTMarketPlaceBase is
         uint256 price = sellData.price;
         bytes32 nftId = sellData.tokenId;
 
-        // transfer price amount from buyer to marketplace
-
         address paymentTokenAddress = sellData.paymentTokenAddress;
-        _requirePayment(
-            paymentTokenAddress,
-            sellData.buyer,
-            address(this),
-            price
-        );
+
+        // transfer price amount from buyer to marketplace
+        // in case of BID - amount is already taken to marketplace
+        if (sellData.sellType == SELL_TYPE.Buy) {
+            _requirePayment(
+                paymentTokenAddress,
+                sellData.buyer,
+                address(this),
+                price
+            );
+        }
 
         // transfer nft from owner to buyer
         _nftContract.safeTransferFrom(
@@ -315,6 +318,10 @@ contract OSNFTMarketPlaceBase is
         // encodePacked can have hashed collision with multiple arguments,
         // encode is safe
         return keccak256(abi.encode(nftId, seller));
+    }
+
+    function geTimeStamp() external view returns (uint256) {
+        return block.timestamp;
     }
 
     function createAuction(
@@ -451,15 +458,8 @@ contract OSNFTMarketPlaceBase is
         // Check if the auction is closed
         require(!isAuctionOpen(auctionId), "Auction is still open");
 
-        address caller = _msgSender();
-
         // Get auction
-        Auction storage auction = _auctions[auctionId];
-
-        require(
-            caller == auction.seller || caller == auction.currentBidOwner,
-            "Claimable by seller or bid owner"
-        );
+        Auction memory auction = _auctions[auctionId];
 
         delete _auctions[auctionId];
 
@@ -475,7 +475,13 @@ contract OSNFTMarketPlaceBase is
             })
         );
 
-        emit NFTClaimed(auctionId, auction.tokenId);
+        emit NFTClaimed(
+            auctionId,
+            auction.tokenId,
+            auction.share,
+            auction.currentBidPrice,
+            auction.paymentTokenAddress
+        );
     }
 
     function refund(bytes32 auctionId) external {
