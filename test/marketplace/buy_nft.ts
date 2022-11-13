@@ -425,7 +425,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         expect((earningForMarketplace).add(earningForSeller)).equal(totalPrice);
     })
 
-    it('buy mahal webpack loader - 0 % percentage cut, price - max uint value', async () => {
+    it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by creator', async () => {
         const marketplace = payload.marketplace;
         const tokenId = payload.getProjectId(payload.projects["mahal-webpack-loader"]);
         const seller = payload.signer3.address;
@@ -453,7 +453,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const balanceOfBuyerBeforeSale = await erc20Token.balanceOf(buyer);
         const balanceOfMarketPlaceBeforeSale = await erc20Token.balanceOf(payload.marketplace.address);
         const paymentTokenAddress = erc20Token.address;
-
+        const balanceOfCreatorBeforeSale = await payload.erc20Token1.balanceOf(creatorOf);
         const tx = marketplace.connect(payload.signer2).buyNFT(
             sellId,
             0,
@@ -485,6 +485,104 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
 
         expect(balanceOfSeller).equal(
+            earningForSeller.add(balanceOfSellerBeforeSale)
+        );
+
+
+
+        // buyer balance should be deducted
+
+        const balanceOfBuyerAfterBuy = await erc20Token.balanceOf(buyer);
+
+        expect(balanceOfBuyerAfterBuy).equal(
+            balanceOfBuyerBeforeSale.sub(
+                price
+            )
+        )
+
+        const balanceOfCreatorAfterSale = await payload.erc20Token1.balanceOf(creatorOf);
+
+        expect(balanceOfCreatorAfterSale).equal(
+            balanceOfCreatorBeforeSale
+        );
+
+
+        expect((earningForMarketplace).add(earningForSeller)).equal(price);
+    });
+
+    it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by not creator', async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(payload.projects["mahal-webpack-loader"]);
+        const seller = payload.signer2.address;
+        const buyer = payload.signer4.address;
+
+        const erc20Token = payload.erc20Token2;
+
+        const price = ethers.constants.MaxUint256;
+
+        // const balanceOfSeller = 
+
+        // transfer amount to buyer so that he can buy
+        const balanceOfMarketPlaceForToken2 = await erc20Token.balanceOf(marketplace.address);
+        await marketplace.withdrawEarningTo(buyer, erc20Token.address, balanceOfMarketPlaceForToken2);
+        // await erc20Token.connect(marketplace).transfer(balanceOfMarketPlaceForToken2,)
+        await erc20Token.connect(payload.signer3).transfer(buyer, price.sub(balanceOfMarketPlaceForToken2));
+
+
+        // add on sale
+
+        await marketplace.connect(payload.signer2).listNFTOnSale(tokenId, 0, price, erc20Token.address);
+
+        const sellId = payload.getSellId(
+            tokenId,
+            seller
+        );
+        const creatorOf = await payload.nft.creatorOf(tokenId);
+        const ownerOf = await payload.nft.ownerOf(tokenId);
+        expect(creatorOf).not.equal(ownerOf);
+
+        expect(buyer).not.equal(seller);
+
+        //(await marketplace.getNFTFromSale(sellId)).price;
+
+        await erc20Token.connect(payload.signer4).approve(marketplace.address, ethers.constants.MaxUint256);
+
+        const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
+        const balanceOfBuyerBeforeSale = await erc20Token.balanceOf(buyer);
+        const balanceOfMarketPlaceBeforeSale = await erc20Token.balanceOf(payload.marketplace.address);
+        const paymentTokenAddress = erc20Token.address;
+
+        const tx = marketplace.connect(payload.signer4).buyNFT(
+            sellId,
+            0,
+            price
+        );
+        await expect(tx).emit(payload.marketplace, 'NFTBought').withArgs(
+            buyer, tokenId, price, 0
+        );
+
+        // check nft owner
+
+        const newOwner = await payload.nft.ownerOf(tokenId);
+        expect(newOwner).equal(buyer);
+
+        // check marketplace money
+
+        const earningForMarketplace = getPercentage(price, 2);
+        const earningForSeller = price.sub(earningForMarketplace); //getPercentage(price, 98);
+
+        // check marketplace money
+
+        const balanceOfMarketPlace = await erc20Token.balanceOf(payload.marketplace.address);
+        expect(balanceOfMarketPlace).equal(
+            earningForMarketplace.add(balanceOfMarketPlaceBeforeSale)
+        );
+
+        const balanceOfSellerAfterSale = await erc20Token.balanceOf(seller);
+
+
+
+        expect(balanceOfSellerAfterSale).equal(
             earningForSeller.add(balanceOfSellerBeforeSale)
         );
 
