@@ -50,7 +50,7 @@ interface IOSNFTMarketPlaceUpgradeable {
     );
 
     event NFTSaleUpdated(
-        bytes32 sellId,
+        bytes32 indexed sellId,
         uint32 share,
         uint256 price,
         address paymentTokenAddress

@@ -32,7 +32,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(3853426);
+        expect(estimatedGas).equal(3853222);
 
     })
 
