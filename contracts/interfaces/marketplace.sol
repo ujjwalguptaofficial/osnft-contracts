@@ -56,7 +56,11 @@ interface IOSNFTMarketPlaceUpgradeable {
         address paymentTokenAddress
     );
 
-    event NftSaleCanceled(address indexed seller, bytes32 indexed tokenId);
+    event NftSaleCanceled(
+        bytes32 indexed auctionId,
+        bytes32 indexed tokenId,
+        address canceledBy
+    );
 
     event NFTBought(
         address indexed buyer,
@@ -69,7 +73,7 @@ interface IOSNFTMarketPlaceUpgradeable {
     event NewAuction(
         bytes32 indexed tokenId,
         address indexed seller,
-        bytes32 auctionId,
+        bytes32 indexed auctionId,
         uint32 share,
         uint256 bidPrice,
         uint256 endAuction,

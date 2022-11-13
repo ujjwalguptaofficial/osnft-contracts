@@ -152,8 +152,8 @@ contract OSNFTMarketPlaceBase is
         // should be owner
         _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
 
-        delete (_sellListings[sellId]);
-        emit NftSaleCanceled(_msgSender(), listing.tokenId);
+        delete _sellListings[sellId];
+        emit NftSaleCanceled(sellId, listing.tokenId, _msgSender());
     }
 
     function _percentageOf(uint256 value, uint8 percentage)
@@ -161,10 +161,11 @@ contract OSNFTMarketPlaceBase is
         pure
         returns (uint256)
     {
+        // will overflow only if value is zero
+        // percentage is greather than 100 - which comes from nft contract
         unchecked {
-            value = (value / 100);
+            return (value / 100) * percentage;
         }
-        return value * (percentage);
     }
 
     function buyNFT(
