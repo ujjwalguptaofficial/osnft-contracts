@@ -28,14 +28,14 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithSign).equal(133236);
+        expect(gasForMintingWithSign).equal(133342);
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
             payload.projects["jsstore-example"],
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(123213);
+        expect(gasForMintingWithoutSign).equal(123319);
     });
 
     describe('percentage cut', async () => {
@@ -73,6 +73,22 @@ export function testMint(payload: IDeployedPayload) {
             expect(owner).equal(deployerAddress);
         })
 
+        it('mint with invalid percentage', async () => {
+            const nft = payload.nft;
+            const address = payload.signer2.address;
+
+            let balance = await nft.balanceOf(address);
+            expect(balance).equal(0);
+
+            const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
+
+            let tx = nft.connect(payload.signer2).mint(projectUrl1, 0, 101);
+            await expect(tx).to.revertedWith('Require total share to be below 100');
+
+            tx = nft.connect(payload.signer2).mint(projectUrl1, 0, 100);
+            await expect(tx).to.revertedWith('Require total share to be below 100');
+        })
+
         it('mint mahal-examples for signer2 user', async () => {
             const nft = payload.nft;
             const address = payload.signer2.address;
@@ -99,6 +115,8 @@ export function testMint(payload: IDeployedPayload) {
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
         });
+
+
 
         it('mint by not approver', async () => {
             const nft = payload.nft;
@@ -160,7 +178,7 @@ export function testMint(payload: IDeployedPayload) {
             const { data, signature } = await signMessage(payload.signer2, projectUrl1);
 
             const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 0);
-            await expect(tx).to.revertedWith('total share should not be zero')
+            await expect(tx).to.revertedWith('Total share should not be zero')
         })
 
         it('mint a percentage cut project with shares', async () => {

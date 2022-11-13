@@ -50,12 +50,7 @@ describe("contracts", () => {
 
 
         // const deploymentData = ct.interface.encodeDeploy(constructorArguments);
-        const deploymentData = ct.getDeployTransaction({
 
-        });
-        const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
-
-        expect(estimatedGas).equal(4763721);
 
         const deployedContract = await upgrades.deployProxy(ct, constructorArguments, {
             initializer: 'initialize',
@@ -74,8 +69,16 @@ describe("contracts", () => {
 
         console.log('nft deployed');
 
+    })
 
+    it('gas estimate for nft contract deployment', async () => {
+        const ct = await ethers.getContractFactory('OSNFT');
+        const deploymentData = ct.getDeployTransaction({
 
+        });
+        const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
+
+        expect(estimatedGas).equal(4821903);
     })
 
     describe('Approver', () => {

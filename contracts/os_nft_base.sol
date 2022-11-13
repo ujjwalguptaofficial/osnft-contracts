@@ -402,15 +402,21 @@ contract OSNFTBase is
             _balances[to] += 1;
         }
 
+        if (nftType == NFT_TYPE.Equity) {
+            totalShare = 100;
+            nftType = NFT_TYPE.Share;
+        }
+
         // equity
         if (nftType == NFT_TYPE.Share) {
-            require(totalShare > 0, "total share should not be zero");
+            require(totalShare > 0, "Total share should not be zero");
 
             EquityTokenInfo storage token = _equityTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
             token.allShareOwner = to;
         } else {
+            require(totalShare < 100, "Require total share to be below 100");
             _percentageTokens[tokenId] = PercentageTokenInfo({
                 creator: to,
                 creatorCut: uint8(totalShare),

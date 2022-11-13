@@ -11,7 +11,8 @@ import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeabl
 interface IERC721Upgradeable is IERC165Upgradeable {
     enum NFT_TYPE {
         PercentageCut,
-        Share
+        Share,
+        Equity
     }
 
     /**

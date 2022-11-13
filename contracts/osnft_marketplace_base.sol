@@ -83,7 +83,7 @@ contract OSNFTMarketPlaceBase is
         bytes32 tokenId,
         uint32 share,
         bytes calldata data
-    ) external returns (bytes4) {
+    ) external pure returns (bytes4) {
         return IERC721ReceiverUpgradeable.onERC721Received.selector;
     }
 
