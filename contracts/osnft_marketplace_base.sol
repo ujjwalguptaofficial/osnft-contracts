@@ -27,6 +27,41 @@ contract OSNFTMarketPlaceBase is
 
     uint8 public marketPlaceRoyality;
 
+    mapping(bytes32 => Auction) _auctions;
+
+    function listNFTOnSale(
+        bytes32 tokenId,
+        uint32 share,
+        uint256 price,
+        address erc20token
+    ) external {
+        address caller = _msgSender();
+
+        bytes32 sellId = _getSellId(tokenId, caller);
+
+        //  should not be listed before
+        _requireNotListed(sellId);
+
+        // should be owner
+        _requireNftOwner(tokenId, caller, share);
+
+        _listItem(tokenId, share, price, erc20token);
+
+        emit NFTSaleAdded(tokenId, caller, sellId, share, price, erc20token);
+    }
+
+    function addPayableToken(address token) external onlyOwner {
+        _erc20TokensAllowed[token] = true;
+    }
+
+    function removePayableToken(address token) external onlyOwner {
+        delete _erc20TokensAllowed[token];
+    }
+
+    function isPayableToken(address token) public view returns (bool) {
+        return _erc20TokensAllowed[token];
+    }
+
     /**
      * @dev Initializes the contract
      */
@@ -62,109 +97,6 @@ contract OSNFTMarketPlaceBase is
         } else {
             address owner = _nftContract.ownerOf(tokenId);
             require(spender == owner, "Require NFT ownership");
-        }
-    }
-
-    function addPayableToken(address token) external onlyOwner {
-        _erc20TokensAllowed[token] = true;
-    }
-
-    function removePayableToken(address token) external onlyOwner {
-        delete _erc20TokensAllowed[token];
-    }
-
-    function isPayableToken(address token) public view returns (bool) {
-        return _erc20TokensAllowed[token];
-    }
-
-    function onERC721Received(
-        address operator,
-        address from,
-        bytes32 tokenId,
-        uint32 share,
-        bytes calldata data
-    ) external pure returns (bytes4) {
-        return IERC721ReceiverUpgradeable.onERC721Received.selector;
-    }
-
-    function listNFTOnSale(
-        bytes32 tokenId,
-        uint32 share,
-        uint256 price,
-        address erc20token
-    ) external {
-        address caller = _msgSender();
-
-        bytes32 sellId = _getSellId(tokenId, caller);
-
-        //  should not be listed before
-        _requireNotListed(sellId);
-
-        // should be owner
-        _requireNftOwner(tokenId, caller, share);
-
-        _listItem(tokenId, share, price, erc20token);
-
-        emit NFTSaleAdded(tokenId, caller, sellId, share, price, erc20token);
-    }
-
-    function _requirePayableToken(address payableToken) internal view {
-        require(isPayableToken(payableToken), "Invalid payment token");
-    }
-
-    function _requireTokenApproved(bytes32 tokenId) internal view {
-        // token should be approved for marketplace, so that it can transfer to buyer
-        // in case of osnft, it won't happen but let's add this
-
-        require(
-            _nftContract.isApprovedForAll(_msgSender(), address(this)) ||
-                _nftContract.getApproved(tokenId) == address(this),
-            "Require NFT ownership transfer approval"
-        );
-    }
-
-    function _listItem(
-        bytes32 tokenId,
-        uint32 share,
-        uint256 price,
-        address paymentTokenAddress
-    ) internal {
-        require(price > 0, "Price must be above zero");
-
-        _requirePayableToken(paymentTokenAddress);
-
-        _requireTokenApproved(tokenId);
-
-        bytes32 sellId = _getSellId(tokenId, _msgSender());
-        _sellListings[sellId] = Listing({
-            tokenId: tokenId,
-            price: price,
-            seller: _msgSender(),
-            share: share,
-            paymentTokenAddress: paymentTokenAddress
-        });
-    }
-
-    function removeNFTSale(bytes32 sellId) external {
-        // nft should be listed
-        Listing memory listing = _requireListed(sellId);
-
-        // should be owner
-        _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
-
-        delete _sellListings[sellId];
-        emit NftSaleCanceled(sellId, listing.tokenId, _msgSender());
-    }
-
-    function _percentageOf(uint256 value, uint8 percentage)
-        internal
-        pure
-        returns (uint256)
-    {
-        // will overflow only if value is zero
-        // percentage is greather than 100 - which comes from nft contract
-        unchecked {
-            return (value / 100) * percentage;
         }
     }
 
@@ -213,84 +145,15 @@ contract OSNFTMarketPlaceBase is
         emit NFTBought(buyer, tokenId, price, share);
     }
 
-    function _processNFTSell(NftSellData memory sellData) internal {
-        address seller = sellData.seller;
+    function removeNFTSale(bytes32 sellId) external {
+        // nft should be listed
+        Listing memory listing = _requireListed(sellId);
 
-        bool isBuySell = sellData.sellType == SELL_TYPE.Buy;
-        address nftOwner = isBuySell ? seller : address(this);
+        // should be owner
+        _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
 
-        uint256 price = sellData.price;
-        bytes32 nftId = sellData.tokenId;
-
-        address paymentTokenAddress = sellData.paymentTokenAddress;
-
-        // transfer price amount from buyer to marketplace
-        // in case of BID - amount is already taken to marketplace
-        if (isBuySell) {
-            _requirePayment(
-                paymentTokenAddress,
-                sellData.buyer,
-                address(this),
-                price
-            );
-        }
-
-        // transfer nft from owner to buyer
-        _nftContract.safeTransferFrom(
-            nftOwner,
-            sellData.buyer,
-            nftId,
-            sellData.share
-        );
-
-        address tokenCreator = _nftContract.creatorOf(nftId);
-
-        uint256 amountForMarketplace = _percentageOf(
-            price,
-            marketPlaceRoyality
-        );
-        uint256 amountForSeller = price - amountForMarketplace;
-
-        if (seller != tokenCreator && !_nftContract.isShareToken(nftId)) {
-            uint8 percentageOfCreator = _nftContract.creatorCut(nftId);
-            if (percentageOfCreator > 0) {
-                uint256 amountForCreator = _percentageOf(
-                    price,
-                    percentageOfCreator
-                );
-
-                // will not oveflow/ underflow
-                // no underflow - amount for creator will be always less than amountForSeller
-                // no overflow as substraction and amountForCreator will be always positive as uint
-                unchecked {
-                    amountForSeller = amountForSeller - amountForCreator;
-                }
-
-                // transfer creator money
-                _requireTransferFromMarketplace(
-                    tokenCreator,
-                    amountForCreator,
-                    paymentTokenAddress
-                );
-            }
-        }
-
-        // transfer seller money
-        _requireTransferFromMarketplace(
-            seller,
-            amountForSeller,
-            paymentTokenAddress
-        );
-    }
-
-    function _requirePayment(
-        address tokenAddress,
-        address from,
-        address to,
-        uint256 price
-    ) internal {
-        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
-        require(paymentToken.transferFrom(from, to, price), "Payment failed");
+        delete _sellListings[sellId];
+        emit NftSaleCanceled(sellId, listing.tokenId, _msgSender());
     }
 
     function updateNFTOnSale(
@@ -310,18 +173,6 @@ contract OSNFTMarketPlaceBase is
         returns (Listing memory)
     {
         return _sellListings[sellId];
-    }
-
-    mapping(bytes32 => Auction) _auctions;
-
-    function _getSellId(bytes32 nftId, address seller)
-        internal
-        pure
-        returns (bytes32)
-    {
-        // encodePacked can have hashed collision with multiple arguments,
-        // encode is safe
-        return keccak256(abi.encode(nftId, seller));
     }
 
     function createAuction(
@@ -381,16 +232,6 @@ contract OSNFTMarketPlaceBase is
     function isAuctionOpen(bytes32 auctionId) public view returns (bool) {
         Auction storage auction = _auctions[auctionId];
         return auction.endAuction > block.timestamp;
-    }
-
-    function _requireAuctioned(bytes32 auctionId)
-        internal
-        view
-        returns (Auction memory)
-    {
-        Auction memory auction = _auctions[auctionId];
-        require(auction.currentBidPrice > 0, "No auction found");
-        return auction;
     }
 
     function getBidOwner(bytes32 auctionId) external view returns (address) {
@@ -509,15 +350,6 @@ contract OSNFTMarketPlaceBase is
         emit NFTRefunded(auctionId, auction.tokenId, auction.share);
     }
 
-    function _requireTransferFromMarketplace(
-        address to,
-        uint256 amount,
-        address tokenAddress
-    ) internal {
-        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
-        require(paymentToken.transfer(to, amount), "Payment failed");
-    }
-
     function withdrawEarning(address tokenAddress, uint256 amount)
         external
         onlyOwner
@@ -531,6 +363,174 @@ contract OSNFTMarketPlaceBase is
         uint256 amount
     ) public onlyOwner {
         _requireTransferFromMarketplace(accountTo, amount, tokenAddress);
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        bytes32 tokenId,
+        uint32 share,
+        bytes calldata data
+    ) external pure returns (bytes4) {
+        return IERC721ReceiverUpgradeable.onERC721Received.selector;
+    }
+
+    function _requirePayableToken(address payableToken) internal view {
+        require(isPayableToken(payableToken), "Invalid payment token");
+    }
+
+    function _requireTokenApproved(bytes32 tokenId) internal view {
+        // token should be approved for marketplace, so that it can transfer to buyer
+        // in case of osnft, it won't happen but let's add this
+
+        require(
+            _nftContract.isApprovedForAll(_msgSender(), address(this)) ||
+                _nftContract.getApproved(tokenId) == address(this),
+            "Require NFT ownership transfer approval"
+        );
+    }
+
+    function _listItem(
+        bytes32 tokenId,
+        uint32 share,
+        uint256 price,
+        address paymentTokenAddress
+    ) internal {
+        require(price > 0, "Price must be above zero");
+
+        _requirePayableToken(paymentTokenAddress);
+
+        _requireTokenApproved(tokenId);
+
+        bytes32 sellId = _getSellId(tokenId, _msgSender());
+        _sellListings[sellId] = Listing({
+            tokenId: tokenId,
+            price: price,
+            seller: _msgSender(),
+            share: share,
+            paymentTokenAddress: paymentTokenAddress
+        });
+    }
+
+    function _percentageOf(uint256 value, uint8 percentage)
+        internal
+        pure
+        returns (uint256)
+    {
+        // will overflow only if value is zero
+        // percentage is greather than 100 - which comes from nft contract
+        unchecked {
+            return (value / 100) * percentage;
+        }
+    }
+
+    function _processNFTSell(NftSellData memory sellData) internal {
+        address seller = sellData.seller;
+
+        bool isBuySell = sellData.sellType == SELL_TYPE.Buy;
+        address nftOwner = isBuySell ? seller : address(this);
+
+        uint256 price = sellData.price;
+        bytes32 nftId = sellData.tokenId;
+
+        address paymentTokenAddress = sellData.paymentTokenAddress;
+
+        // transfer price amount from buyer to marketplace
+        // in case of BID - amount is already taken to marketplace
+        if (isBuySell) {
+            _requirePayment(
+                paymentTokenAddress,
+                sellData.buyer,
+                address(this),
+                price
+            );
+        }
+
+        // transfer nft from owner to buyer
+        _nftContract.safeTransferFrom(
+            nftOwner,
+            sellData.buyer,
+            nftId,
+            sellData.share
+        );
+
+        address tokenCreator = _nftContract.creatorOf(nftId);
+
+        uint256 amountForMarketplace = _percentageOf(
+            price,
+            marketPlaceRoyality
+        );
+        uint256 amountForSeller = price - amountForMarketplace;
+
+        if (seller != tokenCreator && !_nftContract.isShareToken(nftId)) {
+            uint8 percentageOfCreator = _nftContract.creatorCut(nftId);
+            if (percentageOfCreator > 0) {
+                uint256 amountForCreator = _percentageOf(
+                    price,
+                    percentageOfCreator
+                );
+
+                // will not oveflow/ underflow
+                // no underflow - amount for creator will be always less than amountForSeller
+                // no overflow as substraction and amountForCreator will be always positive as uint
+                unchecked {
+                    amountForSeller = amountForSeller - amountForCreator;
+                }
+
+                // transfer creator money
+                _requireTransferFromMarketplace(
+                    tokenCreator,
+                    amountForCreator,
+                    paymentTokenAddress
+                );
+            }
+        }
+
+        // transfer seller money
+        _requireTransferFromMarketplace(
+            seller,
+            amountForSeller,
+            paymentTokenAddress
+        );
+    }
+
+    function _requirePayment(
+        address tokenAddress,
+        address from,
+        address to,
+        uint256 price
+    ) internal {
+        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
+        require(paymentToken.transferFrom(from, to, price), "Payment failed");
+    }
+
+    function _getSellId(bytes32 nftId, address seller)
+        internal
+        pure
+        returns (bytes32)
+    {
+        // encodePacked can have hashed collision with multiple arguments,
+        // encode is safe
+        return keccak256(abi.encode(nftId, seller));
+    }
+
+    function _requireAuctioned(bytes32 auctionId)
+        internal
+        view
+        returns (Auction memory)
+    {
+        Auction memory auction = _auctions[auctionId];
+        require(auction.currentBidPrice > 0, "No auction found");
+        return auction;
+    }
+
+    function _requireTransferFromMarketplace(
+        address to,
+        uint256 amount,
+        address tokenAddress
+    ) internal {
+        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
+        require(paymentToken.transfer(to, amount), "Payment failed");
     }
 
     /**
