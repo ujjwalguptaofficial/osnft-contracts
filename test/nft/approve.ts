@@ -36,8 +36,6 @@ export function testApprove(payload: IDeployedPayload) {
         const projectUrl = payload.projects["jsstore-example"];
         const expectedTokenId = payload.getProjectId(projectUrl);
 
-        const owner = await payload.nft.ownerOf(expectedTokenId);
-
         const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32)"](
             payload.signer3.address,
             expectedTokenId
@@ -114,4 +112,8 @@ export function testApprove(payload: IDeployedPayload) {
         expect(approvedValueWithoutShare).equal(approvedAddress);
 
     })
+
+   
+
+
 }

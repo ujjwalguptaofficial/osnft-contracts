@@ -13,11 +13,13 @@ export interface IDeployedPayload {
     approver: OSNFTApprover,
     marketplace: OSNFTMarketPlace,
     erc20Token1: MyToken,
+    erc20Token2: MyToken,
     projects: {
         'jsstore-example': string;
         'mahal-example': string;
         'mahal': string;
         'jsstore': string;
+        'mahal-webpack-loader': string;
     },
     getProjectId: (projectUrl: string) => string
     getSellId: (tokenId: string, from: string) => string

@@ -32,11 +32,11 @@ export function testMarketplace(payload: IDeployedPayload) {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(3854302);
+        expect(estimatedGas).equal(3853426);
 
     })
 
-    it('deploy erc20 token', async () => {
+    it('deploy erc20 token1', async () => {
         const contract = await ethers.getContractFactory('MyToken');
 
         const deployedContract = await upgrades.deployProxy(
@@ -48,6 +48,18 @@ export function testMarketplace(payload: IDeployedPayload) {
         await payload.erc20Token1.mint(payload.deployer.address, 900000000000);
         await payload.erc20Token1.mint(payload.signer4.address, 900000000000);
         await payload.erc20Token1.mint(payload.signer2.address, 900000000000);
+    })
+
+    it('deploy erc20 token 2', async () => {
+        const contract = await ethers.getContractFactory('MyToken');
+
+        const deployedContract = await upgrades.deployProxy(
+            contract, ["MyToken2", "MT2"], {
+            initializer: 'initialize',
+        }) as any;
+        payload.erc20Token2 = deployedContract;
+
+        await payload.erc20Token2.mint(payload.signer2.address, ethers.constants.MaxUint256);
     })
 
     describe('payable token', () => {

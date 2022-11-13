@@ -210,7 +210,7 @@ contract OSNFTMarketPlaceBase is
             })
         );
 
-        emit NFTBought(buyer, tokenId, listedItem.price, share);
+        emit NFTBought(buyer, tokenId, price, share);
     }
 
     function _processNFTSell(NftSellData memory sellData) internal {

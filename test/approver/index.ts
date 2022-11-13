@@ -171,4 +171,30 @@ export function testApprover(payload: IDeployedPayload) {
         expect(approvedValue).equal(address);
     })
 
+    it('add project mahal webpack loader', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["mahal-webpack-loader"]
+        );
+        const address = payload.signer3.address;
+
+        let approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            tokenId, address
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getProjectApproved(
+            tokenId
+        );
+
+        expect(approvedValue).equal(address);
+    })
+
 }

@@ -154,6 +154,30 @@ export function testMint(payload: IDeployedPayload) {
             );
             await expect(tx).revertedWith('invalid signature')
         })
+
+        it('mint mahal-webpack-loader for signer3 user - 0% percentage cut', async () => {
+            const nft = payload.nft;
+            const address = payload.signer3.address;
+
+            let balance = await nft.balanceOf(address);
+            expect(balance).equal(0);
+
+            const projectUrl = payload.projects["mahal-webpack-loader"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+
+            const tx = nft.connect(payload.signer3).mint(projectUrl, 0, 0);
+            await expect(tx).emit(nft, 'Transfer').withArgs(
+                ethers.constants.AddressZero, address, expectedTokenId
+            );
+
+            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+                projectUrl, 0, 0
+            );
+
+            balance = await nft.balanceOf(address);
+            expect(balance).equal(1);
+        });
+
     })
 
     describe('shares', async () => {
@@ -166,6 +190,7 @@ export function testMint(payload: IDeployedPayload) {
 
             try {
                 const tx = await nft.mintTo(data, signature, address, projectUrl1, 1, 4294967295 + 1);
+                throw "there should be error";
             } catch (error: any) {
                 expect(error.message.includes('value out-of-bounds')).equal(true)
             }

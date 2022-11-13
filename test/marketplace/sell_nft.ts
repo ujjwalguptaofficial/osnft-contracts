@@ -300,4 +300,37 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nftData.tokenId).equal(tokenId);
 
     });
+
+    it("add mahal-webpack-loader (percentage cut) on sale", async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(
+            payload.projects["mahal-webpack-loader"]
+        );
+        const price = ethers.constants.MaxUint256.sub(1);
+        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
+            tokenId,
+            0,
+            price,
+            payload.erc20Token2.address
+        );
+        const from = payload.signer3.address;
+        const sellId = payload.getSellId(tokenId, from);
+        await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
+            tokenId,
+            from,
+            sellId,
+            0,
+            price,
+            payload.erc20Token2.address
+        );
+
+        const nftData = await marketplace.getNFTFromSale(sellId);
+
+        expect(nftData.seller).equal(from);
+        expect(nftData.paymentTokenAddress).equal(payload.erc20Token2.address);
+        expect(nftData.share).equal(0);
+        expect(nftData.price).equal(price);
+        expect(nftData.tokenId).equal(tokenId);
+
+    });
 }

@@ -59,5 +59,21 @@ export function testPayableToken(payload: IDeployedPayload) {
 
     })
 
+    it("add payable - token2", async () => {
+        const marketplace = payload.marketplace;
+        const tokenAddress = payload.erc20Token2.address;
+        const isPayableTokenBefore = await marketplace.isPayableToken(
+            tokenAddress
+        );
+        expect(isPayableTokenBefore).equal(false);
+        const tx = await marketplace.addPayableToken(
+            tokenAddress
+        );
+        const isPayableToken = await marketplace.isPayableToken(
+            tokenAddress
+        );
+        expect(isPayableToken).equal(true);
+    })
+
 
 }
