@@ -327,5 +327,47 @@ export function testMint(payload: IDeployedPayload) {
         });
     })
 
+    describe('equity', async () => {
+
+        it('mint godam', async () => {
+            const nft = payload.nft;
+            const address = payload.signer4.address;
+
+            let balance = await nft.balanceOf(address);
+
+            const projectUrl = payload.projects.godam;
+            const expectedTokenId = payload.getProjectId(projectUrl);
+            const { data, signature } = await signMessage(payload.signer4, projectUrl);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl, 2, 0);
+            await expect(tx).emit(nft, 'Transfer').withArgs(
+                ethers.constants.AddressZero,
+                address,
+                expectedTokenId
+            );
+            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+                projectUrl, 1, 100
+            );
+
+            const balanceAfterMint = await nft.balanceOf(address);
+            expect(balanceAfterMint).equal(balance.add(1));
+        });
+
+        it('mint same project', async () => {
+            const nft = payload.nft;
+            const address = payload.signer4.address;
+
+            const projectUrl = payload.projects.godam;
+            const expectedTokenId = payload.getProjectId(projectUrl);
+
+            const { data, signature } = await signMessage(payload.signer4, projectUrl);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl, 1, 10000);
+
+            await expect(tx).to.revertedWith('ERC721: token already minted');
+
+        });
+    })
+
 
 }

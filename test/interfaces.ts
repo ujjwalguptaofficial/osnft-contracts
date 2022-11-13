@@ -19,6 +19,7 @@ export interface IDeployedPayload {
         'mahal-example': string;
         'mahal': string;
         'jsstore': string;
+        'godam': string;
         'mahal-webpack-loader': string;
     },
     getProjectId: (projectUrl: string) => string

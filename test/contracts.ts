@@ -29,7 +29,8 @@ describe("contracts", () => {
             "mahal-example": 'github.com/ujjwalguptaofficial/mahal-examples',
             "mahal": 'github.com/ujjwalguptaofficial/mahal',
             "mahal-webpack-loader": 'github.com/ujjwalguptaofficial/mahal-webpack-loader',
-            "jsstore": 'github.com/ujjwalguptaofficial/jsstore'
+            "jsstore": 'github.com/ujjwalguptaofficial/jsstore',
+            "godam": 'github.com/ujjwalguptaofficial/godam'
         },
         getProjectId,
         getSellId
