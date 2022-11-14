@@ -32,7 +32,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(3853222);
+        expect(estimatedGas).equal(3884910);
 
     })
 
@@ -92,4 +92,26 @@ export function testMarketplace(payload: IDeployedPayload) {
     describe('remove sale nft', () => {
         testRemoveSale(payload);
     });
+
+    describe('royality info', async () => {
+        it('set marketplace royality by non owner', async () => {
+            const marketplace = payload.marketplace;
+            const tx = marketplace.connect(payload.signer2).setRoyality(3);
+
+            await expect(tx).to.revertedWith('Ownable: caller is not the owner')
+        })
+
+        it('set marketplace royality', async () => {
+            const marketplace = payload.marketplace;
+            const royality = await marketplace.getRoyality();
+            expect(royality).equal(2);
+
+            const tx = await marketplace.setRoyality(3);
+
+            const royalityAfterSet = await marketplace.getRoyality();
+            expect(royalityAfterSet).equal(3);
+
+
+        })
+    })
 }

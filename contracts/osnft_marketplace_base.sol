@@ -25,9 +25,17 @@ contract OSNFTMarketPlaceBase is
 
     IERC721Upgradeable private _nftContract;
 
-    uint8 public marketPlaceRoyality;
+    uint8 internal _marketPlaceRoyality;
 
     mapping(bytes32 => Auction) _auctions;
+
+    function getRoyality() external view returns (uint8) {
+        return _marketPlaceRoyality;
+    }
+
+    function setRoyality(uint8 value) external onlyOwner {
+        _marketPlaceRoyality = value;
+    }
 
     function listNFTOnSale(
         bytes32 tokenId,
@@ -67,7 +75,7 @@ contract OSNFTMarketPlaceBase is
      */
     function __MarketPlace_init(address nft_) internal onlyInitializing {
         _nftContract = IERC721Upgradeable(nft_);
-        marketPlaceRoyality = 2;
+        _marketPlaceRoyality = 2;
     }
 
     function _requireNotListed(bytes32 sellId) internal view {
@@ -458,7 +466,7 @@ contract OSNFTMarketPlaceBase is
 
         uint256 amountForMarketplace = _percentageOf(
             price,
-            marketPlaceRoyality
+            _marketPlaceRoyality
         );
         uint256 amountForSeller = price - amountForMarketplace;
 

@@ -72,17 +72,17 @@
     },
     {
       "address": "0x1613beB3B2C4f22Ee086B2b38C1476A3cE7f78E8",
-      "txHash": "0xe434fefd676c7c6231df597d67b380eb1f8092057acbc925fee75b2cd9e987f1",
+      "txHash": "0x972679d33c69540e9ea12767304c52d5dec0d7a28fbd1e89e7e41ea509f3036a",
       "kind": "transparent"
     },
     {
       "address": "0xf5059a5D33d5853360D16C683c16e67980206f36",
-      "txHash": "0x39e57a6e79b8d44a272a1168b765c3158ab8aef5bb79db1a9a616fccb512abe2",
+      "txHash": "0x22fb09523b9949e45b0cf74f3d1ab2b755aa5d46283647456460396475bed0cd",
       "kind": "transparent"
     },
     {
       "address": "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
-      "txHash": "0xd4b5d76dcda7a79f7808b87b7678eb72d24a0d661b83045bda5fd77737bbfde0",
+      "txHash": "0x71fbc391f8885c88935dbdace2380d3206fb7d681b29e7b75593e01f433e19c4",
       "kind": "transparent"
     }
   ],
@@ -200,7 +200,7 @@
     },
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x851356ae760d987E095750cCeb3bC6014560891C",
-      "txHash": "0x14d9f0994eec9674457a11772f84ef84545b7731c1f6cf5a05082ddb984321bf",
+      "txHash": "0xa831b7c174b0c8c2bd8f18c1242b8d7fa4e6c6ad1d70d5bdcfe8263cdc71e14e",
       "layout": {
         "storage": [
           {
@@ -604,9 +604,9 @@
         }
       }
     },
-    "64c9c61c4f5d3bec145ae9454f310ec5c2f07ca9f54e5dea7298f85194d162a4": {
+    "392f8a9a86df53ca80b7a9659e8619de7337fa1a3601a9ef63326850c00bd4fc": {
       "address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
-      "txHash": "0x1d0335f14390bbbf00ef6b3fdcfbbcde84f789dcdba87300817c2c1cc821d5cc",
+      "txHash": "0x8b8da3a21984b1f014fbe41244c427cbce7e99ce527315dbef7697b7e26b9e18",
       "layout": {
         "storage": [
           {
@@ -675,7 +675,7 @@
             "src": "contracts/osnft_marketplace_base.sol:26"
           },
           {
-            "label": "marketPlaceRoyality",
+            "label": "_marketPlaceRoyality",
             "offset": 20,
             "slot": "103",
             "type": "t_uint8",
@@ -696,7 +696,7 @@
             "slot": "105",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:541"
+            "src": "contracts/osnft_marketplace_base.sol:549"
           }
         ],
         "types": {
