@@ -14,6 +14,7 @@ export interface IDeployedPayload {
     marketplace: OSNFTMarketPlace,
     erc20Token1: MyToken,
     erc20Token2: MyToken,
+    nativeToken: MyToken,
     projects: {
         'jsstore-example': string;
         'mahal-example': string;

@@ -26,8 +26,6 @@ export function testNFT(payload: IDeployedPayload) {
         testMint(payload);
     })
 
-    // return;
-
     describe('owner of', async () => {
         testOwnerOf(payload);
     })

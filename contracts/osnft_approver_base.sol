@@ -11,19 +11,26 @@ contract OSNFTApproverBase is
     IOSNFTApproverUpgradeable
 {
     mapping(address => bool) internal _approvers;
-    mapping(bytes32 => address) internal _projectsApproved;
 
-    function approveProject(bytes32 tokenId, address account) external {
+    mapping(bytes32 => ProjectApprovedInfo) internal _projectsApproved;
+
+    uint256 internal _worthConstant;
+    uint256 internal _oneToken;
+
+    function approveProject(ProjectApproveRequest memory data) external {
         require(_approvers[_msgSender()], "only approvers allowed");
-        _projectsApproved[tokenId] = account;
-        emit ProjectApproved(tokenId, account);
+        _projectsApproved[data.tokenId] = ProjectApprovedInfo({
+            mintTo: data.mintTo,
+            worth: worthOfProject(data.starCount, data.forkCount)
+        });
+        emit ProjectApproved(data.tokenId, data.mintTo);
     }
 
-    function getProjectApproved(bytes32 tokenId)
+    function getApprovedProject(bytes32 tokenId)
         external
         view
         override
-        returns (address)
+        returns (ProjectApprovedInfo memory)
     {
         return _projectsApproved[tokenId];
     }
@@ -42,7 +49,21 @@ contract OSNFTApproverBase is
         emit ApproverRemoved(account);
     }
 
-    function __OSNFTApproverInitialize__() internal onlyInitializing {}
+    function __OSNFTApproverInitialize__() internal onlyInitializing {
+        _worthConstant = 10**13;
+        _oneToken = 10**18;
+    }
+
+    function worthOfProject(uint256 starCount, uint256 forkCount)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 value = (_worthConstant * starCount * 4) +
+            (_worthConstant * forkCount * 2);
+        // worth can not be more than one token
+        return value > _oneToken ? _oneToken : value;
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

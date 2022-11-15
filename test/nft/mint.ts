@@ -28,14 +28,14 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithSign).equal(133342);
+        expect(gasForMintingWithSign).equal(187145);
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
             payload.projects["jsstore-example"],
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(123319);
+        expect(gasForMintingWithoutSign).equal(176629);
     });
 
     describe('percentage cut', async () => {

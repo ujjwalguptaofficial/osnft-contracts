@@ -49,9 +49,12 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.deployer.address;
 
-        const tx = payload.approver.connect(payload.signer4).approveProject(
-            tokenId, address
-        );
+        const tx = payload.approver.connect(payload.signer4).approveProject({
+            tokenId,
+            mintTo: address,
+            starCount: 0,
+            forkCount: 0
+        });
         await expect(tx).revertedWith('only approvers allowed');
     })
 
@@ -62,9 +65,14 @@ export function testApprover(payload: IDeployedPayload) {
         const address = payload.deployer.address;
 
         const tx = await payload.approver.estimateGas.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 0,
+                forkCount: 0
+            }
         );
-        await expect(tx).equal(56402);
+        await expect(tx).equal(65628);
     })
 
     it('add project jsstore-example', async () => {
@@ -73,24 +81,29 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.deployer.address;
 
-        let approvedValue = await payload.approver.getProjectApproved(
+        let approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(ethers.constants.AddressZero);
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
 
         const tx = payload.approver.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 32,
+                forkCount: 35
+            }
         );
         await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
             tokenId, address
         )
 
-        approvedValue = await payload.approver.getProjectApproved(
+        approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(address);
+        expect(approvedValue.mintTo).equal(address);
     })
 
     it('add project mahal-example', async () => {
@@ -99,24 +112,29 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.signer2.address;
 
-        let approvedValue = await payload.approver.getProjectApproved(
+        let approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(ethers.constants.AddressZero);
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
 
         const tx = payload.approver.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 0,
+                forkCount: 0
+            }
         );
         await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
             tokenId, address
         )
 
-        approvedValue = await payload.approver.getProjectApproved(
+        approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(address);
+        expect(approvedValue.mintTo).equal(address);
     })
 
     it('add project mahal', async () => {
@@ -125,24 +143,29 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.signer2.address;
 
-        let approvedValue = await payload.approver.getProjectApproved(
+        let approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(ethers.constants.AddressZero);
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
 
         const tx = payload.approver.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 45,
+                forkCount: 2
+            }
         );
         await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
             tokenId, address
         )
 
-        approvedValue = await payload.approver.getProjectApproved(
+        approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(address);
+        expect(approvedValue.mintTo).equal(address);
     })
 
     it('add project jsstore', async () => {
@@ -151,24 +174,29 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.deployer.address;
 
-        let approvedValue = await payload.approver.getProjectApproved(
+        let approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(ethers.constants.AddressZero);
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
 
         const tx = payload.approver.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 665,
+                forkCount: 98
+            }
         );
         await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
             tokenId, address
         )
 
-        approvedValue = await payload.approver.getProjectApproved(
+        approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(address);
+        expect(approvedValue.mintTo).equal(address);
     })
 
     it('add project mahal webpack loader', async () => {
@@ -177,24 +205,29 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.signer3.address;
 
-        let approvedValue = await payload.approver.getProjectApproved(
+        let approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(ethers.constants.AddressZero);
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
 
         const tx = payload.approver.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 0,
+                forkCount: 0
+            }
         );
         await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
             tokenId, address
         )
 
-        approvedValue = await payload.approver.getProjectApproved(
+        approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(address);
+        expect(approvedValue.mintTo).equal(address);
     })
 
     it('add project godam', async () => {
@@ -203,24 +236,29 @@ export function testApprover(payload: IDeployedPayload) {
         );
         const address = payload.signer4.address;
 
-        let approvedValue = await payload.approver.getProjectApproved(
+        let approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(ethers.constants.AddressZero);
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
 
         const tx = payload.approver.approveProject(
-            tokenId, address
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 4,
+                forkCount: 1
+            }
         );
         await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
             tokenId, address
         )
 
-        approvedValue = await payload.approver.getProjectApproved(
+        approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
-        expect(approvedValue).equal(address);
+        expect(approvedValue.mintTo).equal(address);
     })
 
 }

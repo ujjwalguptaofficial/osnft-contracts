@@ -7,6 +7,18 @@ pragma solidity ^0.8.0;
  * @dev Required interface of an approver contract
  */
 interface IOSNFTApproverUpgradeable {
+    struct ProjectApprovedInfo {
+        address mintTo;
+        uint256 worth;
+    }
+
+    struct ProjectApproveRequest {
+        bytes32 tokenId;
+        address mintTo;
+        uint256 starCount;
+        uint256 forkCount;
+    }
+
     event ProjectApproved(bytes32 indexed tokenId, address indexed account);
 
     event ApproverAdded(address account);
@@ -19,10 +31,10 @@ interface IOSNFTApproverUpgradeable {
 
     function removeApprover(address account) external;
 
-    function approveProject(bytes32 tokenId, address account) external;
+    function approveProject(ProjectApproveRequest memory data) external;
 
-    function getProjectApproved(bytes32 tokenId)
+    function getApprovedProject(bytes32 tokenId)
         external
         view
-        returns (address);
+        returns (ProjectApprovedInfo memory);
 }

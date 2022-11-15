@@ -11,6 +11,7 @@ import "./interfaces/erc721_receiver_upgradable.sol";
 import "./interfaces/osnft_approver.sol";
 import "./string_helper.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
 contract OSNFTBase is
     Initializable,
@@ -334,16 +335,28 @@ contract OSNFTBase is
         _mint(_msgSender(), projectUrl, nftType, shares);
     }
 
+    address internal _nativeToken;
+
+    function setNativeToken(address token) public onlyOwner {
+        _nativeToken = token;
+    }
+
+    function getNativeToken() external view returns (address) {
+        return _nativeToken;
+    }
+
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
     function __ERC721_init(
         string memory name_,
         string memory symbol_,
-        address approver_
+        address approver_,
+        address nativeToken_
     ) internal onlyInitializing {
         __ERC721_init_unchained(name_, symbol_);
         _approver = IOSNFTApproverUpgradeable(approver_);
+        _nativeToken = nativeToken_;
     }
 
     function __ERC721_init_unchained(string memory name_, string memory symbol_)
@@ -386,13 +399,22 @@ contract OSNFTBase is
     ) internal virtual {
         bytes32 tokenId = keccak256(abi.encodePacked(projectUrl));
 
-        require(
-            _approver.getProjectApproved(tokenId) == to,
-            "project not approved"
-        );
-
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
+
+        IOSNFTApproverUpgradeable.ProjectApprovedInfo
+            memory projectApproveInfo = _approver.getApprovedProject(tokenId);
+        require(projectApproveInfo.mintTo == to, "project not approved");
+
+        ERC20Upgradeable paymentToken = ERC20Upgradeable(_nativeToken);
+        require(
+            paymentToken.transferFrom(
+                to,
+                address(this),
+                projectApproveInfo.worth
+            ),
+            "Payment for minting failed"
+        );
 
         unchecked {
             // Will not overflow unless all 2**256 token ids are minted to the same owner.
@@ -411,12 +433,17 @@ contract OSNFTBase is
         if (nftType == NFT_TYPE.Share) {
             require(totalShare > 0, "Total share should not be zero");
 
+            // take mint payment
+
             EquityTokenInfo storage token = _equityTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
             token.allShareOwner = to;
         } else {
             require(totalShare < 100, "Require total share to be below 100");
+
+            // take mint payment
+
             _percentageTokens[tokenId] = PercentageTokenInfo({
                 creator: to,
                 creatorCut: uint8(totalShare),
