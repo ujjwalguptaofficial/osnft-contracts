@@ -410,7 +410,7 @@ contract OSNFTBase is
         require(
             paymentToken.transferFrom(
                 to,
-                address(this),
+                defaultMarketPlace,
                 projectApproveInfo.worth
             ),
             "Payment for minting failed"

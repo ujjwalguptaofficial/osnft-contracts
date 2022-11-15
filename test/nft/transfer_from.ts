@@ -133,14 +133,6 @@ export function testTransferFrom(payload: IDeployedPayload) {
             );
             expect(value).equal(94546);
 
-            // by marketplace
-            const value2 = await payload.nft.connect(payload.defaultMarketPlace).estimateGas["transferFrom(address,address,bytes32,uint32)"](
-                payload.signer2.address,
-                payload.signer3.address,
-                projectId,
-                1
-            );
-            expect(value2).equal(83863);
         });
 
         it('invalid project', async () => {
@@ -319,7 +311,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
             expect(shareOfToAfterTransfer).equal(10000);
         })
 
-        it('transfer by default markpetplace to signer3', async () => {
+        it('transfer jsstore to signer3', async () => {
             const projectUrl = payload.projects["jsstore"];
             const expectedTokenId = payload.getProjectId(projectUrl);
             const from = payload.deployer.address;
@@ -331,7 +323,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             const shareToTransfer = 100;
 
-            const value = payload.nft.connect(payload.defaultMarketPlace)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft["transferFrom(address,address,bytes32,uint32)"](
                 from,
                 to,
                 expectedTokenId,

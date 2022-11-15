@@ -6,35 +6,36 @@ export function testSetMarketPlace(payload: IDeployedPayload) {
 
     it('set by not owner', async () => {
         let tx = payload.nft.connect(payload.signer3).setDefaultMarketPlace(
-            payload.defaultMarketPlace.address
+            payload.marketplace.address
         )
 
         await expect(tx).to.revertedWith('Ownable: caller is not the owner');
     })
 
     it('set marketplace', async () => {
-        expect(payload.defaultMarketPlace.address).not.null;
+        const marketplaceAddress = payload.marketplace.address;
+        expect(marketplaceAddress).not.null;
         let isApprovedForAll = await payload.nft.isApprovedForAll(
-            payload.deployer.address, payload.defaultMarketPlace.address
+            payload.deployer.address, marketplaceAddress
         );
         expect(isApprovedForAll).equal(false);
 
-        const tx = await payload.nft.setDefaultMarketPlace(payload.defaultMarketPlace.address);
+        const tx = await payload.nft.setDefaultMarketPlace(marketplaceAddress);
 
         const defaultMarketPlaceValue = await payload.nft.defaultMarketPlace();
 
-        expect(defaultMarketPlaceValue).equal(payload.defaultMarketPlace.address);
+        expect(defaultMarketPlaceValue).equal(marketplaceAddress);
 
-        isApprovedForAll = await payload.nft.isApprovedForAll(payload.deployer.address, payload.defaultMarketPlace.address);
+        isApprovedForAll = await payload.nft.isApprovedForAll(payload.deployer.address, marketplaceAddress);
         expect(isApprovedForAll).equal(true);
 
-        isApprovedForAll = await payload.nft.isApprovedForAll(payload.signer2.address, payload.defaultMarketPlace.address);
+        isApprovedForAll = await payload.nft.isApprovedForAll(payload.signer2.address, marketplaceAddress);
         expect(isApprovedForAll).equal(true);
 
-        isApprovedForAll = await payload.nft.isApprovedForAll(payload.signer3.address, payload.defaultMarketPlace.address);
+        isApprovedForAll = await payload.nft.isApprovedForAll(payload.signer3.address, marketplaceAddress);
         expect(isApprovedForAll).equal(true);
 
-        isApprovedForAll = await payload.nft.isApprovedForAll(payload.operator.address, payload.defaultMarketPlace.address);
+        isApprovedForAll = await payload.nft.isApprovedForAll(payload.operator.address, marketplaceAddress);
         expect(isApprovedForAll).equal(true);
     })
 }

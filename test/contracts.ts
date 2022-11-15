@@ -7,6 +7,7 @@ import { testApprover } from "./approver";
 import { IDeployedPayload } from "./interfaces";
 import { testMarketplace } from "./marketplace";
 import { testNFT } from "./nft";
+import { testSetMarketPlace } from "./nft/set_makrketplace";
 
 
 
@@ -43,7 +44,6 @@ describe("contracts", () => {
         payload.signer3 = signer3;
         payload.signer4 = signer4;
         payload.operator = operator;
-        payload.defaultMarketPlace = defaultMarketPlace;
     })
 
     it('deploy dev coin', async () => {
@@ -155,8 +155,44 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(5012976);
+        expect(estimatedGas).equal(5020293);
     })
+
+    it('deploy marketplace', async () => {
+        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
+
+        const deployedContract = await upgrades.deployProxy(contract, [payload.nft.address], {
+            initializer: 'initialize',
+        }) as any;
+
+
+        payload.marketplace = deployedContract;
+    })
+
+    it('check for gas in deployed', async () => {
+        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
+        const deploymentData = contract.getDeployTransaction({
+
+        });
+        const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
+
+        expect(estimatedGas).equal(3884922);
+
+    })
+
+    describe('setDefaultMarketPlace', async () => {
+        testSetMarketPlace(payload);
+    })
+
+    // it('set marketplace', async () => {
+    //     const tx = await payload.nft.setDefaultMarketPlace(
+    //         payload.defaultMarketPlace.address
+    //     );
+
+    //     const defaultMarketPlaceValue = await payload.nft.defaultMarketPlace();
+
+    //     expect(defaultMarketPlaceValue).equal(payload.defaultMarketPlace.address);
+    // })
 
     describe('Approver', () => {
         testApprover(payload);

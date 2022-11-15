@@ -38,10 +38,6 @@ export function testNFT(payload: IDeployedPayload) {
         testApprove(payload);
     })
 
-    describe('setDefaultMarketPlace', async () => {
-        testSetMarketPlace(payload);
-    })
-
     describe('transfer from', async () => {
         testTransferFrom(payload);
     })

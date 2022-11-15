@@ -4,7 +4,6 @@ import { MyToken } from "../typechain-types/contracts/erc20.sol";
 
 export interface IDeployedPayload {
     deployer: SignerWithAddress;
-    defaultMarketPlace: SignerWithAddress;
     signer2: SignerWithAddress;
     signer3: SignerWithAddress;
     signer4: SignerWithAddress;

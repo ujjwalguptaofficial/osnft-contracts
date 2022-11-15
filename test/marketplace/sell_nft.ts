@@ -17,6 +17,11 @@ export function testNFTSale(payload: IDeployedPayload) {
     });
 
     it("not approved for marketplace", async () => {
+
+        // change default marketplace
+
+        await payload.nft.setDefaultMarketPlace(payload.operator.address);
+
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
             payload.projects["jsstore-example"]
@@ -53,7 +58,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
 
-        expect(tx).equal(157474);
+        expect(tx).equal(157462);
     });
 
     it('not existing token', async () => {
@@ -96,7 +101,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             tokenId,
             0,
             price,
-            payload.defaultMarketPlace.address
+            payload.marketplace.address
         );
 
         await expect(tx).revertedWith('Invalid payment token');
@@ -162,7 +167,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             tokenId,
             0,
             price,
-            payload.defaultMarketPlace.address
+            payload.marketplace.address
         );
 
         await expect(tx).revertedWith('Require input share to be above zero');
@@ -182,7 +187,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 tokenId,
                 shareOf + 1,
                 price,
-                payload.defaultMarketPlace.address
+                payload.marketplace.address
             );
 
             await expect(tx).revertedWith('Owns less share than input');
@@ -201,7 +206,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 tokenId,
                 shareOf + 1,
                 price,
-                payload.defaultMarketPlace.address
+                payload.marketplace.address
             );
 
             await expect(tx).revertedWith('Owns less share than input');
