@@ -14,28 +14,6 @@ import { testWithdrawPayment } from "./withdraw_payment";
 
 export function testMarketplace(payload: IDeployedPayload) {
 
-    it('deploy marketplace', async () => {
-        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
-
-        const deployedContract = await upgrades.deployProxy(contract, [payload.nft.address], {
-            initializer: 'initialize',
-        }) as any;
-
-
-        payload.marketplace = deployedContract;
-    })
-
-    it('check for gas in deployed', async () => {
-        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
-        const deploymentData = contract.getDeployTransaction({
-
-        });
-        const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
-
-        expect(estimatedGas).equal(3884922);
-
-    })
-
     it('deploy erc20 token1', async () => {
         const contract = await ethers.getContractFactory('MyToken');
 
@@ -86,7 +64,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         testRefundAuction(payload);
     });
 
-    describe('refund auction nft', () => {
+    describe('withdraw payment', () => {
         testWithdrawPayment(payload);
     });
     describe('remove sale nft', () => {

@@ -28,14 +28,14 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithSign).equal(189315);
+        expect(gasForMintingWithSign).equal(185774);
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
             payload.projects["jsstore-example"],
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(178799);
+        expect(gasForMintingWithoutSign).equal(175258);
     });
 
     describe('percentage cut', async () => {
@@ -80,7 +80,7 @@ export function testMint(payload: IDeployedPayload) {
             let balance = await nft.balanceOf(address);
             expect(balance).equal(0);
 
-            const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
+            const projectUrl1 = payload.projects["mahal-example"];
 
             let tx = nft.connect(payload.signer2).mint(projectUrl1, 0, 101);
             await expect(tx).to.revertedWith('Require total share to be below 100');
@@ -225,22 +225,46 @@ export function testMint(payload: IDeployedPayload) {
             let balance = await nft.balanceOf(address);
             expect(balance).equal(1);
 
-            const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
-            const expectedTokenId = payload.getProjectId(projectUrl1);
-            const { data, signature } = await signMessage(payload.signer2, projectUrl1);
+            const projectUrl = payload.projects.mahal;
+            const expectedTokenId = payload.getProjectId(projectUrl);
+            const { data, signature } = await signMessage(payload.signer2, projectUrl);
 
-            const tx = nft.mintTo(data, signature, address, projectUrl1, 1, 10000);
+            // check native token balance
+
+            const nativeToken = payload.nativeToken;
+            const nativeTokenBalanceOfUser = await nativeToken.balanceOf(address);
+            const nativeTokenBalanceOfMarketplace = await nativeToken.balanceOf(payload.marketplace.address);
+
+            const tx = nft.mintTo(data, signature, address, projectUrl, 1, 10000);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero,
                 address,
                 expectedTokenId
             );
             await expect(tx).emit(nft, 'ProjectAdded').withArgs(
-                projectUrl1, 1, 10000
+                projectUrl, 1, 10000
             );
 
             balance = await nft.balanceOf(address);
             expect(balance).equal(2);
+
+            // check native token balance
+
+            const nativeTokenBalanceOfUserAfterMint = await nativeToken.balanceOf(address);
+            const nativeTokenBalanceOfMarketplaceAfterMint = await nativeToken.balanceOf(payload.marketplace.address);
+
+            const approveInfo = await payload.approver.getApprovedProject(expectedTokenId);
+
+            expect(nativeTokenBalanceOfMarketplaceAfterMint).equal(
+                nativeTokenBalanceOfMarketplace.add(approveInfo.worth)
+            );
+
+            expect(nativeTokenBalanceOfUser).equal(
+                nativeTokenBalanceOfUserAfterMint.add(approveInfo.worth)
+            );
+
+            console.log('marketplace address', payload.marketplace.address);
+
         });
 
         it('mint same project', async () => {

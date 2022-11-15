@@ -65,4 +65,14 @@ export function testWithdrawPayment(payload: IDeployedPayload) {
         expect(newBalance).equal(oldBalance.add(tokenToTransfer))
 
     });
+
+    it('balance of native token earning due to mint', async () => {
+        const marketplace = payload.marketplace;
+
+        console.log('marketplace address', marketplace.address);
+
+        const balance = await payload.nativeToken.balanceOf(marketplace.address);
+
+        expect(balance.toString()).equal('32760000000000000');
+    })
 }

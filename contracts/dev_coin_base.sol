@@ -412,7 +412,6 @@ contract DevCoinBase is
         uint256 amount
     ) internal virtual {
         uint256 currentAllowance = allowance(owner, spender);
-        console.log("current allowance %s", currentAllowance);
         if (currentAllowance != type(uint256).max) {
             require(
                 currentAllowance >= amount,

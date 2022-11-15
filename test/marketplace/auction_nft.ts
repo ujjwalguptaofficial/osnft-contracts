@@ -169,7 +169,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(238067)
+        expect(gas).equal(238079)
     })
 
     it('successful auction for jsstore example', async () => {

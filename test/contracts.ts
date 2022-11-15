@@ -169,7 +169,7 @@ describe("contracts", () => {
         payload.marketplace = deployedContract;
     })
 
-    it('check for gas in deployed', async () => {
+    it('check for gas in deployment of marketplace', async () => {
         const contract = await ethers.getContractFactory('OSNFTMarketPlace');
         const deploymentData = contract.getDeployTransaction({
 

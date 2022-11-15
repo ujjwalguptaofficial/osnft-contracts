@@ -122,7 +122,7 @@ export function testApprover(payload: IDeployedPayload) {
             {
                 tokenId,
                 mintTo: address,
-                starCount: 0,
+                starCount: 4,
                 forkCount: 0
             }
         );
@@ -215,7 +215,7 @@ export function testApprover(payload: IDeployedPayload) {
             {
                 tokenId,
                 mintTo: address,
-                starCount: 0,
+                starCount: 1,
                 forkCount: 0
             }
         );
