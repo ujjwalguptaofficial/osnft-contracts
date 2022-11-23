@@ -9,7 +9,7 @@ export function runPublicState(payload: IDeployedPayload) {
 
     it('symbol', async () => {
         const value = await payload.nft.symbol();
-        expect(value).equal('OS');
+        expect(value).equal('OSNFT');
     })
 
     it('baseTokenURI', async () => {

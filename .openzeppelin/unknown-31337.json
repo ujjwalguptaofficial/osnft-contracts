@@ -6,16 +6,6 @@
   },
   "proxies": [
     {
-      "address": "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
-      "txHash": "0xcd1e8f23688bac119e524d06c0b3b84d903488872db813b99df00e6977089825",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
-      "txHash": "0xcbf63a0d8c96ed74b018656947b381062debc398c534beaaff31727ac809b502",
-      "kind": "transparent"
-    },
-    {
       "address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9",
       "txHash": "0x35675fa3ec81fc10803c8fa14413747743bc688613fa306054cb697777a1c5f0",
       "kind": "transparent"
@@ -23,11 +13,6 @@
     {
       "address": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
       "txHash": "0x8d044ebafcbb242c859e952f7c4b2997336838578fd35853637e26881b247de3",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x851356ae760d987E095750cCeb3bC6014560891C",
-      "txHash": "0xcc3162de014a8204154a0e3a84b6b0e093923ad465f291991f498ecdd450ba1e",
       "kind": "transparent"
     },
     {
@@ -111,11 +96,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
-      "txHash": "0xeec8efe27c005ff411512824e66ad97629fea1d53ca206b591e806716f8b525d",
-      "kind": "transparent"
-    },
-    {
       "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
       "txHash": "0x50df7f088d4587e112410539a762b83c7740c828078b843fba1c99bcf94c4015",
       "kind": "transparent"
@@ -126,13 +106,38 @@
       "kind": "transparent"
     },
     {
-      "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-      "txHash": "0x7bf5f82cda5ff42ac77ed443fb601f4c66a1182c48efa11ef4dadfa0a3e85377",
+      "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
+      "txHash": "0xdfdca1bfb2f8ee0119c7338c6e525196e98ec9109ebee6212cd329917254fa68",
       "kind": "transparent"
     },
     {
-      "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
-      "txHash": "0xdfdca1bfb2f8ee0119c7338c6e525196e98ec9109ebee6212cd329917254fa68",
+      "address": "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
+      "txHash": "0xc079b7c2a809421a4ac13444ec4fbbd6857ccd8d10334d3c4c34a0d9b0066738",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
+      "txHash": "0x7d9079c197c33f3110aa42e7d980772d6a220836b907e4740b3067b47ce22ec3",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
+      "txHash": "0x0b3723441b4144f7e62bc73bfbc12912efe588dfe2b70f8d5422d2b5fce5e364",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x851356ae760d987E095750cCeb3bC6014560891C",
+      "txHash": "0x40f4500d77fe1eef7f459513d4eedaa7af20a19ad4b770cd2dc41deac720c8d7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
+      "txHash": "0x694c6c7dd347dc3239d4ed36b4800ff461364189fc7925b0055b1bf46ee65e01",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
+      "txHash": "0x86b2ffd77a6e0949eddf8b82e833d58369c27843e40e4a21d0001765fa3d9107",
       "kind": "transparent"
     },
     {
@@ -147,29 +152,29 @@
     },
     {
       "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "txHash": "0xb29f589c9a6764e98f5724d123a1844541b9a59806c64c2afaa15fc96c3133d5",
+      "txHash": "0xb17a0c9beeb732863adae3fdd1deca023c64b9a6ec34e3604e5a710d268ee15e",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0x94a9afe42e4bdb4609a056e26fdd86f5b621e64c4a6b20941c9a12f9001712e8",
+      "txHash": "0xd0723374e89b6414760bdc03eceb0eb8b873cd1d60952d0aa56ab790d92a6472",
       "kind": "transparent"
     },
     {
       "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
-      "txHash": "0xdad409c8cdea561b7ea494a2bc74bc6938bf6135ee2d359b30b7261a7f6669fb",
+      "txHash": "0x57af9984a1bdda434f0b9063b5c704210321c3ce5e29967dd660b632cd8b575c",
       "kind": "transparent"
     },
     {
       "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
-      "txHash": "0x531c5483aa558bd72fd6e1efa17993c41047a7eed51619d75b75364c68b91cf5",
+      "txHash": "0x1432a69114f6b8705495f20d381b686f46499e2eeed4c9f160ccf8bd20a4b5ce",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
-      "txHash": "0xb8a96d761d533aa36554ced651ccc2078e053e845e6c4178f5d486f3fb3c60d0",
+      "txHash": "0x0df4dc4d021e1a9231ca85d755711150fe6e4dd0ae4ff4303e74ca4331600532",
       "layout": {
         "storage": [
           {
@@ -308,7 +313,7 @@
     },
     "392f8a9a86df53ca80b7a9659e8619de7337fa1a3601a9ef63326850c00bd4fc": {
       "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-      "txHash": "0x229531b1167be91d99fd674659fb394fc29cc5b103bcb73469532186543ad234",
+      "txHash": "0x20898bc0fce7c33a33815ff2da3d8f18f5181eab49be16a2cb98aea028982b0e",
       "layout": {
         "storage": [
           {
@@ -356,7 +361,7 @@
             "label": "_sellListings",
             "offset": 0,
             "slot": "101",
-            "type": "t_mapping(t_bytes32,t_struct(Listing)4233_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(Listing)4234_storage)",
             "contract": "OSNFTMarketPlaceBase",
             "src": "contracts/osnft_marketplace_base.sol:22"
           },
@@ -372,7 +377,7 @@
             "label": "_nftContract",
             "offset": 0,
             "slot": "103",
-            "type": "t_contract(IERC721Upgradeable)4219",
+            "type": "t_contract(IERC721Upgradeable)4220",
             "contract": "OSNFTMarketPlaceBase",
             "src": "contracts/osnft_marketplace_base.sol:26"
           },
@@ -388,7 +393,7 @@
             "label": "_auctions",
             "offset": 0,
             "slot": "104",
-            "type": "t_mapping(t_bytes32,t_struct(Auction)4250_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(Auction)4251_storage)",
             "contract": "OSNFTMarketPlaceBase",
             "src": "contracts/osnft_marketplace_base.sol:30"
           },
@@ -422,7 +427,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IERC721Upgradeable)4219": {
+          "t_contract(IERC721Upgradeable)4220": {
             "label": "contract IERC721Upgradeable",
             "numberOfBytes": "20"
           },
@@ -430,15 +435,15 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(Auction)4250_storage)": {
+          "t_mapping(t_bytes32,t_struct(Auction)4251_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTMarketPlaceUpgradeable.Auction)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(Listing)4233_storage)": {
+          "t_mapping(t_bytes32,t_struct(Listing)4234_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTMarketPlaceUpgradeable.Listing)",
             "numberOfBytes": "32"
           },
-          "t_struct(Auction)4250_storage": {
+          "t_struct(Auction)4251_storage": {
             "label": "struct IOSNFTMarketPlaceUpgradeable.Auction",
             "members": [
               {
@@ -492,7 +497,7 @@
             ],
             "numberOfBytes": "224"
           },
-          "t_struct(Listing)4233_storage": {
+          "t_struct(Listing)4234_storage": {
             "label": "struct IOSNFTMarketPlaceUpgradeable.Listing",
             "members": [
               {
@@ -601,7 +606,7 @@
             "label": "_projectsApproved",
             "offset": 0,
             "slot": "102",
-            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)4455_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)4456_storage)",
             "contract": "OSNFTApproverBase",
             "src": "contracts/osnft_approver_base.sol:15"
           },
@@ -655,11 +660,11 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)4455_storage)": {
+          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)4456_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTApproverUpgradeable.ProjectApprovedInfo)",
             "numberOfBytes": "32"
           },
-          "t_struct(ProjectApprovedInfo)4455_storage": {
+          "t_struct(ProjectApprovedInfo)4456_storage": {
             "label": "struct IOSNFTApproverUpgradeable.ProjectApprovedInfo",
             "members": [
               {
@@ -680,281 +685,6 @@
           "t_uint256": {
             "label": "uint256",
             "numberOfBytes": "32"
-          },
-          "t_uint8": {
-            "label": "uint8",
-            "numberOfBytes": "1"
-          }
-        }
-      }
-    },
-    "328551165e89de8c026325a1369f3ec13c759f51ed895ddfa1cb6cac89abf1f8": {
-      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xcdf57a760ae02fbb0022707deef07f02864a7df75e4d68cb73d618fa84c40838",
-      "layout": {
-        "storage": [
-          {
-            "label": "_initialized",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_uint8",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
-            "retypedFrom": "bool"
-          },
-          {
-            "label": "_initializing",
-            "offset": 1,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
-          },
-          {
-            "label": "_owner",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_address",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ERC165Upgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
-          },
-          {
-            "label": "_name",
-            "offset": 0,
-            "slot": "151",
-            "type": "t_string_storage",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:41"
-          },
-          {
-            "label": "_symbol",
-            "offset": 0,
-            "slot": "152",
-            "type": "t_string_storage",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:44"
-          },
-          {
-            "label": "_equityTokens",
-            "offset": 0,
-            "slot": "153",
-            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3217_storage)",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:46"
-          },
-          {
-            "label": "_percentageTokens",
-            "offset": 0,
-            "slot": "154",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3224_storage)",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:48"
-          },
-          {
-            "label": "_balances",
-            "offset": 0,
-            "slot": "155",
-            "type": "t_mapping(t_address,t_uint256)",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:51"
-          },
-          {
-            "label": "_tokenApprovals",
-            "offset": 0,
-            "slot": "156",
-            "type": "t_mapping(t_bytes32,t_address)",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:54"
-          },
-          {
-            "label": "_operatorApprovals",
-            "offset": 0,
-            "slot": "157",
-            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:57"
-          },
-          {
-            "label": "defaultMarketPlace",
-            "offset": 0,
-            "slot": "158",
-            "type": "t_address",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:59"
-          },
-          {
-            "label": "_approver",
-            "offset": 0,
-            "slot": "159",
-            "type": "t_contract(IOSNFTApproverUpgradeable)3107",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:61"
-          },
-          {
-            "label": "_nativeToken",
-            "offset": 0,
-            "slot": "160",
-            "type": "t_address",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:338"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "161",
-            "type": "t_array(t_uint256)44_storage",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:746"
-          },
-          {
-            "label": "baseTokenURI",
-            "offset": 0,
-            "slot": "205",
-            "type": "t_string_storage",
-            "contract": "OSNFT",
-            "src": "contracts/os_nft.sol:8"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_array(t_uint256)44_storage": {
-            "label": "uint256[44]",
-            "numberOfBytes": "1408"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
-          },
-          "t_bool": {
-            "label": "bool",
-            "numberOfBytes": "1"
-          },
-          "t_bytes32": {
-            "label": "bytes32",
-            "numberOfBytes": "32"
-          },
-          "t_contract(IOSNFTApproverUpgradeable)3107": {
-            "label": "contract IOSNFTApproverUpgradeable",
-            "numberOfBytes": "20"
-          },
-          "t_mapping(t_address,t_bool)": {
-            "label": "mapping(address => bool)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
-            "label": "mapping(address => mapping(address => bool))",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_address,t_uint256)": {
-            "label": "mapping(address => uint256)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_address,t_uint32)": {
-            "label": "mapping(address => uint32)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_bytes32,t_address)": {
-            "label": "mapping(bytes32 => address)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3217_storage)": {
-            "label": "mapping(bytes32 => struct OSNFTBase.EquityTokenInfo)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3224_storage)": {
-            "label": "mapping(bytes32 => struct OSNFTBase.PercentageTokenInfo)",
-            "numberOfBytes": "32"
-          },
-          "t_string_storage": {
-            "label": "string",
-            "numberOfBytes": "32"
-          },
-          "t_struct(EquityTokenInfo)3217_storage": {
-            "label": "struct OSNFTBase.EquityTokenInfo",
-            "members": [
-              {
-                "label": "totalNoOfShare",
-                "type": "t_uint32",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "shares",
-                "type": "t_mapping(t_address,t_uint32)",
-                "offset": 0,
-                "slot": "1"
-              },
-              {
-                "label": "allShareOwner",
-                "type": "t_address",
-                "offset": 0,
-                "slot": "2"
-              }
-            ],
-            "numberOfBytes": "96"
-          },
-          "t_struct(PercentageTokenInfo)3224_storage": {
-            "label": "struct OSNFTBase.PercentageTokenInfo",
-            "members": [
-              {
-                "label": "creatorCut",
-                "type": "t_uint8",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "owner",
-                "type": "t_address",
-                "offset": 1,
-                "slot": "0"
-              },
-              {
-                "label": "creator",
-                "type": "t_address",
-                "offset": 0,
-                "slot": "1"
-              }
-            ],
-            "numberOfBytes": "64"
-          },
-          "t_uint256": {
-            "label": "uint256",
-            "numberOfBytes": "32"
-          },
-          "t_uint32": {
-            "label": "uint32",
-            "numberOfBytes": "4"
           },
           "t_uint8": {
             "label": "uint8",
@@ -1102,6 +832,311 @@
           "t_uint256": {
             "label": "uint256",
             "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "20e7651ad8ae6e3f7b4369e7d2df0ca7eab66f1350d61a8fedde11e6ac770f9e": {
+      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "txHash": "0x47c5ee0e46dfb93e1e0ede3d31670188a8e023396349695a5b23c9d35557f7b6",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_HASHED_NAME",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_bytes32",
+            "contract": "EIP712Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol:32"
+          },
+          {
+            "label": "_HASHED_VERSION",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_bytes32",
+            "contract": "EIP712Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol:33"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "EIP712Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol:120"
+          },
+          {
+            "label": "_name",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_string_storage",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:45"
+          },
+          {
+            "label": "_symbol",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_string_storage",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:48"
+          },
+          {
+            "label": "_equityTokens",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3373_storage)",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:50"
+          },
+          {
+            "label": "_percentageTokens",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3380_storage)",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:52"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:55"
+          },
+          {
+            "label": "_tokenApprovals",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:58"
+          },
+          {
+            "label": "_operatorApprovals",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:61"
+          },
+          {
+            "label": "defaultMarketPlace",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_address",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:63"
+          },
+          {
+            "label": "_approver",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_contract(IOSNFTApproverUpgradeable)3257",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:65"
+          },
+          {
+            "label": "_nativeToken",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_address",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:376"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_array(t_uint256)44_storage",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:786"
+          },
+          {
+            "label": "baseTokenURI",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_string_storage",
+            "contract": "OSNFT",
+            "src": "contracts/os_nft.sol:8"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)44_storage": {
+            "label": "uint256[44]",
+            "numberOfBytes": "1408"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IOSNFTApproverUpgradeable)3257": {
+            "label": "contract IOSNFTApproverUpgradeable",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint32)": {
+            "label": "mapping(address => uint32)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3373_storage)": {
+            "label": "mapping(bytes32 => struct OSNFTBase.EquityTokenInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3380_storage)": {
+            "label": "mapping(bytes32 => struct OSNFTBase.PercentageTokenInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(EquityTokenInfo)3373_storage": {
+            "label": "struct OSNFTBase.EquityTokenInfo",
+            "members": [
+              {
+                "label": "totalNoOfShare",
+                "type": "t_uint32",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "shares",
+                "type": "t_mapping(t_address,t_uint32)",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "allShareOwner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "creator",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(PercentageTokenInfo)3380_storage": {
+            "label": "struct OSNFTBase.PercentageTokenInfo",
+            "members": [
+              {
+                "label": "creatorCut",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "owner",
+                "type": "t_address",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "creator",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
           },
           "t_uint8": {
             "label": "uint8",

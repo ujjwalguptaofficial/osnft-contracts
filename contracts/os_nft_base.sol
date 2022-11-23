@@ -12,13 +12,16 @@ import "./interfaces/osnft_approver.sol";
 import "./string_helper.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
+import "hardhat/console.sol";
 
 contract OSNFTBase is
     Initializable,
     ContextUpgradeable,
     OwnableUpgradeable,
     ERC165Upgradeable,
-    IERC721MetadataUpgradeable
+    IERC721MetadataUpgradeable,
+    EIP712Upgradeable
 {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
@@ -29,6 +32,7 @@ contract OSNFTBase is
         uint32 totalNoOfShare;
         mapping(address => uint32) shares;
         address allShareOwner;
+        address creator;
     }
 
     struct PercentageTokenInfo {
@@ -312,19 +316,53 @@ contract OSNFTBase is
         _safeTransfer(from, to, tokenId, share, data);
     }
 
+    // function verifySign(
+    //     bytes memory signature,
+    //     address to,
+    //     string calldata projectUrl,
+    //     uint8 nftType,
+    //     uint32 totalShare
+    // ) external view returns (address) {
+    //     bytes32 digest = _hashTypedDataV4(
+    //         keccak256(
+    //             abi.encode(
+    //                 keccak256(
+    //                     "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare)"
+    //                 ),
+    //                 keccak256(bytes(projectUrl)),
+    //                 nftType,
+    //                 totalShare
+    //             )
+    //         )
+    //     );
+    //     console.log("to %s", to);
+    //     return ECDSAUpgradeable.recover(digest, signature);
+    // }
+
     function mintTo(
-        bytes32 data,
         bytes memory signature,
         address to,
         string calldata projectUrl,
         NFT_TYPE nftType,
-        uint32 shares
+        uint32 totalShare
     ) external onlyOwner {
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    keccak256(
+                        "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare)"
+                    ),
+                    keccak256(bytes(projectUrl)),
+                    nftType,
+                    totalShare
+                )
+            )
+        );
         require(
-            data.toEthSignedMessageHash().recover(signature) == to,
+            ECDSAUpgradeable.recover(digest, signature) == to,
             "invalid signature"
         );
-        _mint(to, projectUrl, nftType, shares);
+        _mint(to, projectUrl, nftType, totalShare);
     }
 
     function mint(
@@ -357,6 +395,7 @@ contract OSNFTBase is
         __ERC721_init_unchained(name_, symbol_);
         _approver = IOSNFTApproverUpgradeable(approver_);
         _nativeToken = nativeToken_;
+        __EIP712_init(symbol_, "1");
     }
 
     function __ERC721_init_unchained(string memory name_, string memory symbol_)
@@ -439,8 +478,9 @@ contract OSNFTBase is
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
             token.allShareOwner = to;
+            token.creator = to;
         } else {
-            require(totalShare < 100, "Require total share to be below 100");
+            require(totalShare < 100, "Require creator cut to be below 100");
 
             // take mint payment
 

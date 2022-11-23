@@ -112,7 +112,7 @@ describe("contracts", () => {
 
         const deployedContract = await upgrades.deployProxy(ct, [
             'OpenSourceNFT',
-            'OS',
+            'OSNFT',
             'https://ujjwalnft.com/metadata/',
             payload.approver.address,
             payload.nativeToken.address
@@ -155,7 +155,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(5020293);
+        expect(estimatedGas).equal(5199776);
     })
 
     it('deploy marketplace', async () => {
@@ -198,9 +198,11 @@ describe("contracts", () => {
         testApprover(payload);
     });
 
+
     describe('OSNFT', () => {
         testNFT(payload);
     });
+
 
     describe('Marketplace', () => {
         testMarketplace(payload);
