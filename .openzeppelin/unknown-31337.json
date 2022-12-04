@@ -842,7 +842,7 @@
     },
     "20e7651ad8ae6e3f7b4369e7d2df0ca7eab66f1350d61a8fedde11e6ac770f9e": {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x47c5ee0e46dfb93e1e0ede3d31670188a8e023396349695a5b23c9d35557f7b6",
+      "txHash": "0x20262acd675dfed52373197e46943fa24d0821303fffa2b6b8deec33389275f7",
       "layout": {
         "storage": [
           {
@@ -996,7 +996,7 @@
             "slot": "212",
             "type": "t_address",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:376"
+            "src": "contracts/os_nft_base.sol:342"
           },
           {
             "label": "__gap",
@@ -1004,7 +1004,7 @@
             "slot": "213",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:786"
+            "src": "contracts/os_nft_base.sol:748"
           },
           {
             "label": "baseTokenURI",

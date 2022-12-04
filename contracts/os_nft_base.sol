@@ -118,11 +118,10 @@ contract OSNFTBase is
 
     // equity methods
 
-    function shareOf(bytes32 tokenId, address owner)
-        external
-        view
-        returns (uint32)
-    {
+    function shareOf(
+        bytes32 tokenId,
+        address owner
+    ) external view returns (uint32) {
         _requireMinted(tokenId);
         return _shareOf(tokenId, owner);
     }
@@ -136,23 +135,19 @@ contract OSNFTBase is
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved)
-        public
-        virtual
-        override
-    {
+    function setApprovalForAll(
+        address operator,
+        bool approved
+    ) public virtual override {
         _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(bytes32 tokenId)
-        public
-        view
-        virtual
-        returns (string memory)
-    {
+    function tokenURI(
+        bytes32 tokenId
+    ) public view virtual returns (string memory) {
         _requireMinted(tokenId);
 
         string memory baseURI = _baseURI();
@@ -165,11 +160,10 @@ contract OSNFTBase is
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(address owner, address operator)
-        public
-        view
-        returns (bool)
-    {
+    function isApprovedForAll(
+        address owner,
+        address operator
+    ) public view returns (bool) {
         if (operator == defaultMarketPlace) {
             return true;
         }
@@ -183,11 +177,10 @@ contract OSNFTBase is
         return getApproved(tokenId, _msgSender());
     }
 
-    function getApproved(bytes32 tokenId, address shareOwner)
-        public
-        view
-        returns (address)
-    {
+    function getApproved(
+        bytes32 tokenId,
+        address shareOwner
+    ) public view returns (address) {
         _requireMinted(tokenId);
         if (isShareToken(tokenId)) {
             tokenId = _getTokenId(tokenId, shareOwner);
@@ -202,11 +195,7 @@ contract OSNFTBase is
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(
-        address to,
-        bytes32 tokenId,
-        address shareOwner
-    ) public {
+    function approve(address to, bytes32 tokenId, address shareOwner) public {
         if (isShareToken(tokenId)) {
             // in case it is called by approved all address
             if (_msgSender() != shareOwner) {
@@ -316,29 +305,6 @@ contract OSNFTBase is
         _safeTransfer(from, to, tokenId, share, data);
     }
 
-    // function verifySign(
-    //     bytes memory signature,
-    //     address to,
-    //     string calldata projectUrl,
-    //     uint8 nftType,
-    //     uint32 totalShare
-    // ) external view returns (address) {
-    //     bytes32 digest = _hashTypedDataV4(
-    //         keccak256(
-    //             abi.encode(
-    //                 keccak256(
-    //                     "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare)"
-    //                 ),
-    //                 keccak256(bytes(projectUrl)),
-    //                 nftType,
-    //                 totalShare
-    //             )
-    //         )
-    //     );
-    //     console.log("to %s", to);
-    //     return ECDSAUpgradeable.recover(digest, signature);
-    // }
-
     function mintTo(
         bytes memory signature,
         address to,
@@ -398,19 +364,18 @@ contract OSNFTBase is
         __EIP712_init(symbol_, "1");
     }
 
-    function __ERC721_init_unchained(string memory name_, string memory symbol_)
-        internal
-        onlyInitializing
-    {
+    function __ERC721_init_unchained(
+        string memory name_,
+        string memory symbol_
+    ) internal onlyInitializing {
         _name = name_;
         _symbol = symbol_;
     }
 
-    function _getTokenId(bytes32 tokenId, address shareOwner)
-        internal
-        pure
-        returns (bytes32)
-    {
+    function _getTokenId(
+        bytes32 tokenId,
+        address shareOwner
+    ) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(tokenId.toString(), shareOwner));
     }
 
@@ -559,12 +524,10 @@ contract OSNFTBase is
      *
      * - `tokenId` must exist.
      */
-    function _isApprovedOrOwner(address spender, bytes32 tokenId)
-        internal
-        view
-        virtual
-        returns (bool)
-    {
+    function _isApprovedOrOwner(
+        address spender,
+        bytes32 tokenId
+    ) internal view virtual returns (bool) {
         address owner = ownerOf(tokenId);
         return (spender == owner ||
             isApprovedForAll(owner, spender) ||
@@ -582,11 +545,10 @@ contract OSNFTBase is
             _shareOf(tokenId, spender) >= share);
     }
 
-    function _shareOf(bytes32 tokenId, address owner)
-        internal
-        view
-        returns (uint32)
-    {
+    function _shareOf(
+        bytes32 tokenId,
+        address owner
+    ) internal view returns (uint32) {
         return _equityTokens[tokenId].shares[owner];
     }
 
