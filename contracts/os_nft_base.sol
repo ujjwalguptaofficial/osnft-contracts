@@ -11,7 +11,7 @@ import "./interfaces/erc721_receiver_upgradable.sol";
 import "./interfaces/osnft_approver.sol";
 import "./string_helper.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 import "hardhat/console.sol";
 
@@ -410,15 +410,13 @@ contract OSNFTBase is
             memory projectApproveInfo = _approver.getApprovedProject(tokenId);
         require(projectApproveInfo.mintTo == to, "project not approved");
 
-        ERC20Upgradeable paymentToken = ERC20Upgradeable(_nativeToken);
-        require(
-            paymentToken.transferFrom(
-                to,
-                defaultMarketPlace,
-                projectApproveInfo.worth
-            ),
-            "Payment for minting failed"
+        ERC20BurnableUpgradeable paymentToken = ERC20BurnableUpgradeable(
+            _nativeToken
         );
+        // require(
+        paymentToken.burnFrom(to, projectApproveInfo.worth);
+        // "Payment for minting failed"
+        // );
 
         unchecked {
             // Will not overflow unless all 2**256 token ids are minted to the same owner.

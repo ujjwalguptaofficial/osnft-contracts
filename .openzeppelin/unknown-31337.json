@@ -2,7 +2,7 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0xa388ae00e4343e154065c96b719c48a15909c6c01025f05718800beca729ef80"
+    "txHash": "0xb0ae0dce89a402ef368ee71889bed5ed600e7f156208a8942710758862acac71"
   },
   "proxies": [
     {
@@ -142,39 +142,39 @@
     },
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xa3eb395531e29bffc5a8573adc94d228881aa8278881c258613cbf9e0666dc97",
+      "txHash": "0x7ecd4c696179f66338edb76a4335f7d813a8b9b13c7c0c2d27d6217f51a942b4",
       "kind": "transparent"
     },
     {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x435c5545d4595ee80613089118267e09a30c7aa2d39e251bf14d0027aa06f206",
+      "txHash": "0x123595e424137bb4d1f9a534d18aead5342a097133e482a74dee2a011f9a0dc6",
       "kind": "transparent"
     },
     {
       "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "txHash": "0xeb3df726632e78682ab447fce82637f997e31ecdb05f82c271f34202b417b1cd",
+      "txHash": "0xac183df56b859953d1b889f18e14bdd34a6d1a8574e1916d3bfa8313293311b9",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0x465219dcb8f43793f755f16fb46591f01d635f867c3fb1e7d75958c6336f83b0",
+      "txHash": "0xcc3cc48b13b15c4736ea99bc00a52948fdb9d6f13a54ca7db6623c85a6b2d72c",
       "kind": "transparent"
     },
     {
       "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
-      "txHash": "0x57af9984a1bdda434f0b9063b5c704210321c3ce5e29967dd660b632cd8b575c",
+      "txHash": "0x4ae7e671addb05839f278fc82e3ba3ae5dc3d8ac1d37e8ca584e54833b889e8a",
       "kind": "transparent"
     },
     {
       "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
-      "txHash": "0x1432a69114f6b8705495f20d381b686f46499e2eeed4c9f160ccf8bd20a4b5ce",
+      "txHash": "0x2ce8236f551190a3525f232c024873412203eee72ace8b9471244169011d2c5c",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
-      "txHash": "0x0df4dc4d021e1a9231ca85d755711150fe6e4dd0ae4ff4303e74ca4331600532",
+      "txHash": "0x391c39408f3f16c7fd5a270359dee4568c25cb4104ba63a7f7a4d050056edcb6",
       "layout": {
         "storage": [
           {
@@ -313,7 +313,7 @@
     },
     "392f8a9a86df53ca80b7a9659e8619de7337fa1a3601a9ef63326850c00bd4fc": {
       "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-      "txHash": "0xa3a4940e0017235a5a4caaa1a51f6e0c3fbbe6db3f5f27e9b3b4a44e4125d387",
+      "txHash": "0xca823b4de5d84cb4b2f82ab7457a5cccc9ca7dbc6b6c4e7f10152209e44ac649",
       "layout": {
         "storage": [
           {
@@ -550,7 +550,7 @@
     },
     "a82df71b653740fef05383b5365274f725eb214f0e9f68fa9338f0b2296af6f3": {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0x9c4b270bb43e0f3762c08f94f5be61c9d245a1a8238a0b61c09a6409a105813c",
+      "txHash": "0xd5bc40a9ff392bdc3b9f25045ea5916f3215f5e5fe78e759c9c72d3124aaa656",
       "layout": {
         "storage": [
           {
@@ -693,9 +693,9 @@
         }
       }
     },
-    "41d6280fec30a079b72a70629fae27f1ca5b24d701ad3aa28de3e98c6297361c": {
+    "a7c865da82d1114154b162236849fb322e6db18240bcf7035f2c64a01deb6b3f": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xb6c47b4294c3b2859d2312d64ab7ab54eefb0cc6b076a3ea7c3d92cfe2f7b184",
+      "txHash": "0xd05ef418059b366d08ebcd475451caab885a1ad6c76b83ae70a72a63210bd0fd",
       "layout": {
         "storage": [
           {
@@ -840,9 +840,9 @@
         }
       }
     },
-    "20e7651ad8ae6e3f7b4369e7d2df0ca7eab66f1350d61a8fedde11e6ac770f9e": {
+    "e9d3b3f2dff09018a0cfef9e3138a8e10651122d94e7ec3c1483db19c04c6776": {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xbe7c54b2ab70318ff49e826207416bfbad537b6ffcad68b11e7e22ba7afdff09",
+      "txHash": "0xea7f91359a1d2b51e045918ba0a9adf4ad5b31e2c972d04ef88d5cd6067a1bd7",
       "layout": {
         "storage": [
           {
@@ -938,7 +938,7 @@
             "label": "_equityTokens",
             "offset": 0,
             "slot": "205",
-            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)4356_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3437_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:50"
           },
@@ -946,7 +946,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "206",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)4363_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3444_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:52"
           },
@@ -986,7 +986,7 @@
             "label": "_approver",
             "offset": 0,
             "slot": "211",
-            "type": "t_contract(IOSNFTApproverUpgradeable)4240",
+            "type": "t_contract(IOSNFTApproverUpgradeable)3321",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:65"
           },
@@ -1004,7 +1004,7 @@
             "slot": "213",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:748"
+            "src": "contracts/os_nft_base.sol:746"
           },
           {
             "label": "baseTokenURI",
@@ -1040,7 +1040,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFTApproverUpgradeable)4240": {
+          "t_contract(IOSNFTApproverUpgradeable)3321": {
             "label": "contract IOSNFTApproverUpgradeable",
             "numberOfBytes": "20"
           },
@@ -1064,11 +1064,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(EquityTokenInfo)4356_storage)": {
+          "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3437_storage)": {
             "label": "mapping(bytes32 => struct OSNFTBase.EquityTokenInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)4363_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3444_storage)": {
             "label": "mapping(bytes32 => struct OSNFTBase.PercentageTokenInfo)",
             "numberOfBytes": "32"
           },
@@ -1076,7 +1076,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(EquityTokenInfo)4356_storage": {
+          "t_struct(EquityTokenInfo)3437_storage": {
             "label": "struct OSNFTBase.EquityTokenInfo",
             "members": [
               {
@@ -1106,7 +1106,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(PercentageTokenInfo)4363_storage": {
+          "t_struct(PercentageTokenInfo)3444_storage": {
             "label": "struct OSNFTBase.PercentageTokenInfo",
             "members": [
               {

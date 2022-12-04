@@ -1,6 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect, use } from "chai";
-import { ethers, providers, Wallet } from "ethers";
+import { constants, ethers, providers, Wallet } from "ethers";
 import { recoverTypedSignature, SignTypedDataVersion } from "@metamask/eth-sig-util";
 import { recoverAddress } from "ethers/lib/utils";
 import { IDeployedPayload } from "../interfaces";
@@ -86,7 +86,7 @@ export function testMint(payload: IDeployedPayload) {
             30
         );
 
-        expect(gasForMintingWithSign).equal(191481);
+        expect(gasForMintingWithSign).equal(171095);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -94,7 +94,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(175169);
+        expect(gasForMintingWithoutSign).equal(154783);
     });
 
     describe('percentage cut', async () => {
@@ -292,7 +292,6 @@ export function testMint(payload: IDeployedPayload) {
 
             const nativeToken = payload.nativeToken;
             const nativeTokenBalanceOfUser = await nativeToken.balanceOf(address);
-            const nativeTokenBalanceOfMarketplace = await nativeToken.balanceOf(payload.marketplace.address);
 
             const tx = nft.mintTo(signature, address, projectUrl, 1, 10000);
             await expect(tx).emit(nft, 'Transfer').withArgs(
@@ -304,18 +303,18 @@ export function testMint(payload: IDeployedPayload) {
                 projectUrl, 1, 10000
             );
 
+
             balance = await nft.balanceOf(address);
             expect(balance).equal(2);
 
             // check native token balance
 
             const nativeTokenBalanceOfUserAfterMint = await nativeToken.balanceOf(address);
-            const nativeTokenBalanceOfMarketplaceAfterMint = await nativeToken.balanceOf(payload.marketplace.address);
 
             const approveInfo = await payload.approver.getApprovedProject(expectedTokenId);
 
-            expect(nativeTokenBalanceOfMarketplaceAfterMint).equal(
-                nativeTokenBalanceOfMarketplace.add(approveInfo.worth)
+            await expect(tx).emit(payload.nativeToken, 'Transfer').withArgs(
+                address, constants.AddressZero, approveInfo.worth
             );
 
             expect(nativeTokenBalanceOfUser).equal(
