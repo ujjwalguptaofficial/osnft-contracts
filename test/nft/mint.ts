@@ -94,7 +94,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(154783);
+        expect(gasForMintingWithoutSign).equal(154871);
     });
 
     describe('percentage cut', async () => {

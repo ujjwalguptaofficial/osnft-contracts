@@ -341,9 +341,9 @@ contract OSNFTBase is
 
     address internal _nativeToken;
 
-    function setNativeToken(address token) public onlyOwner {
-        _nativeToken = token;
-    }
+    // function setNativeToken(address token) public onlyOwner {
+    //     _nativeToken = token;
+    // }
 
     function getNativeToken() external view returns (address) {
         return _nativeToken;

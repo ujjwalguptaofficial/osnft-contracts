@@ -155,7 +155,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(5134539);
+        expect(estimatedGas).equal(5109649);
     })
 
     it('deploy marketplace', async () => {
