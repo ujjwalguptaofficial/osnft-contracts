@@ -1,8 +1,76 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
 
 export function testNFTSale(payload: IDeployedPayload) {
+
+    const signMessage = async (user: SignerWithAddress, tokenId, share, price, erc20token) => {
+        const domainType = [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "uint256" },
+            { name: "verifyingContract", type: "address" },
+        ];
+        const nftMintDataType = [
+            { name: "tokenId", type: "bytes32" },
+            { name: "share", type: "uint32" },
+            { name: "price", type: "uint256" },
+            { name: "erc20token", type: "address" },
+        ];
+
+        const domainData = {
+            name: "OSNFT_MARKETPLACE",
+            version: "1",
+            chainId: await user.getChainId(),
+            verifyingContract: payload.marketplace.address.toLowerCase(),
+        };
+        const message = {
+            tokenId,
+            share,
+            price,
+            erc20token
+        };
+
+        // const data = JSON.stringify({
+        //     types: {
+        //         EIP712Domain: domainType,
+        //         NFTMintData: nftMintDataType,
+        //     },
+        //     domain: domainData,
+        //     primaryType: "NFTListOnSaleData",
+        //     message: message
+        // });
+        // const walletAddress = user.address;
+
+        const signatureResult = await user._signTypedData(domainData, {
+            NFTListOnSaleData: nftMintDataType,
+        }, message);
+        // recover
+
+        // const datas = {
+        //     EIP712Domain: domainType,
+        //     NFTMintData: nftMintDataType,
+        // };
+        // const result = recoverTypedSignature<SignTypedDataVersion.V4, typeof datas>({
+        //     data: {
+        //         types: {
+        //             EIP712Domain: domainType,
+        //             NFTMintData: nftMintDataType,
+        //         },
+        //         domain: domainData,
+        //         primaryType: "NFTMintData",
+        //         message: message
+        //     },
+        //     signature: signatureResult,
+        //     version: SignTypedDataVersion.V4
+        // });
+        // expect(result).equal(user.address.toLowerCase());
+
+        return signatureResult;
+        // { data: payload.getProjectId(data), signature: signatureResult };
+    }
+
     it("add nft on sale by non owner", async () => {
         const marketplace = payload.marketplace;
         const tx = marketplace.connect(payload.signer4).listNFTOnSale(
@@ -58,7 +126,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
 
-        expect(tx).equal(157497);
+        expect(tx).equal(157528);
     });
 
     it('not existing token', async () => {
@@ -306,36 +374,86 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     });
 
-    it("add mahal-webpack-loader (percentage cut) on sale", async () => {
-        const marketplace = payload.marketplace;
-        const tokenId = payload.getProjectId(
-            payload.projects["mahal-webpack-loader"]
-        );
-        const price = ethers.constants.MaxUint256.sub(1);
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
-            tokenId,
-            0,
-            price,
-            payload.erc20Token2.address
-        );
-        const from = payload.signer3.address;
-        const sellId = payload.getSellId(tokenId, from);
-        await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
-            tokenId,
-            from,
-            sellId,
-            0,
-            price,
-            payload.erc20Token2.address
-        );
+    describe("sell using meta sign", () => {
 
-        const nftData = await marketplace.getNFTFromSale(sellId);
+        it("Invalid signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token)
+            const from = payload.signer3.address;
+            const tx = marketplace.listNFTOnSaleMeta(
+                signature,
+                payload.signer2.address,
+                tokenId,
+                0,
+                price,
+                erc20token
+            );
 
-        expect(nftData.seller).equal(from);
-        expect(nftData.paymentTokenAddress).equal(payload.erc20Token2.address);
-        expect(nftData.share).equal(0);
-        expect(nftData.price).equal(price);
-        expect(nftData.tokenId).equal(tokenId);
+            await expect(tx).to.revertedWith('Invalid signature');
+        });
 
-    });
+        it("Valid signature but now owner", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const signature = await signMessage(payload.signer2, tokenId, 0, price, erc20token)
+            const from = payload.signer2.address;
+            const tx = marketplace.listNFTOnSaleMeta(
+                signature,
+                from,
+                tokenId,
+                0,
+                price,
+                erc20token
+            );
+
+            await expect(tx).to.revertedWith('Require NFT ownership');
+        });
+
+        it("add mahal-webpack-loader (percentage cut) on sale", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token)
+            const from = payload.signer3.address;
+            const tx = marketplace.listNFTOnSaleMeta(
+                signature,
+                from,
+                tokenId,
+                0,
+                price,
+                erc20token
+            );
+            const sellId = payload.getSellId(tokenId, from);
+            await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
+                tokenId,
+                from,
+                sellId,
+                0,
+                price,
+                payload.erc20Token2.address
+            );
+
+            const nftData = await marketplace.getNFTFromSale(sellId);
+
+            expect(nftData.seller).equal(from);
+            expect(nftData.paymentTokenAddress).equal(payload.erc20Token2.address);
+            expect(nftData.share).equal(0);
+            expect(nftData.price).equal(price);
+            expect(nftData.tokenId).equal(tokenId);
+
+        });
+    })
+
 }

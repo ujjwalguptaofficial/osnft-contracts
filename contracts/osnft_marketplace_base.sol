@@ -9,16 +9,19 @@ import "./interfaces/erc721_receiver_upgradable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "./string_helper.sol";
-import "hardhat/console.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
 contract OSNFTMarketPlaceBase is
     Initializable,
     OwnableUpgradeable,
     IOSNFTMarketPlaceUpgradeable,
     IERC721ReceiverUpgradeable,
+    EIP712Upgradeable,
     ReentrancyGuardUpgradeable
 {
     using StringHelper for bytes32;
+    using ECDSAUpgradeable for bytes32;
 
     // tokenId -> { shareOwner: Listing }
     mapping(bytes32 => Listing) private _sellListings;
@@ -31,12 +34,43 @@ contract OSNFTMarketPlaceBase is
 
     mapping(bytes32 => Auction) _auctions;
 
+    // uint256 internal _sellPriorityConstant;
+
     function getRoyality() external view returns (uint8) {
         return _marketPlaceRoyality;
     }
 
     function setRoyality(uint8 value) external onlyOwner {
         _marketPlaceRoyality = value;
+    }
+
+    function listNFTOnSaleMeta(
+        bytes memory signature,
+        address to,
+        bytes32 tokenId,
+        uint32 share,
+        uint256 price,
+        address erc20token
+    ) external {
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    keccak256(
+                        "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token)"
+                    ),
+                    tokenId,
+                    share,
+                    price,
+                    erc20token
+                )
+            )
+        );
+        require(
+            ECDSAUpgradeable.recover(digest, signature) == to,
+            "Invalid signature"
+        );
+
+        _listNFTOnSale(tokenId, share, price, erc20token, to);
     }
 
     function listNFTOnSale(
@@ -46,18 +80,27 @@ contract OSNFTMarketPlaceBase is
         address erc20token
     ) external {
         address caller = _msgSender();
+        _listNFTOnSale(tokenId, share, price, erc20token, caller);
+    }
 
-        bytes32 sellId = _getSellId(tokenId, caller);
+    function _listNFTOnSale(
+        bytes32 tokenId,
+        uint32 share,
+        uint256 price,
+        address erc20token,
+        address seller
+    ) internal {
+        bytes32 sellId = _getSellId(tokenId, seller);
 
         //  should not be listed before
         _requireNotListed(sellId);
 
         // should be owner
-        _requireNftOwner(tokenId, caller, share);
+        _requireNftOwner(tokenId, seller, share);
 
-        _listItem(tokenId, share, price, erc20token);
+        _listItem(tokenId, share, price, erc20token, seller);
 
-        emit NFTSaleAdded(tokenId, caller, sellId, share, price, erc20token);
+        emit NFTSaleAdded(tokenId, seller, sellId, share, price, erc20token);
     }
 
     function addPayableToken(address token) external onlyOwner {
@@ -78,6 +121,8 @@ contract OSNFTMarketPlaceBase is
     function __MarketPlace_init(address nft_) internal onlyInitializing {
         _nftContract = IERC721Upgradeable(nft_);
         _marketPlaceRoyality = 2;
+        // _sellPriorityConstant = 1000000000000000; // 10^15 - allows sell Priority to be 1000 in one OSD
+        __EIP712_init("OSNFT_MARKETPLACE", "1");
     }
 
     function _requireNotListed(bytes32 sellId) internal view {
@@ -171,7 +216,13 @@ contract OSNFTMarketPlaceBase is
         address paymentTokenAddress
     ) external {
         Listing memory listedNft = _requireListed(sellId);
-        _listItem(listedNft.tokenId, share, price, paymentTokenAddress);
+        _listItem(
+            listedNft.tokenId,
+            share,
+            price,
+            paymentTokenAddress,
+            _msgSender()
+        );
         emit NFTSaleUpdated(sellId, share, price, paymentTokenAddress);
     }
 
@@ -403,7 +454,8 @@ contract OSNFTMarketPlaceBase is
         bytes32 tokenId,
         uint32 share,
         uint256 price,
-        address paymentTokenAddress
+        address paymentTokenAddress,
+        address seller
     ) internal {
         require(price > 0, "Price must be above zero");
 
@@ -411,11 +463,11 @@ contract OSNFTMarketPlaceBase is
 
         _requireTokenApproved(tokenId);
 
-        bytes32 sellId = _getSellId(tokenId, _msgSender());
+        bytes32 sellId = _getSellId(tokenId, seller);
         _sellListings[sellId] = Listing({
             tokenId: tokenId,
             price: price,
-            seller: _msgSender(),
+            seller: seller,
             share: share,
             paymentTokenAddress: paymentTokenAddress
         });

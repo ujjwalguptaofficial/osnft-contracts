@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "dev": "hardhat node"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
