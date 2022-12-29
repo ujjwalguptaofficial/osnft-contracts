@@ -410,11 +410,7 @@ contract OSNFTBase is
             memory projectApproveInfo = _approver.getApprovedProject(tokenId);
         require(projectApproveInfo.mintTo == to, "project not approved");
 
-        ERC20BurnableUpgradeable paymentToken = ERC20BurnableUpgradeable(
-            _nativeToken
-        );
-
-        paymentToken.burnFrom(to, projectApproveInfo.worth);
+        _burnProjectWorth(to, projectApproveInfo.worth);
 
         _increaseBalance(to);
 
@@ -448,6 +444,14 @@ contract OSNFTBase is
 
         emit Transfer(address(0), to, tokenId);
         emit ProjectAdded(projectUrl, nftType, totalShare);
+    }
+
+    function _burnProjectWorth(address to, uint256 worth) internal {
+        ERC20BurnableUpgradeable paymentToken = ERC20BurnableUpgradeable(
+            _nativeToken
+        );
+
+        paymentToken.burnFrom(to, worth);
     }
 
     /**
@@ -674,6 +678,10 @@ contract OSNFTBase is
         } else {
             delete _percentageTokens[tokenId];
         }
+        IOSNFTApproverUpgradeable.ProjectApprovedInfo
+            memory projectApproveInfo = _approver.getApprovedProject(tokenId);
+
+        _burnProjectWorth(from, projectApproveInfo.worth);
         _decreaseBalance(from);
         emit Transfer(from, address(0), tokenId);
     }

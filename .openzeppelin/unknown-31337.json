@@ -177,29 +177,29 @@
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x22909b7c7c7bd9d435686695ba69ca5249010a261b7d80eac03d1372e52a95fb",
+      "txHash": "0xcb5793859b8f91033a116fc9d394c223533aca72505233620fbd81eaa9db7e1c",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x9f8edf5435d53167d8203dbba70c3b1fb217319cc239697d485d3dc35e6d8f00",
+      "txHash": "0xeccea5dc1a318571039df2e8133a7de2f3a237542ef90805ddcdae17b73de88e",
       "kind": "transparent"
     },
     {
       "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
-      "txHash": "0x3128a3a6f6da6b2c88dffc7b4405927340abf98734758c612e77c851b59c6446",
+      "txHash": "0x2ba433cff5ba969700145d54400ea5c412e30ab3c62642ba9b85c34d25ed9c14",
       "kind": "transparent"
     },
     {
       "address": "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",
-      "txHash": "0x0c2e095d31d535d4abdb7fcf3ff0f5d0a03ff48d7ac4c78db5b4380df2e76db4",
+      "txHash": "0x67c3cb7747032c2bd2ede0adb57c77963ef0a3052f5934ec5f1b6f88ae51cd19",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-      "txHash": "0x390f1ca5cbd6f7260f9236ba326850789d0b2aba1df2f8e49554216b14f20387",
+      "txHash": "0x1fcf7185cfc51658e061ab471f9155be298628076394781ec94b005eb94f1dc3",
       "layout": {
         "storage": [
           {
@@ -630,7 +630,7 @@
     },
     "f85bb07ea2120f13c5cafa4f324cbf77ad81002ab85b8fe1c947ff74d5997a40": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x66ec8dc57de857945745218755705c77d708cc22a36ec9f08e3f127ec786aca4",
+      "txHash": "0xbb790f12d723b63710cf1bfab2fe7a35c0d956c45d81ebfc895c1f4d0a61f788",
       "layout": {
         "storage": [
           {
@@ -881,9 +881,9 @@
         }
       }
     },
-    "a768392d6163fd900abc07eff507bad7a974e40ff7d238cde9690d032f4ffbc2": {
+    "d45185b53d6c4a43428b07a64b24914de4bb8ee3aa303ba8187c1a47c7f992f4": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x6976871713270e6b15f6ff601bdc411704cb31affe6fef0c56c554c8ee8451fb",
+      "txHash": "0x78189ba8d6ccc84667ad62476ae1c51de843fcd782e3f8601b6f27184c488b95",
       "layout": {
         "storage": [
           {
@@ -1045,7 +1045,7 @@
             "slot": "213",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:765"
+            "src": "contracts/os_nft_base.sol:773"
           },
           {
             "label": "baseTokenURI",

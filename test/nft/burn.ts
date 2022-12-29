@@ -52,6 +52,7 @@ export function testNFTBurn(payload: IDeployedPayload) {
     describe('burn success', () => {
         it('share tokens', async () => {
             const nft = payload.nft;
+
             const projectId = payload.getProjectId(payload.projects["solidity-learning"]);
             const from = payload.deployer.address;
 
@@ -61,6 +62,8 @@ export function testNFTBurn(payload: IDeployedPayload) {
             )
 
             expect(shareOf).greaterThan(0);
+            const nativeToken = payload.nativeToken;
+            const balanceOfOSD = await nativeToken.balanceOf(from);
 
             const tx = await nft.burn(projectId);
 
@@ -80,8 +83,15 @@ export function testNFTBurn(payload: IDeployedPayload) {
                 projectId, from
             )
 
-            await expect(shareOfAfter).to.revertedWith(`ERC721: invalid token ID`)
+            await expect(shareOfAfter).to.revertedWith(`ERC721: invalid token ID`);
 
+            const balanceOfOSDAfter = await nativeToken.balanceOf(from);
+            const approvedProject = await payload.approver.getApprovedProject(projectId);
+            expect(balanceOfOSDAfter).equal(
+                balanceOfOSD.sub(
+                    approvedProject.worth
+                )
+            );
         })
 
         it('percentagecut tokens', async () => {
@@ -95,7 +105,10 @@ export function testNFTBurn(payload: IDeployedPayload) {
             );
 
             expect(creatorCut).greaterThan(0);
-        
+
+            const nativeToken = payload.nativeToken;
+            const balanceOfOSD = await nativeToken.balanceOf(from);
+
             const tx = await nft.burn(projectId);
 
             await expect(tx).to.emit(nft, 'Transfer').withArgs(
@@ -114,7 +127,15 @@ export function testNFTBurn(payload: IDeployedPayload) {
                 projectId
             )
 
-            await expect(creatorCutAfter).to.revertedWith(`ERC721: invalid token ID`)
+            await expect(creatorCutAfter).to.revertedWith(`ERC721: invalid token ID`);
+
+            const balanceOfOSDAfter = await nativeToken.balanceOf(from);
+            const approvedProject = await payload.approver.getApprovedProject(projectId);
+            expect(balanceOfOSDAfter).equal(
+                balanceOfOSD.sub(
+                    approvedProject.worth
+                )
+            );
 
         })
     })
