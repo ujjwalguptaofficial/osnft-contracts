@@ -2,12 +2,6 @@
 // OpenZeppelin Contracts (last updated v4.8.0-rc.1) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
-
-// import "./IERC20Upgradeable.sol";
-// import "./extensions/IERC20MetadataUpgradeable.sol";
-// import "../../utils/ContextUpgradeable.sol";
-// import "../../proxy/utils/Initializable.sol";
-
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -142,6 +136,20 @@ contract DevCoinBase is
         address owner = _msgSender();
         _transfer(owner, to, amount);
         return true;
+    }
+
+    function batchTransfer(
+        address[] calldata tokenHolders,
+        uint256[] calldata amounts
+    ) external {
+        require(
+            tokenHolders.length == amounts.length,
+            "Invalid input parameters"
+        );
+        address owner = _msgSender();
+        for (uint256 indx = 0; indx < tokenHolders.length; indx++) {
+            _transfer(owner, tokenHolders[indx], amounts[indx]);
+        }
     }
 
     function allowance(

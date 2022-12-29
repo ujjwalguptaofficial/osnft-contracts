@@ -8,6 +8,7 @@ import { IDeployedPayload } from "./interfaces";
 import { testMarketplace } from "./marketplace";
 import { testNFT } from "./nft";
 import { testSetMarketPlace } from "./nft/set_makrketplace";
+import { testOSD } from "./osd";
 
 
 
@@ -58,38 +59,8 @@ describe("contracts", () => {
         payload.nativeToken = deployedContract;
     })
 
-    it('mint token to owner', async () => {
-        const oneToken = ethers.BigNumber.from(10).pow(18);
-        const amount = oneToken.mul('10000000000'); // 10 billion
-        const nativeToken = payload.nativeToken;
-
-        const devCoin = payload.nativeToken.mint(payload.deployer.address, amount);
-
-        await expect(devCoin).emit(nativeToken, 'Transfer').withArgs(
-            ethers.constants.AddressZero, payload.deployer.address, amount
-        )
-
-        const decimal = await payload.nativeToken.decimals();
-
-        const gwei = ethers.BigNumber.from(10).pow(13);
-
-        const star = 10000;
-        const fork = 100;
-
-        const worth = gwei.mul(star * 4).add(gwei.mul(fork * 2));
-
-        console.log('no of projects mint', worth, ethers.BigNumber.from(10).pow(18).div(worth));
-
-        const balance = await nativeToken.balanceOf(payload.deployer.address);
-        expect(balance).equal(amount);
-    })
-
-    it('airdrop to different users', async () => {
-        const nativeToken = payload.nativeToken;
-        const oneToken = ethers.BigNumber.from(10).pow(18);
-        await nativeToken.transfer(payload.signer2.address, oneToken);
-        await nativeToken.transfer(payload.signer3.address, oneToken);
-        await nativeToken.transfer(payload.signer4.address, oneToken);
+    describe('OSD coin', async () => {
+        testOSD(payload);
     })
 
     // return;
