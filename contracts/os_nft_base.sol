@@ -656,6 +656,20 @@ contract OSNFTBase is
         emit Transfer(from, to, tokenId);
     }
 
+    function _burn(bytes32 tokenId) internal {
+        require(_exists(tokenId));
+        address from = _msgSender();
+        require(_ownerOf(tokenId) == from, "Only owner can burn");
+
+        if (isShareToken(tokenId)) {
+            delete _equityTokens[tokenId];
+        } else {
+            delete _percentageTokens[tokenId];
+        }
+
+        emit Transfer(from, address(0), tokenId);
+    }
+
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
      * are aware of the ERC721 protocol to prevent tokens from being forever locked.

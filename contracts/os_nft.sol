@@ -26,4 +26,8 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     function setBaseTokenURI(string calldata _baseTokenURI) external onlyOwner {
         baseTokenURI = _baseTokenURI;
     }
+
+    function burn(bytes32 tokenId) external {
+        _burn(tokenId);
+    }
 }
