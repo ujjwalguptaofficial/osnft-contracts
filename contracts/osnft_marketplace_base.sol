@@ -7,6 +7,7 @@ import "./interfaces/marketplace.sol";
 import "./interfaces/erc721_upgradable.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "./string_helper.sol";
 import "hardhat/console.sol";
 
@@ -14,7 +15,8 @@ contract OSNFTMarketPlaceBase is
     Initializable,
     OwnableUpgradeable,
     IOSNFTMarketPlaceUpgradeable,
-    IERC721ReceiverUpgradeable
+    IERC721ReceiverUpgradeable,
+    ReentrancyGuardUpgradeable
 {
     using StringHelper for bytes32;
 
@@ -83,11 +85,9 @@ contract OSNFTMarketPlaceBase is
         require(listing.price <= 0, "Already on sale");
     }
 
-    function _requireListed(bytes32 sellId)
-        internal
-        view
-        returns (Listing memory)
-    {
+    function _requireListed(
+        bytes32 sellId
+    ) internal view returns (Listing memory) {
         Listing memory listing = _sellListings[sellId];
         require(listing.price > 0, "Require NFT listed");
         return listing;
@@ -112,7 +112,7 @@ contract OSNFTMarketPlaceBase is
         bytes32 sellId,
         uint32 share,
         uint256 price
-    ) external {
+    ) external nonReentrant {
         address buyer = _msgSender();
         Listing memory listedItem = _requireListed(sellId);
 
@@ -175,11 +175,9 @@ contract OSNFTMarketPlaceBase is
         emit NFTSaleUpdated(sellId, share, price, paymentTokenAddress);
     }
 
-    function getNFTFromSale(bytes32 sellId)
-        external
-        view
-        returns (Listing memory)
-    {
+    function getNFTFromSale(
+        bytes32 sellId
+    ) external view returns (Listing memory) {
         return _sellListings[sellId];
     }
 
@@ -252,7 +250,10 @@ contract OSNFTMarketPlaceBase is
         return auction.currentBidPrice;
     }
 
-    function placeBid(bytes32 auctionId, uint256 bidAmount) external {
+    function placeBid(
+        bytes32 auctionId,
+        uint256 bidAmount
+    ) external nonReentrant {
         _requireAuctioned(auctionId);
         Auction storage auction = _auctions[auctionId];
 
@@ -301,7 +302,7 @@ contract OSNFTMarketPlaceBase is
         emit NewBidOnAuction(auctionId, bidAmount);
     }
 
-    function claimNFT(bytes32 auctionId) external {
+    function claimNFT(bytes32 auctionId) external nonReentrant {
         _requireAuctioned(auctionId);
 
         // Check if the auction is closed
@@ -358,10 +359,10 @@ contract OSNFTMarketPlaceBase is
         emit NFTRefunded(auctionId, auction.tokenId, auction.share);
     }
 
-    function withdrawEarning(address tokenAddress, uint256 amount)
-        external
-        onlyOwner
-    {
+    function withdrawEarning(
+        address tokenAddress,
+        uint256 amount
+    ) external onlyOwner {
         withdrawEarningTo(owner(), tokenAddress, amount);
     }
 
@@ -420,11 +421,10 @@ contract OSNFTMarketPlaceBase is
         });
     }
 
-    function _percentageOf(uint256 value, uint8 percentage)
-        internal
-        pure
-        returns (uint256)
-    {
+    function _percentageOf(
+        uint256 value,
+        uint8 percentage
+    ) internal pure returns (uint256) {
         // will overflow only if value is zero
         // percentage is greather than 100 - which comes from nft contract
         unchecked {
@@ -512,21 +512,18 @@ contract OSNFTMarketPlaceBase is
         require(paymentToken.transferFrom(from, to, price), "Payment failed");
     }
 
-    function _getSellId(bytes32 nftId, address seller)
-        internal
-        pure
-        returns (bytes32)
-    {
+    function _getSellId(
+        bytes32 nftId,
+        address seller
+    ) internal pure returns (bytes32) {
         // encodePacked can have hashed collision with multiple arguments,
         // encode is safe
         return keccak256(abi.encode(nftId, seller));
     }
 
-    function _requireAuctioned(bytes32 auctionId)
-        internal
-        view
-        returns (Auction memory)
-    {
+    function _requireAuctioned(
+        bytes32 auctionId
+    ) internal view returns (Auction memory) {
         Auction memory auction = _auctions[auctionId];
         require(auction.currentBidPrice > 0, "No auction found");
         return auction;

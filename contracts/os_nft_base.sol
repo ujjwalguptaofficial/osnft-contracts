@@ -413,11 +413,8 @@ contract OSNFTBase is
         ERC20BurnableUpgradeable paymentToken = ERC20BurnableUpgradeable(
             _nativeToken
         );
-        // require(
-        paymentToken.burnFrom(to, projectApproveInfo.worth);
-        // "Payment for minting failed"
-        // );
 
+        paymentToken.burnFrom(to, projectApproveInfo.worth);
         unchecked {
             // Will not overflow unless all 2**256 token ids are minted to the same owner.
             // Given that tokens are minted one by one, it is impossible in practice that
