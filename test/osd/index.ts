@@ -42,15 +42,39 @@ export function testOSD(payload: IDeployedPayload) {
         const balance = await nativeToken.balanceOf(payload.deployer.address);
         expect(balance).equal(amount);
     })
+
     const oneToken = ethers.BigNumber.from(10).pow(18);
 
-    it('transfer', async () => {
-        const nativeToken = payload.nativeToken;
-        const user = payload.signer2.address;
-        const beforeBalance = await nativeToken.balanceOf(user);
-        await nativeToken.transfer(user, oneToken);
-        const afterBalance = await nativeToken.balanceOf(user);
-        expect(afterBalance).equal(beforeBalance.add(oneToken));
+    describe('transfer', () => {
+
+        it('fail', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.connect(payload.signer3).transfer(user, oneToken);
+            await expect(tx).to.revertedWith(`ERC20: transfer amount exceeds balance`);
+        })
+
+        it('estimatGas', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const gas = await nativeToken.estimateGas.transfer(user, oneToken);
+
+            expect(gas).equal(59975);
+        })
+
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const beforeBalance = await nativeToken.balanceOf(user);
+            const tx = nativeToken.transfer(user, oneToken);
+
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                payload.deployer.address, user, oneToken.toString()
+            )
+
+            const afterBalance = await nativeToken.balanceOf(user);
+            expect(afterBalance).equal(beforeBalance.add(oneToken));
+        })
     })
 
     describe("batch transfer", () => {
@@ -79,6 +103,19 @@ export function testOSD(payload: IDeployedPayload) {
             await expect(tx).to.be.revertedWith(`Invalid input parameters`)
         });
 
+        it('estimategasg', async () => {
+            const nativeToken = payload.nativeToken;
+            const user1 = payload.signer3.address;
+            const user2 = payload.signer4.address;
+
+            const twoToken = oneToken.mul(2);
+            const gas = await nativeToken.estimateGas.batchTransfer(
+                [user1, user2],
+                [oneToken, twoToken]
+            );
+
+            expect(gas).equal(87827);
+        });
 
         it('batchTransfer', async () => {
             const nativeToken = payload.nativeToken;
@@ -87,17 +124,24 @@ export function testOSD(payload: IDeployedPayload) {
 
             const beforeBalance1 = await nativeToken.balanceOf(user1);
             const beforeBalance2 = await nativeToken.balanceOf(user2);
-
-            await nativeToken.batchTransfer(
+            const twoToken = oneToken.mul(2);
+            const tx = nativeToken.batchTransfer(
                 [user1, user2],
-                [oneToken, oneToken]
+                [oneToken, twoToken]
             );
+
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                payload.deployer.address, user1, oneToken.toString()
+            )
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                payload.deployer.address, user2, twoToken.toString()
+            )
 
             const afterBalance1 = await nativeToken.balanceOf(user1);
             const afterBalance2 = await nativeToken.balanceOf(user2);
 
             expect(afterBalance1).equal(beforeBalance1.add(oneToken));
-            expect(afterBalance2).equal(beforeBalance2.add(oneToken));
+            expect(afterBalance2).equal(beforeBalance2.add(twoToken));
         })
 
         it('batchTransfer fail', async () => {
