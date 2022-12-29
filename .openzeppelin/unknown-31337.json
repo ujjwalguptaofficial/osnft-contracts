@@ -2,7 +2,7 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0xa04d52882b81cc72a3c95e2a21517413ac970b92770d442fbc3e9a984fa5b9c3"
+    "txHash": "0x7c89f8904a5df136f32f97e2f0e88d9da4c12c2e32be4022fe6623a69ddd8f1b"
   },
   "proxies": [
     {
@@ -142,39 +142,39 @@
     },
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x500570eadf48f15fccfc6569b0619c80691abbcb0309a74ddae03e70b8f03ddb",
+      "txHash": "0x9254fcbca878f3325d6130c5cb2bbcf9d3d65225f60ecdd0c18449117b75ad81",
       "kind": "transparent"
     },
     {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0xba90c4dea030dcd720e12190da8dda4ab0c87ffc5e48f6e6b154c42cd150376d",
+      "txHash": "0x091008ec2126184404f77d5863a58e827c66231e7c923274d3b48e1401cdf195",
       "kind": "transparent"
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x466e873f056a533baa6dc267b26180283bc5cec888b3a48b2878ac523cf29ac7",
+      "txHash": "0x334415f15db961072865e096753c7413ffb323fa8a5abb336dff8c5897e38f88",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x32b4e8ace5b17774445711cfab3f45c77a3dd3f3903d39db96cc3e46d91bfbee",
+      "txHash": "0xe132e1ee2b1e68515b214b4b915cb86442dadb235630c31cbe555964e8a7e2ab",
       "kind": "transparent"
     },
     {
       "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-      "txHash": "0xeb67bca423c6ca2e53e12e6cd87de6606c874a8c300bce3e6d02ad88eb126967",
+      "txHash": "0x73d0a47aaa2bc4705f1fbb6af756255fb2a16864728437075682e7627d1078c1",
       "kind": "transparent"
     },
     {
       "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
-      "txHash": "0x132d751f9be4d8b2a4d71cec16ff241cffa7225d8db0fc71b80d2dd1f14d99d2",
+      "txHash": "0xd926b034c08539d68a95142a4f8b8765b6761ab675bbfb4820a1406a682204d8",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
-      "txHash": "0xcf26a983f64c8020eee2b6365c206f7cbef307506aac33120ae1f492d7f7fedd",
+      "txHash": "0x47b96f9cb6da553c991ef497b541f97aed25906520dc668ceea50e7513ce2d2e",
       "layout": {
         "storage": [
           {
@@ -313,7 +313,7 @@
     },
     "392f8a9a86df53ca80b7a9659e8619de7337fa1a3601a9ef63326850c00bd4fc": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x29f82798f2e93a0a1e931fe2311f1c4da922f3f5b3263e1d6ec1fb7ff2a3d4ba",
+      "txHash": "0x6ea37ee4e8354a0a9eacd9c7c5adc23d11d7319644d7b953d56dd3294f15db0c",
       "layout": {
         "storage": [
           {
@@ -550,7 +550,7 @@
     },
     "a82df71b653740fef05383b5365274f725eb214f0e9f68fa9338f0b2296af6f3": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0xbc4a74e8d55a015470f2635c5ef0e9227acfd87128003b03e09a36c907634f6f",
+      "txHash": "0x4364914f06fa1b694157565d5b66344bc0414e24cc462d32ea1873ffa0eb2d10",
       "layout": {
         "storage": [
           {
@@ -695,7 +695,7 @@
     },
     "652f043781fa89462f4f6ca128a97c26aa6c8b86e837a79a274e7c1fd39d7c5a": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x153f7eb2db3c6e08b33218379db07435865bb0febc725f3bc94e6a061ea06bcd",
+      "txHash": "0x8e8a41a130547eb86983ae9823ea7086306e8e513e9f18c72ee792fa5c34af89",
       "layout": {
         "storage": [
           {
@@ -998,9 +998,9 @@
         }
       }
     },
-    "0446a4c06a525ca880780f942dddb7c1375bb3aef1776edbf48c45dac144a0ef": {
+    "90edc57fc609d7266bf7526f4e00c8acdde035d949525185e6c380b48f7cc71e": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x5276e8c5eac7cdf84558453ee7748ab36c0600e8e73fc1a4eee6fc9f049f4a9b",
+      "txHash": "0x5c690f77e1fd4c91d230adc9405876f04c65fd82899b4e197e04bdace0d3eff9",
       "layout": {
         "storage": [
           {
@@ -1098,7 +1098,7 @@
             "slot": "107",
             "type": "t_array(t_uint256)45_storage",
             "contract": "DevCoinBase",
-            "src": "contracts/dev_coin_base.sol:452"
+            "src": "contracts/dev_coin_base.sol:453"
           }
         ],
         "types": {

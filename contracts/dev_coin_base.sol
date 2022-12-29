@@ -141,7 +141,7 @@ contract DevCoinBase is
     function batchTransfer(
         address[] calldata tokenHolders,
         uint256[] calldata amounts
-    ) external {
+    ) external returns (bool) {
         require(
             tokenHolders.length == amounts.length,
             "Invalid input parameters"
@@ -150,6 +150,7 @@ contract DevCoinBase is
         for (uint256 indx = 0; indx < tokenHolders.length; indx++) {
             _transfer(owner, tokenHolders[indx], amounts[indx]);
         }
+        return true;
     }
 
     function allowance(
