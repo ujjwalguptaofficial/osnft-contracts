@@ -86,7 +86,7 @@ export function testMint(payload: IDeployedPayload) {
             30
         );
 
-        expect(gasForMintingWithSign).equal(171083);
+        expect(gasForMintingWithSign).equal(171112);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -94,7 +94,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(154760);
+        expect(gasForMintingWithoutSign).equal(154790);
     });
 
     describe('percentage cut', async () => {
@@ -231,6 +231,29 @@ export function testMint(payload: IDeployedPayload) {
 
             await expect(tx).emit(nft, 'ProjectAdded').withArgs(
                 projectUrl, 0, 0
+            );
+
+            balance = await nft.balanceOf(address);
+            expect(balance).equal(1);
+        });
+
+        it('mint godam-vue for signer4 user - to burn', async () => {
+            const nft = payload.nft;
+            const address = payload.signer4.address;
+
+            let balance = await nft.balanceOf(address);
+            expect(balance).equal(0);
+
+            const projectUrl = payload.projects["godam-vue"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+
+            const tx = nft.connect(payload.signer4).mint(projectUrl, 0, 10);
+            await expect(tx).emit(nft, 'Transfer').withArgs(
+                ethers.constants.AddressZero, address, expectedTokenId
+            );
+
+            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+                projectUrl, 0, 10
             );
 
             balance = await nft.balanceOf(address);
@@ -451,6 +474,29 @@ export function testMint(payload: IDeployedPayload) {
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
 
+        });
+
+        it('mint solidity-learning for burn', async () => {
+            const nft = payload.nft;
+            const address = payload.deployer.address;
+
+            let balance = await nft.balanceOf(address);
+
+            const projectUrl = payload.projects["solidity-learning"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+
+            const tx = nft.mint(projectUrl, 2, 0);
+            await expect(tx).emit(nft, 'Transfer').withArgs(
+                ethers.constants.AddressZero,
+                address,
+                expectedTokenId
+            );
+            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+                projectUrl, 1, 100
+            );
+
+            const balanceAfterMint = await nft.balanceOf(address);
+            expect(balanceAfterMint).equal(balance.add(1));
         });
     })
 

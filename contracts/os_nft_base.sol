@@ -415,13 +415,8 @@ contract OSNFTBase is
         );
 
         paymentToken.burnFrom(to, projectApproveInfo.worth);
-        unchecked {
-            // Will not overflow unless all 2**256 token ids are minted to the same owner.
-            // Given that tokens are minted one by one, it is impossible in practice that
-            // this ever happens. Might change if we allow batch minting.
-            // The ERC fails to describe this case.
-            _balances[to] += 1;
-        }
+
+        _increaseBalance(to);
 
         if (nftType == NFT_TYPE.Equity) {
             totalShare = 100;
@@ -620,9 +615,7 @@ contract OSNFTBase is
 
             // if to does not own any share then increase the balance
             if (equityToken.shares[to] == 0) {
-                unchecked {
-                    _balances[to] += 1;
-                }
+                _increaseBalance(to);
             }
 
             unchecked {
@@ -632,9 +625,7 @@ contract OSNFTBase is
 
             // if from does not have any share left then decrease the balance
             if (equityToken.shares[from] == 0) {
-                unchecked {
-                    _balances[from] -= 1;
-                }
+                _decreaseBalance(from);
             }
 
             uint32 totalShare = equityToken.totalNoOfShare;
@@ -656,8 +647,25 @@ contract OSNFTBase is
         emit Transfer(from, to, tokenId);
     }
 
+    function _decreaseBalance(address from) internal {
+        unchecked {
+            _balances[from] -= 1;
+        }
+    }
+
+    function _increaseBalance(address from) internal {
+        unchecked {
+            // Will not overflow unless all 2**256 token ids are minted to the same owner.
+            // Given that tokens are minted one by one, it is impossible in practice that
+            // this ever happens. Might change if we allow batch minting.
+            // The ERC fails to describe this case.
+            _balances[from] += 1;
+        }
+    }
+
     function _burn(bytes32 tokenId) internal {
-        require(_exists(tokenId));
+        _requireMinted(tokenId);
+
         address from = _msgSender();
         require(_ownerOf(tokenId) == from, "Only owner can burn");
 
@@ -666,7 +674,7 @@ contract OSNFTBase is
         } else {
             delete _percentageTokens[tokenId];
         }
-
+        _decreaseBalance(from);
         emit Transfer(from, address(0), tokenId);
     }
 

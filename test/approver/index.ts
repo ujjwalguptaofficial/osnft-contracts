@@ -261,4 +261,66 @@ export function testApprover(payload: IDeployedPayload) {
         expect(approvedValue.mintTo).equal(address);
     })
 
+    it('add project solidity-learning', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["solidity-learning"]
+        );
+        const address = payload.deployer.address;
+
+        let approvedValue = await payload.approver.getApprovedProject(
+            tokenId
+        );
+
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 4,
+                forkCount: 1
+            }
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getApprovedProject(
+            tokenId
+        );
+
+        expect(approvedValue.mintTo).equal(address);
+    })
+
+    it('add project godam vue', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["godam-vue"]
+        );
+        const address = payload.signer4.address;
+
+        let approvedValue = await payload.approver.getApprovedProject(
+            tokenId
+        );
+
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 4,
+                forkCount: 1
+            }
+        );
+        await expect(tx).emit(payload.approver, "ProjectApproved").withArgs(
+            tokenId, address
+        )
+
+        approvedValue = await payload.approver.getApprovedProject(
+            tokenId
+        );
+
+        expect(approvedValue.mintTo).equal(address);
+    })
+
 }

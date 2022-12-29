@@ -21,6 +21,9 @@ export interface IDeployedPayload {
         'jsstore': string;
         'godam': string;
         'mahal-webpack-loader': string;
+        'solidity-learning': string;
+        'godam-vue': string;
+        'solidity-tip': string;
     },
     getProjectId: (projectUrl: string) => string
     getSellId: (tokenId: string, from: string) => string

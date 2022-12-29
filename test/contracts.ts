@@ -32,7 +32,10 @@ describe("contracts", () => {
             "mahal": 'github.com/ujjwalguptaofficial/mahal',
             "mahal-webpack-loader": 'github.com/ujjwalguptaofficial/mahal-webpack-loader',
             "jsstore": 'github.com/ujjwalguptaofficial/jsstore',
-            "godam": 'github.com/ujjwalguptaofficial/godam'
+            "godam": 'github.com/ujjwalguptaofficial/godam',
+            "solidity-learning": 'github.com/ujjwalguptaofficial/solidity-learning',
+            "godam-vue": 'github.com/ujjwalguptaofficial/godam-vue',
+            "solidity-tip": 'github.com/ujjwalguptaofficial/solidity-tip'
         },
         getProjectId,
         getSellId
@@ -126,7 +129,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(5252903);
+        expect(estimatedGas).equal(5243234);
     })
 
     it('deploy marketplace', async () => {
@@ -173,7 +176,6 @@ describe("contracts", () => {
     describe('OSNFT', () => {
         testNFT(payload);
     });
-
 
     describe('Marketplace', () => {
         testMarketplace(payload);

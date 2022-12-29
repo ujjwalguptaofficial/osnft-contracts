@@ -169,7 +169,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(238044)
+        expect(gas).equal(238056)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -274,7 +274,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(243390)
+        expect(gas).equal(243432)
     })
 
     it('successful share auction', async () => {

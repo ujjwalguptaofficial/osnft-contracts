@@ -67,7 +67,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
             const to = payload.signer3.address;
 
             const balanceOfFrom = await payload.nft.balanceOf(from);
-            expect(balanceOfFrom).equal(2);
+            expect(balanceOfFrom).equal(3);
 
             const balanceOfTo = await payload.nft.balanceOf(to);
             expect(balanceOfTo).equal(1);
@@ -131,7 +131,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(94590);
+            expect(value).equal(94619);
 
         });
 

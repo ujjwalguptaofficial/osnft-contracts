@@ -58,7 +58,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.erc20Token1.address
         );
 
-        expect(tx).equal(157484);
+        expect(tx).equal(157497);
     });
 
     it('not existing token', async () => {

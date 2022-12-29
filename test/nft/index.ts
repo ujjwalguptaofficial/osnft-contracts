@@ -10,6 +10,7 @@ import { runPublicState } from "./public_state";
 import { setBaseTokenURI } from "./set_base_token_uri";
 import { testSetMarketPlace } from "./set_makrketplace";
 import { testTransferFrom } from "./transfer_from";
+import { testNFTBurn } from "./burn";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -40,6 +41,10 @@ export function testNFT(payload: IDeployedPayload) {
 
     describe('transfer from', async () => {
         testTransferFrom(payload);
+    })
+
+    describe('burn', async () => {
+        testNFTBurn(payload);
     })
 
 

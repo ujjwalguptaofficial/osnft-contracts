@@ -1,5 +1,6 @@
 {
-  "name": "hardhat-project",
+  "name": "osnft-contracts",
+  "private": true,
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test"
