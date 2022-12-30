@@ -38,6 +38,12 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 sellPriority;
     }
 
+    struct SignatureMeta {
+        bytes signature;
+        address to;
+        uint256 deadline;
+    }
+
     // Structure to define auction properties
     struct SellAuction {
         bytes32 tokenId;

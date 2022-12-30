@@ -47,25 +47,28 @@ contract OSNFTMarketPlaceBase is
     }
 
     function listNFTOnSaleMeta(
-        bytes memory signature,
-        address to,
+        SignatureMeta calldata signatureData,
         SellListingInput calldata sellData
     ) external {
+        require(block.timestamp < signatureData.deadline, "Signature expired");
+
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
                     keccak256(
-                        "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token)"
+                        "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint256 deadline)"
                     ),
                     sellData.tokenId,
                     sellData.share,
                     sellData.price,
-                    sellData.paymentTokenAddress
+                    sellData.paymentTokenAddress,
+                    signatureData.deadline
                 )
             )
         );
         require(
-            ECDSAUpgradeable.recover(digest, signature) == to,
+            ECDSAUpgradeable.recover(digest, signatureData.signature) ==
+                signatureData.to,
             "Invalid signature"
         );
 
@@ -76,7 +79,7 @@ contract OSNFTMarketPlaceBase is
                 price: sellData.price,
                 tokenId: sellData.tokenId,
                 sellPriority: sellData.sellPriority,
-                seller: to
+                seller: signatureData.to
             })
         );
     }

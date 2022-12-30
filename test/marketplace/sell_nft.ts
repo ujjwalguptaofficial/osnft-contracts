@@ -1,3 +1,4 @@
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
@@ -6,7 +7,7 @@ import { IDeployedPayload } from "../interfaces";
 
 export function testNFTSale(payload: IDeployedPayload) {
 
-    const signMessage = async (user: SignerWithAddress, tokenId, share, price, erc20token) => {
+    const signMessage = async (user: SignerWithAddress, tokenId, share, price, erc20token, deadline) => {
         const domainType = [
             { name: "name", type: "string" },
             { name: "version", type: "string" },
@@ -18,6 +19,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             { name: "share", type: "uint32" },
             { name: "price", type: "uint256" },
             { name: "erc20token", type: "address" },
+            { name: "deadline", type: "uint256" },
         ];
 
         const domainData = {
@@ -30,7 +32,8 @@ export function testNFTSale(payload: IDeployedPayload) {
             tokenId,
             share,
             price,
-            erc20token
+            erc20token,
+            deadline
         };
 
         // const data = JSON.stringify({
@@ -436,10 +439,14 @@ export function testNFTSale(payload: IDeployedPayload) {
             );
             const price = ethers.constants.MaxUint256.sub(1);
             const erc20token = payload.erc20Token2.address;
-            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token)
+            const deadline = (await time.latest()) + 1000;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, deadline)
             const tx = marketplace.listNFTOnSaleMeta(
-                signature,
-                payload.signer2.address,
+                {
+                    signature,
+                    to: payload.signer2.address,
+                    deadline: deadline
+                },
                 {
                     tokenId,
                     share: 0,
@@ -459,11 +466,15 @@ export function testNFTSale(payload: IDeployedPayload) {
             );
             const price = ethers.constants.MaxUint256.sub(1);
             const erc20token = payload.erc20Token2.address;
-            const signature = await signMessage(payload.signer2, tokenId, 0, price, erc20token)
+            const deadline = (await time.latest()) + 1000;
+            const signature = await signMessage(payload.signer2, tokenId, 0, price, erc20token, deadline)
             const from = payload.signer2.address;
             const tx = marketplace.listNFTOnSaleMeta(
-                signature,
-                from,
+                {
+                    signature,
+                    to: from,
+                    deadline
+                },
                 {
                     tokenId,
                     share: 0,
@@ -483,11 +494,15 @@ export function testNFTSale(payload: IDeployedPayload) {
             );
             const price = ethers.constants.MaxUint256.sub(1);
             const erc20token = payload.erc20Token2.address;
-            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token)
+            const deadline = (await time.latest()) + 1000;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, deadline)
             const from = payload.signer3.address;
             const tx = marketplace.listNFTOnSaleMeta(
-                signature,
-                from,
+                {
+                    signature,
+                    to: from,
+                    deadline
+                },
                 {
                     tokenId,
                     share: 0,
