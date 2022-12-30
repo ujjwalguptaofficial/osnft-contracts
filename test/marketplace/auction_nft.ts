@@ -364,12 +364,122 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
     describe('createAuctionMeta', () => {
 
-        // it('successful share auction', async () => {
-        //     const marketplace = payload.marketplace;
-        //     const projectId = payload.getProjectId(
-        //         payload.projects["jsstore"]
-        //     );
-        // });
+        it('sending expired signature', async () => {
+            const marketplace = payload.marketplace;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore"]
+            );
+            const seller = payload.deployer.address;
+            const from = seller;
+
+            const endAuction = (await time.latest()) + 200;
+            const shareToAuction = 100;
+            const deadline = (await time.latest()) - 1000;
+
+            const signature = await signMessage(
+                payload.deployer,
+                projectId,
+                shareToAuction,
+                10000,
+                endAuction,
+                payload.erc20Token1.address,
+                0,
+                deadline
+            );
+
+            const tx = marketplace.createAuctionMeta({
+                signature: signature,
+                to: from,
+                deadline: deadline
+            }, {
+                tokenId: projectId,
+                share: shareToAuction,
+                initialBid: 10000,
+                endAuction,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 0
+            });
+
+            await expect(tx).to.revertedWith(`Signature expired`);
+        });
+
+        it('sending expired signature with different deadline', async () => {
+            const marketplace = payload.marketplace;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore"]
+            );
+            const seller = payload.deployer.address;
+            const from = seller;
+
+            const endAuction = (await time.latest()) + 200;
+            const shareToAuction = 100;
+            const deadline = (await time.latest()) - 1000;
+
+            const signature = await signMessage(
+                payload.deployer,
+                projectId,
+                shareToAuction,
+                10000,
+                endAuction,
+                payload.erc20Token1.address,
+                0,
+                deadline
+            );
+
+            const tx = marketplace.createAuctionMeta({
+                signature: signature,
+                to: from,
+                deadline: deadline + 2000
+            }, {
+                tokenId: projectId,
+                share: shareToAuction,
+                initialBid: 10000,
+                endAuction,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 0
+            });
+
+            await expect(tx).to.revertedWith(`Invalid signature`);
+        });
+
+        it('sending signature with different sell Priority', async () => {
+            const marketplace = payload.marketplace;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore"]
+            );
+            const seller = payload.deployer.address;
+            const from = seller;
+
+            const endAuction = (await time.latest()) + 200;
+            const shareToAuction = 100;
+            const deadline = (await time.latest()) + 1000;
+
+            const signature = await signMessage(
+                payload.deployer,
+                projectId,
+                shareToAuction,
+                10000,
+                endAuction,
+                payload.erc20Token1.address,
+                0,
+                deadline
+            );
+
+            const tx = marketplace.createAuctionMeta({
+                signature: signature,
+                to: from,
+                deadline: deadline
+            }, {
+                tokenId: projectId,
+                share: shareToAuction,
+                initialBid: 10000,
+                endAuction,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 100
+            });
+
+            await expect(tx).to.revertedWith(`Invalid signature`);
+        });
 
         it('successful share auction', async () => {
             const marketplace = payload.marketplace;
