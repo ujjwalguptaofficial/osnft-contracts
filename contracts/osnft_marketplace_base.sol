@@ -231,7 +231,7 @@ contract OSNFTMarketPlaceBase is
 
     function updateNFTOnSale(
         bytes32 sellId,
-        SellListingInput calldata sellData
+        SellUpdateInput calldata sellData
     ) external {
         SellListing memory listedNft = _requireListed(sellId);
         listedNft.paymentTokenAddress = sellData.paymentTokenAddress;

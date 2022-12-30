@@ -13,6 +13,13 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 sellPriority;
     }
 
+    struct SellUpdateInput {
+        uint256 price;
+        uint32 share;
+        address paymentTokenAddress;
+        uint32 sellPriority;
+    }
+
     struct SellListing {
         uint256 price;
         address seller;
@@ -129,7 +136,7 @@ interface IOSNFTMarketPlaceUpgradeable {
 
     function updateNFTOnSale(
         bytes32 sellId,
-        SellListingInput calldata sellData
+        SellUpdateInput calldata sellData
     ) external;
 
     function getNFTFromSale(

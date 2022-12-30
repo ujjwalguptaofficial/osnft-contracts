@@ -65,7 +65,6 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 price: 10000,
                 paymentTokenAddress: payload.erc20Token2.address,
                 sellPriority: 0,
-                tokenId: projectId
             }
         );
 
