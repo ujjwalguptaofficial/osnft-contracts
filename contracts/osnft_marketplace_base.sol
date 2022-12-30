@@ -288,8 +288,17 @@ contract OSNFTMarketPlaceBase is
             input.share
         );
 
-        // Create new Auction object
-        SellAuction memory newAuction = SellAuction({
+        if (input.sellPriority > 0) {
+            _requirePayment(
+                _nativeCoinAddress,
+                seller,
+                address(this),
+                input.sellPriority * _sellPriorityConstant
+            );
+        }
+
+        // add auction to list
+        _auctions[auctionId] = SellAuction({
             tokenId: tokenId,
             share: input.share,
             seller: seller,
@@ -299,7 +308,6 @@ contract OSNFTMarketPlaceBase is
             endAuction: input.endAuction,
             bidCount: 0
         });
-        _auctions[auctionId] = newAuction; // add auction to list
 
         // Trigger event and return index of new auction
         emit NewAuction(

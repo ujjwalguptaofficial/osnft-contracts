@@ -1,5 +1,6 @@
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
 
@@ -192,7 +193,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentTokenAddress: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(242293)
+        expect(gas).equal(242581)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -206,13 +207,18 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const endAuction = (await time.latest()) + 100; // Math.floor(Date.now() / 1000) + 10000;
         //        (await time.latest()) + 100000000; // new Date().getTime(); //+ 1000; //addHours(, 24).getTime();
         console.log('endAuction', endAuction);
+        const sellPriority = 100;
+        const nativeCoin = payload.nativeToken;
+        const from = seller;
+        const nativeCoinBalance = await nativeCoin.balanceOf(from);
+
         const tx = marketplace.connect(payload.signer4).createAuction({
             tokenId: projectId,
             share: 0,
             initialBid: 1000,
             endAuction,
             paymentTokenAddress: payload.erc20Token1.address,
-            sellPriority: 0
+            sellPriority: sellPriority
         });
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'NewAuction').withArgs(
@@ -223,7 +229,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             1000,
             endAuction,
             payload.erc20Token1.address,
-            0
+            sellPriority
         )
 
         const newOwner = await payload.nft.ownerOf(projectId);
@@ -235,6 +241,12 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(1000);
+
+        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+        const expectedDeduction = BigNumber.from(10).pow(15).mul(sellPriority);
+        expect(nativeCoinBalanceAfter).equal(
+            nativeCoinBalance.sub(expectedDeduction)
+        )
     });
 
     it('require share greater than zero', async () => {
@@ -303,7 +315,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentTokenAddress: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).equal(247669)
+        expect(gas).equal(247956)
     })
 
     it('successful share auction', async () => {
@@ -313,6 +325,12 @@ export function testNFTAuction(payload: IDeployedPayload) {
         );
         const seller = payload.deployer.address;
         // const endAuction = addHours(new Date(), 24).getTime();
+
+        const nativeCoin = payload.nativeToken;
+        const from = seller;
+        const nativeCoinBalance = await nativeCoin.balanceOf(from);
+
+
         const endAuction = (await time.latest()) + 200;
         const tx = marketplace.createAuction({
             tokenId: projectId,
@@ -343,6 +361,11 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(10000);
+
+        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+        expect(nativeCoinBalanceAfter).equal(
+            nativeCoinBalance
+        )
     });
 
 }
