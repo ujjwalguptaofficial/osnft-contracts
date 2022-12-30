@@ -72,7 +72,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 1234,
                 endAuction: timestampBefore,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -91,7 +91,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 0,
                 endAuction: new Date().getTime(),
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -110,7 +110,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 10,
                 endAuction: new Date().getTime(),
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -136,7 +136,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 10,
                 endAuction: new Date().getTime(),
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -165,7 +165,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 tokenId: projectId,
                 share: 0,
                 price: 10,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -175,7 +175,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 10,
                 endAuction: new Date().getTime(),
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -198,7 +198,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 0,
             initialBid: 10,
             endAuction: new Date().getTime(),
-            paymentTokenAddress: payload.deployer.address,
+            paymentToken: payload.deployer.address,
             sellPriority: 0
         });
         await expect(tx).revertedWith('Invalid payment token');
@@ -216,7 +216,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 10,
                 endAuction: new Date().getTime(),
-                paymentTokenAddress: payload.deployer.address,
+                paymentToken: payload.deployer.address,
                 sellPriority: 0
             });
         await expect(tx).revertedWith('ERC721: invalid token ID');
@@ -234,7 +234,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 1000,
                 endAuction,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
         expect(gas).equal(242469)
@@ -261,7 +261,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 0,
             initialBid: 1000,
             endAuction,
-            paymentTokenAddress: payload.erc20Token1.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: sellPriority
         });
         const auctionId = payload.getSellId(projectId, seller);
@@ -304,7 +304,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 0,
             initialBid: 1000,
             endAuction: new Date().getTime(),
-            paymentTokenAddress: payload.deployer.address,
+            paymentToken: payload.deployer.address,
             sellPriority: 0
         });
         await expect(tx).revertedWith('Require input share to be above zero');
@@ -321,7 +321,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 1,
             initialBid: 1000,
             endAuction: new Date().getTime(),
-            paymentTokenAddress: payload.deployer.address,
+            paymentToken: payload.deployer.address,
             sellPriority: 0
         });
         await expect(tx).revertedWith('Owns less share than input');
@@ -338,7 +338,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 10000,
             initialBid: 1000,
             endAuction: new Date().getTime(),
-            paymentTokenAddress: payload.erc20Token1.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
         await expect(tx).revertedWith('Owns less share than input');
@@ -356,7 +356,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 100,
             initialBid: 10000,
             endAuction,
-            paymentTokenAddress: payload.erc20Token1.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
         expect(gas).equal(247845)
@@ -396,7 +396,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: shareToAuction,
                 initialBid: 10000,
                 endAuction,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
 
@@ -435,7 +435,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: shareToAuction,
                 initialBid: 10000,
                 endAuction,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
 
@@ -474,7 +474,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: shareToAuction,
                 initialBid: 10000,
                 endAuction,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 100
             });
 
@@ -518,7 +518,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: shareToAuction,
                 initialBid: 10000,
                 endAuction,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
             const auctionId = payload.getSellId(projectId, seller);

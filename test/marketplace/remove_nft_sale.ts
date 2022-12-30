@@ -31,7 +31,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 tokenId: projectId,
                 share: 0,
                 price: 1000,
-                paymentTokenAddress: payload.erc20Token1.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             }
         );
@@ -63,7 +63,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             {
                 share: 0,
                 price: 10000,
-                paymentTokenAddress: payload.erc20Token2.address,
+                paymentToken: payload.erc20Token2.address,
                 sellPriority: 0,
             }
         );
@@ -76,7 +76,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
         const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
 
         expect(nftSaleInfo.price).equal(10000);
-        expect(nftSaleInfo.paymentTokenAddress).equal(payload.erc20Token2.address);
+        expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
     })
 
     it('successful remove', async () => {

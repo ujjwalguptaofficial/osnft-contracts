@@ -132,7 +132,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 marketplace.address, ethers.constants.MaxUint256,
             );
 
-            const paymentTokenAddress = payload.erc20Token1.address;
+            const paymentToken = payload.erc20Token1.address;
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
             const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(payload.marketplace.address);
             const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
@@ -214,7 +214,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
             const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(payload.marketplace.address);
-            const paymentTokenAddress = payload.erc20Token1.address;
+            const paymentToken = payload.erc20Token1.address;
 
             const tx = marketplace.buyNFT(
                 sellId,
@@ -358,7 +358,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
         const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(marketplace.address);
-        const paymentTokenAddress = payload.erc20Token1.address;
+        const paymentToken = payload.erc20Token1.address;
         const shareToBuy = 10;
         const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
         const shareOfSellerBeforeSale = await payload.nft.shareOf(tokenId, seller);
@@ -452,7 +452,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
         const balanceOfBuyerBeforeSale = await erc20Token.balanceOf(buyer);
         const balanceOfMarketPlaceBeforeSale = await erc20Token.balanceOf(payload.marketplace.address);
-        const paymentTokenAddress = erc20Token.address;
+        const paymentToken = erc20Token.address;
         const balanceOfCreatorBeforeSale = await payload.erc20Token1.balanceOf(creatorOf);
         const tx = marketplace.connect(payload.signer2).buyNFT(
             sellId,
@@ -532,7 +532,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         // add on sale
 
         await marketplace.connect(payload.signer2).listNFTOnSale({
-            tokenId, share: 0, price, paymentTokenAddress: erc20Token.address, sellPriority: 0
+            tokenId, share: 0, price, paymentToken: erc20Token.address, sellPriority: 0
         });
 
         const sellId = payload.getSellId(
@@ -552,7 +552,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const balanceOfSellerBeforeSale = await erc20Token.balanceOf(seller);
         const balanceOfBuyerBeforeSale = await erc20Token.balanceOf(buyer);
         const balanceOfMarketPlaceBeforeSale = await erc20Token.balanceOf(payload.marketplace.address);
-        const paymentTokenAddress = erc20Token.address;
+        const paymentToken = erc20Token.address;
 
         const tx = marketplace.connect(payload.signer4).buyNFT(
             sellId,

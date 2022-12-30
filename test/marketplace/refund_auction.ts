@@ -40,7 +40,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
             share: 0,
             initialBid: 1000,
             endAuction,
-            paymentTokenAddress: payload.erc20Token1.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
         const auctionId = payload.getSellId(projectId, seller);
@@ -92,7 +92,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
             share: 100,
             initialBid: 10000,
             endAuction,
-            paymentTokenAddress: payload.erc20Token1.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
         const auctionId = payload.getSellId(projectId, seller);

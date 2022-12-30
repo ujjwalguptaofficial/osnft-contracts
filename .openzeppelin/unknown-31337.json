@@ -964,7 +964,7 @@
     },
     "d90a71156a39d1b3b9eb27d25fb49dc28d5650c55a5ff85e6f2f4df37b28fc65": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x271ae40e20a843b9b285750695dc9f057a001acd598ef85e915d4d79273a23b4",
+      "txHash": "0xaa11f8e46b8a5da0f8c96c0580ea3a3b4f64d71142cc917e6d78bd43c7595669",
       "layout": {
         "storage": [
           {
@@ -1172,7 +1172,7 @@
                 "slot": "1"
               },
               {
-                "label": "paymentTokenAddress",
+                "label": "paymentToken",
                 "type": "t_address",
                 "offset": 0,
                 "slot": "2"
@@ -1226,7 +1226,7 @@
                 "slot": "1"
               },
               {
-                "label": "paymentTokenAddress",
+                "label": "paymentToken",
                 "type": "t_address",
                 "offset": 0,
                 "slot": "2"

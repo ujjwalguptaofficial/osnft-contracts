@@ -61,7 +61,7 @@ contract OSNFTMarketPlaceBase is
                     sellData.tokenId,
                     sellData.share,
                     sellData.price,
-                    sellData.paymentTokenAddress,
+                    sellData.paymentToken,
                     sellData.sellPriority,
                     signatureData.deadline
                 )
@@ -75,7 +75,7 @@ contract OSNFTMarketPlaceBase is
 
         _listNFTOnSale(
             SellListing({
-                paymentTokenAddress: sellData.paymentTokenAddress,
+                paymentToken: sellData.paymentToken,
                 share: sellData.share,
                 price: sellData.price,
                 tokenId: sellData.tokenId,
@@ -88,7 +88,7 @@ contract OSNFTMarketPlaceBase is
     function listNFTOnSale(SellListingInput calldata sellData) external {
         _listNFTOnSale(
             SellListing({
-                paymentTokenAddress: sellData.paymentTokenAddress,
+                paymentToken: sellData.paymentToken,
                 share: sellData.share,
                 price: sellData.price,
                 tokenId: sellData.tokenId,
@@ -118,7 +118,7 @@ contract OSNFTMarketPlaceBase is
             sellId,
             sellData.share,
             sellData.price,
-            sellData.paymentTokenAddress,
+            sellData.paymentToken,
             sellData.sellPriority
         );
     }
@@ -214,7 +214,7 @@ contract OSNFTMarketPlaceBase is
                 buyer: buyer,
                 seller: listedItem.seller,
                 price: price,
-                paymentTokenAddress: listedItem.paymentTokenAddress,
+                paymentToken: listedItem.paymentToken,
                 sellType: SELL_TYPE.Buy
             })
         );
@@ -238,17 +238,17 @@ contract OSNFTMarketPlaceBase is
         SellUpdateInput calldata sellData
     ) external {
         SellListing memory listedNft = _requireListed(sellId);
-        listedNft.paymentTokenAddress = sellData.paymentTokenAddress;
+        listedNft.paymentToken = sellData.paymentToken;
         listedNft.share = sellData.share;
         listedNft.price = sellData.price;
-        listedNft.paymentTokenAddress = sellData.paymentTokenAddress;
+        listedNft.paymentToken = sellData.paymentToken;
 
         _listItem(listedNft);
         emit NFTSaleUpdated(
             sellId,
             sellData.share,
             sellData.price,
-            sellData.paymentTokenAddress,
+            sellData.paymentToken,
             sellData.sellPriority
         );
     }
@@ -275,7 +275,7 @@ contract OSNFTMarketPlaceBase is
                     input.share,
                     input.initialBid,
                     input.endAuction,
-                    input.paymentTokenAddress,
+                    input.paymentToken,
                     input.sellPriority,
                     signatureData.deadline
                 )
@@ -313,7 +313,7 @@ contract OSNFTMarketPlaceBase is
         // not listed for sells
         _requireNotListed(auctionId);
 
-        _requirePayableToken(input.paymentTokenAddress);
+        _requirePayableToken(input.paymentToken);
 
         // Lock NFT in Marketplace contract
         _nftContract.safeTransferFrom(
@@ -337,7 +337,7 @@ contract OSNFTMarketPlaceBase is
             tokenId: tokenId,
             share: input.share,
             seller: seller,
-            paymentTokenAddress: input.paymentTokenAddress,
+            paymentToken: input.paymentToken,
             currentBidOwner: address(0),
             currentBidPrice: input.initialBid,
             endAuction: input.endAuction,
@@ -352,7 +352,7 @@ contract OSNFTMarketPlaceBase is
             input.share,
             input.initialBid,
             input.endAuction,
-            input.paymentTokenAddress,
+            input.paymentToken,
             input.sellPriority
         );
     }
@@ -400,7 +400,7 @@ contract OSNFTMarketPlaceBase is
         // to lock the tokens
 
         _requirePayment(
-            auction.paymentTokenAddress,
+            auction.paymentToken,
             newBidder,
             address(this),
             bidAmount
@@ -411,7 +411,7 @@ contract OSNFTMarketPlaceBase is
             _requireTransferFromMarketplace(
                 auction.currentBidOwner,
                 auction.currentBidPrice,
-                auction.paymentTokenAddress
+                auction.paymentToken
             );
         }
 
@@ -442,7 +442,7 @@ contract OSNFTMarketPlaceBase is
                 buyer: auction.currentBidOwner,
                 seller: auction.seller,
                 price: auction.currentBidPrice,
-                paymentTokenAddress: auction.paymentTokenAddress,
+                paymentToken: auction.paymentToken,
                 sellType: SELL_TYPE.Bid
             })
         );
@@ -452,7 +452,7 @@ contract OSNFTMarketPlaceBase is
             auction.tokenId,
             auction.share,
             auction.currentBidPrice,
-            auction.paymentTokenAddress
+            auction.paymentToken
         );
     }
 
@@ -524,7 +524,7 @@ contract OSNFTMarketPlaceBase is
     function _listItem(SellListing memory sellData) internal {
         require(sellData.price > 0, "Price must be above zero");
 
-        _requirePayableToken(sellData.paymentTokenAddress);
+        _requirePayableToken(sellData.paymentToken);
 
         _requireTokenApproved(sellData.tokenId);
 
@@ -562,13 +562,13 @@ contract OSNFTMarketPlaceBase is
         uint256 price = sellData.price;
         bytes32 nftId = sellData.tokenId;
 
-        address paymentTokenAddress = sellData.paymentTokenAddress;
+        address paymentToken = sellData.paymentToken;
 
         // transfer price amount from buyer to marketplace
         // in case of BID - amount is already taken to marketplace
         if (isBuySell) {
             _requirePayment(
-                paymentTokenAddress,
+                paymentToken,
                 sellData.buyer,
                 address(this),
                 price
@@ -610,7 +610,7 @@ contract OSNFTMarketPlaceBase is
                 _requireTransferFromMarketplace(
                     tokenCreator,
                     amountForCreator,
-                    paymentTokenAddress
+                    paymentToken
                 );
             }
         }
@@ -619,7 +619,7 @@ contract OSNFTMarketPlaceBase is
         _requireTransferFromMarketplace(
             seller,
             amountForSeller,
-            paymentTokenAddress
+            paymentToken
         );
     }
 

@@ -8,7 +8,7 @@ interface IOSNFTMarketPlaceUpgradeable {
     struct SellListingInput {
         uint256 price;
         uint32 share;
-        address paymentTokenAddress;
+        address paymentToken;
         bytes32 tokenId;
         uint32 sellPriority;
     }
@@ -18,14 +18,14 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 share;
         uint256 initialBid;
         uint256 endAuction;
-        address paymentTokenAddress;
+        address paymentToken;
         uint32 sellPriority;
     }
 
     struct SellUpdateInput {
         uint256 price;
         uint32 share;
-        address paymentTokenAddress;
+        address paymentToken;
         uint32 sellPriority;
     }
 
@@ -33,7 +33,7 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint256 price;
         address seller;
         uint32 share;
-        address paymentTokenAddress;
+        address paymentToken;
         bytes32 tokenId;
         uint32 sellPriority;
     }
@@ -49,7 +49,7 @@ interface IOSNFTMarketPlaceUpgradeable {
         bytes32 tokenId;
         uint32 share;
         address seller;
-        address paymentTokenAddress; // Address of the ERC20 Payment Token contract
+        address paymentToken; // Address of the ERC20 Payment Token contract
         address currentBidOwner; // Address of the highest bider
         uint256 currentBidPrice; // Current highest bid for the auction
         uint256 endAuction; // Timestamp for the end day&time of the auction
@@ -65,7 +65,7 @@ interface IOSNFTMarketPlaceUpgradeable {
         bytes32 tokenId;
         uint32 share;
         address seller;
-        address paymentTokenAddress;
+        address paymentToken;
         address buyer;
         uint256 price;
         SELL_TYPE sellType;
@@ -77,7 +77,7 @@ interface IOSNFTMarketPlaceUpgradeable {
         bytes32 sellId,
         uint32 share,
         uint256 price,
-        address paymentTokenAddress,
+        address paymentToken,
         uint32 sellPriority
     );
 
@@ -85,7 +85,7 @@ interface IOSNFTMarketPlaceUpgradeable {
         bytes32 indexed sellId,
         uint32 share,
         uint256 price,
-        address paymentTokenAddress,
+        address paymentToken,
         uint32 sellPriority
     );
 
@@ -135,14 +135,14 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 share
     );
 
-    error PriceNotMet(bytes32 tokenId, uint256 price);
-    error ItemNotForSale(address nftAddress, bytes32 tokenId);
-    error NotListed(address nftAddress, bytes32 tokenId);
-    error AlreadyListed(address nftAddress, bytes32 tokenId);
-    error NoProceeds();
-    error NotOwner();
-    error NotApprovedForMarketplace();
-    error PriceMustBeAboveZero();
+    // error PriceNotMet(bytes32 tokenId, uint256 price);
+    // error ItemNotForSale(address nftAddress, bytes32 tokenId);
+    // error NotListed(address nftAddress, bytes32 tokenId);
+    // error AlreadyListed(address nftAddress, bytes32 tokenId);
+    // error NoProceeds();
+    // error NotOwner();
+    // error NotApprovedForMarketplace();
+    // error PriceMustBeAboveZero();
 
     function listNFTOnSale(SellListingInput calldata sellData) external;
 
