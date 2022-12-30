@@ -74,7 +74,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(216578);
+        expect(gas).equal(219336);
 
     });
 
@@ -106,7 +106,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(180079);
+        expect(gas).equal(185488);
 
     });
 
@@ -287,7 +287,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(193070);
+        expect(gas).equal(195326);
     })
 
     it('buy with zero share', async () => {
@@ -531,7 +531,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         // add on sale
 
-        await marketplace.connect(payload.signer2).listNFTOnSale(tokenId, 0, price, erc20Token.address);
+        await marketplace.connect(payload.signer2).listNFTOnSale({
+            tokenId, share: 0, price, paymentTokenAddress: erc20Token.address, sellPriority: 0
+        });
 
         const sellId = payload.getSellId(
             tokenId,

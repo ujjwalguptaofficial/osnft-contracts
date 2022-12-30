@@ -10,8 +10,8 @@ contract OSNFTMarketPlace is
     OwnableUpgradeable,
     OSNFTMarketPlaceBase
 {
-    function initialize(address nft) external initializer {
+    function initialize(address nft, address nativeCoin_) external initializer {
         __Ownable_init();
-        __MarketPlace_init(nft);
+        __MarketPlace_init(nft, nativeCoin_);
     }
 }

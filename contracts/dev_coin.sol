@@ -19,8 +19,13 @@ contract OSDevCoin is Initializable, OwnableUpgradeable, DevCoinBase {
         _mint(account, amount);
     }
 
-    function setOSNFT(address nftContract) external {
-        _osnftAddress = nftContract;
+    /**
+     * sets default operator
+     *  used for nft contract and marketplace contract
+     */
+    function addDefaultOperator(address operator) external onlyOwner {
+        _defaultAllowedOperator[operator] = true;
+        emit DefaultOperatorAdded(operator);
     }
 
     /**

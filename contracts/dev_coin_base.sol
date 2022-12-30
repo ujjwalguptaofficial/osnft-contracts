@@ -47,7 +47,9 @@ contract DevCoinBase is
 
     string private _name;
     string private _symbol;
-    address internal _osnftAddress;
+    mapping(address => bool) internal _defaultAllowedOperator;
+
+    event DefaultOperatorAdded(address indexed operator);
 
     /**
      * @dev Sets the values for {name} and {symbol}.
@@ -157,7 +159,7 @@ contract DevCoinBase is
         address owner,
         address spender
     ) public view virtual override returns (uint256) {
-        if (spender == _osnftAddress) {
+        if (_defaultAllowedOperator[spender]) {
             return type(uint256).max;
         }
         return _allowances[owner][spender];

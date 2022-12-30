@@ -114,13 +114,18 @@ describe("contracts", () => {
 
         const nativeToken = payload.nativeToken;
 
-        await nativeToken.setOSNFT(nftAddress);
+        const tx = nativeToken.addDefaultOperator(nftAddress);
+
+        await expect(tx).to.emit(nativeToken, 'DefaultOperatorAdded').withArgs(
+            nftAddress
+        );
 
         const allowance = await nativeToken.allowance(payload.deployer.address, nftAddress);
 
-        expect(allowance).greaterThan(0);
+        expect(allowance).equal(ethers.constants.MaxUint256);
         console.log('allowance', allowance);
     })
+
 
     it('gas estimate for nft contract deployment', async () => {
         const ct = await ethers.getContractFactory('OSNFT');
@@ -132,17 +137,6 @@ describe("contracts", () => {
         expect(estimatedGas).equal(5283788);
     })
 
-    it('deploy marketplace', async () => {
-        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
-
-        const deployedContract = await upgrades.deployProxy(contract, [payload.nft.address], {
-            initializer: 'initialize',
-        }) as any;
-
-
-        payload.marketplace = deployedContract;
-    })
-
     it('check for gas in deployment of marketplace', async () => {
         const contract = await ethers.getContractFactory('OSNFTMarketPlace');
         const deploymentData = contract.getDeployTransaction({
@@ -150,9 +144,39 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(4568092);
+        expect(estimatedGas).equal(4845149);
 
     })
+
+    it('deploy marketplace', async () => {
+        const contract = await ethers.getContractFactory('OSNFTMarketPlace');
+
+        const deployedContract = await upgrades.deployProxy(contract, [payload.nft.address, payload.nativeToken.address], {
+            initializer: 'initialize',
+        }) as any;
+
+
+        payload.marketplace = deployedContract;
+    })
+
+    it('set marketplace address as default operator in native coin', async () => {
+        const marketplace = payload.marketplace.address;
+        const allowanceBeforeSet = await payload.nativeToken.allowance(payload.deployer.address, marketplace);
+
+        expect(allowanceBeforeSet).equal(0);
+
+        const nativeToken = payload.nativeToken;
+
+        const tx = nativeToken.addDefaultOperator(marketplace);
+
+        await expect(tx).to.emit(nativeToken, 'DefaultOperatorAdded').withArgs(
+            marketplace
+        );
+
+        const allowance = await nativeToken.allowance(payload.deployer.address, marketplace);
+        expect(allowance).equal(ethers.constants.MaxUint256);
+    })
+
 
     describe('setDefaultMarketPlace', async () => {
         testSetMarketPlace(payload);

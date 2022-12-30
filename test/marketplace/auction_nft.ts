@@ -104,10 +104,13 @@ export function testNFTAuction(payload: IDeployedPayload) {
         );
 
         const tx1 = await marketplace.connect(payload.signer4).listNFTOnSale(
-            projectId,
-            0,
-            10,
-            payload.erc20Token1.address
+            {
+                tokenId: projectId,
+                share: 0,
+                price: 10,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 0
+            }
         );
         const tx2 = marketplace.connect(payload.signer4).createAuction(
             projectId,
@@ -169,7 +172,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(238056)
+        expect(gas).equal(240284)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -274,7 +277,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             endAuction,
             payload.erc20Token1.address
         );
-        expect(gas).equal(243432)
+        expect(gas).equal(245660)
     })
 
     it('successful share auction', async () => {

@@ -167,4 +167,21 @@ export function testOSD(payload: IDeployedPayload) {
         })
 
     })
+
+    describe("addDefaultOperator", async () => {
+        it('by not owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const tx = nativeToken.connect(payload.operator).addDefaultOperator(payload.signer2.address);
+            await expect(tx).to.revertedWith(`Ownable: caller is not the owner`)
+        })
+
+        it('by owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const operator = payload.operator.address;
+            const tx = nativeToken.connect(payload.deployer).addDefaultOperator(operator);
+            await expect(tx).to.emit(nativeToken, 'DefaultOperatorAdded').withArgs(
+                operator
+            );
+        })
+    })
 }

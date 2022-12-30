@@ -73,14 +73,15 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     it("add nft on sale by non owner", async () => {
         const marketplace = payload.marketplace;
-        const tx = marketplace.connect(payload.signer4).listNFTOnSale(
-            payload.getProjectId(
+        const tx = marketplace.connect(payload.signer4).listNFTOnSale({
+            tokenId: payload.getProjectId(
                 payload.projects["jsstore-example"]
             ),
-            0,
-            1000000,
-            payload.erc20Token1.address
-        );
+            share: 0,
+            price: 1000000,
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
         await expect(tx).revertedWith('Require NFT ownership');
     });
 
@@ -94,13 +95,16 @@ export function testNFTSale(payload: IDeployedPayload) {
         const projectId = payload.getProjectId(
             payload.projects["jsstore-example"]
         );
+
         const tx = marketplace.connect(payload.signer3).listNFTOnSale(
-            projectId,
-            0,
-            10000000000,
-            payload.erc20Token1.address
+            {
+                tokenId: projectId,
+                share: 0,
+                price: 10000000000,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 0
+            }
         );
-        const from = payload.signer2.address;
         await expect(tx).revertedWith('Require NFT ownership transfer approval');
     });
 
@@ -119,15 +123,17 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = await marketplace.connect(payload.signer3).estimateGas.listNFTOnSale(
+        const tx = await marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
             tokenId,
-            0,
+            share: 0,
             price,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
 
-        expect(tx).equal(157528);
+        expect(tx).equal(160847);
     });
+
 
     it('not existing token', async () => {
         const marketplace = payload.marketplace;
@@ -135,12 +141,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             "ffgg"
         );
 
-        const tx = marketplace.listNFTOnSale(
-            projectId,
-            0,
-            10,
-            payload.deployer.address
-        );
+        const tx = marketplace.listNFTOnSale({
+            tokenId: projectId,
+            share: 0,
+            price: 10,
+            paymentTokenAddress: payload.deployer.address,
+            sellPriority: 0
+        });
         await expect(tx).revertedWith('ERC721: invalid token ID');
     });
 
@@ -149,15 +156,17 @@ export function testNFTSale(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(
             payload.projects["jsstore-example"]
         );
-        const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
             tokenId,
-            0,
-            0,
-            payload.erc20Token1.address
-        );
+            share: 0,
+            price: 0,
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
 
         await expect(tx).revertedWith('Price must be above zero');
     });
+
 
     it("non payable token", async () => {
         const marketplace = payload.marketplace;
@@ -165,15 +174,17 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
             tokenId,
-            0,
+            share: 0,
             price,
-            payload.marketplace.address
-        );
+            paymentTokenAddress: payload.marketplace.address,
+            sellPriority: 0
+        });
 
         await expect(tx).revertedWith('Invalid payment token');
     });
+
 
     it("add jsstore-example (percentage cut) on sale", async () => {
         const marketplace = payload.marketplace;
@@ -181,12 +192,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
             tokenId,
-            0,
+            share: 0,
             price,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
         const from = payload.signer3.address;
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
@@ -195,7 +207,8 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellId,
             0,
             price,
-            payload.erc20Token1.address
+            payload.erc20Token1.address,
+            0
         );
 
         const nftData = await marketplace.getNFTFromSale(sellId);
@@ -205,6 +218,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nftData.share).equal(0);
         expect(nftData.price).equal(price);
         expect(nftData.tokenId).equal(tokenId);
+        expect(nftData.sellPriority).equal(0);
 
     });
 
@@ -215,15 +229,17 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
             tokenId,
-            0,
+            share: 0,
             price,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
 
         await expect(tx).revertedWith('Already on sale');
     });
+
 
     it('add share token on sale with zero share', async () => {
         const marketplace = payload.marketplace;
@@ -231,12 +247,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer4).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer4).listNFTOnSale({
             tokenId,
-            0,
+            share: 0,
             price,
-            payload.marketplace.address
-        );
+            paymentTokenAddress: payload.marketplace.address,
+            sellPriority: 0
+        });
 
         await expect(tx).revertedWith('Require input share to be above zero');
     });
@@ -251,12 +268,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             const price = 10000000000;
             const shareOf = await payload.nft.connect(payload.signer4).shareOf(tokenId, payload.signer4.address);
             expect(shareOf).equal(0);
-            const tx = marketplace.connect(payload.signer4).listNFTOnSale(
+            const tx = marketplace.connect(payload.signer4).listNFTOnSale({
                 tokenId,
-                shareOf + 1,
+                share: shareOf + 1,
                 price,
-                payload.marketplace.address
-            );
+                paymentTokenAddress: payload.marketplace.address,
+                sellPriority: 0
+            });
 
             await expect(tx).revertedWith('Owns less share than input');
         })
@@ -270,12 +288,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             const shareOf = await payload.nft.shareOf(tokenId, payload.signer2.address);
             expect(shareOf).greaterThan(0);
 
-            const tx = marketplace.connect(payload.signer2).listNFTOnSale(
+            const tx = marketplace.connect(payload.signer2).listNFTOnSale({
                 tokenId,
-                shareOf + 1,
+                share: shareOf + 1,
                 price,
-                payload.marketplace.address
-            );
+                paymentTokenAddress: payload.marketplace.address,
+                sellPriority: 0
+            });
 
             await expect(tx).revertedWith('Owns less share than input');
         })
@@ -293,12 +312,13 @@ export function testNFTSale(payload: IDeployedPayload) {
         const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
         expect(shareOf).greaterThan(shareToSell);
 
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
             tokenId,
-            shareToSell,
+            share: shareToSell,
             price,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 1
+        });
         const from = payload.signer3.address;
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
@@ -307,7 +327,8 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellId,
             shareToSell,
             price,
-            payload.erc20Token1.address
+            payload.erc20Token1.address,
+            1
         );
 
         const nftData = await marketplace.getNFTFromSale(sellId);
@@ -317,6 +338,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nftData.share).equal(shareToSell);
         expect(nftData.price).equal(price);
         expect(nftData.tokenId).equal(tokenId);
+        expect(nftData.sellPriority).equal(1);
 
     });
 
@@ -331,12 +353,13 @@ export function testNFTSale(payload: IDeployedPayload) {
         const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
         expect(shareOf).greaterThan(shareToSell);
 
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
             tokenId,
-            shareToSell,
+            share: shareToSell,
             price,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
         await expect(tx).revertedWith('Already on sale')
 
     });
@@ -347,12 +370,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["mahal-example"]
         );
         const price = 10000000005;
-        const tx = marketplace.connect(payload.signer2).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer2).listNFTOnSale({
             tokenId,
-            0,
+            share: 0,
             price,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 100
+        });
         const from = payload.signer2.address;
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
@@ -361,7 +385,8 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellId,
             0,
             price,
-            payload.erc20Token1.address
+            payload.erc20Token1.address,
+            100
         );
 
         const nftData = await marketplace.getNFTFromSale(sellId);
@@ -371,6 +396,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nftData.share).equal(0);
         expect(nftData.price).equal(price);
         expect(nftData.tokenId).equal(tokenId);
+        expect(nftData.sellPriority).equal(100);
 
     });
 
@@ -384,14 +410,16 @@ export function testNFTSale(payload: IDeployedPayload) {
             const price = ethers.constants.MaxUint256.sub(1);
             const erc20token = payload.erc20Token2.address;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token)
-            const from = payload.signer3.address;
             const tx = marketplace.listNFTOnSaleMeta(
                 signature,
                 payload.signer2.address,
-                tokenId,
-                0,
-                price,
-                erc20token
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentTokenAddress: erc20token,
+                    sellPriority: 0
+                }
             );
 
             await expect(tx).to.revertedWith('Invalid signature');
@@ -409,10 +437,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             const tx = marketplace.listNFTOnSaleMeta(
                 signature,
                 from,
-                tokenId,
-                0,
-                price,
-                erc20token
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentTokenAddress: erc20token,
+                    sellPriority: 0
+                }
             );
 
             await expect(tx).to.revertedWith('Require NFT ownership');
@@ -430,10 +461,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             const tx = marketplace.listNFTOnSaleMeta(
                 signature,
                 from,
-                tokenId,
-                0,
-                price,
-                erc20token
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentTokenAddress: erc20token,
+                    sellPriority: 0
+                }
             );
             const sellId = payload.getSellId(tokenId, from);
             await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
@@ -442,7 +476,8 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellId,
                 0,
                 price,
-                payload.erc20Token2.address
+                payload.erc20Token2.address,
+                0
             );
 
             const nftData = await marketplace.getNFTFromSale(sellId);
@@ -452,6 +487,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             expect(nftData.share).equal(0);
             expect(nftData.price).equal(price);
             expect(nftData.tokenId).equal(tokenId);
+            expect(nftData.sellPriority).equal(0);
 
         });
     })

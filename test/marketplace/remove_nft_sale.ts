@@ -27,10 +27,13 @@ export function testRemoveSale(payload: IDeployedPayload) {
         const seller = payload.signer2.address;
 
         const tx = await marketplace.connect(payload.signer2).listNFTOnSale(
-            projectId,
-            0,
-            1000,
-            payload.erc20Token1.address
+            {
+                tokenId: projectId,
+                share: 0,
+                price: 1000,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 0
+            }
         );
         const auctionId = payload.getSellId(projectId, seller);
     });
@@ -57,14 +60,18 @@ export function testRemoveSale(payload: IDeployedPayload) {
         const sellId = payload.getSellId(projectId, seller);
         const tx = marketplace.connect(payload.signer2).updateNFTOnSale(
             sellId,
-            0,
-            10000,
-            payload.erc20Token2.address
+            {
+                share: 0,
+                price: 10000,
+                paymentTokenAddress: payload.erc20Token2.address,
+                sellPriority: 0,
+                tokenId: projectId
+            }
         );
 
         await expect(tx).to.emit(marketplace, 'NFTSaleUpdated').withArgs(
             sellId, 0, 10000,
-            payload.erc20Token2.address
+            payload.erc20Token2.address, 0
         );
 
         const nftSaleInfo = await marketplace.getNFTFromSale(sellId);

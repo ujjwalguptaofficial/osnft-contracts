@@ -5,16 +5,25 @@ pragma solidity ^0.8.17;
  * @dev Required interface of an marketplace contract
  */
 interface IOSNFTMarketPlaceUpgradeable {
-    struct Listing {
+    struct SellListingInput {
+        uint256 price;
+        uint32 share;
+        address paymentTokenAddress;
+        bytes32 tokenId;
+        uint32 sellPriority;
+    }
+
+    struct SellListing {
         uint256 price;
         address seller;
         uint32 share;
         address paymentTokenAddress;
         bytes32 tokenId;
+        uint32 sellPriority;
     }
 
     // Structure to define auction properties
-    struct Auction {
+    struct SellAuction {
         bytes32 tokenId;
         uint32 share;
         address seller;
@@ -46,14 +55,16 @@ interface IOSNFTMarketPlaceUpgradeable {
         bytes32 sellId,
         uint32 share,
         uint256 price,
-        address paymentTokenAddress
+        address paymentTokenAddress,
+        uint32 sellPriority
     );
 
     event NFTSaleUpdated(
         bytes32 indexed sellId,
         uint32 share,
         uint256 price,
-        address paymentTokenAddress
+        address paymentTokenAddress,
+        uint32 sellPriority
     );
 
     event NftSaleCanceled(
@@ -110,32 +121,20 @@ interface IOSNFTMarketPlaceUpgradeable {
     error NotApprovedForMarketplace();
     error PriceMustBeAboveZero();
 
-    function listNFTOnSale(
-        bytes32 tokenId,
-        uint32 share,
-        uint256 price,
-        address erc20token
-    ) external;
+    function listNFTOnSale(SellListingInput calldata sellData) external;
 
     function removeNFTSale(bytes32 tokenId) external;
 
-    function buyNFT(
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) external;
+    function buyNFT(bytes32 sellId, uint32 share, uint256 price) external;
 
     function updateNFTOnSale(
-        bytes32 tokenId,
-        uint32 share,
-        uint256 price,
-        address erc20token
+        bytes32 sellId,
+        SellListingInput calldata sellData
     ) external;
 
-    function getNFTFromSale(bytes32 sellId)
-        external
-        view
-        returns (Listing memory);
+    function getNFTFromSale(
+        bytes32 sellId
+    ) external view returns (SellListing memory);
 
     function addPayableToken(address token) external;
 
