@@ -309,17 +309,20 @@ contract OSNFTBase is
         address to,
         string calldata projectUrl,
         NFT_TYPE nftType,
-        uint32 totalShare
+        uint32 totalShare,
+        uint256 deadline
     ) external {
+        require(block.timestamp < deadline, "Signature expired");
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
                     keccak256(
-                        "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare)"
+                        "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare,uint256 deadline)"
                     ),
                     keccak256(bytes(projectUrl)),
                     nftType,
-                    totalShare
+                    totalShare,
+                    deadline
                 )
             )
         );
