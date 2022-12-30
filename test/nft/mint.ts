@@ -86,7 +86,7 @@ export function testMint(payload: IDeployedPayload) {
             30
         );
 
-        expect(gasForMintingWithSign).equal(171223);
+        expect(gasForMintingWithSign).equal(168923);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -187,7 +187,8 @@ export function testMint(payload: IDeployedPayload) {
             const tx = nft.connect(payload.signer2).mintTo(
                 signature, address, projectUrl1, 0, 30
             );
-            await expect(tx).revertedWith('Ownable: caller is not the owner')
+            // await expect(tx).revertedWith('Ownable: caller is not the owner')
+            await expect(tx).revertedWith('project not approved');
         })
 
         it('mint already minted', async () => {

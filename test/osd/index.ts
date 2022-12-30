@@ -19,6 +19,26 @@ export function testOSD(payload: IDeployedPayload) {
         expect(name).equal('OSDevCoin');
     })
 
+    describe("addDefaultOperator", async () => {
+        it('by not owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const tx = nativeToken.connect(payload.operator).addDefaultOperator(payload.signer2.address);
+            await expect(tx).to.revertedWith(`Ownable: caller is not the owner`)
+        })
+
+        it('by owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const operator = payload.operator.address;
+            const tx = nativeToken.connect(payload.deployer).addDefaultOperator(operator);
+            await expect(tx).to.emit(nativeToken, 'DefaultOperatorAdded').withArgs(
+                operator
+            );
+
+            const allowance = await nativeToken.allowance(payload.signer2.address, operator);
+            expect(allowance).equal(ethers.constants.MaxUint256);
+        })
+    })
+
     it('mint token to owner', async () => {
         const oneToken = ethers.BigNumber.from(10).pow(18);
         const amount = oneToken.mul('10000000000'); // 10 billion
@@ -103,7 +123,7 @@ export function testOSD(payload: IDeployedPayload) {
             await expect(tx).to.be.revertedWith(`Invalid input parameters`)
         });
 
-        it('estimategasg', async () => {
+        it('estimate gas', async () => {
             const nativeToken = payload.nativeToken;
             const user1 = payload.signer3.address;
             const user2 = payload.signer4.address;
@@ -168,20 +188,4 @@ export function testOSD(payload: IDeployedPayload) {
 
     })
 
-    describe("addDefaultOperator", async () => {
-        it('by not owner', async () => {
-            const nativeToken = payload.nativeToken;
-            const tx = nativeToken.connect(payload.operator).addDefaultOperator(payload.signer2.address);
-            await expect(tx).to.revertedWith(`Ownable: caller is not the owner`)
-        })
-
-        it('by owner', async () => {
-            const nativeToken = payload.nativeToken;
-            const operator = payload.operator.address;
-            const tx = nativeToken.connect(payload.deployer).addDefaultOperator(operator);
-            await expect(tx).to.emit(nativeToken, 'DefaultOperatorAdded').withArgs(
-                operator
-            );
-        })
-    })
 }

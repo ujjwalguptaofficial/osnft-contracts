@@ -310,7 +310,7 @@ contract OSNFTBase is
         string calldata projectUrl,
         NFT_TYPE nftType,
         uint32 totalShare
-    ) external onlyOwner {
+    ) external {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
