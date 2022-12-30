@@ -255,57 +255,62 @@ contract OSNFTMarketPlaceBase is
         return _sellListings[sellId];
     }
 
-    function createAuction(
-        bytes32 _nftId,
-        uint32 share,
-        uint256 _initialBid,
-        uint256 _endAuction,
-        address _addressPaymentToken
-    ) external {
+    function createAuction(AuctionListingInput calldata input) external {
         // Check if the endAuction time is valid
-        require(_endAuction > block.timestamp, "Invalid end date for auction");
+        require(
+            input.endAuction > block.timestamp,
+            "Invalid end date for auction"
+        );
 
         // Check if the initial bid price is > 0
-        require(_initialBid > 0, "Require bid price above zero");
+        require(input.initialBid > 0, "Require bid price above zero");
 
         address seller = _msgSender();
 
-        _requireNftOwner(_nftId, seller, share);
+        bytes32 tokenId = input.tokenId;
 
-        _requireTokenApproved(_nftId);
+        _requireNftOwner(tokenId, seller, input.share);
 
-        bytes32 auctionId = _getSellId(_nftId, _msgSender());
+        _requireTokenApproved(tokenId);
+
+        bytes32 auctionId = _getSellId(tokenId, seller);
 
         // not listed for sells
         _requireNotListed(auctionId);
 
-        _requirePayableToken(_addressPaymentToken);
+        _requirePayableToken(input.paymentTokenAddress);
 
         // Lock NFT in Marketplace contract
-        _nftContract.safeTransferFrom(seller, address(this), _nftId, share);
+        _nftContract.safeTransferFrom(
+            seller,
+            address(this),
+            input.tokenId,
+            input.share
+        );
 
         // Create new Auction object
         SellAuction memory newAuction = SellAuction({
-            tokenId: _nftId,
-            share: share,
+            tokenId: tokenId,
+            share: input.share,
             seller: seller,
-            paymentTokenAddress: _addressPaymentToken,
+            paymentTokenAddress: input.paymentTokenAddress,
             currentBidOwner: address(0),
-            currentBidPrice: _initialBid,
-            endAuction: _endAuction,
+            currentBidPrice: input.initialBid,
+            endAuction: input.endAuction,
             bidCount: 0
         });
         _auctions[auctionId] = newAuction; // add auction to list
 
         // Trigger event and return index of new auction
         emit NewAuction(
-            _nftId,
+            tokenId,
             seller,
             auctionId,
-            share,
-            _initialBid,
-            _endAuction,
-            _addressPaymentToken
+            input.share,
+            input.initialBid,
+            input.endAuction,
+            input.paymentTokenAddress,
+            input.sellPriority
         );
     }
 

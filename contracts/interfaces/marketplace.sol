@@ -13,6 +13,15 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 sellPriority;
     }
 
+    struct AuctionListingInput {
+        bytes32 tokenId;
+        uint32 share;
+        uint256 initialBid;
+        uint256 endAuction;
+        address paymentTokenAddress;
+        uint32 sellPriority;
+    }
+
     struct SellUpdateInput {
         uint256 price;
         uint32 share;
@@ -95,7 +104,8 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 share,
         uint256 bidPrice,
         uint256 endAuction,
-        address paymentToken
+        address paymentToken,
+        uint32 sellPriority
     );
 
     // Public event to notify that a new bid has been placed

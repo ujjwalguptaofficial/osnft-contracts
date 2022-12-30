@@ -35,13 +35,14 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const seller = payload.signer2.address;
         const endAuction = (await time.latest()) + 10; // Math.floor(Date.now() / 1000) + 10000;
 
-        const tx = marketplace.connect(payload.signer2).createAuction(
-            projectId,
-            0,
-            1000,
+        const tx = marketplace.connect(payload.signer2).createAuction({
+            tokenId: projectId,
+            share: 0,
+            initialBid: 1000,
             endAuction,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'NewAuction').withArgs(
             projectId,
@@ -50,7 +51,8 @@ export function testRefundAuction(payload: IDeployedPayload) {
             0,
             1000,
             endAuction,
-            payload.erc20Token1.address
+            payload.erc20Token1.address,
+            0
         )
 
         const newOwner = await payload.nft.ownerOf(projectId);
@@ -85,13 +87,14 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const seller = payload.deployer.address;
         // const endAuction = addHours(new Date(), 24).getTime();
         const endAuction = (await time.latest()) + 10;
-        const tx = marketplace.createAuction(
-            projectId,
-            100,
-            10000,
+        const tx = marketplace.createAuction({
+            tokenId: projectId,
+            share: 100,
+            initialBid: 10000,
             endAuction,
-            payload.erc20Token1.address
-        );
+            paymentTokenAddress: payload.erc20Token1.address,
+            sellPriority: 0
+        });
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'NewAuction').withArgs(
             projectId,
@@ -100,7 +103,8 @@ export function testRefundAuction(payload: IDeployedPayload) {
             100,
             10000,
             endAuction,
-            payload.erc20Token1.address
+            payload.erc20Token1.address,
+            0
         )
 
         const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);

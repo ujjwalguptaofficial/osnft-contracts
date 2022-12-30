@@ -53,6 +53,7 @@ export function testMarketplace(payload: IDeployedPayload) {
         testNFTBuy(payload);
     });
 
+
     describe('auction nft', () => {
         testNFTAuction(payload);
     });
@@ -70,7 +71,7 @@ export function testMarketplace(payload: IDeployedPayload) {
     describe('withdraw payment', () => {
         testWithdrawPayment(payload);
     });
-    
+
     describe('remove sale nft', () => {
         testRemoveSale(payload);
     });
