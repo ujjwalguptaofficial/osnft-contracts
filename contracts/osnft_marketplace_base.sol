@@ -259,34 +259,36 @@ contract OSNFTMarketPlaceBase is
         return _sellListings[sellId];
     }
 
-    // function createAuctionMeta(
-    //     SignatureMeta calldata signatureData,
-    //     AuctionListingInput calldata input
-    // ) external {
-    //     require(block.timestamp < signatureData.deadline, "Signature expired");
+    function createAuctionMeta(
+        SignatureMeta calldata signatureData,
+        AuctionListingInput calldata input
+    ) external {
+        require(block.timestamp < signatureData.deadline, "Signature expired");
 
-    //     bytes32 digest = _hashTypedDataV4(
-    //         keccak256(
-    //             abi.encode(
-    //                 keccak256(
-    //                     "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint256 deadline)"
-    //                 ),
-    //                 sellData.tokenId,
-    //                 sellData.share,
-    //                 sellData.price,
-    //                 sellData.paymentTokenAddress,
-    //                 signatureData.deadline
-    //             )
-    //         )
-    //     );
-    //     require(
-    //         ECDSAUpgradeable.recover(digest, signatureData.signature) ==
-    //             signatureData.to,
-    //         "Invalid signature"
-    //     );
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    keccak256(
+                        "NFTAuctionData(bytes32 tokenId,uint32 share,uint256 initialBid,uint256 endAuction,address paymentToken,uint32 sellPriority,uint256 deadline)"
+                    ),
+                    input.tokenId,
+                    input.share,
+                    input.initialBid,
+                    input.endAuction,
+                    input.paymentTokenAddress,
+                    input.sellPriority,
+                    signatureData.deadline
+                )
+            )
+        );
+        require(
+            ECDSAUpgradeable.recover(digest, signatureData.signature) ==
+                signatureData.to,
+            "Invalid signature"
+        );
 
-    //     createAuction(input);
-    // }
+        createAuction(input);
+    }
 
     function createAuction(AuctionListingInput calldata input) public {
         // Check if the endAuction time is valid

@@ -157,7 +157,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         expect(newOwner).equal(seller);
     })
 
-    it('successful refund for jsstore example', async () => {
+    it('successful refund for jsstore ', async () => {
         const marketplace = payload.marketplace;
         const nftId = payload.getProjectId(payload.projects["jsstore"]);
         const seller = payload.deployer.address;

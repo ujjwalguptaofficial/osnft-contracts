@@ -207,24 +207,24 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xba718707a98b04c866ebcb24840b923973379199aad43640de222afb351fadae",
+      "txHash": "0x544792f97f5f26667c4644cee7bcbca80f99eb0701259c1039273aa4f3aa43b1",
       "kind": "transparent"
     },
     {
       "address": "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",
-      "txHash": "0x1a7ff451aec9e4d2c52e72ce6fe75eb1b01c643df0614430fa5986a7147b7d2d",
+      "txHash": "0x1c6129f9c3a97589457481dd253544a0626c97a696e1e965b6ca9f2e28fe5eeb",
       "kind": "transparent"
     },
     {
       "address": "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f",
-      "txHash": "0x84168fc207fb4c06b9188af299d91cfa5e0ce3967e316498d0fda9ce28705d9d",
+      "txHash": "0x31f2345eddb42208094901859f6e1b6323b516ec3eafedd1f8b3ad389200622a",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
-      "txHash": "0xda1045a38560e10e9a6e9ee702f5d3c4d21f5c698ecdedd97a0dc636bfc4ff55",
+      "txHash": "0xe93cc5bc18d6c99e4791b73c393f93956a054b9ac6d42361e5383e29316d465a",
       "layout": {
         "storage": [
           {
@@ -962,9 +962,9 @@
         }
       }
     },
-    "437c502b63e2bc1d7639ec4b13650e65ceaa523c2d613ee46051e5824b655eb9": {
+    "d90a71156a39d1b3b9eb27d25fb49dc28d5650c55a5ff85e6f2f4df37b28fc65": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x23e450cbdb8d2d41509dcdd5922cb6078547a00aeea63d4623049ae3a8596bc7",
+      "txHash": "0x271ae40e20a843b9b285750695dc9f057a001acd598ef85e915d4d79273a23b4",
       "layout": {
         "storage": [
           {
@@ -1110,7 +1110,7 @@
             "slot": "208",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:665"
+            "src": "contracts/osnft_marketplace_base.sol:667"
           }
         ],
         "types": {

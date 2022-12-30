@@ -1,4 +1,5 @@
 import { time } from "@nomicfoundation/hardhat-network-helpers";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
@@ -9,7 +10,50 @@ function addHours(date: Date, h: number) {
     return date;
 }
 
+
+
 export function testNFTAuction(payload: IDeployedPayload) {
+
+    const signMessage = async (user: SignerWithAddress, tokenId, share, initialBid, endAuction, erc20token, sellPriority, deadline) => {
+        const domainType = [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "uint256" },
+            { name: "verifyingContract", type: "address" },
+        ];
+        const nftMintDataType = [
+            { name: "tokenId", type: "bytes32" },
+            { name: "share", type: "uint32" },
+            { name: "initialBid", type: "uint256" },
+            { name: "endAuction", type: "uint256" },
+            { name: "paymentToken", type: "address" },
+            { name: "sellPriority", type: "uint32" },
+            { name: "deadline", type: "uint256" },
+        ];
+
+        const domainData = {
+            name: "OSNFT_MARKETPLACE",
+            version: "1",
+            chainId: await user.getChainId(),
+            verifyingContract: payload.marketplace.address.toLowerCase(),
+        };
+        const message = {
+            tokenId,
+            share,
+            initialBid: initialBid,
+            endAuction,
+            paymentToken: erc20token,
+            sellPriority,
+            deadline
+        };
+
+        const signatureResult = await user._signTypedData(domainData, {
+            NFTAuctionData: nftMintDataType,
+        }, message);
+
+        return signatureResult;
+    }
+
     it('auction with timestamp less than block', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
@@ -318,54 +362,83 @@ export function testNFTAuction(payload: IDeployedPayload) {
         expect(gas).equal(247845)
     })
 
-    it('successful share auction', async () => {
-        const marketplace = payload.marketplace;
-        const projectId = payload.getProjectId(
-            payload.projects["jsstore"]
-        );
-        const seller = payload.deployer.address;
-        // const endAuction = addHours(new Date(), 24).getTime();
+    describe('createAuctionMeta', () => {
 
-        const nativeCoin = payload.nativeToken;
-        const from = seller;
-        const nativeCoinBalance = await nativeCoin.balanceOf(from);
+        // it('successful share auction', async () => {
+        //     const marketplace = payload.marketplace;
+        //     const projectId = payload.getProjectId(
+        //         payload.projects["jsstore"]
+        //     );
+        // });
+
+        it('successful share auction', async () => {
+            const marketplace = payload.marketplace;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore"]
+            );
+            const seller = payload.deployer.address;
+            // const endAuction = addHours(new Date(), 24).getTime();
+
+            const nativeCoin = payload.nativeToken;
+            const from = seller;
+            const nativeCoinBalance = await nativeCoin.balanceOf(from);
 
 
-        const endAuction = (await time.latest()) + 200;
-        const tx = marketplace.createAuction({
-            tokenId: projectId,
-            share: 100,
-            initialBid: 10000,
-            endAuction,
-            paymentTokenAddress: payload.erc20Token1.address,
-            sellPriority: 0
+            const endAuction = (await time.latest()) + 200;
+            const shareToAuction = 100;
+            const deadline = (await time.latest()) + 1000;
+
+            const signature = await signMessage(
+                payload.deployer,
+                projectId,
+                shareToAuction,
+                10000,
+                endAuction,
+                payload.erc20Token1.address,
+                0,
+                deadline
+            );
+
+            const tx = marketplace.createAuctionMeta({
+                signature: signature,
+                to: from,
+                deadline: deadline
+            }, {
+                tokenId: projectId,
+                share: shareToAuction,
+                initialBid: 10000,
+                endAuction,
+                paymentTokenAddress: payload.erc20Token1.address,
+                sellPriority: 0
+            });
+            const auctionId = payload.getSellId(projectId, seller);
+            await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+                projectId,
+                seller,
+                auctionId,
+                shareToAuction,
+                10000,
+                endAuction,
+                payload.erc20Token1.address,
+                0
+            )
+
+            const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
+            expect(shareOfMarketPlace).equal(shareToAuction);
+
+            const bidOwner = await marketplace.getBidOwner(auctionId);
+            expect(bidOwner).equal(ethers.constants.AddressZero);
+
+
+            const bidPrice = await marketplace.getBidPrice(auctionId);
+            expect(bidPrice).equal(10000);
+
+            const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+            expect(nativeCoinBalanceAfter).equal(
+                nativeCoinBalance
+            )
         });
-        const auctionId = payload.getSellId(projectId, seller);
-        await expect(tx).emit(marketplace, 'NewAuction').withArgs(
-            projectId,
-            seller,
-            auctionId,
-            100,
-            10000,
-            endAuction,
-            payload.erc20Token1.address,
-            0
-        )
 
-        const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
-        expect(shareOfMarketPlace).equal(100);
-
-        const bidOwner = await marketplace.getBidOwner(auctionId);
-        expect(bidOwner).equal(ethers.constants.AddressZero);
-
-
-        const bidPrice = await marketplace.getBidPrice(auctionId);
-        expect(bidPrice).equal(10000);
-
-        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
-        expect(nativeCoinBalanceAfter).equal(
-            nativeCoinBalance
-        )
-    });
+    })
 
 }
