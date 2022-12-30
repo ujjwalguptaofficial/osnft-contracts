@@ -432,7 +432,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     describe("sell using meta sign", () => {
 
-        it("Invalid signature", async () => {
+        it("passing different from than in sign - Invalid signature", async () => {
             const marketplace = payload.marketplace;
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
@@ -485,6 +485,60 @@ export function testNFTSale(payload: IDeployedPayload) {
             );
 
             await expect(tx).to.revertedWith('Require NFT ownership');
+        });
+
+        it("valid signature valid owner but deadline is expired", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const deadline = (await time.latest()) - 1000;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, deadline)
+            const from = payload.signer3.address;
+            const tx = marketplace.listNFTOnSaleMeta(
+                {
+                    signature,
+                    to: from,
+                    deadline
+                },
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentTokenAddress: erc20token,
+                    sellPriority: 0
+                }
+            );
+            await expect(tx).to.revertedWith(`Signature expired`)
+        });
+
+        it("valid signature valid owner but different deadline than signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const deadline = (await time.latest()) - 1000;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, deadline)
+            const from = payload.signer3.address;
+            const tx = marketplace.listNFTOnSaleMeta(
+                {
+                    signature,
+                    to: from,
+                    deadline: deadline + 5000
+                },
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentTokenAddress: erc20token,
+                    sellPriority: 0
+                }
+            );
+            await expect(tx).to.revertedWith(`Invalid signature`)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
