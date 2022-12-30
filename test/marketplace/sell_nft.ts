@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
 
@@ -312,6 +313,10 @@ export function testNFTSale(payload: IDeployedPayload) {
         const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
         expect(shareOf).greaterThan(shareToSell);
 
+        const nativeCoin = payload.nativeToken;
+        const from = payload.signer3.address;
+        const nativeCoinBalance = await nativeCoin.balanceOf(from);
+
         const tx = marketplace.connect(payload.signer3).listNFTOnSale({
             tokenId,
             share: shareToSell,
@@ -319,7 +324,6 @@ export function testNFTSale(payload: IDeployedPayload) {
             paymentTokenAddress: payload.erc20Token1.address,
             sellPriority: 1
         });
-        const from = payload.signer3.address;
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
             tokenId,
@@ -339,6 +343,12 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nftData.price).equal(price);
         expect(nftData.tokenId).equal(tokenId);
         expect(nftData.sellPriority).equal(1);
+
+        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+        const expectedDeduction = BigNumber.from(10).pow(15).mul(nftData.sellPriority);
+        expect(nativeCoinBalanceAfter).equal(
+            nativeCoinBalance.sub(expectedDeduction)
+        )
 
     });
 
@@ -370,6 +380,9 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["mahal-example"]
         );
         const price = 10000000005;
+        const nativeCoin = payload.nativeToken;
+        const from = payload.signer2.address;
+        const nativeCoinBalance = await nativeCoin.balanceOf(from);
         const tx = marketplace.connect(payload.signer2).listNFTOnSale({
             tokenId,
             share: 0,
@@ -377,7 +390,6 @@ export function testNFTSale(payload: IDeployedPayload) {
             paymentTokenAddress: payload.erc20Token1.address,
             sellPriority: 100
         });
-        const from = payload.signer2.address;
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'NFTSaleAdded').withArgs(
             tokenId,
@@ -397,6 +409,12 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nftData.price).equal(price);
         expect(nftData.tokenId).equal(tokenId);
         expect(nftData.sellPriority).equal(100);
+
+        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+        const expectedDeduction = BigNumber.from(10).pow(15).mul(nftData.sellPriority);
+        expect(nativeCoinBalanceAfter).equal(
+            nativeCoinBalance.sub(expectedDeduction)
+        )
 
     });
 
