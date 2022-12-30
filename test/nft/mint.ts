@@ -106,6 +106,27 @@ export function testMint(payload: IDeployedPayload) {
 
     describe('percentage cut', async () => {
 
+        it('deadline change from what was signed', async () => {
+            const nft = payload.nft;
+            const deployerAddress = payload.deployer.address;
+            const projectUrl = payload.projects["jsstore-example"];
+
+            const oldBalance = await nft.balanceOf(deployerAddress);
+            expect(oldBalance).equal(0);
+
+            const expectedTokenId = payload.getProjectId(
+                projectUrl
+            );
+            const timestampToSign = await time.latest() - 1000;
+            const signature = await signMessage(payload.deployer, projectUrl, 0, 30, timestampToSign);
+
+            const timestamp = await time.latest() + 1000;
+
+            const tx = nft.mintTo(signature, deployerAddress, projectUrl, 0, 30, timestamp);
+
+            await expect(tx).revertedWith('invalid signature');
+        })
+
         it('mint jsstore example to deployer', async () => {
             const nft = payload.nft;
             const deployerAddress = payload.deployer.address;
