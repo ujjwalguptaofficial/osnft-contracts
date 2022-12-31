@@ -15,6 +15,35 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
         _marketplace = IOSNFTMarketPlaceUpgradeable(marketplace_);
     }
 
+    function listNFTOnSale(
+        SignatureMeta calldata signatureData,
+        IOSNFTMarketPlaceUpgradeable.SellListingInput calldata sellData
+    ) external {
+        require(block.timestamp < signatureData.deadline, "Signature expired");
+
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    keccak256(
+                        "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint32 sellPriority,uint256 deadline)"
+                    ),
+                    sellData.tokenId,
+                    sellData.share,
+                    sellData.price,
+                    sellData.paymentToken,
+                    sellData.sellPriority,
+                    signatureData.deadline
+                )
+            )
+        );
+        require(
+            ECDSA.recover(digest, signatureData.signature) == signatureData.to,
+            "Invalid signature"
+        );
+
+        _marketplace.listNFTOnSaleMeta(signatureData.to, sellData);
+    }
+
     function createAuction(
         SignatureMeta calldata signatureData,
         IOSNFTMarketPlaceUpgradeable.AuctionListingInput calldata input

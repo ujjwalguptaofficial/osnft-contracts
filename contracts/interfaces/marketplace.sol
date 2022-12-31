@@ -174,4 +174,9 @@ interface IOSNFTMarketPlaceUpgradeable {
         address to,
         AuctionListingInput calldata input
     ) external;
+
+    function listNFTOnSaleMeta(
+        address to,
+        SellListingInput calldata sellData
+    ) external;
 }

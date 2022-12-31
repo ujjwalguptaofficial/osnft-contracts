@@ -8,12 +8,7 @@ import { IDeployedPayload } from "../interfaces";
 export function testNFTSale(payload: IDeployedPayload) {
 
     const signMessage = async (user: SignerWithAddress, tokenId, share, price, erc20token, sellPriority, deadline) => {
-        const domainType = [
-            { name: "name", type: "string" },
-            { name: "version", type: "string" },
-            { name: "chainId", type: "uint256" },
-            { name: "verifyingContract", type: "address" },
-        ];
+
         const nftMintDataType = [
             { name: "tokenId", type: "bytes32" },
             { name: "share", type: "uint32" },
@@ -24,10 +19,10 @@ export function testNFTSale(payload: IDeployedPayload) {
         ];
 
         const domainData = {
-            name: "OSNFT_MARKETPLACE",
+            name: "OSNFT_RELAYER",
             version: "1",
             chainId: await user.getChainId(),
-            verifyingContract: payload.marketplace.address.toLowerCase(),
+            verifyingContract: payload.relayer.address.toLowerCase(),
         };
         const message = {
             tokenId,
@@ -38,43 +33,13 @@ export function testNFTSale(payload: IDeployedPayload) {
             deadline
         };
 
-        // const data = JSON.stringify({
-        //     types: {
-        //         EIP712Domain: domainType,
-        //         NFTMintData: nftMintDataType,
-        //     },
-        //     domain: domainData,
-        //     primaryType: "NFTListOnSaleData",
-        //     message: message
-        // });
-        // const walletAddress = user.address;
 
         const signatureResult = await user._signTypedData(domainData, {
             NFTListOnSaleData: nftMintDataType,
         }, message);
-        // recover
 
-        // const datas = {
-        //     EIP712Domain: domainType,
-        //     NFTMintData: nftMintDataType,
-        // };
-        // const result = recoverTypedSignature<SignTypedDataVersion.V4, typeof datas>({
-        //     data: {
-        //         types: {
-        //             EIP712Domain: domainType,
-        //             NFTMintData: nftMintDataType,
-        //         },
-        //         domain: domainData,
-        //         primaryType: "NFTMintData",
-        //         message: message
-        //     },
-        //     signature: signatureResult,
-        //     version: SignTypedDataVersion.V4
-        // });
-        // expect(result).equal(user.address.toLowerCase());
 
         return signatureResult;
-        // { data: payload.getProjectId(data), signature: signatureResult };
     }
 
     it("add nft on sale by non owner", async () => {
@@ -436,6 +401,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         it("passing different from than in sign - Invalid signature", async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
             );
@@ -443,7 +409,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const erc20token = payload.erc20Token2.address;
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
-            const tx = marketplace.listNFTOnSaleMeta(
+            const tx = relayer.listNFTOnSale(
                 {
                     signature,
                     to: payload.signer2.address,
@@ -463,6 +429,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         it("Valid signature but now owner", async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
             );
@@ -471,7 +438,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer2, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer2.address;
-            const tx = marketplace.listNFTOnSaleMeta(
+            const tx = relayer.listNFTOnSale(
                 {
                     signature,
                     to: from,
@@ -491,6 +458,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         it("valid signature valid owner but deadline is expired", async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
             );
@@ -499,7 +467,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) - 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer3.address;
-            const tx = marketplace.listNFTOnSaleMeta(
+            const tx = relayer.listNFTOnSale(
                 {
                     signature,
                     to: from,
@@ -518,6 +486,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         it("valid signature valid owner but different deadline than signature", async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
             );
@@ -526,7 +495,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) - 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer3.address;
-            const tx = marketplace.listNFTOnSaleMeta(
+            const tx = relayer.listNFTOnSale(
                 {
                     signature,
                     to: from,
@@ -545,6 +514,8 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         it("valid signature valid owner but different sellPriority than signature", async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
+
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
             );
@@ -553,7 +524,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer3.address;
-            const tx = marketplace.listNFTOnSaleMeta(
+            const tx = relayer.listNFTOnSale(
                 {
                     signature,
                     to: from,
@@ -570,8 +541,10 @@ export function testNFTSale(payload: IDeployedPayload) {
             await expect(tx).to.revertedWith(`Invalid signature`)
         });
 
-        it("add mahal-webpack-loader (percentage cut) on sale", async () => {
+        it("Invalid relayer", async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
+
             const tokenId = payload.getProjectId(
                 payload.projects["mahal-webpack-loader"]
             );
@@ -581,6 +554,60 @@ export function testNFTSale(payload: IDeployedPayload) {
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 10, deadline)
             const from = payload.signer3.address;
             const tx = marketplace.listNFTOnSaleMeta(
+                from,
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentToken: erc20token,
+                    sellPriority: 10
+                }
+            );
+            await expect(tx).revertedWith(`Invalid relayer`)
+        });
+
+        it("gas estimate", async () => {
+            const relayer = payload.relayer;
+
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const deadline = (await time.latest()) + 1000;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 10, deadline)
+            const from = payload.signer3.address;
+            const gas = await relayer.estimateGas.listNFTOnSale(
+                {
+                    signature,
+                    to: from,
+                    deadline
+                },
+                {
+                    tokenId,
+                    share: 0,
+                    price,
+                    paymentToken: erc20token,
+                    sellPriority: 10
+                }
+            );
+
+            expect(gas).equal(234179)
+        });
+
+        it("add mahal-webpack-loader (percentage cut) on sale", async () => {
+            const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
+
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const price = ethers.constants.MaxUint256.sub(1);
+            const erc20token = payload.erc20Token2.address;
+            const deadline = (await time.latest()) + 1000;
+            const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 10, deadline)
+            const from = payload.signer3.address;
+            const tx = relayer.listNFTOnSale(
                 {
                     signature,
                     to: from,

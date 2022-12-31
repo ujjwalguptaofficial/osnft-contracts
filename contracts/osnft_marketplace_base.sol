@@ -57,31 +57,10 @@ contract OSNFTMarketPlaceBase is
     }
 
     function listNFTOnSaleMeta(
-        SignatureMeta calldata signatureData,
+        address to,
         SellListingInput calldata sellData
     ) external {
-        require(block.timestamp < signatureData.deadline, "Signature expired");
-
-        bytes32 digest = _hashTypedDataV4(
-            keccak256(
-                abi.encode(
-                    keccak256(
-                        "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint32 sellPriority,uint256 deadline)"
-                    ),
-                    sellData.tokenId,
-                    sellData.share,
-                    sellData.price,
-                    sellData.paymentToken,
-                    sellData.sellPriority,
-                    signatureData.deadline
-                )
-            )
-        );
-        require(
-            ECDSAUpgradeable.recover(digest, signatureData.signature) ==
-                signatureData.to,
-            "Invalid signature"
-        );
+        _requireRelayer();
 
         _listNFTOnSale(
             SellListing({
@@ -90,7 +69,7 @@ contract OSNFTMarketPlaceBase is
                 price: sellData.price,
                 tokenId: sellData.tokenId,
                 sellPriority: sellData.sellPriority,
-                seller: signatureData.to
+                seller: to
             })
         );
     }
@@ -319,11 +298,15 @@ contract OSNFTMarketPlaceBase is
         return _sellListings[sellId];
     }
 
+    function _requireRelayer() internal view {
+        require(_msgSender() == _relayerAddress, "Invalid relayer");
+    }
+
     function createAuctionMeta(
         address to,
         AuctionListingInput calldata input
     ) external {
-        require(_msgSender() == _relayerAddress, "Invalid relayer");
+        _requireRelayer();
         _createAuction(input, to);
     }
 
