@@ -247,22 +247,22 @@
     },
     {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0xca5fdf1c7329ed0b493917f9d0e0b84d91e4c33c891c120e2c5f7f683b897718",
+      "txHash": "0x5958a7eb131c9794793f6a824db67c98609c6b3d084ed86103e5f4da71d35e18",
       "kind": "transparent"
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x24cd440d6937d17b90b9803cf9d1a7e6f9ac9dfd1fccca4e14c73c16e0c0f8a1",
+      "txHash": "0x966fdf3667c2cbc89ccf9d08db657cc315cd3bbf52ce83e662cdfabd1ffaa834",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xfde235d304eae4779d2186aba23956b85dbeb26a080d4cf4ff902b8aa69404d7",
+      "txHash": "0xf369be3e8a502979922347ee87214c6dfb15b40bb060e63c942e765ed7b1bd4c",
       "kind": "transparent"
     },
     {
       "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-      "txHash": "0x3634d362e0b7a62094109a279b8eeba8cd39043c66e4db45a884f4c10dcc0fd9",
+      "txHash": "0xe58c100e95b5a9b038df12425f96aed41c2d650299712758d804463c84339472",
       "kind": "transparent"
     },
     {
@@ -274,7 +274,7 @@
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x162A433068F51e18b7d13932F27e66a3f99E6890",
-      "txHash": "0x6b21dceebd72074f942c8fec4376c1a5f8d15848d64933ad0d3343132dc065d4",
+      "txHash": "0xdabe621811333d6aab934bbfa75a72e0e6617026551d21226bf8c7335654bf0a",
       "layout": {
         "storage": [
           {
@@ -413,7 +413,7 @@
     },
     "d90a71156a39d1b3b9eb27d25fb49dc28d5650c55a5ff85e6f2f4df37b28fc65": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x6608df93166849b7a51804fc497b50041d5a80a80d65274796fc854092ca3690",
+      "txHash": "0xff091c90f7607e7840541587b775cf29ed4e0490dd3fa8b7de29f81aa3395f94",
       "layout": {
         "storage": [
           {
@@ -716,7 +716,7 @@
     },
     "90466e1cb0386d1d3d662f88c117b3a16fc4fe917a2167ef93ba58370b51258d": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0xa8d1c0c426c58cfe7c0e46a77f89f9882af646887f2285d88aafa9bee629631b",
+      "txHash": "0x2e955984bfc51774a272b4e11f68548015db5d539d77f542e61990c891711018",
       "layout": {
         "storage": [
           {
@@ -1170,9 +1170,9 @@
         }
       }
     },
-    "a82df71b653740fef05383b5365274f725eb214f0e9f68fa9338f0b2296af6f3": {
+    "3e7902458224ffbc6e30bea0903993b9ab40c9203b72477b53aec4ba27d1e9ad": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x9a384e9cd993bc3bff0f221fd05992f9fd63cf3f9b3e91603da0d13b32f29264",
+      "txHash": "0xd92578fa6586fbbf8f30154c8993c0bbeeb4affd5275fba2d40dd25dfec6c208",
       "layout": {
         "storage": [
           {
@@ -1228,7 +1228,7 @@
             "label": "_projectsApproved",
             "offset": 0,
             "slot": "102",
-            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)4553_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)634_storage)",
             "contract": "OSNFTApproverBase",
             "src": "contracts/osnft_approver_base.sol:15"
           },
@@ -1254,7 +1254,7 @@
             "slot": "105",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:73"
+            "src": "contracts/osnft_approver_base.sol:70"
           }
         ],
         "types": {
@@ -1282,11 +1282,11 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)4553_storage)": {
+          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)634_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTApproverUpgradeable.ProjectApprovedInfo)",
             "numberOfBytes": "32"
           },
-          "t_struct(ProjectApprovedInfo)4553_storage": {
+          "t_struct(ProjectApprovedInfo)634_storage": {
             "label": "struct IOSNFTApproverUpgradeable.ProjectApprovedInfo",
             "members": [
               {
