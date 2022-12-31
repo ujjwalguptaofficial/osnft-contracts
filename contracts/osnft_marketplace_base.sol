@@ -337,10 +337,17 @@ contract OSNFTMarketPlaceBase is
             "Invalid signature"
         );
 
-        createAuction(input);
+        _createAuction(input, signatureData.to);
     }
 
-    function createAuction(AuctionListingInput calldata input) public {
+    function createAuction(AuctionListingInput calldata input) external {
+        _createAuction(input, _msgSender());
+    }
+
+    function _createAuction(
+        AuctionListingInput calldata input,
+        address seller
+    ) internal {
         // Check if the endAuction time is valid
         require(
             input.endAuction > block.timestamp,
@@ -349,8 +356,6 @@ contract OSNFTMarketPlaceBase is
 
         // Check if the initial bid price is > 0
         require(input.initialBid > 0, "Require bid price above zero");
-
-        address seller = _msgSender();
 
         bytes32 tokenId = input.tokenId;
 
