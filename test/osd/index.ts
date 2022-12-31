@@ -44,35 +44,51 @@ export function testOSD(payload: IDeployedPayload) {
         })
     })
 
+    describe("mint", () => {
 
-    it('mint token to owner', async () => {
-        const oneToken = ethers.BigNumber.from(10).pow(18);
-        const amount = oneToken.mul('10000000000'); // 10 billion
-        const nativeToken = payload.nativeToken;
+        it('without owner', async () => {
+            const oneToken = ethers.BigNumber.from(10).pow(18);
+            const amount = oneToken.mul('10000000000'); // 10 billion
+            const nativeToken = payload.nativeToken;
 
-        const devCoin = payload.nativeToken.mint(payload.deployer.address, amount);
+            const devCoin = payload.nativeToken.connect(payload.signer3).mint(
+                payload.signer3.address, amount
+            );
 
-        await expect(devCoin).emit(nativeToken, 'Transfer').withArgs(
-            ethers.constants.AddressZero, payload.deployer.address, amount
-        )
+            await expect(devCoin).revertedWith(`Ownable: caller is not the owner`);
+        })
 
-        const gwei = ethers.BigNumber.from(10).pow(13);
+        it('mint token to owner', async () => {
+            const oneToken = ethers.BigNumber.from(10).pow(18);
+            const amount = oneToken.mul('10000000000'); // 10 billion
+            const nativeToken = payload.nativeToken;
 
-        const star = 10000;
-        const fork = 100;
+            const devCoin = payload.nativeToken.mint(payload.deployer.address, amount);
 
-        const worth = gwei.mul(star * 4).add(gwei.mul(fork * 2));
+            await expect(devCoin).emit(nativeToken, 'Transfer').withArgs(
+                ethers.constants.AddressZero, payload.deployer.address, amount
+            )
 
-        console.log('no of projects mint', worth, ethers.BigNumber.from(10).pow(18).div(worth));
+            const gwei = ethers.BigNumber.from(10).pow(13);
 
-        const balance = await nativeToken.balanceOf(payload.deployer.address);
-        expect(balance).equal(amount);
+            const star = 10000;
+            const fork = 100;
+
+            const worth = gwei.mul(star * 4).add(gwei.mul(fork * 2));
+
+            console.log('no of projects mint', worth, ethers.BigNumber.from(10).pow(18).div(worth));
+
+            const balance = await nativeToken.balanceOf(payload.deployer.address);
+            expect(balance).equal(amount);
+        })
+
+        it("totalSupply after mint", async () => {
+            const totalSupply = await payload.nativeToken.totalSupply();
+            expect(totalSupply).equal(ethers.BigNumber.from('10000000000000000000000000000'));
+        })
+
     })
 
-    it("totalSupply after mint", async () => {
-        const totalSupply = await payload.nativeToken.totalSupply();
-        expect(totalSupply).equal(ethers.BigNumber.from('10000000000000000000000000000'));
-    })
 
     const oneToken = ethers.BigNumber.from(10).pow(18);
 
@@ -245,25 +261,26 @@ export function testOSD(payload: IDeployedPayload) {
         })
     })
 
-    it('transferFrom fail because not approved', async () => {
-        const nativeToken = payload.nativeToken;
-        const user = payload.signer2.address;
-        const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken);
+    describe('approve', () => {
 
-        await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
-    })
+        it('transferFrom fail because not approved', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken);
 
-    it('approve', async () => {
-        const nativeToken = payload.nativeToken;
-        const user = payload.signer2.address;
-        const tx = nativeToken.connect(payload.signer2).approve(payload.deployer.address, oneToken);
+            await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
+        })
 
-        await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
-            user, payload.deployer.address, oneToken.toString()
-        )
-    })
+        it('approve', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.connect(payload.signer2).approve(payload.deployer.address, oneToken);
 
-    describe('transferFrom after approval ', () => {
+            await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
+                user, payload.deployer.address, oneToken.toString()
+            )
+        })
+
 
 
         it('insufficient allowance', async () => {
@@ -315,6 +332,6 @@ export function testOSD(payload: IDeployedPayload) {
 
             await expect(tx).to.revertedWith(`ERC20: transfer amount exceeds balance`);
         })
-
     })
+
 }
