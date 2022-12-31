@@ -7,7 +7,7 @@ import { testBidNFTAuction } from "./bid_nft";
 import { testNFTBuy } from "./buy_nft";
 import { testPayableToken } from "./payable_token";
 import { testRefundAuction } from "./refund_auction";
-import { testRemoveSale } from "./remove_nft_sale";
+import { testRemoveSale } from "./update_remove_nft_sale";
 import { testNFTSale } from "./sell_nft";
 import { testWithdrawPayment } from "./withdraw_payment";
 
