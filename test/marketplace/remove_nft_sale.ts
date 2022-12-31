@@ -108,6 +108,30 @@ export function testRemoveSale(payload: IDeployedPayload) {
         expect(nftSaleInfo.sellPriority).equal(10);
     })
 
+    it('update sellPriority sale', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const seller = payload.signer2.address;
+        const sellId = payload.getSellId(projectId, seller);
+        const tx = marketplace.connect(payload.signer2).updateSellPriorityOnSale(
+            sellId,
+            101
+        );
+
+        await expect(tx).to.emit(marketplace, 'NFTSaleSellPriorityUpdated').withArgs(
+            sellId, 101
+        );
+
+        const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
+
+        expect(nftSaleInfo.price).equal(10000);
+        expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
+        expect(nftSaleInfo.share).equal(100);
+        expect(nftSaleInfo.sellPriority).equal(101);
+    })
+
     it('successful remove', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
