@@ -93,7 +93,17 @@ export function testOSD(payload: IDeployedPayload) {
             )
 
             const afterBalance = await nativeToken.balanceOf(user);
+
+            console.log(`afterBalance`, afterBalance);
             expect(afterBalance).equal(beforeBalance.add(oneToken));
+        })
+
+        it('exceed balance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.connect(payload.signer2).transfer(payload.signer3.address, oneToken.mul(2));
+
+            await expect(tx).to.revertedWith(`ERC20: transfer amount exceeds balance`);
         })
     })
 
@@ -188,4 +198,76 @@ export function testOSD(payload: IDeployedPayload) {
 
     })
 
+    it('transferFrom fail because not approved', async () => {
+        const nativeToken = payload.nativeToken;
+        const user = payload.signer2.address;
+        const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken);
+
+        await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
+    })
+
+    it('approve', async () => {
+        const nativeToken = payload.nativeToken;
+        const user = payload.signer2.address;
+        const tx = nativeToken.connect(payload.signer2).approve(payload.deployer.address, oneToken);
+
+        await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
+            user, payload.deployer.address, oneToken.toString()
+        )
+    })
+
+    describe('transferFrom after approval ', () => {
+
+
+        it('insufficient allowance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken.mul(2));
+
+            await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
+        })
+
+
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const balanceOfBefore = await nativeToken.balanceOf(user);
+            expect(balanceOfBefore).greaterThan(0);
+            const tx = nativeToken.transferFrom(user, payload.signer4.address, 10);
+
+            await expect(tx).to.emit(nativeToken, 'Transfer')
+        })
+
+        it('success by default operator', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const balanceOfBefore = await nativeToken.balanceOf(user);
+            expect(balanceOfBefore).greaterThan(0);
+            const tx = nativeToken.connect(payload.operator).transferFrom(user, payload.signer4.address, 10);
+
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                user, payload.signer4.address, '10'
+            )
+        })
+
+        it('max approve', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const amount = ethers.constants.MaxUint256;
+            const tx = nativeToken.connect(payload.signer2).approve(payload.deployer.address, amount);
+
+            await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
+                user, payload.deployer.address, amount.toString()
+            )
+        })
+
+        it('exceed balance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken);
+
+            await expect(tx).to.revertedWith(`ERC20: transfer amount exceeds balance`);
+        })
+
+    })
 }
