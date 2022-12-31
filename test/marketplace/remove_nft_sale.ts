@@ -69,6 +69,13 @@ export function testRemoveSale(payload: IDeployedPayload) {
         );
 
         expect(gas).equal(126816);
+
+        const gasForPrioritySale = await marketplace.connect(payload.signer2).estimateGas.updateSellPriorityOnSale(
+            sellId,
+            10
+        );
+
+        expect(gasForPrioritySale).equal(114389);
     })
 
     it('update nft sale', async () => {

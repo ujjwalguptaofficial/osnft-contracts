@@ -137,7 +137,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(tx).equal(160893);
+        expect(tx).equal(160870);
     });
 
 

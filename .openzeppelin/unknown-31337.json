@@ -257,12 +257,12 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x16c53d4e9bd129f2d13f5acd0b7114267c4a7567c2870c67b7e639de108be08b",
+      "txHash": "0x854d008597895989140a1e75fc9c94893609f9de18cb99d954c4181df3bf2460",
       "kind": "transparent"
     },
     {
       "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-      "txHash": "0xe58c100e95b5a9b038df12425f96aed41c2d650299712758d804463c84339472",
+      "txHash": "0x3634d362e0b7a62094109a279b8eeba8cd39043c66e4db45a884f4c10dcc0fd9",
       "kind": "transparent"
     },
     {
@@ -274,7 +274,7 @@
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x162A433068F51e18b7d13932F27e66a3f99E6890",
-      "txHash": "0xdabe621811333d6aab934bbfa75a72e0e6617026551d21226bf8c7335654bf0a",
+      "txHash": "0x6b21dceebd72074f942c8fec4376c1a5f8d15848d64933ad0d3343132dc065d4",
       "layout": {
         "storage": [
           {
@@ -1012,9 +1012,9 @@
         }
       }
     },
-    "ded8d952e8694d463129ea251a2e6ee28516c3e516939c4ea8a8e085092c7136": {
+    "eb087645141c4689e9e464e10b6fa19c7f4f9fdc89119ebbbb52a947a033c480": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xb469f828281a117897a2361def3b6044ffa9219edaef3c76888612b5fa04779f",
+      "txHash": "0xd73e5586e6c008aa5004dc0e71d154e3bf0eef2e7b7f8bcf6aba6ee0b4dc3b06",
       "layout": {
         "storage": [
           {
@@ -1160,7 +1160,7 @@
             "slot": "208",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:659"
+            "src": "contracts/osnft_marketplace_base.sol:671"
           }
         ],
         "types": {

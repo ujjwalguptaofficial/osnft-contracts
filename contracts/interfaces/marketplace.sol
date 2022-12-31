@@ -89,6 +89,11 @@ interface IOSNFTMarketPlaceUpgradeable {
         uint32 sellPriority
     );
 
+    event NFTSaleSellPriorityUpdated(
+        bytes32 indexed sellId,
+        uint32 sellPriority
+    );
+
     event NftSaleCanceled(
         bytes32 indexed auctionId,
         bytes32 indexed tokenId,

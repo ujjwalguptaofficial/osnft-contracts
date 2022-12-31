@@ -254,6 +254,18 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
+    function updateSellPriorityOnSale(
+        bytes32 sellId,
+        uint32 sellPriority
+    ) external {
+        SellListing memory listedNft = _requireListed(sellId);
+
+        listedNft.sellPriority = sellPriority;
+
+        _listItem(listedNft);
+        emit NFTSaleSellPriorityUpdated(sellId, sellPriority);
+    }
+
     function getNFTFromSale(
         bytes32 sellId
     ) external view returns (SellListing memory) {
