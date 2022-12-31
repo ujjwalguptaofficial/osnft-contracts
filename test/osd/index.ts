@@ -350,12 +350,20 @@ export function testOSD(payload: IDeployedPayload) {
             const nativeToken = payload.nativeToken;
             const user = payload.signer2.address;
             const balanceOfBefore = await nativeToken.balanceOf(user);
+            const totalSupply = await nativeToken.totalSupply();
+
             expect(balanceOfBefore).greaterThan(0);
             const tx = nativeToken.burnFrom(user, 10);
 
             await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
                 user, ethers.constants.AddressZero, '10'
             )
+
+            const afterBalance = await nativeToken.balanceOf(user);
+            const totalSupplyAfter = await nativeToken.totalSupply();
+
+            expect(afterBalance).equal(balanceOfBefore.sub(10));
+            expect(totalSupplyAfter).equal(totalSupply.sub(10));
         })
 
         it('success by default operator', async () => {
