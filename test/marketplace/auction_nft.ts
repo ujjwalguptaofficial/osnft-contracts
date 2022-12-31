@@ -550,5 +550,4 @@ export function testNFTAuction(payload: IDeployedPayload) {
         });
 
     })
-
 }

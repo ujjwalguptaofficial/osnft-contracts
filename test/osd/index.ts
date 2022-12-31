@@ -299,7 +299,9 @@ export function testOSD(payload: IDeployedPayload) {
             expect(balanceOfBefore).greaterThan(0);
             const tx = nativeToken.transferFrom(user, payload.signer4.address, 10);
 
-            await expect(tx).to.emit(nativeToken, 'Transfer')
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                user, payload.signer4.address, '10'
+            )
         })
 
         it('success by default operator', async () => {
@@ -331,6 +333,49 @@ export function testOSD(payload: IDeployedPayload) {
             const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken);
 
             await expect(tx).to.revertedWith(`ERC20: transfer amount exceeds balance`);
+        })
+    })
+
+    describe("burnFrom", () => {
+
+        it('insufficient allowance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer3.address;
+            const tx = nativeToken.burnFrom(user, oneToken.mul(2));
+
+            await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
+        })
+
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const balanceOfBefore = await nativeToken.balanceOf(user);
+            expect(balanceOfBefore).greaterThan(0);
+            const tx = nativeToken.burnFrom(user, 10);
+
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                user, ethers.constants.AddressZero, '10'
+            )
+        })
+
+        it('success by default operator', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const balanceOfBefore = await nativeToken.balanceOf(user);
+            expect(balanceOfBefore).greaterThan(0);
+            const tx = nativeToken.connect(payload.operator).burnFrom(user, 10);
+
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                user, ethers.constants.AddressZero, '10'
+            )
+        })
+
+        it('exceed balance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.burnFrom(user, oneToken);
+
+            await expect(tx).to.revertedWith(`ERC20: burn amount exceeds balance`);
         })
     })
 
