@@ -182,16 +182,6 @@ describe("contracts", () => {
         testSetMarketPlace(payload);
     })
 
-    // it('set marketplace', async () => {
-    //     const tx = await payload.nft.setDefaultMarketPlace(
-    //         payload.defaultMarketPlace.address
-    //     );
-
-    //     const defaultMarketPlaceValue = await payload.nft.defaultMarketPlace();
-
-    //     expect(defaultMarketPlaceValue).equal(payload.defaultMarketPlace.address);
-    // })
-
     describe('Approver', () => {
         testApprover(payload);
     });

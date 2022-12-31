@@ -19,6 +19,11 @@ export function testOSD(payload: IDeployedPayload) {
         expect(name).equal('OSDevCoin');
     })
 
+    it("totalSupply", async () => {
+        const totalSupply = await payload.nativeToken.totalSupply();
+        expect(totalSupply).equal(0);
+    })
+
     describe("addDefaultOperator", async () => {
         it('by not owner', async () => {
             const nativeToken = payload.nativeToken;
@@ -38,6 +43,7 @@ export function testOSD(payload: IDeployedPayload) {
             expect(allowance).equal(ethers.constants.MaxUint256);
         })
     })
+
 
     it('mint token to owner', async () => {
         const oneToken = ethers.BigNumber.from(10).pow(18);
@@ -61,6 +67,11 @@ export function testOSD(payload: IDeployedPayload) {
 
         const balance = await nativeToken.balanceOf(payload.deployer.address);
         expect(balance).equal(amount);
+    })
+
+    it("totalSupply after mint", async () => {
+        const totalSupply = await payload.nativeToken.totalSupply();
+        expect(totalSupply).equal(ethers.BigNumber.from('10000000000000000000000000000'));
     })
 
     const oneToken = ethers.BigNumber.from(10).pow(18);
@@ -196,6 +207,42 @@ export function testOSD(payload: IDeployedPayload) {
             expect(afterBalance2).equal(beforeBalance2);
         })
 
+    })
+
+    describe('burn', () => {
+        it('exceed balance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.connect(payload.signer2).burn(
+                oneToken.mul(2)
+            );
+
+            await expect(tx).to.revertedWith(`ERC20: burn amount exceeds balance`);
+        })
+
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer4.address;
+            const amount = 100;
+
+
+            const beforeBalance = await nativeToken.balanceOf(user);
+            const totalSupply = await nativeToken.totalSupply();
+
+            const tx = nativeToken.connect(payload.signer4).burn(
+                amount
+            );
+
+            await expect(tx).to.emit(nativeToken, 'Transfer').withArgs(
+                user, ethers.constants.AddressZero, amount
+            )
+
+            const afterBalance = await nativeToken.balanceOf(user);
+            const totalSupplyAfter = await nativeToken.totalSupply();
+
+            expect(afterBalance).equal(beforeBalance.sub(amount));
+            expect(totalSupplyAfter).equal(totalSupply.sub(amount));
+        })
     })
 
     it('transferFrom fail because not approved', async () => {
