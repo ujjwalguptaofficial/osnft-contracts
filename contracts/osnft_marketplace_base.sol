@@ -261,9 +261,14 @@ contract OSNFTMarketPlaceBase is
         listedNft.share = sellData.share;
         listedNft.price = sellData.price;
         listedNft.paymentToken = sellData.paymentToken;
-        listedNft.sellPriority = sellData.sellPriority;
 
-        _takePaymentForSellPriority(sellData.sellPriority, seller);
+        // osd is official coin so no chance of reentrancy attack
+        _takePaymentForSellPriority(
+            sellData.sellPriority - listedNft.sellPriority,
+            seller
+        );
+        // setting sellPriority after taking payments
+        listedNft.sellPriority = sellData.sellPriority;
 
         _sellListings[sellId] = listedNft;
 
@@ -289,8 +294,11 @@ contract OSNFTMarketPlaceBase is
         // then someone can change price or something
         _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
 
+        _takePaymentForSellPriority(
+            sellPriority - listedNft.sellPriority,
+            seller
+        );
         listedNft.sellPriority = sellPriority;
-        _takePaymentForSellPriority(sellPriority, seller);
 
         emit NFTSaleSellPriorityUpdated(sellId, sellPriority);
     }
@@ -567,6 +575,7 @@ contract OSNFTMarketPlaceBase is
         uint32 sellPriority,
         address seller
     ) internal {
+        // osd is official coin so no chance of reentrancy attack
         if (sellPriority > 0) {
             _requirePayment(
                 _nativeCoinAddress,
