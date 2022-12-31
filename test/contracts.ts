@@ -51,10 +51,10 @@ describe("contracts", () => {
     })
 
     it('deploy dev coin', async () => {
-        const osdCoin = await ethers.getContractFactory('OSDevCoin');
+        const osdCoin = await ethers.getContractFactory('OSDCoin');
 
         const deployedContract = await upgrades.deployProxy(osdCoin, [
-            'OSDevCoin', 'OSD'
+            'OpenSourceDevCoin', 'OSD'
         ], {
             initializer: 'initialize'
         }) as any;

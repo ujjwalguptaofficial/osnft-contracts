@@ -2,11 +2,9 @@
 // OpenZeppelin Contracts (last updated v4.8.0-rc.1) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "hardhat/console.sol";
+import "./interfaces/osd_coin.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -33,12 +31,7 @@ import "hardhat/console.sol";
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract DevCoinBase is
-    Initializable,
-    ContextUpgradeable,
-    IERC20Upgradeable,
-    IERC20MetadataUpgradeable
-{
+contract OSDCoinBase is Initializable, ContextUpgradeable, IOSDCoin {
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -48,32 +41,6 @@ contract DevCoinBase is
     string private _name;
     string private _symbol;
     mapping(address => bool) internal _defaultAllowedOperator;
-
-    event DefaultOperatorAdded(address indexed operator);
-
-    /**
-     * @dev Sets the values for {name} and {symbol}.
-     *
-     * The default value of {decimals} is 18. To select a different value for
-     * {decimals} you should overload it.
-     *
-     * All two of these values are immutable: they can only be set once during
-     * construction.
-     */
-    function __ERC20_init(
-        string memory name_,
-        string memory symbol_
-    ) internal onlyInitializing {
-        __ERC20_init_unchained(name_, symbol_);
-    }
-
-    function __ERC20_init_unchained(
-        string memory name_,
-        string memory symbol_
-    ) internal onlyInitializing {
-        _name = name_;
-        _symbol = symbol_;
-    }
 
     /**
      * @dev Returns the name of the token.
@@ -285,8 +252,6 @@ contract DevCoinBase is
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
-        _beforeTokenTransfer(from, to, amount);
-
         uint256 fromBalance = _balances[from];
         require(
             fromBalance >= amount,
@@ -300,8 +265,6 @@ contract DevCoinBase is
         }
 
         emit Transfer(from, to, amount);
-
-        _afterTokenTransfer(from, to, amount);
     }
 
     /** @dev Creates `amount` tokens and assigns them to `account`, increasing
@@ -316,16 +279,12 @@ contract DevCoinBase is
     function _mint(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: mint to the zero address");
 
-        _beforeTokenTransfer(address(0), account, amount);
-
         _totalSupply += amount;
         unchecked {
             // Overflow not possible: balance + amount is at most totalSupply + amount, which is checked above.
             _balances[account] += amount;
         }
         emit Transfer(address(0), account, amount);
-
-        _afterTokenTransfer(address(0), account, amount);
     }
 
     /**
@@ -342,8 +301,6 @@ contract DevCoinBase is
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
 
-        _beforeTokenTransfer(account, address(0), amount);
-
         uint256 accountBalance = _balances[account];
         require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
         unchecked {
@@ -353,8 +310,6 @@ contract DevCoinBase is
         }
 
         emit Transfer(account, address(0), amount);
-
-        _afterTokenTransfer(account, address(0), amount);
     }
 
     /**
@@ -408,44 +363,28 @@ contract DevCoinBase is
     }
 
     /**
-     * @dev Hook that is called before any transfer of tokens. This includes
-     * minting and burning.
+     * @dev Sets the values for {name} and {symbol}.
      *
-     * Calling conditions:
+     * The default value of {decimals} is 18. To select a different value for
+     * {decimals} you should overload it.
      *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * will be transferred to `to`.
-     * - when `from` is zero, `amount` tokens will be minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     * All two of these values are immutable: they can only be set once during
+     * construction.
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual {}
+    function __ERC20_init(
+        string memory name_,
+        string memory symbol_
+    ) internal onlyInitializing {
+        __ERC20_init_unchained(name_, symbol_);
+    }
 
-    /**
-     * @dev Hook that is called after any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * has been transferred to `to`.
-     * - when `from` is zero, `amount` tokens have been minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens have been burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual {}
+    function __ERC20_init_unchained(
+        string memory name_,
+        string memory symbol_
+    ) internal onlyInitializing {
+        _name = name_;
+        _symbol = symbol_;
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

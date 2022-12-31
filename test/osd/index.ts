@@ -16,7 +16,7 @@ export function testOSD(payload: IDeployedPayload) {
 
     it("name", async () => {
         const name = await payload.nativeToken.name();
-        expect(name).equal('OSDevCoin');
+        expect(name).equal('OpenSourceDevCoin');
     })
 
     it("totalSupply", async () => {
@@ -106,7 +106,7 @@ export function testOSD(payload: IDeployedPayload) {
             const user = payload.signer2.address;
             const gas = await nativeToken.estimateGas.transfer(user, oneToken);
 
-            expect(gas).equal(59975);
+            expect(gas).equal(59897);
         })
 
         it('success', async () => {
@@ -171,7 +171,7 @@ export function testOSD(payload: IDeployedPayload) {
                 [oneToken, twoToken]
             );
 
-            expect(gas).equal(87827);
+            expect(gas).equal(87668);
         });
 
         it('batchTransfer', async () => {

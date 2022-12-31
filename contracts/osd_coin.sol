@@ -3,10 +3,10 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./dev_coin_base.sol";
+import "./osd_coin_base.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-ERC20PermitUpgradeable.sol";
 
-contract OSDevCoin is Initializable, OwnableUpgradeable, DevCoinBase {
+contract OSDCoin is Initializable, OwnableUpgradeable, OSDCoinBase {
     function initialize(
         string memory name,
         string memory symbol
@@ -33,7 +33,7 @@ contract OSDevCoin is Initializable, OwnableUpgradeable, DevCoinBase {
      *
      * See {ERC20-_burn}.
      */
-    function burn(uint256 amount) public virtual {
+    function burn(uint256 amount) external virtual {
         _burn(_msgSender(), amount);
     }
 
@@ -48,7 +48,7 @@ contract OSDevCoin is Initializable, OwnableUpgradeable, DevCoinBase {
      * - the caller must have allowance for ``accounts``'s tokens of at least
      * `amount`.
      */
-    function burnFrom(address account, uint256 amount) public virtual {
+    function burnFrom(address account, uint256 amount) external virtual {
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
     }
