@@ -9,19 +9,15 @@ import "./interfaces/erc721_receiver_upgradable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "./string_helper.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
 contract OSNFTMarketPlaceBase is
     Initializable,
     OwnableUpgradeable,
     IOSNFTMarketPlaceUpgradeable,
     IERC721ReceiverUpgradeable,
-    EIP712Upgradeable,
     ReentrancyGuardUpgradeable
 {
     using StringHelper for bytes32;
-    using ECDSAUpgradeable for bytes32;
 
     // tokenId -> { shareOwner: Listing }
     mapping(bytes32 => SellListing) private _sellListings;
@@ -134,7 +130,6 @@ contract OSNFTMarketPlaceBase is
         _nftContract = IERC721Upgradeable(nft_);
         _marketPlaceRoyality = 2;
         _sellPriorityConstant = 1000000000000000; // 10^15 - allows sell Priority to be 1000 in one OSD
-        __EIP712_init("OSNFT_MARKETPLACE", "1");
         _nativeCoinAddress = nativeCoinAddress_;
     }
 
