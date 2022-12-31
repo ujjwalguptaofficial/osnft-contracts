@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { IDeployedPayload } from "../interfaces";
 
 export function testRemoveSale(payload: IDeployedPayload) {
@@ -130,19 +131,25 @@ export function testRemoveSale(payload: IDeployedPayload) {
             );
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
+
+            const nativeCoin = payload.nativeToken;
+            const from = seller;
+            const nativeCoinBalance = await nativeCoin.balanceOf(from);
+            const sellPriority = 10;
+
             const tx = marketplace.connect(payload.signer2).updateNFTOnSale(
                 sellId,
                 {
                     share: 100,
                     price: 10000,
                     paymentToken: payload.erc20Token2.address,
-                    sellPriority: 10,
+                    sellPriority: sellPriority,
                 }
             );
 
             await expect(tx).to.emit(marketplace, 'NFTSaleUpdated').withArgs(
                 sellId, 100, 10000,
-                payload.erc20Token2.address, 10
+                payload.erc20Token2.address, sellPriority
             );
 
             const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
@@ -151,6 +158,12 @@ export function testRemoveSale(payload: IDeployedPayload) {
             expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
             expect(nftSaleInfo.share).equal(100);
             expect(nftSaleInfo.sellPriority).equal(10);
+
+            const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+            const expectedDeduction = BigNumber.from(10).pow(15).mul(sellPriority);
+            expect(nativeCoinBalanceAfter).equal(
+                nativeCoinBalance.sub(expectedDeduction)
+            )
         })
 
     });
@@ -211,13 +224,19 @@ export function testRemoveSale(payload: IDeployedPayload) {
             );
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
+
+            const nativeCoin = payload.nativeToken;
+            const from = seller;
+            const nativeCoinBalance = await nativeCoin.balanceOf(from);
+            const sellPriority = 101;
+
             const tx = marketplace.connect(payload.signer2).updateSellPriorityOnSale(
                 sellId,
-                101
+                sellPriority
             );
 
             await expect(tx).to.emit(marketplace, 'NFTSaleSellPriorityUpdated').withArgs(
-                sellId, 101
+                sellId, sellPriority
             );
 
             const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
@@ -225,7 +244,13 @@ export function testRemoveSale(payload: IDeployedPayload) {
             expect(nftSaleInfo.price).equal(10000);
             expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
             expect(nftSaleInfo.share).equal(100);
-            expect(nftSaleInfo.sellPriority).equal(101);
+            expect(nftSaleInfo.sellPriority).equal(sellPriority);
+
+            const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+            const expectedDeduction = BigNumber.from(10).pow(15).mul(sellPriority);
+            expect(nativeCoinBalanceAfter).equal(
+                nativeCoinBalance.sub(expectedDeduction)
+            )
         })
     })
 
