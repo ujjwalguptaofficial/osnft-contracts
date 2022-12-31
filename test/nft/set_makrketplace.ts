@@ -5,7 +5,7 @@ import { IDeployedPayload } from "../interfaces";
 export function testSetMarketPlace(payload: IDeployedPayload) {
 
     it('set by not owner', async () => {
-        let tx = payload.nft.connect(payload.signer3).setDefaultMarketPlace(
+        let tx = payload.nft.connect(payload.signer3)["defaultMarketPlace(address)"](
             payload.marketplace.address
         )
 
@@ -20,9 +20,9 @@ export function testSetMarketPlace(payload: IDeployedPayload) {
         );
         expect(isApprovedForAll).equal(false);
 
-        const tx = await payload.nft.setDefaultMarketPlace(marketplaceAddress);
+        const tx = await payload.nft["defaultMarketPlace(address)"](marketplaceAddress);
 
-        const defaultMarketPlaceValue = await payload.nft.defaultMarketPlace();
+        const defaultMarketPlaceValue = await payload.nft["defaultMarketPlace()"]();
 
         expect(defaultMarketPlaceValue).equal(marketplaceAddress);
 

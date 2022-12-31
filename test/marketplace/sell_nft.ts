@@ -95,7 +95,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         // change default marketplace
 
-        await payload.nft.setDefaultMarketPlace(payload.operator.address);
+        await payload.nft["defaultMarketPlace(address)"](payload.operator.address);
 
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
@@ -116,9 +116,9 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     it('change default marketplace', async () => {
         const defaultMarketPlace = payload.marketplace.address;
-        const tx = await payload.nft.setDefaultMarketPlace(defaultMarketPlace);
+        const tx = await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);
 
-        const defaultMarketPlaceValue = await payload.nft.defaultMarketPlace();
+        const defaultMarketPlaceValue = await payload.nft["defaultMarketPlace()"]();
 
         expect(defaultMarketPlaceValue).equal(defaultMarketPlace);
     });
@@ -137,7 +137,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(tx).equal(160869);
+        expect(tx).equal(160893);
     });
 
 

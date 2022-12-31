@@ -122,7 +122,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
         // change default marketplace to default
 
         const defaultMarketPlace = payload.operator.address;
-        await payload.nft.setDefaultMarketPlace(defaultMarketPlace);
+        await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);
 
 
         const marketplace = payload.marketplace;
@@ -146,9 +146,9 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
     it('change default marketplace', async () => {
         const defaultMarketPlace = payload.marketplace.address;
-        const tx = await payload.nft.setDefaultMarketPlace(defaultMarketPlace);
+        const tx = await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);
 
-        const defaultMarketPlaceValue = await payload.nft.defaultMarketPlace();
+        const defaultMarketPlaceValue = await payload.nft["defaultMarketPlace()"]();
 
         expect(defaultMarketPlaceValue).equal(defaultMarketPlace);
     });
@@ -237,7 +237,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(242469)
+        expect(gas).equal(242560)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -359,7 +359,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).equal(247845)
+        expect(gas).equal(247936)
     })
 
     describe('createAuctionMeta', () => {

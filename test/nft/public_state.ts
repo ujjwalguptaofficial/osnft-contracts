@@ -13,7 +13,7 @@ export function runPublicState(payload: IDeployedPayload) {
     })
 
     it('baseTokenURI', async () => {
-        const value = await payload.nft.baseTokenURI();
+        const value = await payload.nft["baseTokenURI()"]();
         expect(value).equal('https://ujjwalnft.com/metadata/');
     })
 

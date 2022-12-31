@@ -92,7 +92,7 @@ export function testMint(payload: IDeployedPayload) {
             timestamp
         );
 
-        expect(gasForMintingWithSign).equal(169477);
+        expect(gasForMintingWithSign).equal(169455);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(

@@ -5,26 +5,15 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./os_nft_base.sol";
 
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
-    string public baseTokenURI;
-
     function initialize(
         string calldata name,
         string calldata symbol,
-        string calldata _baseTokenURI,
+        string calldata baseTokenURI,
         address approver,
         address nativeToken_
     ) external initializer {
-        __ERC721_init(name, symbol, approver, nativeToken_);
+        __ERC721_init(name, symbol, baseTokenURI, approver, nativeToken_);
         __Ownable_init();
-        baseTokenURI = _baseTokenURI;
-    }
-
-    function _baseURI() internal view override returns (string memory) {
-        return baseTokenURI;
-    }
-
-    function setBaseTokenURI(string calldata _baseTokenURI) external onlyOwner {
-        baseTokenURI = _baseTokenURI;
     }
 
     function burn(bytes32 tokenId) external {

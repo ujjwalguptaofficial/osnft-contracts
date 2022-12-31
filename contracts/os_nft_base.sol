@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./interfaces/erc721_metadata_upgradable.sol";
+import "./interfaces/osnft.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
 import "./interfaces/osnft_approver.sol";
 import "./string_helper.sol";
@@ -19,7 +19,7 @@ contract OSNFTBase is
     ContextUpgradeable,
     OwnableUpgradeable,
     ERC165Upgradeable,
-    IERC721MetadataUpgradeable,
+    IOSNFT,
     EIP712Upgradeable
 {
     using AddressUpgradeable for address;
@@ -27,24 +27,14 @@ contract OSNFTBase is
     using ECDSAUpgradeable for bytes32;
     using StringHelper for bytes32;
 
-    struct EquityTokenInfo {
-        uint32 totalNoOfShare;
-        mapping(address => uint32) shares;
-        address allShareOwner;
-        address creator;
-    }
-
-    struct PercentageTokenInfo {
-        uint8 creatorCut;
-        address owner;
-        address creator;
-    }
-
     // Token name
     string private _name;
 
     // Token symbol
     string private _symbol;
+
+    // base token uri
+    string private _baseTokenURI;
 
     mapping(bytes32 => EquityTokenInfo) internal _equityTokens;
 
@@ -59,12 +49,24 @@ contract OSNFTBase is
     // Mapping from owner to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-    address public defaultMarketPlace;
+    address private _defaultMarketPlace;
 
     IOSNFTApproverUpgradeable private _approver;
 
-    function setDefaultMarketPlace(address value) external onlyOwner {
-        defaultMarketPlace = value;
+    function defaultMarketPlace(address value) external onlyOwner {
+        _defaultMarketPlace = value;
+    }
+
+    function defaultMarketPlace() external view returns (address) {
+        return _defaultMarketPlace;
+    }
+
+    function baseTokenURI(string calldata baseTokenURI_) external onlyOwner {
+        _baseTokenURI = baseTokenURI_;
+    }
+
+    function baseTokenURI() external view returns (string memory) {
+        return _baseTokenURI;
     }
 
     /**
@@ -149,7 +151,7 @@ contract OSNFTBase is
     ) public view virtual returns (string memory) {
         _requireMinted(tokenId);
 
-        string memory baseURI = _baseURI();
+        string memory baseURI = _baseTokenURI;
         return
             bytes(baseURI).length > 0
                 ? string(abi.encodePacked(baseURI, tokenId.toString()))
@@ -163,7 +165,7 @@ contract OSNFTBase is
         address owner,
         address operator
     ) public view returns (bool) {
-        if (operator == defaultMarketPlace) {
+        if (operator == _defaultMarketPlace) {
             return true;
         }
         return _operatorApprovals[owner][operator];
@@ -343,10 +345,6 @@ contract OSNFTBase is
 
     address internal _nativeToken;
 
-    // function setNativeToken(address token) public onlyOwner {
-    //     _nativeToken = token;
-    // }
-
     function getNativeToken() external view returns (address) {
         return _nativeToken;
     }
@@ -357,12 +355,14 @@ contract OSNFTBase is
     function __ERC721_init(
         string memory name_,
         string memory symbol_,
+        string calldata baseTokenURI,
         address approver_,
         address nativeToken_
     ) internal onlyInitializing {
         __ERC721_init_unchained(name_, symbol_);
         _approver = IOSNFTApproverUpgradeable(approver_);
         _nativeToken = nativeToken_;
+        _baseTokenURI = baseTokenURI;
         __EIP712_init(symbol_, "1");
     }
 
@@ -502,15 +502,6 @@ contract OSNFTBase is
      */
     function _requireMinted(bytes32 tokenId) internal view virtual {
         require(_exists(tokenId), "ERC721: invalid token ID");
-    }
-
-    /**
-     * @dev Base URI for computing {tokenURI}. If set, the resulting URI for each
-     * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
-     * by default, can be overridden in child contracts.
-     */
-    function _baseURI() internal view virtual returns (string memory) {
-        return "";
     }
 
     /**
