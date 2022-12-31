@@ -323,6 +323,7 @@ contract OSNFTMarketPlaceBase is
         address to,
         AuctionListingInput calldata input
     ) external {
+        require(_msgSender() == _relayerAddress, "Invalid relayer");
         _createAuction(input, to);
     }
 

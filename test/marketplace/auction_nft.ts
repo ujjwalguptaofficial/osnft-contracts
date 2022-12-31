@@ -484,9 +484,8 @@ export function testNFTAuction(payload: IDeployedPayload) {
             await expect(tx).to.revertedWith(`Invalid signature`);
         });
 
-        it('successful share auction', async () => {
+        it('Invalid relayer', async () => {
             const marketplace = payload.marketplace;
-            const relayer = payload.relayer;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore"]
             );
@@ -513,6 +512,50 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 deadline
             );
 
+            const tx = payload.marketplace.connect(payload.signer2).createAuctionMeta(from, {
+                tokenId: projectId,
+                share: shareToAuction,
+                initialBid: 10000,
+                endAuction,
+                paymentToken: payload.erc20Token1.address,
+                sellPriority: 0
+            });
+            await expect(tx).revertedWith(`Invalid relayer`)
+
+
+        });
+
+        it('successful share auction', async () => {
+            const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore"]
+            );
+            const seller = payload.deployer.address;
+            // const endAuction = addHours(new Date(), 24).getTime();
+
+            const nativeCoin = payload.nativeToken;
+            const from = seller;
+            const nativeCoinBalance = await nativeCoin.balanceOf(from);
+
+
+            const endAuction = (await time.latest()) + 200;
+            const shareToAuction = 100;
+            const deadline = (await time.latest()) + 1000;
+
+            const sellPriority = 1;
+
+            const signature = await signMessage(
+                payload.deployer,
+                projectId,
+                shareToAuction,
+                10000,
+                endAuction,
+                payload.erc20Token1.address,
+                sellPriority,
+                deadline
+            );
+
             const tx = relayer.connect(payload.signer2).createAuction({
                 signature: signature,
                 to: from,
@@ -523,7 +566,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 initialBid: 10000,
                 endAuction,
                 paymentToken: payload.erc20Token1.address,
-                sellPriority: 0
+                sellPriority: sellPriority
             });
             const auctionId = payload.getSellId(projectId, seller);
             await expect(tx).emit(marketplace, 'NewAuction').withArgs(
@@ -534,7 +577,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 10000,
                 endAuction,
                 payload.erc20Token1.address,
-                0
+                sellPriority
             )
 
             const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
@@ -548,8 +591,9 @@ export function testNFTAuction(payload: IDeployedPayload) {
             expect(bidPrice).equal(10000);
 
             const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+            const expectedDeduction = BigNumber.from(10).pow(15).mul(sellPriority);
             expect(nativeCoinBalanceAfter).equal(
-                nativeCoinBalance
+                nativeCoinBalance.sub(expectedDeduction)
             )
         });
 
