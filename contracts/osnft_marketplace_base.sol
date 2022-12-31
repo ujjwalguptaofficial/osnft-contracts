@@ -242,6 +242,7 @@ contract OSNFTMarketPlaceBase is
         listedNft.share = sellData.share;
         listedNft.price = sellData.price;
         listedNft.paymentToken = sellData.paymentToken;
+        listedNft.sellPriority = sellData.sellPriority;
 
         _listItem(listedNft);
         emit NFTSaleUpdated(
@@ -567,12 +568,7 @@ contract OSNFTMarketPlaceBase is
         // transfer price amount from buyer to marketplace
         // in case of BID - amount is already taken to marketplace
         if (isBuySell) {
-            _requirePayment(
-                paymentToken,
-                sellData.buyer,
-                address(this),
-                price
-            );
+            _requirePayment(paymentToken, sellData.buyer, address(this), price);
         }
 
         // transfer nft from owner to buyer
@@ -616,11 +612,7 @@ contract OSNFTMarketPlaceBase is
         }
 
         // transfer seller money
-        _requireTransferFromMarketplace(
-            seller,
-            amountForSeller,
-            paymentToken
-        );
+        _requireTransferFromMarketplace(seller, amountForSeller, paymentToken);
     }
 
     function _requirePayment(

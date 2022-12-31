@@ -51,6 +51,26 @@ export function testRemoveSale(payload: IDeployedPayload) {
         await expect(tx).to.revertedWith('Require NFT ownership');
     })
 
+    it('update nft sale gas estimate', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const seller = payload.signer2.address;
+        const sellId = payload.getSellId(projectId, seller);
+        const gas = await marketplace.connect(payload.signer2).estimateGas.updateNFTOnSale(
+            sellId,
+            {
+                share: 100,
+                price: 10000,
+                paymentToken: payload.erc20Token2.address,
+                sellPriority: 10,
+            }
+        );
+
+        expect(gas).equal(126816);
+    })
+
     it('update nft sale', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
@@ -61,22 +81,24 @@ export function testRemoveSale(payload: IDeployedPayload) {
         const tx = marketplace.connect(payload.signer2).updateNFTOnSale(
             sellId,
             {
-                share: 0,
+                share: 100,
                 price: 10000,
                 paymentToken: payload.erc20Token2.address,
-                sellPriority: 0,
+                sellPriority: 10,
             }
         );
 
         await expect(tx).to.emit(marketplace, 'NFTSaleUpdated').withArgs(
-            sellId, 0, 10000,
-            payload.erc20Token2.address, 0
+            sellId, 100, 10000,
+            payload.erc20Token2.address, 10
         );
 
         const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
 
         expect(nftSaleInfo.price).equal(10000);
         expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
+        expect(nftSaleInfo.share).equal(100);
+        expect(nftSaleInfo.sellPriority).equal(10);
     })
 
     it('successful remove', async () => {
