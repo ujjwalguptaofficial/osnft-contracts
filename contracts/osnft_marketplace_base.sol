@@ -280,16 +280,18 @@ contract OSNFTMarketPlaceBase is
         bytes32 sellId,
         uint32 sellPriority
     ) external {
-        SellListing memory listedNft = _requireListed(sellId);
+        SellListing storage listedNft = _requireListedStorage(sellId);
+
+        address seller = _msgSender();
 
         // should be owner
         // if update allowed other than owner,
         // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, _msgSender(), listedNft.share);
+        _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
 
         listedNft.sellPriority = sellPriority;
+        _takePaymentForSellPriority(sellPriority, seller);
 
-        _listItem(listedNft);
         emit NFTSaleSellPriorityUpdated(sellId, sellPriority);
     }
 
