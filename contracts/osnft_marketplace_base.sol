@@ -238,7 +238,12 @@ contract OSNFTMarketPlaceBase is
         SellUpdateInput calldata sellData
     ) external {
         SellListing memory listedNft = _requireListed(sellId);
-        listedNft.paymentToken = sellData.paymentToken;
+
+        // should be owner
+        // if update allowed other than owner,
+        // then someone can change price or something
+        _requireNftOwner(listedNft.tokenId, _msgSender(), listedNft.share);
+
         listedNft.share = sellData.share;
         listedNft.price = sellData.price;
         listedNft.paymentToken = sellData.paymentToken;
@@ -259,6 +264,11 @@ contract OSNFTMarketPlaceBase is
         uint32 sellPriority
     ) external {
         SellListing memory listedNft = _requireListed(sellId);
+
+        // should be owner
+        // if update allowed other than owner,
+        // then someone can change price or something
+        _requireNftOwner(listedNft.tokenId, _msgSender(), listedNft.share);
 
         listedNft.sellPriority = sellPriority;
 

@@ -24,8 +24,86 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
     describe("updaye nft", () => {
 
+        it('Require NFT listed', async () => {
+            const marketplace = payload.marketplace;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore-example"]
+            );
+            const seller = payload.signer4.address;
 
-        it('update nft sale gas estimate', async () => {
+            const sellId = payload.getSellId(projectId, seller);
+
+            const tx = marketplace.connect(payload.signer4).updateNFTOnSale(
+                sellId,
+                {
+                    share: 100,
+                    price: 10000,
+                    paymentToken: payload.erc20Token2.address,
+                    sellPriority: 10,
+                }
+            );
+
+            await expect(tx).to.revertedWith('Require NFT listed');
+        })
+
+        it('non owner', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer2.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+
+            const tx = marketplace.connect(payload.signer4).updateNFTOnSale(auctionId,
+                {
+                    share: 100,
+                    price: 10000,
+                    paymentToken: payload.erc20Token2.address,
+                    sellPriority: 10,
+                });
+            await expect(tx).to.revertedWith('Require NFT ownership');
+        })
+
+        it('price must be above zero', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer2.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+
+            const tx = marketplace.connect(payload.signer2).updateNFTOnSale(auctionId,
+                {
+                    share: 100,
+                    price: 0,
+                    paymentToken: payload.erc20Token1.address,
+                    sellPriority: 10,
+                });
+            await expect(tx).to.revertedWith('Price must be above zero');
+        })
+
+        it('require payable token', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer2.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+
+            const tx = marketplace.connect(payload.signer2).updateNFTOnSale(auctionId,
+                {
+                    share: 100,
+                    price: 10000,
+                    paymentToken: payload.deployer.address,
+                    sellPriority: 10,
+                });
+            await expect(tx).to.revertedWith('Invalid payment token');
+        })
+
+        it('gas estimate', async () => {
             const marketplace = payload.marketplace;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore-example"]
@@ -42,10 +120,10 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).equal(126816);
+            expect(gas).equal(138549);
         })
 
-        it('update nft sale', async () => {
+        it('success', async () => {
             const marketplace = payload.marketplace;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore-example"]
@@ -79,6 +157,37 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
     describe("update sellPriority", () => {
 
+        it('Require NFT listed', async () => {
+            const marketplace = payload.marketplace;
+            const projectId = payload.getProjectId(
+                payload.projects["jsstore-example"]
+            );
+            const seller = payload.signer4.address;
+
+            const sellId = payload.getSellId(projectId, seller);
+
+            const tx = marketplace.connect(payload.signer4).updateSellPriorityOnSale(
+                sellId,
+                10,
+            );
+
+            await expect(tx).to.revertedWith('Require NFT listed');
+        })
+
+        it('non owner', async () => {
+            const marketplace = payload.marketplace;
+            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+            const seller = payload.signer2.address;
+            const auctionId = payload.getSellId(
+                nftId,
+                seller
+            );
+
+            const tx = marketplace.connect(payload.signer4).updateSellPriorityOnSale(auctionId,
+                10);
+            await expect(tx).to.revertedWith('Require NFT ownership');
+        })
+
         it('gas estimate', async () => {
             const marketplace = payload.marketplace;
             const projectId = payload.getProjectId(
@@ -92,10 +201,10 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10
             );
 
-            expect(gasForPrioritySale).equal(94540);
+            expect(gasForPrioritySale).equal(107084);
         })
 
-        it('update sellPriority sale', async () => {
+        it('success', async () => {
             const marketplace = payload.marketplace;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore-example"]
