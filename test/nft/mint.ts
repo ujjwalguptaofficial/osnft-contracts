@@ -100,7 +100,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(154989);
+        expect(gasForMintingWithoutSign).equal(154967);
     });
 
 

@@ -36,6 +36,8 @@ contract OSNFTBase is
     // base token uri
     string private _baseTokenURI;
 
+    address private _nativeToken;
+
     mapping(bytes32 => EquityTokenInfo) internal _equityTokens;
 
     mapping(bytes32 => PercentageTokenInfo) internal _percentageTokens;
@@ -263,7 +265,7 @@ contract OSNFTBase is
         address from,
         address to,
         bytes32 tokenId
-    ) public virtual override {
+    ) external virtual override {
         safeTransferFrom(from, to, tokenId, 0, "");
     }
 
@@ -272,7 +274,7 @@ contract OSNFTBase is
         address to,
         bytes32 tokenId,
         uint32 share
-    ) public virtual override {
+    ) external virtual override {
         safeTransferFrom(from, to, tokenId, share, "");
     }
 
@@ -342,8 +344,6 @@ contract OSNFTBase is
     ) external {
         _mint(_msgSender(), projectUrl, nftType, shares);
     }
-
-    address internal _nativeToken;
 
     function getNativeToken() external view returns (address) {
         return _nativeToken;

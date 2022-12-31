@@ -1000,9 +1000,9 @@
         }
       }
     },
-    "0822d6c5d5bef0843c555e811dcb3941eaeb77c34810c11d110f54648a3640bb": {
+    "90466e1cb0386d1d3d662f88c117b3a16fc4fe917a2167ef93ba58370b51258d": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x37a0b83522fd2d8a26c4388d19580469d9befa12d44171a085011f49080b0655",
+      "txHash": "0x55eb74b84719ed53f56480cd5b26a9e2156ff2f003d20ed36333e0a83af0043f",
       "layout": {
         "storage": [
           {
@@ -1103,68 +1103,68 @@
             "src": "contracts/os_nft_base.sol:37"
           },
           {
-            "label": "_equityTokens",
+            "label": "_nativeToken",
             "offset": 0,
             "slot": "206",
-            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3274_storage)",
+            "type": "t_address",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:39"
           },
           {
-            "label": "_percentageTokens",
+            "label": "_equityTokens",
             "offset": 0,
             "slot": "207",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3281_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(EquityTokenInfo)3274_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:41"
           },
           {
-            "label": "_balances",
+            "label": "_percentageTokens",
             "offset": 0,
             "slot": "208",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageTokenInfo)3281_storage)",
+            "contract": "OSNFTBase",
+            "src": "contracts/os_nft_base.sol:43"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "209",
             "type": "t_mapping(t_address,t_uint256)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:44"
+            "src": "contracts/os_nft_base.sol:46"
           },
           {
             "label": "_tokenApprovals",
             "offset": 0,
-            "slot": "209",
+            "slot": "210",
             "type": "t_mapping(t_bytes32,t_address)",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:47"
+            "src": "contracts/os_nft_base.sol:49"
           },
           {
             "label": "_operatorApprovals",
             "offset": 0,
-            "slot": "210",
-            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
-            "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:50"
-          },
-          {
-            "label": "_defaultMarketPlace",
-            "offset": 0,
             "slot": "211",
-            "type": "t_address",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:52"
           },
           {
-            "label": "_approver",
+            "label": "_defaultMarketPlace",
             "offset": 0,
             "slot": "212",
-            "type": "t_contract(IOSNFTApproverUpgradeable)3345",
+            "type": "t_address",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:54"
           },
           {
-            "label": "_nativeToken",
+            "label": "_approver",
             "offset": 0,
             "slot": "213",
-            "type": "t_address",
+            "type": "t_contract(IOSNFTApproverUpgradeable)3345",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:346"
+            "src": "contracts/os_nft_base.sol:56"
           },
           {
             "label": "__gap",
