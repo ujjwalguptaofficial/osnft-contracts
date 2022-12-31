@@ -9,6 +9,7 @@ import { testMarketplace } from "./marketplace";
 import { testNFT } from "./nft";
 import { testSetMarketPlace } from "./nft/set_makrketplace";
 import { testOSD } from "./osd";
+import { testRelayer } from "./relayer";
 
 
 
@@ -144,7 +145,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(5333363);
+        expect(estimatedGas).equal(5244410);
 
     })
 
@@ -158,6 +159,11 @@ describe("contracts", () => {
 
         payload.marketplace = deployedContract;
     })
+
+    describe('test relayer', () => {
+        testRelayer(payload);
+    })
+
 
     it('set marketplace address as default operator in native coin', async () => {
         const marketplace = payload.marketplace.address;

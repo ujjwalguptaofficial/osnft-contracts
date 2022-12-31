@@ -44,6 +44,23 @@ export function testMarketplace(payload: IDeployedPayload) {
         testPayableToken(payload);
     });
 
+    describe('relayer', () => {
+        it('set relayer non admin', async () => {
+            const relayer = payload.relayer.address;
+            const tx = payload.marketplace.connect(payload.signer3)["relayer(address)"](relayer);
+            await expect(tx).revertedWith(`Ownable: caller is not the owner`);
+        })
+
+        it('set relayer success', async () => {
+            const relayer = payload.relayer.address;
+            await payload.marketplace["relayer(address)"](relayer);
+
+            const addressFrom = await payload.marketplace["relayer()"]();
+
+            expect(addressFrom).equal(relayer);
+        })
+    })
+
     describe('sale nft', () => {
         testNFTSale(payload);
     });

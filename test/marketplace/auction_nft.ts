@@ -32,10 +32,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
         ];
 
         const domainData = {
-            name: "OSNFT_MARKETPLACE",
+            name: "OSNFT_RELAYER",
             version: "1",
             chainId: await user.getChainId(),
-            verifyingContract: payload.marketplace.address.toLowerCase(),
+            verifyingContract: payload.relayer.address.toLowerCase(),
         };
         const message = {
             tokenId,
@@ -237,7 +237,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(242582)
+        expect(gas).equal(242560)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -359,13 +359,14 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).equal(247957)
+        expect(gas).equal(247936)
     })
 
     describe('createAuctionMeta', () => {
 
         it('sending expired signature', async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore"]
             );
@@ -387,7 +388,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 deadline
             );
 
-            const tx = marketplace.createAuctionMeta({
+            const tx = relayer.createAuction({
                 signature: signature,
                 to: from,
                 deadline: deadline
@@ -405,6 +406,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         it('sending expired signature with different deadline', async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore"]
             );
@@ -426,7 +428,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 deadline
             );
 
-            const tx = marketplace.createAuctionMeta({
+            const tx = relayer.createAuction({
                 signature: signature,
                 to: from,
                 deadline: deadline + 2000
@@ -444,6 +446,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         it('sending signature with different sell Priority', async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore"]
             );
@@ -465,7 +468,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 deadline
             );
 
-            const tx = marketplace.createAuctionMeta({
+            const tx = relayer.createAuction({
                 signature: signature,
                 to: from,
                 deadline: deadline
@@ -483,6 +486,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         it('successful share auction', async () => {
             const marketplace = payload.marketplace;
+            const relayer = payload.relayer;
             const projectId = payload.getProjectId(
                 payload.projects["jsstore"]
             );
@@ -509,7 +513,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 deadline
             );
 
-            const tx = marketplace.connect(payload.signer2).createAuctionMeta({
+            const tx = relayer.connect(payload.signer2).createAuction({
                 signature: signature,
                 to: from,
                 deadline: deadline

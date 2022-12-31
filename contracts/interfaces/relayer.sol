@@ -13,14 +13,14 @@ interface IOsNFTRelayer {
         uint256 deadline;
     }
 
-    struct AuctionListingInput {
-        bytes32 tokenId;
-        uint32 share;
-        uint256 initialBid;
-        uint256 endAuction;
-        address paymentToken;
-        uint32 sellPriority;
-    }
+    // struct AuctionListingInput {
+    //     bytes32 tokenId;
+    //     uint32 share;
+    //     uint256 initialBid;
+    //     uint256 endAuction;
+    //     address paymentToken;
+    //     uint32 sellPriority;
+    // }
 
     // struct SignatureMetaWithNonce {
     //     bytes signature;

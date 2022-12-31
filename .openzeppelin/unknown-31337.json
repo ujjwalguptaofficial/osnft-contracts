@@ -206,11 +206,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f",
-      "txHash": "0x8a665fbc09c0685686928532ed42e54ecd3e482fb69846112c2fe29919afe71c",
-      "kind": "transparent"
-    },
-    {
       "address": "0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07",
       "txHash": "0xa1e6ba10530651cc0d3dcb3a38b15cc1f4d2ea881fead43d50d567a1b0d2b104",
       "kind": "transparent"
@@ -241,6 +236,16 @@
       "kind": "transparent"
     },
     {
+      "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
+      "txHash": "0x735119b64ff3e1432d578e7adca4506e9d9ed7dac05239a2786b06fb192bfa05",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x04C89607413713Ec9775E14b954286519d836FEf",
+      "txHash": "0x3d0fb5b004de25fe45cf2acafd931bc0a47969f5971a743917ee20365a6e644a",
+      "kind": "transparent"
+    },
+    {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0x761d7463ed4c9a75cb66f2405eb69d14324996912b480e0013d169083e0cb0b6",
       "kind": "transparent"
@@ -257,24 +262,24 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x42e15c7e4aa9567300152bca127128d1adf543674b61447181225919e56a2416",
+      "txHash": "0xbd123443217be4582873a6acc28ea3bebd892c116141175961595e1016757451",
       "kind": "transparent"
     },
     {
-      "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
-      "txHash": "0x8ddc72d5f2d2fc4643e62c052fb578e19ee9721a0a49d0e9a4958f1b75c376d7",
+      "address": "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f",
+      "txHash": "0x63ff471cc30a4eaf695197f16bce722816c4d8402d8bc5fcf97b03e8bd0c60d9",
       "kind": "transparent"
     },
     {
-      "address": "0x04C89607413713Ec9775E14b954286519d836FEf",
-      "txHash": "0x926a22f2539e0ce3b9022e5f6ea40557707210eee99abe0801897e53c5eea6e0",
+      "address": "0x4C4a2f8c81640e47606d3fd77B353E87Ba015584",
+      "txHash": "0x7fd9f40e3457fcef2cee92f79ecc658d10927261236803d85380a5c10d5147b8",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
-      "address": "0x162A433068F51e18b7d13932F27e66a3f99E6890",
-      "txHash": "0xcaccbc0e4a48d320960f876eb517c7b9be086de31355265e739f88788b75788f",
+      "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe",
+      "txHash": "0x22a0c39917a7d8047a5fda9a303e3fc531ec54914a814dda8e5c4f60f8de6ae4",
       "layout": {
         "storage": [
           {
@@ -1012,9 +1017,9 @@
         }
       }
     },
-    "e6fa401fecae5e09711674b1fe5ae8c887b669ab0f07294fd057c6000222c962": {
+    "63dfd74de56fdf26e3f529963f385c36cccd2a7c8490f5df4f0d32cb901b4967": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x47d0f255c2488cea34872267251e7a2433bc557dbb8f6272247b9b04d6e39acb",
+      "txHash": "0xbdcf7905d08943e68e65e4045512ceaf251bba2b3bf5cf6682cf07d0a92e4fb4",
       "layout": {
         "storage": [
           {
@@ -1155,12 +1160,20 @@
             "src": "contracts/osnft_marketplace_base.sol:39"
           },
           {
-            "label": "__gap",
+            "label": "_relayerAddress",
             "offset": 0,
             "slot": "208",
+            "type": "t_address",
+            "contract": "OSNFTMarketPlaceBase",
+            "src": "contracts/osnft_marketplace_base.sol:41"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "209",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:721"
+            "src": "contracts/osnft_marketplace_base.sol:707"
           }
         ],
         "types": {

@@ -169,4 +169,9 @@ interface IOSNFTMarketPlaceUpgradeable {
     function removePayableToken(address token) external;
 
     function isPayableToken(address token) external view returns (bool);
+
+    function createAuctionMeta(
+        address to,
+        AuctionListingInput calldata input
+    ) external;
 }

@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "../interfaces/relayer.sol";
 import "../interfaces/marketplace.sol";
 
-contract RelayerBase is EIP712, IOsNFTRelayer {
+contract OSDRelayerBase is EIP712, IOsNFTRelayer {
     using ECDSA for bytes32;
 
     IOSNFTMarketPlaceUpgradeable private _marketplace;
@@ -15,9 +15,9 @@ contract RelayerBase is EIP712, IOsNFTRelayer {
         _marketplace = IOSNFTMarketPlaceUpgradeable(marketplace_);
     }
 
-    function createAuctionMeta(
+    function createAuction(
         SignatureMeta calldata signatureData,
-        AuctionListingInput calldata input
+        IOSNFTMarketPlaceUpgradeable.AuctionListingInput calldata input
     ) external {
         require(block.timestamp < signatureData.deadline, "Signature expired");
 
@@ -42,6 +42,6 @@ contract RelayerBase is EIP712, IOsNFTRelayer {
             "Invalid signature"
         );
 
-        //    _marketplace. createAuction(input);
+        _marketplace.createAuctionMeta(signatureData.to, input);
     }
 }
