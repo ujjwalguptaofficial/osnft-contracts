@@ -162,6 +162,14 @@ contract OSNFTMarketPlaceBase is
         return listing;
     }
 
+    function _requireListedStorage(
+        bytes32 sellId
+    ) internal view returns (SellListing storage) {
+        SellListing storage listing = _sellListings[sellId];
+        require(listing.price > 0, "Require NFT listed");
+        return listing;
+    }
+
     function _requireNftOwner(
         bytes32 tokenId,
         address spender,
@@ -237,19 +245,28 @@ contract OSNFTMarketPlaceBase is
         bytes32 sellId,
         SellUpdateInput calldata sellData
     ) external {
-        SellListing memory listedNft = _requireListed(sellId);
+        SellListing storage listedNft = _requireListedStorage(sellId);
+
+        address seller = _msgSender();
 
         // should be owner
         // if update allowed other than owner,
         // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, _msgSender(), listedNft.share);
+        _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
+
+        require(sellData.price > 0, "Price must be above zero");
+
+        _requirePayableToken(sellData.paymentToken);
 
         listedNft.share = sellData.share;
         listedNft.price = sellData.price;
         listedNft.paymentToken = sellData.paymentToken;
         listedNft.sellPriority = sellData.sellPriority;
 
-        _listItem(listedNft);
+        _takePaymentForSellPriority(sellData.sellPriority, seller);
+
+        _sellListings[sellId] = listedNft;
+
         emit NFTSaleUpdated(
             sellId,
             sellData.share,
@@ -544,6 +561,20 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
+    function _takePaymentForSellPriority(
+        uint32 sellPriority,
+        address seller
+    ) internal {
+        if (sellPriority > 0) {
+            _requirePayment(
+                _nativeCoinAddress,
+                seller,
+                address(this),
+                sellPriority * _sellPriorityConstant
+            );
+        }
+    }
+
     function _listItem(SellListing memory sellData) internal {
         require(sellData.price > 0, "Price must be above zero");
 
@@ -553,14 +584,7 @@ contract OSNFTMarketPlaceBase is
 
         bytes32 sellId = _getSellId(sellData.tokenId, sellData.seller);
 
-        if (sellData.sellPriority > 0) {
-            _requirePayment(
-                _nativeCoinAddress,
-                sellData.seller,
-                address(this),
-                sellData.sellPriority * _sellPriorityConstant
-            );
-        }
+        _takePaymentForSellPriority(sellData.sellPriority, sellData.seller);
 
         _sellListings[sellId] = sellData;
     }
