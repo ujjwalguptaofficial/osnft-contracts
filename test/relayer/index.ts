@@ -7,17 +7,23 @@ export function testRelayer(payload: IDeployedPayload) {
     it('deploy relayer', async () => {
         const osdCoin = await ethers.getContractFactory('OSDRelayer');
 
-        const relayerContract = await osdCoin.deploy(payload.marketplace.address);
+        const relayerContract = await osdCoin.deploy(
+            payload.marketplace.address,
+            payload.nft.address
+        );
         payload.relayer = relayerContract;
     })
 
     it('gasestimate for deployment', async () => {
         const osdCoin = await ethers.getContractFactory('OSDRelayer');
 
-        const deploymentData = osdCoin.getDeployTransaction(payload.marketplace.address);
+        const deploymentData = osdCoin.getDeployTransaction(
+            payload.marketplace.address,
+            payload.nft.address
+        );
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(1180509);
+        expect(estimatedGas).equal(1473103);
     })
 
 }

@@ -55,6 +55,16 @@ contract OSNFTBase is
 
     IOSNFTApproverUpgradeable private _approver;
 
+    address internal _relayerAddress;
+
+    function relayer() external view returns (address) {
+        return _relayerAddress;
+    }
+
+    function relayer(address relayerAddress_) external onlyOwner {
+        _relayerAddress = relayerAddress_;
+    }
+
     function defaultMarketPlace(address value) external onlyOwner {
         _defaultMarketPlace = value;
     }
@@ -308,32 +318,13 @@ contract OSNFTBase is
         _safeTransfer(from, to, tokenId, share, data);
     }
 
-    function mintTo(
-        bytes memory signature,
+    function mintMeta(
         address to,
         string calldata projectUrl,
         NFT_TYPE nftType,
-        uint32 totalShare,
-        uint256 deadline
+        uint32 totalShare
     ) external {
-        require(block.timestamp < deadline, "Signature expired");
-        bytes32 digest = _hashTypedDataV4(
-            keccak256(
-                abi.encode(
-                    keccak256(
-                        "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare,uint256 deadline)"
-                    ),
-                    keccak256(bytes(projectUrl)),
-                    nftType,
-                    totalShare,
-                    deadline
-                )
-            )
-        );
-        require(
-            ECDSAUpgradeable.recover(digest, signature) == to,
-            "invalid signature"
-        );
+        _requireRelayer();
         _mint(to, projectUrl, nftType, totalShare);
     }
 
@@ -355,14 +346,14 @@ contract OSNFTBase is
     function __ERC721_init(
         string memory name_,
         string memory symbol_,
-        string calldata baseTokenURI,
+        string calldata baseTokenURI_,
         address approver_,
         address nativeToken_
     ) internal onlyInitializing {
         __ERC721_init_unchained(name_, symbol_);
         _approver = IOSNFTApproverUpgradeable(approver_);
         _nativeToken = nativeToken_;
-        _baseTokenURI = baseTokenURI;
+        _baseTokenURI = baseTokenURI_;
         __EIP712_init(symbol_, "1");
     }
 
@@ -379,6 +370,10 @@ contract OSNFTBase is
         address shareOwner
     ) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(tokenId.toString(), shareOwner));
+    }
+
+    function _requireRelayer() internal view {
+        require(_msgSender() == _relayerAddress, "Invalid relayer");
     }
 
     function isShareToken(bytes32 tokenId) public view returns (bool) {

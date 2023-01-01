@@ -33,7 +33,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 payload.signer3.address,
                 projectId,
             );
-            expect(value).equal(55448);
+            expect(value).equal(55471);
         });
 
         it('invalid project', async () => {

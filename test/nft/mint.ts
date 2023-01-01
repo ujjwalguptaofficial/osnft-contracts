@@ -23,10 +23,10 @@ export function testMint(payload: IDeployedPayload) {
         ];
 
         const domainData = {
-            name: "OSNFT",
+            name: "OSNFT_RELAYER",
             version: "1",
             chainId: await user.getChainId(),
-            verifyingContract: payload.nft.address.toLowerCase(),
+            verifyingContract: payload.relayer.address.toLowerCase(),
         };
         const message = {
             projectUrl: project,
@@ -76,23 +76,28 @@ export function testMint(payload: IDeployedPayload) {
 
     it('estimate gas', async () => {
         const nft = payload.nft;
+        const relayer = payload.relayer;
         const timestamp = new Date().getTime();
 
         const signature = await signMessage(
             payload.deployer, payload.projects["jsstore-example"],
             0,
-            30, timestamp
-        );
-
-        const gasForMintingWithSign = await nft.estimateGas.mintTo(
-            signature,
-            payload.deployer.address, payload.projects["jsstore-example"],
-            0,
             30,
             timestamp
         );
 
-        expect(gasForMintingWithSign).equal(169375);
+        const gasForMintingWithSign = await relayer.estimateGas.mint(
+            {
+                signature,
+                deadline: timestamp,
+                to: payload.deployer.address,
+            },
+            payload.projects["jsstore-example"],
+            0,
+            30,
+        );
+
+        expect(gasForMintingWithSign).equal(175678);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -108,6 +113,7 @@ export function testMint(payload: IDeployedPayload) {
 
         it('deadline change from what was signed', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const deployerAddress = payload.deployer.address;
             const projectUrl = payload.projects["jsstore-example"];
 
@@ -122,13 +128,15 @@ export function testMint(payload: IDeployedPayload) {
 
             const timestamp = await time.latest() + 1000;
 
-            const tx = nft.mintTo(signature, deployerAddress, projectUrl, 0, 30, timestamp);
+            const tx = relayer.mint({ signature, to: deployerAddress, deadline: timestamp }, projectUrl, 0, 30);
 
-            await expect(tx).revertedWith('invalid signature');
+            await expect(tx).revertedWith('Invalid signature');
         })
 
         it('mint jsstore example to deployer', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
+
             const deployerAddress = payload.deployer.address;
             const projectUrl = payload.projects["jsstore-example"];
 
@@ -141,7 +149,8 @@ export function testMint(payload: IDeployedPayload) {
             const timestamp = await time.latest() + 1000;
             const signature = await signMessage(payload.deployer, projectUrl, 0, 30, timestamp);
 
-            const tx = nft.mintTo(signature, deployerAddress, projectUrl, 0, 30, timestamp);
+            const tx = relayer.mint(
+                { signature, to: deployerAddress, deadline: timestamp }, projectUrl, 0, 30);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero, deployerAddress, expectedTokenId
             );
@@ -207,14 +216,15 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint by not approver', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-exampless'
             const timestamp = new Date().getTime();
             const signature = await signMessage(payload.signer2, projectUrl1, 0, 30, timestamp);
 
-            const tx = nft.connect(payload.signer2).mintTo(
-                signature, address, projectUrl1, 0, 30, timestamp
+            const tx = relayer.connect(payload.signer2).mint(
+                { signature, to: address, deadline: timestamp }, projectUrl1, 0, 30
             );
             // await expect(tx).revertedWith('Ownable: caller is not the owner')
             await expect(tx).revertedWith('project not approved');
@@ -222,32 +232,37 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint already minted', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
             const timestamp = await time.latest() + 1000;
             const signature = await signMessage(payload.signer2, projectUrl1, 0, 30, timestamp);
-            const tx = nft.mintTo(signature, address, projectUrl1, 0, 30, timestamp);
+            const tx = relayer.mint({
+                signature, to: address, deadline: timestamp
+            }, projectUrl1, 0, 30);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
         })
 
         it('invalid signature', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl = 'github.com/ujjwalguptaofficial/mahal-exampless'
             const timestamp = new Date().getTime();
             const signature = await signMessage(payload.deployer, projectUrl, 0, 30, timestamp);
 
-            const tx = nft.mintTo(
-                signature, address, projectUrl, 0, 30, timestamp
+            const tx = relayer.mint(
+                { signature, to: address, deadline: timestamp }, projectUrl, 0, 30
             );
-            await expect(tx).revertedWith('invalid signature')
+            await expect(tx).revertedWith('Invalid signature')
         })
 
         it('Signature expired', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl = 'github.com/ujjwalguptaofficial/mahal-exampless'
@@ -257,8 +272,8 @@ export function testMint(payload: IDeployedPayload) {
 
             const signature = await signMessage(payload.deployer, projectUrl, 0, 30, timestamp);
 
-            const tx = nft.mintTo(
-                signature, address, projectUrl, 0, 30, timestamp
+            const tx = relayer.mint(
+                { signature, to: address, deadline: timestamp }, projectUrl, 0, 30
             );
             await expect(tx).revertedWith('Signature expired')
         })
@@ -329,6 +344,7 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint a project with zero shares', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
 
@@ -336,12 +352,15 @@ export function testMint(payload: IDeployedPayload) {
 
             const signature = await signMessage(payload.signer2, projectUrl1, 1, 0, timestamp);
 
-            const tx = nft.mintTo(signature, address, projectUrl1, 1, 0, timestamp);
+            const tx = relayer.mint({
+                signature, to: address, deadline: timestamp
+            }, projectUrl1, 1, 0);
             await expect(tx).to.revertedWith('Total share should not be zero')
         })
 
         it('mint a percentage cut project with shares', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal-examples'
@@ -350,13 +369,17 @@ export function testMint(payload: IDeployedPayload) {
 
             const signature = await signMessage(payload.signer2, projectUrl1, 1, 10000, timestamp);
 
-            const tx = nft.mintTo(signature, address, projectUrl1, 1, 10000, timestamp);
+            const tx = relayer.mint({
+                signature, to: address, deadline: timestamp
+            },
+                projectUrl1, 1, 10000);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
         })
 
         it('mint mahal', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             let balance = await nft.balanceOf(address);
@@ -372,7 +395,7 @@ export function testMint(payload: IDeployedPayload) {
             const nativeToken = payload.nativeToken;
             const nativeTokenBalanceOfUser = await nativeToken.balanceOf(address);
 
-            const tx = nft.mintTo(signature, address, projectUrl, 1, 10000, timestamp);
+            const tx = relayer.mint({ signature, to: address, deadline: timestamp }, projectUrl, 1, 10000);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero,
                 address,
@@ -406,6 +429,7 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint same project', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
@@ -414,7 +438,10 @@ export function testMint(payload: IDeployedPayload) {
 
             const signature = await signMessage(payload.signer2, projectUrl1, 1, 10000, timestamp);
 
-            const tx = nft.mintTo(signature, address, projectUrl1, 1, 10000, timestamp);
+            const tx = relayer.mint({
+                signature, to: address, deadline: timestamp
+            }, projectUrl1, 1, 10000
+            );
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
 
@@ -422,6 +449,7 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint share project with percentage cut', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer2.address;
 
             const projectUrl1 = 'github.com/ujjwalguptaofficial/mahal'
@@ -431,7 +459,7 @@ export function testMint(payload: IDeployedPayload) {
             const signature = await signMessage(payload.signer2, projectUrl1, 1, 0, timestamp);
 
 
-            const tx = nft.mintTo(signature, address, projectUrl1, 1, 0, timestamp);
+            const tx = relayer.mint({ signature, to: address, deadline: timestamp }, projectUrl1, 1, 0,);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
 
@@ -494,6 +522,8 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint godam', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
+
             const address = payload.signer4.address;
 
             let balance = await nft.balanceOf(address);
@@ -504,7 +534,9 @@ export function testMint(payload: IDeployedPayload) {
 
             const signature = await signMessage(payload.signer4, projectUrl, 2, 0, timestamp);
 
-            const tx = nft.mintTo(signature, address, projectUrl, 2, 0, timestamp);
+            const tx = relayer.mint({
+                signature, to: address, deadline: timestamp
+            }, projectUrl, 2, 0);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero,
                 address,
@@ -520,6 +552,7 @@ export function testMint(payload: IDeployedPayload) {
 
         it('mint same project', async () => {
             const nft = payload.nft;
+            const relayer = payload.relayer;
             const address = payload.signer4.address;
 
             const projectUrl = payload.projects.godam;
@@ -530,7 +563,7 @@ export function testMint(payload: IDeployedPayload) {
                 1, 10000, timestamp
             );
 
-            const tx = nft.mintTo(signature, address, projectUrl, 1, 10000, timestamp);
+            const tx = relayer.mint({ signature, to: address, deadline: timestamp }, projectUrl, 1, 10000);
 
             await expect(tx).to.revertedWith('ERC721: token already minted');
 

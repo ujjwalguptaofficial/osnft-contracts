@@ -4,7 +4,7 @@ import { IDeployedPayload } from "../interfaces";
 export function setBaseTokenURI(payload: IDeployedPayload) {
     it('estimate gas', async () => {
         const value = await payload.nft.estimateGas["baseTokenURI(string)"]('https://ujjwalnft.com/metadata/')
-        expect(value).equal(37279);
+        expect(value).equal(37303);
     })
 
     it('transaction', async () => {

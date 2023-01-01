@@ -16,4 +16,11 @@ interface IOSNFT is IERC721MetadataUpgradeable {
         address owner;
         address creator;
     }
+
+    function mintMeta(
+        address to,
+        string calldata projectUrl,
+        NFT_TYPE nftType,
+        uint32 totalShare
+    ) external;
 }

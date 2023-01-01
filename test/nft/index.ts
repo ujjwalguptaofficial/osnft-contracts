@@ -9,6 +9,7 @@ import { runPublicState } from "./public_state";
 import { setBaseTokenURI } from "./set_base_token_uri";
 import { testTransferFrom } from "./transfer_from";
 import { testNFTBurn } from "./burn";
+import { expect } from "chai";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -19,6 +20,23 @@ export function testNFT(payload: IDeployedPayload) {
 
     describe('setBaseTokenURI', async () => {
         setBaseTokenURI(payload);
+    })
+
+    describe('relayer', () => {
+        it('set relayer non admin', async () => {
+            const relayer = payload.relayer.address;
+            const tx = payload.nft.connect(payload.signer3)["relayer(address)"](relayer);
+            await expect(tx).revertedWith(`Ownable: caller is not the owner`);
+        })
+
+        it('set relayer success', async () => {
+            const relayer = payload.relayer.address;
+            await payload.nft["relayer(address)"](relayer);
+
+            const addressFrom = await payload.nft["relayer()"]();
+
+            expect(addressFrom).equal(relayer);
+        })
     })
 
     describe('mint', async () => {
