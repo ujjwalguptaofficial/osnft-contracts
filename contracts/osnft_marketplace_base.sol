@@ -13,7 +13,7 @@ import "./interfaces/erc721_receiver_upgradable.sol";
 contract OSNFTMarketPlaceBase is
     Initializable,
     OwnableUpgradeable,
-    IOSNFTMarketPlaceUpgradeable,
+    IOSNFTMarketPlace,
     IERC721ReceiverUpgradeable,
     ReentrancyGuardUpgradeable
 {

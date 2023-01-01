@@ -11,7 +11,7 @@ contract OSDRelayer is OSDRelayerBase {
 
     function listNFTOnSale(
         SignatureMeta calldata signatureData,
-        IOSNFTMarketPlaceUpgradeable.SellListingInput calldata sellData
+        IOSNFTMarketPlace.SellListingInput calldata sellData
     ) external {
         _requireDeadlineNotExpired(signatureData);
 
@@ -38,7 +38,7 @@ contract OSDRelayer is OSDRelayerBase {
 
     function createAuction(
         SignatureMeta calldata signatureData,
-        IOSNFTMarketPlaceUpgradeable.AuctionListingInput calldata input
+        IOSNFTMarketPlace.AuctionListingInput calldata input
     ) external {
         _requireDeadlineNotExpired(signatureData);
 

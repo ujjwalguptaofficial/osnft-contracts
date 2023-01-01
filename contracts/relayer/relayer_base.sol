@@ -10,7 +10,7 @@ import "../interfaces/osnft.sol";
 contract OSDRelayerBase is EIP712, IOsNFTRelayer {
     using ECDSA for bytes32;
 
-    IOSNFTMarketPlaceUpgradeable internal _marketplace;
+    IOSNFTMarketPlace internal _marketplace;
     IOSNFT internal _nft;
     bytes32 internal immutable _TYPE_HASH_NFTListOnSaleData;
     bytes32 internal immutable _TYPE_HASH_NFTAuctionData;
@@ -19,7 +19,7 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
         address marketplace_,
         address nft_
     ) EIP712("OSNFT_RELAYER", "1") {
-        _marketplace = IOSNFTMarketPlaceUpgradeable(marketplace_);
+        _marketplace = IOSNFTMarketPlace(marketplace_);
         _nft = IOSNFT(nft_);
         _TYPE_HASH_NFTListOnSaleData = keccak256(
             "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint32 sellPriority,uint256 deadline)"
