@@ -218,7 +218,7 @@ contract OSNFTBase is
         address spender,
         bytes32 tokenId
     ) internal view virtual returns (bool) {
-        address owner = _requireOwnerOfNotZero(tokenId);
+        address owner = _requireValidOwner(tokenId);
         return (spender == owner ||
             _isApprovedForAll(owner, spender) ||
             _getApproved(tokenId) == spender);
@@ -275,7 +275,7 @@ contract OSNFTBase is
     function _approve(address to, bytes32 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
 
-        emit Approval(_requireOwnerOfNotZero(tokenId), to, tokenId);
+        emit Approval(_requireValidOwner(tokenId), to, tokenId);
     }
 
     function _approve(
@@ -287,7 +287,7 @@ contract OSNFTBase is
         emit Approval(shareOwner, to, tokenId);
     }
 
-    function _requireOwnerOfNotZero(
+    function _requireValidOwner(
         bytes32 tokenId
     ) internal view returns (address) {
         address owner = _ownerOf(tokenId);
@@ -319,7 +319,7 @@ contract OSNFTBase is
         // if token is percentage
         if (token.creator != address(0)) {
             require(
-                _requireOwnerOfNotZero(tokenId) == from,
+                _requireValidOwner(tokenId) == from,
                 "ERC721: transfer from incorrect owner"
             );
 

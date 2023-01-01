@@ -66,14 +66,14 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(bytes32 tokenId) public view returns (address) {
-        return _requireOwnerOfNotZero(tokenId);
+    function ownerOf(bytes32 tokenId) external view returns (address) {
+        return _requireValidOwner(tokenId);
     }
 
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner) public view returns (uint256) {
+    function balanceOf(address owner) external view returns (uint256) {
         require(
             owner != address(0),
             "ERC721: address zero is not a valid owner"
@@ -114,14 +114,14 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved) public {
+    function setApprovalForAll(address operator, bool approved) external {
         _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(bytes32 tokenId) public view returns (string memory) {
+    function tokenURI(bytes32 tokenId) external view returns (string memory) {
         _requireMinted(tokenId);
 
         string memory baseURI = _baseTokenURI;
@@ -155,7 +155,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
         return _getApproved(tokenId, shareOwner);
     }
 
-    function approve(address to, bytes32 tokenId) public {
+    function approve(address to, bytes32 tokenId) external {
         approve(to, tokenId, _msgSender());
     }
 
@@ -163,7 +163,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
      * @dev See {IERC721-approve}.
      */
     function approve(address to, bytes32 tokenId, address shareOwner) public {
-        if (isShareToken(tokenId)) {
+        if (_isShareToken(tokenId)) {
             // in case it is called by approved all address
             if (_msgSender() != shareOwner) {
                 require(
@@ -178,7 +178,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
             );
             _approve(to, tokenId, shareOwner);
         } else {
-            address owner = ownerOf(tokenId);
+            address owner = _requireValidOwner(tokenId);
             require(to != owner, "ERC721: approval to current owner");
 
             require(
@@ -290,7 +290,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
         return _nativeToken;
     }
 
-    function isShareToken(bytes32 tokenId) public view returns (bool) {
+    function isShareToken(bytes32 tokenId) external view returns (bool) {
         return _isShareToken(tokenId);
     }
 }
