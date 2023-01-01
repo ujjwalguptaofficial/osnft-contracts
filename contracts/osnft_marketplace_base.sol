@@ -13,18 +13,17 @@ import "./interfaces/erc721_receiver_upgradable.sol";
 contract OSNFTMarketPlaceBase is
     Initializable,
     OwnableUpgradeable,
-    IOSNFTMarketPlace,
+    IOSNFTMarketPlaceDataType,
     IERC721ReceiverUpgradeable,
     ReentrancyGuardUpgradeable
 {
     using StringHelper for bytes32;
 
-    // tokenId -> { shareOwner: Listing }
-    mapping(bytes32 => SellListing) private _sellListings;
+    mapping(bytes32 => SellListing) internal _sellListings;
 
-    mapping(address => bool) private _erc20TokensAllowed;
+    mapping(address => bool) internal _erc20TokensAllowed;
 
-    IOSNFT private _nftContract;
+    IOSNFT internal _nftContract;
 
     uint8 internal _marketPlaceRoyality;
 
@@ -35,53 +34,6 @@ contract OSNFTMarketPlaceBase is
     address internal _nativeCoinAddress;
 
     address internal _relayerAddress;
-
-    function relayer() external view returns (address) {
-        return _relayerAddress;
-    }
-
-    function relayer(address relayerAddress_) external onlyOwner {
-        _relayerAddress = relayerAddress_;
-    }
-
-    function getRoyality() external view returns (uint8) {
-        return _marketPlaceRoyality;
-    }
-
-    function setRoyality(uint8 value) external onlyOwner {
-        _marketPlaceRoyality = value;
-    }
-
-    function listNFTOnSaleMeta(
-        address to,
-        SellListingInput calldata sellData
-    ) external {
-        _requireRelayer();
-
-        _listNFTOnSale(
-            SellListing({
-                paymentToken: sellData.paymentToken,
-                share: sellData.share,
-                price: sellData.price,
-                tokenId: sellData.tokenId,
-                sellPriority: sellData.sellPriority,
-                seller: to
-            })
-        );
-    }
-
-    function listNFTOnSale(SellListingInput calldata sellData) external {
-        _listNFTOnSale(
-            SellListing({
-                paymentToken: sellData.paymentToken,
-                share: sellData.share,
-                price: sellData.price,
-                tokenId: sellData.tokenId,
-                sellPriority: sellData.sellPriority,
-                seller: _msgSender()
-            })
-        );
-    }
 
     function _listNFTOnSale(SellListing memory sellData) internal {
         bytes32 tokenId = sellData.tokenId;
@@ -106,18 +58,6 @@ contract OSNFTMarketPlaceBase is
             sellData.paymentToken,
             sellData.sellPriority
         );
-    }
-
-    function addPayableToken(address token) external onlyOwner {
-        _erc20TokensAllowed[token] = true;
-    }
-
-    function removePayableToken(address token) external onlyOwner {
-        delete _erc20TokensAllowed[token];
-    }
-
-    function isPayableToken(address token) public view returns (bool) {
-        return _erc20TokensAllowed[token];
     }
 
     /**
@@ -169,144 +109,8 @@ contract OSNFTMarketPlaceBase is
         }
     }
 
-    function buyNFT(
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) external nonReentrant {
-        address buyer = _msgSender();
-        SellListing memory listedItem = _requireListed(sellId);
-
-        bytes32 tokenId = listedItem.tokenId;
-        bool isShareToken = listedItem.share > 0;
-        if (isShareToken) {
-            require(
-                share <= listedItem.share,
-                "Input share is greater than listed"
-            );
-
-            price = price * share;
-        }
-        require(price >= listedItem.price, "Price not met");
-
-        if (isShareToken) {
-            // will no overflow  as input share is already checked
-            // share will be always less than or equal to stored share
-            unchecked {
-                _sellListings[sellId].share -= share;
-            }
-        } else {
-            delete (_sellListings[sellId]);
-        }
-
-        _processNFTSell(
-            NftSellData({
-                tokenId: tokenId,
-                share: share,
-                buyer: buyer,
-                seller: listedItem.seller,
-                price: price,
-                paymentToken: listedItem.paymentToken,
-                sellType: SELL_TYPE.Buy
-            })
-        );
-
-        emit NFTBought(buyer, tokenId, price, share);
-    }
-
-    function removeNFTSale(bytes32 sellId) external {
-        // nft should be listed
-        SellListing memory listing = _requireListed(sellId);
-
-        // should be owner
-        _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
-
-        delete _sellListings[sellId];
-        emit NftSaleCanceled(sellId, listing.tokenId, _msgSender());
-    }
-
-    function updateNFTOnSale(
-        bytes32 sellId,
-        SellUpdateInput calldata sellData
-    ) external {
-        SellListing storage listedNft = _requireListedStorage(sellId);
-
-        address seller = _msgSender();
-
-        // should be owner
-        // if update allowed other than owner,
-        // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
-
-        require(sellData.price > 0, "Price must be above zero");
-
-        _requirePayableToken(sellData.paymentToken);
-
-        listedNft.share = sellData.share;
-        listedNft.price = sellData.price;
-        listedNft.paymentToken = sellData.paymentToken;
-
-        // osd is official coin so no chance of reentrancy attack
-        _takePaymentForSellPriority(
-            sellData.sellPriority - listedNft.sellPriority,
-            seller
-        );
-        // setting sellPriority after taking payments
-        listedNft.sellPriority = sellData.sellPriority;
-
-        _sellListings[sellId] = listedNft;
-
-        emit NFTSaleUpdated(
-            sellId,
-            sellData.share,
-            sellData.price,
-            sellData.paymentToken,
-            sellData.sellPriority
-        );
-    }
-
-    function updateSellPriorityOnSale(
-        bytes32 sellId,
-        uint32 sellPriority
-    ) external {
-        SellListing storage listedNft = _requireListedStorage(sellId);
-
-        address seller = _msgSender();
-
-        // should be owner
-        // if update allowed other than owner,
-        // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
-
-        _takePaymentForSellPriority(
-            sellPriority - listedNft.sellPriority,
-            seller
-        );
-        listedNft.sellPriority = sellPriority;
-
-        emit NFTSaleSellPriorityUpdated(sellId, sellPriority);
-    }
-
-    function getNFTFromSale(
-        bytes32 sellId
-    ) external view returns (SellListing memory) {
-        return _sellListings[sellId];
-    }
-
     function _requireRelayer() internal view {
         require(_msgSender() == _relayerAddress, "Invalid relayer");
-    }
-
-    function createAuctionMeta(
-        address to,
-        AuctionListingInput calldata input
-    ) external {
-        _requireRelayer();
-        _createAuction(input, to);
-    }
-
-    function createAuction(AuctionListingInput calldata input) external {
-        _createAuction(input, _msgSender());
     }
 
     function _createAuction(
@@ -377,145 +181,6 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
-    function isAuctionOpen(bytes32 auctionId) public view returns (bool) {
-        SellAuction storage auction = _auctions[auctionId];
-        return auction.endAuction > block.timestamp;
-    }
-
-    function getBidOwner(bytes32 auctionId) external view returns (address) {
-        SellAuction memory auction = _requireAuctioned(auctionId);
-        return auction.currentBidOwner;
-    }
-
-    function getBidPrice(bytes32 auctionId) external view returns (uint256) {
-        SellAuction memory auction = _requireAuctioned(auctionId);
-        return auction.currentBidPrice;
-    }
-
-    function placeBid(
-        bytes32 auctionId,
-        uint256 bidAmount
-    ) external nonReentrant {
-        _requireAuctioned(auctionId);
-        SellAuction storage auction = _auctions[auctionId];
-
-        // check if auction is still open
-        require(isAuctionOpen(auctionId), "Auction is not open");
-
-        // check if new bid price is higher than the current one
-        require(
-            bidAmount > auction.currentBidPrice,
-            "New bid price must be higher than current bid"
-        );
-
-        address newBidder = _msgSender();
-
-        // check if new bider is not the owner
-        require(
-            newBidder != auction.seller,
-            "Creator of auction cannot place new bid"
-        );
-
-        // transfer token from new bider account to the marketplace account
-        // to lock the tokens
-
-        _requirePayment(
-            auction.paymentToken,
-            newBidder,
-            address(this),
-            bidAmount
-        );
-
-        // new bid is valid so must refund the current bid owner (if there is one!)
-        if (auction.bidCount > 0) {
-            _requireTransferFromMarketplace(
-                auction.currentBidOwner,
-                auction.currentBidPrice,
-                auction.paymentToken
-            );
-        }
-
-        // update auction info
-
-        auction.currentBidOwner = newBidder;
-        auction.currentBidPrice = bidAmount;
-        auction.bidCount++;
-
-        emit NewBidOnAuction(auctionId, bidAmount);
-    }
-
-    function claimNFT(bytes32 auctionId) external nonReentrant {
-        _requireAuctioned(auctionId);
-
-        // Check if the auction is closed
-        require(!isAuctionOpen(auctionId), "Auction is still open");
-
-        // Get auction
-        SellAuction memory auction = _auctions[auctionId];
-
-        delete _auctions[auctionId];
-
-        _processNFTSell(
-            NftSellData({
-                tokenId: auction.tokenId,
-                share: auction.share,
-                buyer: auction.currentBidOwner,
-                seller: auction.seller,
-                price: auction.currentBidPrice,
-                paymentToken: auction.paymentToken,
-                sellType: SELL_TYPE.Bid
-            })
-        );
-
-        emit NFTClaimed(
-            auctionId,
-            auction.tokenId,
-            auction.share,
-            auction.currentBidPrice,
-            auction.paymentToken
-        );
-    }
-
-    function refundAuction(bytes32 auctionId) external {
-        SellAuction memory auction = _requireAuctioned(auctionId);
-
-        // Check if the auction is closed
-        require(!isAuctionOpen(auctionId), "Auction is still open");
-
-        require(
-            auction.currentBidOwner == address(0),
-            "Bider exist for this auction"
-        );
-
-        delete _auctions[auctionId];
-
-        // Transfer NFT back from marketplace contract
-        // to the creator of the auction
-        _nftContract.transferFrom(
-            address(this),
-            auction.seller,
-            auction.tokenId,
-            auction.share
-        );
-
-        emit NFTRefunded(auctionId, auction.tokenId, auction.share);
-    }
-
-    function withdrawEarning(
-        address tokenAddress,
-        uint256 amount
-    ) external onlyOwner {
-        withdrawEarningTo(owner(), tokenAddress, amount);
-    }
-
-    function withdrawEarningTo(
-        address accountTo,
-        address tokenAddress,
-        uint256 amount
-    ) public onlyOwner {
-        _requireTransferFromMarketplace(accountTo, amount, tokenAddress);
-    }
-
     function onERC721Received(
         address operator,
         address from,
@@ -526,8 +191,12 @@ contract OSNFTMarketPlaceBase is
         return IERC721ReceiverUpgradeable.onERC721Received.selector;
     }
 
+    function _isPayableToken(address token) internal view returns (bool) {
+        return _erc20TokensAllowed[token];
+    }
+
     function _requirePayableToken(address payableToken) internal view {
-        require(isPayableToken(payableToken), "Invalid payment token");
+        require(_isPayableToken(payableToken), "Invalid payment token");
     }
 
     function _requireTokenApproved(bytes32 tokenId) internal view {
