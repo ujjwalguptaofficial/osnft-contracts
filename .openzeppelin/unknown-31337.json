@@ -579,7 +579,7 @@
     },
     "3e7902458224ffbc6e30bea0903993b9ab40c9203b72477b53aec4ba27d1e9ad": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0xd92578fa6586fbbf8f30154c8993c0bbeeb4affd5275fba2d40dd25dfec6c208",
+      "txHash": "0xa2ba75e9ed4f6e30db629bf80dcbd1b9a8ddbafa5899855effec0c8c0df58466",
       "layout": {
         "storage": [
           {
@@ -635,7 +635,7 @@
             "label": "_projectsApproved",
             "offset": 0,
             "slot": "102",
-            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)5546_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)672_storage)",
             "contract": "OSNFTApproverBase",
             "src": "contracts/osnft_approver_base.sol:15"
           },
@@ -661,7 +661,7 @@
             "slot": "105",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:70"
+            "src": "contracts/osnft_approver_base.sol:30"
           }
         ],
         "types": {
@@ -689,12 +689,12 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)5546_storage)": {
-            "label": "mapping(bytes32 => struct IOSNFTApproverUpgradeable.ProjectApprovedInfo)",
+          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)672_storage)": {
+            "label": "mapping(bytes32 => struct IOSNFTApproverDataType.ProjectApprovedInfo)",
             "numberOfBytes": "32"
           },
-          "t_struct(ProjectApprovedInfo)5546_storage": {
-            "label": "struct IOSNFTApproverUpgradeable.ProjectApprovedInfo",
+          "t_struct(ProjectApprovedInfo)672_storage": {
+            "label": "struct IOSNFTApproverDataType.ProjectApprovedInfo",
             "members": [
               {
                 "label": "mintTo",
@@ -1011,7 +1011,7 @@
     },
     "a1f9979030363fd82257fdb6711a470fcfbeaa5444260a7e1dc6ceff32324aaf": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x907d5a9f43ffb921d91a34750198c77929c436d8f152dfcd71941ffb6755bcb1",
+      "txHash": "0x1340fbcb3f6ab22910e8810ff3e801df189d35daef6f1dd40d89150365e9e351",
       "layout": {
         "storage": [
           {
@@ -1099,7 +1099,7 @@
             "label": "_stockTokens",
             "offset": 0,
             "slot": "155",
-            "type": "t_mapping(t_bytes32,t_struct(StockToken)4678_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(StockToken)2792_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:37"
           },
@@ -1107,7 +1107,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "156",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)4685_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)2799_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:39"
           },
@@ -1147,7 +1147,7 @@
             "label": "_approver",
             "offset": 0,
             "slot": "161",
-            "type": "t_contract(IOSNFTApproverUpgradeable)4665",
+            "type": "t_contract(IOSNFTApprover)2747",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:52"
           },
@@ -1193,8 +1193,8 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFTApproverUpgradeable)4665": {
-            "label": "contract IOSNFTApproverUpgradeable",
+          "t_contract(IOSNFTApprover)2747": {
+            "label": "contract IOSNFTApprover",
             "numberOfBytes": "20"
           },
           "t_mapping(t_address,t_bool)": {
@@ -1217,11 +1217,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageToken)4685_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageToken)2799_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.PercentageToken)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(StockToken)4678_storage)": {
+          "t_mapping(t_bytes32,t_struct(StockToken)2792_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.StockToken)",
             "numberOfBytes": "32"
           },
@@ -1229,7 +1229,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(PercentageToken)4685_storage": {
+          "t_struct(PercentageToken)2799_storage": {
             "label": "struct IOSNFTDataType.PercentageToken",
             "members": [
               {
@@ -1253,7 +1253,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(StockToken)4678_storage": {
+          "t_struct(StockToken)2792_storage": {
             "label": "struct IOSNFTDataType.StockToken",
             "members": [
               {

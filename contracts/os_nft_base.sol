@@ -49,7 +49,7 @@ contract OSNFTBase is
 
     address internal _defaultMarketPlace;
 
-    IOSNFTApproverUpgradeable private _approver;
+    IOSNFTApprover private _approver;
 
     address internal _relayerAddress;
 
@@ -64,7 +64,7 @@ contract OSNFTBase is
         address nativeToken_
     ) internal onlyInitializing {
         __ERC721_init_unchained(name_, symbol_);
-        _approver = IOSNFTApproverUpgradeable(approver_);
+        _approver = IOSNFTApprover(approver_);
         _nativeToken = nativeToken_;
         _baseTokenURI = baseTokenURI_;
     }
@@ -111,8 +111,8 @@ contract OSNFTBase is
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
 
-        IOSNFTApproverUpgradeable.ProjectApprovedInfo
-            memory projectApproveInfo = _approver.getApprovedProject(tokenId);
+        IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
+            .getApprovedProject(tokenId);
         require(projectApproveInfo.mintTo == to, "project not approved");
 
         _burnProjectWorth(to, projectApproveInfo.worth);
@@ -411,8 +411,8 @@ contract OSNFTBase is
         } else {
             delete _percentageTokens[tokenId];
         }
-        IOSNFTApproverUpgradeable.ProjectApprovedInfo
-            memory projectApproveInfo = _approver.getApprovedProject(tokenId);
+        IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
+            .getApprovedProject(tokenId);
 
         _burnProjectWorth(from, projectApproveInfo.worth);
         _decreaseBalance(from);
