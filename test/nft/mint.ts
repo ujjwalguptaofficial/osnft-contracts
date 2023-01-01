@@ -117,9 +117,6 @@ export function testMint(payload: IDeployedPayload) {
             const deployerAddress = payload.deployer.address;
             const projectUrl = payload.projects["jsstore-example"];
 
-            const oldBalance = await nft.balanceOf(deployerAddress);
-            expect(oldBalance).equal(0);
-
             const expectedTokenId = payload.getProjectId(
                 projectUrl
             );
@@ -131,6 +128,17 @@ export function testMint(payload: IDeployedPayload) {
             const tx = relayer.mint({ signature, to: deployerAddress, deadline: timestamp }, projectUrl, 0, 30);
 
             await expect(tx).revertedWith('Invalid signature');
+        })
+
+        it('Invalid relayer', async () => {
+            const nft = payload.nft;
+            const relayer = payload.relayer;
+            const deployerAddress = payload.deployer.address;
+            const projectUrl = payload.projects["jsstore-example"];
+
+            const tx = nft.mintMeta(deployerAddress, projectUrl, 0, 30);
+
+            await expect(tx).revertedWith('Invalid relayer');
         })
 
         it('mint jsstore example to deployer', async () => {

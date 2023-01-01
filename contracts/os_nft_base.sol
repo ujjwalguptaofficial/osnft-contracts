@@ -10,21 +10,17 @@ import "./interfaces/osnft.sol";
 import "./interfaces/erc721_receiver_upgradable.sol";
 import "./interfaces/osnft_approver.sol";
 import "./string_helper.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
 contract OSNFTBase is
     Initializable,
     ContextUpgradeable,
     OwnableUpgradeable,
     ERC165Upgradeable,
-    IOSNFT,
-    EIP712Upgradeable
+    IOSNFT
 {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
-    using ECDSAUpgradeable for bytes32;
     using StringHelper for bytes32;
 
     // Token name
@@ -354,7 +350,6 @@ contract OSNFTBase is
         _approver = IOSNFTApproverUpgradeable(approver_);
         _nativeToken = nativeToken_;
         _baseTokenURI = baseTokenURI_;
-        __EIP712_init(symbol_, "1");
     }
 
     function __ERC721_init_unchained(
