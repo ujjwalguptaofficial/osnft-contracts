@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "./osnft_datatype.sol";
 
-interface IOSNFT is IOSNFTDataType, IERC165Upgradeable {
+interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
     function mintMeta(
         address to,
         string calldata projectUrl,

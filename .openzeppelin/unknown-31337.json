@@ -267,12 +267,12 @@
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x49cfe5dddef9a5ee61f6a404057f40c0c4a5d5449bd0194a38fa891adfee9d3d",
+      "txHash": "0xc276b98c0097957c45ff11de9ff84c5b43c7f52b07af8a8b7240ee694258d0dd",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x29370daa3498a2320d97111c01695d562e1d884a7cc599c5b0b8a18117d26f88",
+      "txHash": "0x8053c7f0dc9a9ea250d3cde08da3d3fcc0706a8227d5027d430c0f3197041d36",
       "kind": "transparent"
     },
     {
@@ -724,7 +724,7 @@
     },
     "ebae613f02102432d7ab3e5c9809b185c6058960a9b0d6851c8da339565f2cd9": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xa08134dbe55565650112d5ade881301e765b718398c10cfa64ef01748a1145a2",
+      "txHash": "0x793164b3215c59fdccd56de805f0463bbd8aadd00f51eccb69a13dd587f0eca4",
       "layout": {
         "storage": [
           {
@@ -1011,7 +1011,7 @@
     },
     "a1f9979030363fd82257fdb6711a470fcfbeaa5444260a7e1dc6ceff32324aaf": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x927be1eb93e897a2b51bdca1f097636aab6f39fbb7ccb585e20be78a7d4f76eb",
+      "txHash": "0x907d5a9f43ffb921d91a34750198c77929c436d8f152dfcd71941ffb6755bcb1",
       "layout": {
         "storage": [
           {
@@ -1099,7 +1099,7 @@
             "label": "_stockTokens",
             "offset": 0,
             "slot": "155",
-            "type": "t_mapping(t_bytes32,t_struct(StockToken)2785_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(StockToken)4678_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:37"
           },
@@ -1107,7 +1107,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "156",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)2792_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)4685_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:39"
           },
@@ -1147,7 +1147,7 @@
             "label": "_approver",
             "offset": 0,
             "slot": "161",
-            "type": "t_contract(IOSNFTApproverUpgradeable)2772",
+            "type": "t_contract(IOSNFTApproverUpgradeable)4665",
             "contract": "OSNFTBase",
             "src": "contracts/os_nft_base.sol:52"
           },
@@ -1193,7 +1193,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFTApproverUpgradeable)2772": {
+          "t_contract(IOSNFTApproverUpgradeable)4665": {
             "label": "contract IOSNFTApproverUpgradeable",
             "numberOfBytes": "20"
           },
@@ -1217,11 +1217,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageToken)2792_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageToken)4685_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.PercentageToken)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(StockToken)2785_storage)": {
+          "t_mapping(t_bytes32,t_struct(StockToken)4678_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.StockToken)",
             "numberOfBytes": "32"
           },
@@ -1229,7 +1229,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(PercentageToken)2792_storage": {
+          "t_struct(PercentageToken)4685_storage": {
             "label": "struct IOSNFTDataType.PercentageToken",
             "members": [
               {
@@ -1253,7 +1253,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(StockToken)2785_storage": {
+          "t_struct(StockToken)4678_storage": {
             "label": "struct IOSNFTDataType.StockToken",
             "members": [
               {
