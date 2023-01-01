@@ -3,12 +3,12 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./interfaces/marketplace.sol";
-import "./interfaces/erc721_upgradable.sol";
-import "./interfaces/erc721_receiver_upgradable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "./string_helper.sol";
+import "./interfaces/osnft.sol";
+import "./interfaces/marketplace.sol";
+import "./interfaces/erc721_receiver_upgradable.sol";
 
 contract OSNFTMarketPlaceBase is
     Initializable,
@@ -24,7 +24,7 @@ contract OSNFTMarketPlaceBase is
 
     mapping(address => bool) private _erc20TokensAllowed;
 
-    IERC721Upgradeable private _nftContract;
+    IOSNFT private _nftContract;
 
     uint8 internal _marketPlaceRoyality;
 
@@ -127,7 +127,7 @@ contract OSNFTMarketPlaceBase is
         address nft_,
         address nativeCoinAddress_
     ) internal onlyInitializing {
-        _nftContract = IERC721Upgradeable(nft_);
+        _nftContract = IOSNFT(nft_);
         _marketPlaceRoyality = 2;
         _sellPriorityConstant = 1000000000000000; // 10^15 - allows sell Priority to be 1000 in one OSD
         _nativeCoinAddress = nativeCoinAddress_;

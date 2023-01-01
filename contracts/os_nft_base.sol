@@ -34,9 +34,9 @@ contract OSNFTBase is
 
     address private _nativeToken;
 
-    mapping(bytes32 => EquityTokenInfo) internal _equityTokens;
+    mapping(bytes32 => StockToken) internal _stockTokens;
 
-    mapping(bytes32 => PercentageTokenInfo) internal _percentageTokens;
+    mapping(bytes32 => PercentageToken) internal _percentageTokens;
 
     // Mapping owner address to token count
     mapping(address => uint256) internal _balances;
@@ -138,7 +138,7 @@ contract OSNFTBase is
     function totalShareOf(bytes32 tokenId) external view returns (uint32) {
         _requireMinted(tokenId);
 
-        return _equityTokens[tokenId].totalNoOfShare;
+        return _stockTokens[tokenId].totalNoOfShare;
     }
 
     /**
@@ -336,6 +336,10 @@ contract OSNFTBase is
         return _nativeToken;
     }
 
+    function isShareToken(bytes32 tokenId) public view returns (bool) {
+        return _stockTokens[tokenId].totalNoOfShare > 0;
+    }
+
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
@@ -369,10 +373,6 @@ contract OSNFTBase is
 
     function _requireRelayer() internal view {
         require(_msgSender() == _relayerAddress, "Invalid relayer");
-    }
-
-    function isShareToken(bytes32 tokenId) public view returns (bool) {
-        return _equityTokens[tokenId].totalNoOfShare > 0;
     }
 
     /**
@@ -417,7 +417,7 @@ contract OSNFTBase is
 
             // take mint payment
 
-            EquityTokenInfo storage token = _equityTokens[tokenId];
+            StockToken storage token = _stockTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
             token.allShareOwner = to;
@@ -427,7 +427,7 @@ contract OSNFTBase is
 
             // take mint payment
 
-            _percentageTokens[tokenId] = PercentageTokenInfo({
+            _percentageTokens[tokenId] = PercentageToken({
                 creator: to,
                 creatorCut: uint8(totalShare),
                 owner: to
@@ -477,12 +477,12 @@ contract OSNFTBase is
      * @dev Returns the owner of the `tokenId`. Does NOT revert if token doesn't exist
      */
     function _ownerOf(bytes32 tokenId) internal view returns (address) {
-        PercentageTokenInfo memory percentageToken = _percentageTokens[tokenId];
+        PercentageToken memory percentageToken = _percentageTokens[tokenId];
         if (percentageToken.owner != address(0)) {
             return percentageToken.owner;
         }
-        if (_equityTokens[tokenId].totalNoOfShare > 0) {
-            return _equityTokens[tokenId].allShareOwner;
+        if (_stockTokens[tokenId].totalNoOfShare > 0) {
+            return _stockTokens[tokenId].allShareOwner;
         }
         return address(0);
     }
@@ -526,7 +526,7 @@ contract OSNFTBase is
         bytes32 tokenId,
         address owner
     ) internal view returns (uint32) {
-        return _equityTokens[tokenId].shares[owner];
+        return _stockTokens[tokenId].shares[owner];
     }
 
     /**
@@ -568,7 +568,7 @@ contract OSNFTBase is
     ) internal {
         require(to != address(0), "ERC721: transfer to the zero address");
 
-        PercentageTokenInfo memory token = _percentageTokens[tokenId];
+        PercentageToken memory token = _percentageTokens[tokenId];
 
         // if token is percentage
         if (token.creator != address(0)) {
@@ -593,7 +593,7 @@ contract OSNFTBase is
         } else {
             require(share > 0, "Input share should be above zero");
 
-            EquityTokenInfo storage equityToken = _equityTokens[tokenId];
+            StockToken storage equityToken = _stockTokens[tokenId];
 
             require(
                 equityToken.shares[from] >= share,
@@ -657,7 +657,7 @@ contract OSNFTBase is
         require(_ownerOf(tokenId) == from, "Only owner can burn");
 
         if (isShareToken(tokenId)) {
-            delete _equityTokens[tokenId];
+            delete _stockTokens[tokenId];
         } else {
             delete _percentageTokens[tokenId];
         }
