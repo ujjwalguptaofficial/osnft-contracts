@@ -17,7 +17,7 @@ export function testRelayer(payload: IDeployedPayload) {
         const deploymentData = osdCoin.getDeployTransaction(payload.marketplace.address);
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(1179555);
+        expect(estimatedGas).equal(1180509);
     })
 
 }

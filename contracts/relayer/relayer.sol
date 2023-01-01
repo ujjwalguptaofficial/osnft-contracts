@@ -15,9 +15,7 @@ contract OSDRelayer is OSDRelayerBase {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
-                    keccak256(
-                        "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint32 sellPriority,uint256 deadline)"
-                    ),
+                    _TYPE_HASH_NFTListOnSaleData,
                     sellData.tokenId,
                     sellData.share,
                     sellData.price,
@@ -44,9 +42,7 @@ contract OSDRelayer is OSDRelayerBase {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
-                    keccak256(
-                        "NFTAuctionData(bytes32 tokenId,uint32 share,uint256 initialBid,uint256 endAuction,address paymentToken,uint32 sellPriority,uint256 deadline)"
-                    ),
+                    _TYPE_HASH_NFTAuctionData,
                     input.tokenId,
                     input.share,
                     input.initialBid,
