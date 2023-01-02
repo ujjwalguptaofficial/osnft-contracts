@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "compile": "hardhat compile",
-    "test": "hardhat test",
+    "test": "cross-env REPORT_GAS=trues hardhat test",
     "dev": "hardhat node"
   },
   "devDependencies": {
@@ -32,6 +32,7 @@
     "@metamask/eth-sig-util": "^5.0.2",
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.0",
-    "@openzeppelin/hardhat-upgrades": "^1.20.0"
+    "@openzeppelin/hardhat-upgrades": "^1.20.0",
+    "cross-env": "^7.0.3"
   }
 }
