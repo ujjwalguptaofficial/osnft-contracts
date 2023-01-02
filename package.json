@@ -4,7 +4,9 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "cross-env REPORT_GAS=trues hardhat test",
-    "dev": "hardhat node"
+    "dev": "hardhat node",
+    "deploy:contracts": "hardhat run --network localhost scripts/deploy.ts",
+    "deploy:task": "hardhat deploy:contracts --show-stack-traces"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",

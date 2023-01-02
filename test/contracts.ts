@@ -4,9 +4,11 @@ import { toUtf8Bytes } from "ethers/lib/utils";
 import { ethers, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { testApprover } from "./approver";
+import { deployApprover } from "./approver/deploy_contract";
 import { IDeployedPayload } from "./interfaces";
 import { testMarketplace } from "./marketplace";
 import { testNFT } from "./nft";
+import { deployNFTContract } from "./nft/deploy_contract";
 import { testSetMarketPlace } from "./nft/set_makrketplace";
 import { testOSD } from "./osd";
 import { testRelayer } from "./relayer";
@@ -71,35 +73,11 @@ describe("contracts", () => {
 
 
     it('approve contract', async () => {
-        const approverContract = await ethers.getContractFactory('OSNFTApprover');
-
-        const deployedApproverContract = await upgrades.deployProxy(approverContract, [], {
-            initializer: 'initialize',
-        }) as any;
-        payload.approver = deployedApproverContract;
+        await deployApprover(payload);
     })
 
     it('deploy nft contracts', async () => {
-
-        console.log('native token', payload.nativeToken.address);
-
-        const ct = await ethers.getContractFactory('OSNFT');
-
-        const deployedContract = await upgrades.deployProxy(ct, [
-            'OpenSourceNFT',
-            'OSNFT',
-            'https://ujjwalnft.com/metadata/',
-            payload.approver.address,
-            payload.nativeToken.address
-        ], {
-            initializer: 'initialize',
-        });
-
-        await deployedContract.deployed();
-
-        payload.nft = deployedContract as any;
-
-        console.log('nft deployed');
+        await deployNFTContract(payload);
     })
 
     it('value of native token', async () => {
@@ -201,4 +179,21 @@ describe("contracts", () => {
     describe('Marketplace', () => {
         testMarketplace(payload);
     });
+
+    after(() => {
+        console.log(`------contract addresses-------------`);
+        const addresses = {
+            nft: payload.nft.address,
+            marketplace: payload.marketplace.address,
+            osd: payload.nativeToken.address,
+            approver: payload.approver.address,
+            relayer: payload.relayer.address,
+            deployer: payload.deployer.address,
+            signer2: payload.signer2.address,
+            signer3: payload.signer3.address,
+            signer4: payload.signer4.address
+        };
+        console.log(JSON.stringify(addresses));
+        console.table(addresses);
+    })
 })

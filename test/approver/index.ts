@@ -104,6 +104,8 @@ export function testApprover(payload: IDeployedPayload) {
             tokenId, address
         )
 
+        console.log("txhash", (await tx).hash)
+
         approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
