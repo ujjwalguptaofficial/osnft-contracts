@@ -567,6 +567,19 @@ export function testOSD(payload: IDeployedPayload) {
     })
 
     describe("decreaseAllowance", () => {
+
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer4.address;
+            const increaseAllowanceTo = payload.signer3.address;
+
+            const tx = nativeToken.connect(payload.signer4).decreaseAllowance(
+                increaseAllowanceTo, oneToken.mul(2)
+            );
+
+            await expect(tx).to.revertedWith(`ERC20: decreased allowance below zero`)
+        })
+
         it('success', async () => {
             const nativeToken = payload.nativeToken;
             const user = payload.signer4.address;
