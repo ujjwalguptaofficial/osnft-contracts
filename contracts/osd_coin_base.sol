@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.8.0-rc.1) (token/ERC20/ERC20.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "./interfaces/osd_coin.sol";
+import "./interfaces/osd_coin_datatype.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -31,204 +31,16 @@ import "./interfaces/osd_coin.sol";
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract OSDCoinBase is Initializable, ContextUpgradeable, IOSDCoin {
-    mapping(address => uint256) private _balances;
+contract OSDCoinBase is Initializable, ContextUpgradeable, IOSDCoinDataTye {
+    mapping(address => uint256) internal _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
 
-    uint256 private _totalSupply;
+    uint256 internal _totalSupply;
 
-    string private _name;
-    string private _symbol;
+    string internal _name;
+    string internal _symbol;
     mapping(address => bool) internal _defaultAllowedOperator;
-
-    /**
-     * @dev Returns the name of the token.
-     */
-    function name() public view virtual override returns (string memory) {
-        return _name;
-    }
-
-    /**
-     * @dev Returns the symbol of the token, usually a shorter version of the
-     * name.
-     */
-    function symbol() public view virtual override returns (string memory) {
-        return _symbol;
-    }
-
-    /**
-     * @dev Returns the number of decimals used to get its user representation.
-     * For example, if `decimals` equals `2`, a balance of `505` tokens should
-     * be displayed to a user as `5.05` (`505 / 10 ** 2`).
-     *
-     * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei. This is the value {ERC20} uses, unless this function is
-     * overridden;
-     *
-     * NOTE: This information is only used for _display_ purposes: it in
-     * no way affects any of the arithmetic of the contract, including
-     * {IERC20-balanceOf} and {IERC20-transfer}.
-     */
-    function decimals() public view virtual override returns (uint8) {
-        return 18;
-    }
-
-    /**
-     * @dev See {IERC20-totalSupply}.
-     */
-    function totalSupply() public view virtual override returns (uint256) {
-        return _totalSupply;
-    }
-
-    /**
-     * @dev See {IERC20-balanceOf}.
-     */
-    function balanceOf(
-        address account
-    ) public view virtual override returns (uint256) {
-        return _balances[account];
-    }
-
-    /**
-     * @dev See {IERC20-transfer}.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - the caller must have a balance of at least `amount`.
-     */
-    function transfer(
-        address to,
-        uint256 amount
-    ) public virtual override returns (bool) {
-        address owner = _msgSender();
-        _transfer(owner, to, amount);
-        return true;
-    }
-
-    function batchTransfer(
-        address[] calldata tokenHolders,
-        uint256[] calldata amounts
-    ) external returns (bool) {
-        require(
-            tokenHolders.length == amounts.length,
-            "Invalid input parameters"
-        );
-        address owner = _msgSender();
-        for (uint256 indx = 0; indx < tokenHolders.length; indx++) {
-            _transfer(owner, tokenHolders[indx], amounts[indx]);
-        }
-        return true;
-    }
-
-    function allowance(
-        address owner,
-        address spender
-    ) public view virtual override returns (uint256) {
-        if (_defaultAllowedOperator[spender]) {
-            return type(uint256).max;
-        }
-        return _allowances[owner][spender];
-    }
-
-    /**
-     * @dev See {IERC20-approve}.
-     *
-     * NOTE: If `amount` is the maximum `uint256`, the allowance is not updated on
-     * `transferFrom`. This is semantically equivalent to an infinite approval.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     */
-    function approve(
-        address spender,
-        uint256 amount
-    ) public virtual override returns (bool) {
-        address owner = _msgSender();
-        _approve(owner, spender, amount);
-        return true;
-    }
-
-    /**
-     * @dev See {IERC20-transferFrom}.
-     *
-     * Emits an {Approval} event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of {ERC20}.
-     *
-     * NOTE: Does not update the allowance if the current allowance
-     * is the maximum `uint256`.
-     *
-     * Requirements:
-     *
-     * - `from` and `to` cannot be the zero address.
-     * - `from` must have a balance of at least `amount`.
-     * - the caller must have allowance for ``from``'s tokens of at least
-     * `amount`.
-     */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public virtual override returns (bool) {
-        address spender = _msgSender();
-        _spendAllowance(from, spender, amount);
-        _transfer(from, to, amount);
-        return true;
-    }
-
-    /**
-     * @dev Atomically increases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     */
-    function increaseAllowance(
-        address spender,
-        uint256 addedValue
-    ) public virtual returns (bool) {
-        address owner = _msgSender();
-        _approve(owner, spender, allowance(owner, spender) + addedValue);
-        return true;
-    }
-
-    /**
-     * @dev Atomically decreases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     * - `spender` must have allowance for the caller of at least
-     * `subtractedValue`.
-     */
-    function decreaseAllowance(
-        address spender,
-        uint256 subtractedValue
-    ) public virtual returns (bool) {
-        address owner = _msgSender();
-        uint256 currentAllowance = allowance(owner, spender);
-        require(
-            currentAllowance >= subtractedValue,
-            "ERC20: decreased allowance below zero"
-        );
-        unchecked {
-            _approve(owner, spender, currentAllowance - subtractedValue);
-        }
-
-        return true;
-    }
 
     /**
      * @dev Moves `amount` of tokens from `from` to `to`.
@@ -337,6 +149,16 @@ contract OSDCoinBase is Initializable, ContextUpgradeable, IOSDCoin {
         emit Approval(owner, spender, amount);
     }
 
+    function _allowance(
+        address owner,
+        address spender
+    ) internal view returns (uint256) {
+        if (_defaultAllowedOperator[spender]) {
+            return type(uint256).max;
+        }
+        return _allowances[owner][spender];
+    }
+
     /**
      * @dev Updates `owner` s allowance for `spender` based on spent `amount`.
      *
@@ -350,7 +172,7 @@ contract OSDCoinBase is Initializable, ContextUpgradeable, IOSDCoin {
         address spender,
         uint256 amount
     ) internal virtual {
-        uint256 currentAllowance = allowance(owner, spender);
+        uint256 currentAllowance = _allowance(owner, spender);
         if (currentAllowance != type(uint256).max) {
             require(
                 currentAllowance >= amount,
