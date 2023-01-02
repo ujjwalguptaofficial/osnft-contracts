@@ -58,6 +58,17 @@ export function testOSD(payload: IDeployedPayload) {
             await expect(devCoin).revertedWith(`Ownable: caller is not the owner`);
         })
 
+        it('to zero address', async () => {
+            const oneToken = ethers.BigNumber.from(10).pow(18);
+            const amount = oneToken.mul('10000000000'); // 10 billion
+
+            const devCoin = payload.nativeToken.mint(
+                ethers.constants.AddressZero, amount
+            );
+
+            await expect(devCoin).revertedWith(`ERC20: mint to the zero address`);
+        })
+
         it('mint token to owner', async () => {
             const oneToken = ethers.BigNumber.from(10).pow(18);
             const amount = oneToken.mul('10000000000'); // 10 billion
@@ -94,11 +105,20 @@ export function testOSD(payload: IDeployedPayload) {
 
     describe('transfer', () => {
 
-        it('fail', async () => {
+        it('exceed balance', async () => {
             const nativeToken = payload.nativeToken;
             const user = payload.signer2.address;
             const tx = nativeToken.connect(payload.signer3).transfer(user, oneToken);
             await expect(tx).to.revertedWith(`ERC20: transfer amount exceeds balance`);
+        })
+
+        it('to zero address', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.connect(payload.signer3).transfer(
+                ethers.constants.AddressZero, oneToken
+            );
+            await expect(tx).to.revertedWith(`ERC20: transfer to the zero address`);
         })
 
         it('estimatGas', async () => {
@@ -259,6 +279,8 @@ export function testOSD(payload: IDeployedPayload) {
             expect(afterBalance).equal(beforeBalance.sub(amount));
             expect(totalSupplyAfter).equal(totalSupply.sub(amount));
         })
+
+
     })
 
     describe('approve', () => {
@@ -269,6 +291,15 @@ export function testOSD(payload: IDeployedPayload) {
             const tx = nativeToken.transferFrom(user, payload.deployer.address, oneToken);
 
             await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
+        })
+
+        it('to zero address', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.connect(payload.signer3).approve(
+                ethers.constants.AddressZero, oneToken
+            );
+            await expect(tx).to.revertedWith(`ERC20: approve to the zero address`);
         })
 
         it('approve', async () => {
@@ -384,6 +415,13 @@ export function testOSD(payload: IDeployedPayload) {
             const tx = nativeToken.burnFrom(user, oneToken);
 
             await expect(tx).to.revertedWith(`ERC20: burn amount exceeds balance`);
+        })
+
+        it('to zero address', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const tx = nativeToken.burnFrom(ethers.constants.AddressZero, 10);
+            await expect(tx).to.revertedWith(`ERC20: insufficient allowance`);
         })
     })
 
