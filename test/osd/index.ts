@@ -221,7 +221,7 @@ export function testOSD(payload: IDeployedPayload) {
             expect(afterBalance2).equal(beforeBalance2.add(twoToken));
         })
 
-        it('batchTransfer fail', async () => {
+        it('batchTransfer transsfer amount exceed', async () => {
             const nativeToken = payload.nativeToken;
             const user1 = payload.signer3.address;
             const user2 = payload.signer4.address;
@@ -235,6 +235,28 @@ export function testOSD(payload: IDeployedPayload) {
             );
 
             await expect(tx).to.rejectedWith(`ERC20: transfer amount exceeds balance`);
+
+            const afterBalance1 = await nativeToken.balanceOf(user1);
+            const afterBalance2 = await nativeToken.balanceOf(user2);
+
+            expect(afterBalance1).equal(beforeBalance1);
+            expect(afterBalance2).equal(beforeBalance2);
+        })
+
+        it('batchTransfer transsfer to zero balance', async () => {
+            const nativeToken = payload.nativeToken;
+            const user1 = payload.signer3.address;
+            const user2 = payload.signer4.address;
+
+            const beforeBalance1 = await nativeToken.balanceOf(user1);
+            const beforeBalance2 = await nativeToken.balanceOf(user2);
+
+            const tx = nativeToken.connect(payload.signer2).batchTransfer(
+                [user1, ethers.constants.AddressZero],
+                [oneToken, oneToken]
+            );
+
+            await expect(tx).to.rejectedWith(`ERC20: transfer to the zero address`);
 
             const afterBalance1 = await nativeToken.balanceOf(user1);
             const afterBalance2 = await nativeToken.balanceOf(user2);
