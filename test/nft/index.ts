@@ -13,6 +13,14 @@ import { expect } from "chai";
 
 export function testNFT(payload: IDeployedPayload) {
 
+    it('call initialize', async () => {
+        const tx = payload.nft.initialize('OpenSourceNFT',
+            'OSNFT',
+            'https://ujjwalnft.com/metadata/',
+            payload.approver.address,
+            payload.nativeToken.address);
+        await expect(tx).revertedWith(`Initializable: contract is already initialized`);
+    })
 
     describe('meta data', () => {
         runPublicState(payload);

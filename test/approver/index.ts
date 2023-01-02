@@ -4,6 +4,11 @@ import { IDeployedPayload } from "../interfaces";
 
 export function testApprover(payload: IDeployedPayload) {
 
+    it('call initialize', async () => {
+        const tx = payload.approver.initialize();
+        await expect(tx).revertedWith(`Initializable: contract is already initialized`);
+    })
+
     it('isApprover', async () => {
         const tx = await payload.approver.isApprover(payload.deployer.address);
         await expect(tx).equal(false);

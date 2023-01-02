@@ -4,6 +4,11 @@ import { IDeployedPayload } from "../interfaces";
 
 export function testOSD(payload: IDeployedPayload) {
 
+    it('call initialize', async () => {
+        const tx = payload.nativeToken.initialize('OpenSourceDevCoin', 'OSD');
+        await expect(tx).revertedWith(`Initializable: contract is already initialized`);
+    })
+
     it("decimal", async () => {
         const decimal = await payload.nativeToken.decimals();
         expect(decimal).equal(18);

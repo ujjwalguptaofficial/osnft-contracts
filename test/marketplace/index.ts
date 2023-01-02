@@ -40,6 +40,11 @@ export function testMarketplace(payload: IDeployedPayload) {
         await payload.erc20Token2.mint(payload.signer2.address, ethers.constants.MaxUint256);
     })
 
+    it('call marketplace initialize', async () => {
+        const tx = payload.marketplace.initialize(payload.nft.address, payload.nativeToken.address);
+        await expect(tx).revertedWith(`Initializable: contract is already initialized`);
+    })
+
     describe('payable token', () => {
         testPayableToken(payload);
     });
