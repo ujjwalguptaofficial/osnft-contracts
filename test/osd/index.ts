@@ -329,9 +329,15 @@ export function testOSD(payload: IDeployedPayload) {
             const user = payload.signer2.address;
             const tx = nativeToken.connect(payload.signer2).approve(payload.deployer.address, oneToken);
 
+            const allowanceBefore = await nativeToken.allowance(user, payload.deployer.address);
+            expect(allowanceBefore).equal(0);
+
             await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
                 user, payload.deployer.address, oneToken.toString()
-            )
+            );
+
+            const allowanceAfter = await nativeToken.allowance(user, payload.deployer.address);
+            expect(allowanceAfter).equal(oneToken);
         })
 
 
@@ -378,6 +384,18 @@ export function testOSD(payload: IDeployedPayload) {
             await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
                 user, payload.deployer.address, amount.toString()
             )
+        })
+
+        it('increase allowance after max approval', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer2.address;
+            const amount = 100; // ethers.constants.MaxUint256;
+            const tx = nativeToken.connect(payload.signer2).increaseAllowance(
+                payload.deployer.address, amount
+            );
+
+            await expect(tx).revertedWithPanic(`0x11`);
+            // panic code  (Arithmetic operation underflowed or overflowed outside of an unchecked block)`)
         })
 
         it('exceed balance', async () => {
@@ -521,6 +539,55 @@ export function testOSD(payload: IDeployedPayload) {
             const user = payload.signer2.address;
             const tx = nativeToken.transferFrom(payload.signer2.address, ethers.constants.AddressZero, 10);
             await expect(tx).to.revertedWith(`ERC20: transfer to the zero address`);
+        })
+    })
+
+
+    describe("increaseAllowance", () => {
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer4.address;
+            const increaseAllowanceTo = payload.signer3.address;
+
+            const allowanceBefore = await nativeToken.allowance(user, increaseAllowanceTo);
+            expect(allowanceBefore).equal(0);
+
+            const tx = nativeToken.connect(payload.signer4).increaseAllowance(increaseAllowanceTo, oneToken);
+
+
+
+            await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
+                user, increaseAllowanceTo, oneToken.toString()
+            );
+
+
+            const allowanceAfter = await nativeToken.allowance(user, increaseAllowanceTo);
+            expect(allowanceAfter).equal(oneToken);
+        })
+    })
+
+    describe("decreaseAllowance", () => {
+        it('success', async () => {
+            const nativeToken = payload.nativeToken;
+            const user = payload.signer4.address;
+            const increaseAllowanceTo = payload.signer3.address;
+
+            const allowanceBefore = await nativeToken.allowance(user, increaseAllowanceTo);
+            expect(allowanceBefore).equal(oneToken);
+
+            const tx = nativeToken.connect(payload.signer4).decreaseAllowance(
+                increaseAllowanceTo, oneToken
+            );
+
+
+
+            await expect(tx).to.emit(nativeToken, 'Approval').withArgs(
+                user, increaseAllowanceTo, '0'
+            );
+
+
+            const allowanceAfter = await nativeToken.allowance(user, increaseAllowanceTo);
+            expect(allowanceAfter).equal(0);
         })
     })
 
