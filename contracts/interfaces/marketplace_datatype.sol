@@ -100,12 +100,7 @@ interface IOSNFTMarketPlaceDataType {
         address canceledBy
     );
 
-    event NFTBought(
-        address indexed buyer,
-        bytes32 indexed tokenId,
-        uint256 price,
-        uint32 share
-    );
+    event NFTSold(bytes32 indexed sellId, uint256 price);
 
     // Public event to notify that a new auction has been created
     event NewAuction(

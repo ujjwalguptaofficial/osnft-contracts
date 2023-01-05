@@ -117,7 +117,7 @@ contract OSNFTMarketPlace is
             })
         );
 
-        emit NFTBought(buyer, tokenId, price, share);
+        emit NFTSold(sellId, price);
     }
 
     function removeNFTSale(bytes32 sellId) external {

@@ -177,7 +177,8 @@ export function testApprover(payload: IDeployedPayload) {
 
         expect(approvedValue.mintTo).equal(address);
 
-        console.log("txhash", (await tx).hash)
+        payload.transactions['projectApprovedMahal'] = (await tx).hash;
+
     })
 
     it('add project jsstore', async () => {
@@ -210,7 +211,8 @@ export function testApprover(payload: IDeployedPayload) {
 
         expect(approvedValue.mintTo).equal(address);
 
-        console.log("txhash jsstore approve", (await tx).hash)
+        payload.transactions['projectApprovedJsStore'] = (await tx).hash;
+
     })
 
     it('add project mahal webpack loader', async () => {
@@ -275,6 +277,7 @@ export function testApprover(payload: IDeployedPayload) {
         expect(approvedValue.mintTo).equal(address);
 
         console.log("txhash godam approve", (await tx).hash)
+        payload.transactions['projectApprovedGodam'] = (await tx).hash;
 
     })
 

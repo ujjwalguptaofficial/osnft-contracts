@@ -74,7 +74,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(218752);
+        expect(gas).equal(218669);
 
     });
 
@@ -106,7 +106,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(185621);
+        expect(gas).equal(184738);
 
     });
 
@@ -143,8 +143,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 0,
                 price
             );
-            await expect(tx).emit(payload.marketplace, 'NFTBought').withArgs(
-                buyer, tokenId, price, 0
+
+            await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+                sellId, price
             );
 
             // check nft owner
@@ -225,8 +226,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 0,
                 price
             );
-            await expect(tx).emit(payload.marketplace, 'NFTBought').withArgs(
-                payload.deployer.address, tokenId, price, 0
+
+            await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+                sellId, price
             );
 
             // check nft owner
@@ -267,6 +269,10 @@ export function testNFTBuy(payload: IDeployedPayload) {
             )
 
             expect((earningForMarketplace).add(earningForSeller)).equal(price);
+
+            payload.transactions['buyMahalExample'].push(
+                (await tx).hash
+            )
         })
     });
 
@@ -291,7 +297,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(195485);
+        expect(gas).equal(194719);
     })
 
     it('buy with zero share', async () => {
@@ -372,8 +378,11 @@ export function testNFTBuy(payload: IDeployedPayload) {
             shareToBuy,
             price
         );
-        await expect(tx).emit(payload.marketplace, 'NFTBought').withArgs(
-            payload.deployer.address, tokenId, totalPrice, shareToBuy
+        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+            sellId, totalPrice
+        );
+        await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+            seller, buyer, tokenId
         );
 
 
@@ -427,6 +436,10 @@ export function testNFTBuy(payload: IDeployedPayload) {
         )
 
         expect((earningForMarketplace).add(earningForSeller)).equal(totalPrice);
+
+        payload.transactions['buyJsStore'].push(
+            (await tx).hash
+        )
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by creator', async () => {
@@ -463,8 +476,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        await expect(tx).emit(payload.marketplace, 'NFTBought').withArgs(
-            buyer, tokenId, price, 0
+        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+            sellId, price
         );
 
         // check nft owner
@@ -563,8 +576,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        await expect(tx).emit(payload.marketplace, 'NFTBought').withArgs(
-            buyer, tokenId, price, 0
+
+        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+            sellId, price
         );
 
         // check nft owner
