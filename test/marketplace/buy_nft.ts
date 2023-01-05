@@ -297,7 +297,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(194719);
+        expect(gas).equal(194959);
     })
 
     it('buy with zero share', async () => {
@@ -346,7 +346,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         await expect(tx).to.revertedWith('Input share is greater than listed')
     })
 
-    it('buy share nft - jsstore', async () => {
+    it('partial buy share nft - jsstore', async () => {
         const marketplace = payload.marketplace;
         const tokenId = payload.getProjectId(payload.projects["jsstore"]);
         const seller = payload.signer3.address;
@@ -368,6 +368,10 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
         const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(marketplace.address);
+
+        console.log("balanceOfBuyerBeforeSale", balanceOfBuyerBeforeSale);
+
+
         const paymentToken = payload.erc20Token1.address;
         const shareToBuy = 10;
         const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
@@ -412,6 +416,116 @@ export function testNFTBuy(payload: IDeployedPayload) {
         // check marketplace money
 
         const balanceOfMarketPlace = await payload.erc20Token1.balanceOf(payload.marketplace.address);
+        // console.log('balanceOfMarketPlace', balanceOfMarketPlace);
+        // console.log('earningForMarketplace', earningForMarketplace);
+        // console.log('balanceOfMarketPlaceBeforeSale', balanceOfMarketPlaceBeforeSale);
+        expect(balanceOfMarketPlace).equal(
+            earningForMarketplace.add(balanceOfMarketPlaceBeforeSale)
+        );
+
+        const balanceOfSeller = await payload.erc20Token1.balanceOf(seller);
+
+        expect(balanceOfSeller).equal(
+            earningForSeller
+        );
+
+        // buyer balance should be deducted
+
+        const balanceOfBuyerAfterBuy = await payload.erc20Token1.balanceOf(buyer);
+
+        expect(balanceOfBuyerAfterBuy).equal(
+            balanceOfBuyerBeforeSale.sub(
+                price.mul(shareToBuy)
+            )
+        )
+
+        expect((earningForMarketplace).add(earningForSeller)).equal(totalPrice);
+
+        payload.transactions['buyJsStore'].push(
+            (await tx).hash
+        )
+    })
+
+    it('all buy share nft - jsstore', async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+        const seller = payload.signer3.address;
+        const buyer = payload.deployer.address;
+
+        const sellId = payload.getSellId(
+            tokenId,
+            seller
+        );
+        expect(buyer).not.equal(seller);
+
+        const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+        const price = sellInfoBeforeSale.price;
+
+        await payload.erc20Token1.approve(
+            marketplace.address, ethers.constants.MaxUint256,
+        )
+
+        const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
+        const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
+        const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(marketplace.address);
+        const paymentToken = payload.erc20Token1.address;
+        const shareToBuy = sellInfoBeforeSale.share;
+        expect(shareToBuy).equal(90);
+        console.log("balanceOfBuyerBeforeSale", balanceOfBuyerBeforeSale);
+        const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
+        const shareOfSellerBeforeSale = await payload.nft.shareOf(tokenId, seller);
+        const totalPrice = price.mul(shareToBuy);
+        const tx = marketplace.buyNFT(
+            sellId,
+            shareToBuy,
+            price
+        );
+        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+            sellId, totalPrice
+        );
+        await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+            seller, buyer, tokenId
+        );
+
+
+        const sellInfoAfterSale = await marketplace.getNFTFromSale(sellId);
+        const expectedVal = {
+            price: 0,
+            seller: ethers.constants.AddressZero,
+            share: 0,
+            paymentToken: ethers.constants.AddressZero,
+            tokenId: '0x0000000000000000000000000000000000000000000000000000000000000000',
+            sellPriority: 0
+        };
+        for (const prop in expectedVal) {
+            expect((sellInfoAfterSale as any)[prop]).equal((expectedVal as any)[prop]);
+        }
+
+        expect(sellInfoAfterSale.share).equal(
+            sellInfoBeforeSale.share - shareToBuy
+        )
+
+        // seller share should be deducted
+        const shareOfSellerAfterSale = await payload.nft.shareOf(tokenId, seller);
+        expect(shareOfSellerAfterSale).equal(
+            shareOfSellerBeforeSale - shareToBuy
+        );
+
+        // check nft owner
+
+        const shareOfBuyer = await payload.nft.shareOf(tokenId, buyer);
+        expect(shareOfBuyer).equal(
+            shareOfBuyerBeforeSale + shareToBuy
+        );
+
+        // check marketplace money
+        const earningForMarketplace = getPercentage(totalPrice, 2);
+        const earningForSeller = totalPrice.sub(earningForMarketplace); //getPercentage(price, 98);
+
+        // check marketplace money
+
+        const balanceOfMarketPlace = await payload.erc20Token1.balanceOf(payload.marketplace.address);
         console.log('balanceOfMarketPlace', balanceOfMarketPlace);
         console.log('earningForMarketplace', earningForMarketplace);
         console.log('balanceOfMarketPlaceBeforeSale', balanceOfMarketPlaceBeforeSale);
@@ -421,7 +535,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         const balanceOfSeller = await payload.erc20Token1.balanceOf(seller);
 
-        expect(balanceOfSeller).equal(
+        expect(balanceOfSeller.sub(balanceOfSellerBeforeSale)).equal(
             earningForSeller
         );
 

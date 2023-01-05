@@ -98,8 +98,12 @@ contract OSNFTMarketPlace is
         if (isShareToken) {
             // will no overflow  as input share is already checked
             // share will be always less than or equal to stored share
+            SellListing storage listedSell = _sellListings[sellId];
             unchecked {
-                _sellListings[sellId].share -= share;
+                listedSell.share -= share;
+            }
+            if (listedSell.share == 0) {
+                delete (_sellListings[sellId]);
             }
         } else {
             delete (_sellListings[sellId]);
