@@ -102,7 +102,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 auctionId,
                 bidAmount
             );
-            await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
+            await expect(tx).emit(marketplace, 'Bid').withArgs(
                 auctionId,
                 bidAmount
             );
@@ -162,7 +162,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 auctionId,
                 bidAmount
             );
-            await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
+            await expect(tx).emit(marketplace, 'Bid').withArgs(
                 auctionId,
                 bidAmount
             );
@@ -255,7 +255,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
 
                 const tx = marketplace.claimNFT(auctionId);
-                await expect(tx).emit(marketplace, 'NFTClaimed').withArgs(
+                await expect(tx).emit(marketplace, 'Claimed').withArgs(
                     auctionId, nftId,
                     0,
                     currentBidAmount,
@@ -364,7 +364,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 auctionId,
                 bidAmount
             );
-            await expect(tx).emit(marketplace, 'NewBidOnAuction').withArgs(
+            await expect(tx).emit(marketplace, 'Bid').withArgs(
                 auctionId,
                 bidAmount
             );
@@ -442,7 +442,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 const tx = marketplace.claimNFT(auctionId);
                 const shareToTransfer = 100;
-                await expect(tx).emit(marketplace, 'NFTClaimed').withArgs(
+                await expect(tx).emit(marketplace, 'Claimed').withArgs(
                     auctionId, nftId,
                     shareToTransfer,
                     currentBidAmount,

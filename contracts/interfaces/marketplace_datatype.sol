@@ -61,7 +61,7 @@ interface IOSNFTMarketPlaceDataType {
         Bid
     }
 
-    struct NftSellData {
+    struct SellData {
         bytes32 tokenId;
         uint32 share;
         address seller;
@@ -71,7 +71,7 @@ interface IOSNFTMarketPlaceDataType {
         SELL_TYPE sellType;
     }
 
-    event NFTSaleAdded(
+    event Sale(
         bytes32 indexed tokenId,
         address indexed seller,
         bytes32 sellId,
@@ -81,7 +81,7 @@ interface IOSNFTMarketPlaceDataType {
         uint32 sellPriority
     );
 
-    event NFTSaleUpdated(
+    event SaleUpdated(
         bytes32 indexed sellId,
         uint32 share,
         uint256 price,
@@ -89,21 +89,18 @@ interface IOSNFTMarketPlaceDataType {
         uint32 sellPriority
     );
 
-    event NFTSaleSellPriorityUpdated(
-        bytes32 indexed sellId,
-        uint32 sellPriority
-    );
+    event SalePriorityUpdated(bytes32 indexed sellId, uint32 sellPriority);
 
-    event NftSaleCanceled(
+    event SaleCanceled(
         bytes32 indexed auctionId,
         bytes32 indexed tokenId,
         address canceledBy
     );
 
-    event NFTSold(bytes32 indexed sellId, uint256 price);
+    event Sold(bytes32 indexed sellId, uint256 price);
 
     // Public event to notify that a new auction has been created
-    event NewAuction(
+    event Auction(
         bytes32 indexed tokenId,
         address indexed seller,
         bytes32 indexed auctionId,
@@ -115,11 +112,11 @@ interface IOSNFTMarketPlaceDataType {
     );
 
     // Public event to notify that a new bid has been placed
-    event NewBidOnAuction(bytes32 tokenId, uint256 bidAmount);
+    event Bid(bytes32 tokenId, uint256 bidAmount);
 
     // Public event to notif that winner of an
     // auction claim for his reward
-    event NFTClaimed(
+    event Claimed(
         bytes32 indexed auctionid,
         bytes32 indexed tokenId,
         uint32 share,
@@ -129,7 +126,7 @@ interface IOSNFTMarketPlaceDataType {
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction
-    event NFTRefunded(
+    event Refunded(
         bytes32 indexed auctionid,
         bytes32 indexed tokenId,
         uint32 share

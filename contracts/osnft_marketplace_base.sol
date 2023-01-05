@@ -49,7 +49,7 @@ contract OSNFTMarketPlaceBase is
 
         _listItem(sellData);
 
-        emit NFTSaleAdded(
+        emit Sale(
             tokenId,
             seller,
             sellId,
@@ -169,7 +169,7 @@ contract OSNFTMarketPlaceBase is
         });
 
         // Trigger event and return index of new auction
-        emit NewAuction(
+        emit Auction(
             tokenId,
             seller,
             auctionId,
@@ -250,7 +250,7 @@ contract OSNFTMarketPlaceBase is
         }
     }
 
-    function _processNFTSell(NftSellData memory sellData) internal {
+    function _processNFTSell(SellData memory sellData) internal {
         address seller = sellData.seller;
 
         bool isBuySell = sellData.sellType == SELL_TYPE.Buy;

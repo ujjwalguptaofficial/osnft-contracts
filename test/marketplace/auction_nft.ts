@@ -265,7 +265,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             sellPriority: sellPriority
         });
         const auctionId = payload.getSellId(projectId, seller);
-        await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+        await expect(tx).emit(marketplace, 'Auction').withArgs(
             projectId,
             seller,
             auctionId,
@@ -569,7 +569,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: sellPriority
             });
             const auctionId = payload.getSellId(projectId, seller);
-            await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+            await expect(tx).emit(marketplace, 'Auction').withArgs(
                 projectId,
                 seller,
                 auctionId,

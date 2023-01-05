@@ -149,7 +149,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            await expect(tx).to.emit(marketplace, 'NFTSaleUpdated').withArgs(
+            await expect(tx).to.emit(marketplace, 'SaleUpdated').withArgs(
                 sellId, 100, 10000,
                 payload.erc20Token2.address, sellPriority
             );
@@ -240,7 +240,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 sellPriority
             );
 
-            await expect(tx).to.emit(marketplace, 'NFTSaleSellPriorityUpdated').withArgs(
+            await expect(tx).to.emit(marketplace, 'SalePriorityUpdated').withArgs(
                 sellId, sellPriority
             );
 
@@ -302,7 +302,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 sellId
             );
 
-            await expect(tx).emit(marketplace, 'NftSaleCanceled').withArgs(
+            await expect(tx).emit(marketplace, 'SaleCanceled').withArgs(
                 sellId, projectId, seller
             );
         });

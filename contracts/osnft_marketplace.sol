@@ -110,7 +110,7 @@ contract OSNFTMarketPlace is
         }
 
         _processNFTSell(
-            NftSellData({
+            SellData({
                 tokenId: tokenId,
                 share: share,
                 buyer: buyer,
@@ -121,7 +121,7 @@ contract OSNFTMarketPlace is
             })
         );
 
-        emit NFTSold(sellId, price);
+        emit Sold(sellId, price);
     }
 
     function removeNFTSale(bytes32 sellId) external {
@@ -132,7 +132,7 @@ contract OSNFTMarketPlace is
         _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
 
         delete _sellListings[sellId];
-        emit NftSaleCanceled(sellId, listing.tokenId, _msgSender());
+        emit SaleCanceled(sellId, listing.tokenId, _msgSender());
     }
 
     function updateNFTOnSale(
@@ -166,7 +166,7 @@ contract OSNFTMarketPlace is
 
         _sellListings[sellId] = listedNft;
 
-        emit NFTSaleUpdated(
+        emit SaleUpdated(
             sellId,
             sellData.share,
             sellData.price,
@@ -194,7 +194,7 @@ contract OSNFTMarketPlace is
         );
         listedNft.sellPriority = sellPriority;
 
-        emit NFTSaleSellPriorityUpdated(sellId, sellPriority);
+        emit SalePriorityUpdated(sellId, sellPriority);
     }
 
     function getNFTFromSale(
@@ -279,7 +279,7 @@ contract OSNFTMarketPlace is
         auction.currentBidPrice = bidAmount;
         auction.bidCount++;
 
-        emit NewBidOnAuction(auctionId, bidAmount);
+        emit Bid(auctionId, bidAmount);
     }
 
     function claimNFT(bytes32 auctionId) external nonReentrant {
@@ -294,7 +294,7 @@ contract OSNFTMarketPlace is
         delete _auctions[auctionId];
 
         _processNFTSell(
-            NftSellData({
+            SellData({
                 tokenId: auction.tokenId,
                 share: auction.share,
                 buyer: auction.currentBidOwner,
@@ -305,7 +305,7 @@ contract OSNFTMarketPlace is
             })
         );
 
-        emit NFTClaimed(
+        emit Claimed(
             auctionId,
             auction.tokenId,
             auction.share,
@@ -336,7 +336,7 @@ contract OSNFTMarketPlace is
             auction.share
         );
 
-        emit NFTRefunded(auctionId, auction.tokenId, auction.share);
+        emit Refunded(auctionId, auction.tokenId, auction.share);
     }
 
     function withdrawEarning(

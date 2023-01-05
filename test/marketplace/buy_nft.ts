@@ -144,7 +144,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 price
             );
 
-            await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+            await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
                 sellId, price
             );
 
@@ -227,7 +227,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 price
             );
 
-            await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+            await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
                 sellId, price
             );
 
@@ -376,13 +376,17 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const shareToBuy = 10;
         const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
         const shareOfSellerBeforeSale = await payload.nft.shareOf(tokenId, seller);
+
+        // console.log("shareOfBuyerBeforeSale", shareOfBuyerBeforeSale);
+        // console.log("shareOfSellerBeforeSale", shareOfSellerBeforeSale);
+
         const totalPrice = price.mul(shareToBuy);
         const tx = marketplace.buyNFT(
             sellId,
             shareToBuy,
             price
         );
-        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+        await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
             sellId, totalPrice
         );
         await expect(tx).emit(payload.nft, 'Transfer').withArgs(
@@ -481,7 +485,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             shareToBuy,
             price
         );
-        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+        await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
             sellId, totalPrice
         );
         await expect(tx).emit(payload.nft, 'Transfer').withArgs(
@@ -590,7 +594,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+        await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
             sellId, price
         );
 
@@ -691,7 +695,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             price
         );
 
-        await expect(tx).emit(payload.marketplace, 'NFTSold').withArgs(
+        await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
             sellId, price
         );
 

@@ -44,7 +44,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
             sellPriority: 0
         });
         const auctionId = payload.getSellId(projectId, seller);
-        await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+        await expect(tx).emit(marketplace, 'Auction').withArgs(
             projectId,
             seller,
             auctionId,
@@ -96,7 +96,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
             sellPriority: 0
         });
         const auctionId = payload.getSellId(projectId, seller);
-        await expect(tx).emit(marketplace, 'NewAuction').withArgs(
+        await expect(tx).emit(marketplace, 'Auction').withArgs(
             projectId,
             seller,
             auctionId,
@@ -149,7 +149,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         expect(oldOwner).equal(marketplace.address);
 
         const tx = marketplace.refundAuction(auctionId);
-        await expect(tx).emit(marketplace, 'NFTRefunded').withArgs(
+        await expect(tx).emit(marketplace, 'Refunded').withArgs(
             auctionId, nftId, 0
         )
 
@@ -169,7 +169,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const oldShare = await payload.nft.shareOf(nftId, seller);
 
         const tx = marketplace.refundAuction(auctionId);
-        await expect(tx).emit(marketplace, 'NFTRefunded').withArgs(
+        await expect(tx).emit(marketplace, 'Refunded').withArgs(
             auctionId, nftId, 100
         )
 
