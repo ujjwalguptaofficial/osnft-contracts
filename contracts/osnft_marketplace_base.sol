@@ -75,7 +75,7 @@ contract OSNFTMarketPlaceBase is
 
     function _requireNotListed(bytes32 sellId) internal view {
         SellListing memory listing = _sellListings[sellId];
-        require(listing.price <= 0, "Already on sale");
+        require(listing.price == 0, "Already on sale");
     }
 
     function _requireListed(
