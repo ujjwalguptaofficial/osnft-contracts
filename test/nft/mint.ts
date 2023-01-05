@@ -175,6 +175,8 @@ export function testMint(payload: IDeployedPayload) {
                 expectedTokenId
             );
             expect(owner).equal(deployerAddress);
+
+            payload.transactions['mintJsStoreExample'] = (await tx).hash
         })
 
         it('mint with invalid percentage', async () => {
@@ -218,6 +220,8 @@ export function testMint(payload: IDeployedPayload) {
 
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
+
+            payload.transactions['mintMahalExample'] = (await tx).hash;
         });
 
 
@@ -431,8 +435,9 @@ export function testMint(payload: IDeployedPayload) {
                 nativeTokenBalanceOfUserAfterMint.add(approveInfo.worth)
             );
 
-            console.log('marketplace address', payload.marketplace.address);
+            console.log("txhash", (await tx).hash)
 
+            payload.transactions['mintMahal'] = (await tx).hash;
         });
 
         it('mint same project', async () => {
@@ -511,6 +516,9 @@ export function testMint(payload: IDeployedPayload) {
 
                 balance = await nft.balanceOf(address);
                 expect(balance).equal(2);
+
+                payload.transactions['mintJsStore'] = (await tx).hash;
+
             });
         });
 
@@ -556,6 +564,9 @@ export function testMint(payload: IDeployedPayload) {
 
             const balanceAfterMint = await nft.balanceOf(address);
             expect(balanceAfterMint).equal(balance.add(1));
+
+            console.log("txhash", (await tx).hash)
+            payload.transactions['mintGodam'] = (await tx).hash;
         });
 
         it('mint same project', async () => {

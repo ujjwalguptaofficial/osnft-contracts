@@ -1,7 +1,7 @@
 
 import { expect } from "chai";
 import { toUtf8Bytes } from "ethers/lib/utils";
-import { ethers, upgrades } from "hardhat"
+import { ethers, network, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { testApprover } from "./approver";
 import { deployApprover } from "./approver/deploy_contract";
@@ -12,6 +12,7 @@ import { deployNFTContract } from "./nft/deploy_contract";
 import { testSetMarketPlace } from "./nft/set_makrketplace";
 import { testOSD } from "./osd";
 import { testRelayer } from "./relayer";
+const writeJsonFile = require("write-json");
 
 
 
@@ -41,10 +42,20 @@ describe("contracts", () => {
             "solidity-tip": 'github.com/ujjwalguptaofficial/solidity-tip'
         },
         getProjectId,
-        getSellId
+        getSellId,
+        transactions: {
+
+        }
     } as IDeployedPayload;
 
+    payload.transactions['sellJsStoreExamples'] = []
+    payload.transactions['sellJsStore'] = []
+    payload.transactions['sellMahalExamples'] = []
+    payload.transactions['buyJsStoreExample'] = []
+
     before(async () => {
+        await network.provider.send("hardhat_reset")
+
         const [signer1, signer2, signer3, operator, defaultMarketPlace, signer4] = await ethers.getSigners();
         payload.deployer = signer1;
         payload.signer2 = signer2;
@@ -175,12 +186,11 @@ describe("contracts", () => {
         testNFT(payload);
     });
 
-
     describe('Marketplace', () => {
         testMarketplace(payload);
     });
 
-    after(() => {
+    after(async () => {
         console.log(`------contract addresses-------------`);
         const addresses = {
             nft: payload.nft.address,
@@ -191,9 +201,13 @@ describe("contracts", () => {
             deployer: payload.deployer.address,
             signer2: payload.signer2.address,
             signer3: payload.signer3.address,
-            signer4: payload.signer4.address
+            signer4: payload.signer4.address,
+            operator: payload.operator.address
         };
-        console.log(JSON.stringify(addresses));
+        // console.log(JSON.stringify(addresses));
         console.table(addresses);
+        console.table(payload.transactions);
+
+        writeJsonFile.sync(`cache/transaction.json`, payload.transactions);
     })
 })

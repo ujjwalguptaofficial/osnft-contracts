@@ -186,6 +186,10 @@ export function testNFTBuy(payload: IDeployedPayload) {
             )
 
             expect(earningForCreator.add(earningForMarketplace).add(earningForSeller)).equal(price);
+
+            payload.transactions['buyJsStoreExample'].push(
+                (await tx).hash
+            )
         });
 
         it('seller is creator', async () => {

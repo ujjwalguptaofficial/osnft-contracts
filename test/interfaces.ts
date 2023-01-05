@@ -27,5 +27,9 @@ export interface IDeployedPayload {
         'solidity-tip': string;
     },
     getProjectId: (projectUrl: string) => string
-    getSellId: (tokenId: string, from: string) => string
+    getSellId: (tokenId: string, from: string) => string,
+
+    transactions: {
+        [key: string]: any
+    }
 }

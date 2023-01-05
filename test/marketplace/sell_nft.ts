@@ -199,7 +199,9 @@ export function testNFTSale(payload: IDeployedPayload) {
         expect(nativeCoinBalanceAfter).equal(
             nativeCoinBalance
         )
-
+        const txhash = (await tx).hash;
+        // console.log("txhash",);
+        payload.transactions['sellJsStoreExamples'].push(txhash);
     });
 
 
@@ -329,6 +331,10 @@ export function testNFTSale(payload: IDeployedPayload) {
             nativeCoinBalance.sub(expectedDeduction)
         )
 
+        const txhash = (await tx).hash;
+        // console.log("txhash",);
+        payload.transactions['sellJsStore'].push(txhash);
+
     });
 
     it('add share token again on sale', async () => {
@@ -395,6 +401,9 @@ export function testNFTSale(payload: IDeployedPayload) {
             nativeCoinBalance.sub(expectedDeduction)
         )
 
+        const txhash = (await tx).hash;
+        // console.log("txhash",);
+        payload.transactions['sellMahalExamples'].push(txhash);
     });
 
     describe("sell using meta sign", () => {

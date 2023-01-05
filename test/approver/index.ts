@@ -104,13 +104,13 @@ export function testApprover(payload: IDeployedPayload) {
             tokenId, address
         )
 
-        console.log("txhash", (await tx).hash)
-
         approvedValue = await payload.approver.getApprovedProject(
             tokenId
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        payload.transactions['projectApprovedJsStoreExample'] = (await tx).hash;
     })
 
     it('add project mahal-example', async () => {
@@ -142,6 +142,9 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        payload.transactions['projectApprovedMahalExample'] = (await tx).hash;
+
     })
 
     it('add project mahal', async () => {
@@ -173,6 +176,8 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        console.log("txhash", (await tx).hash)
     })
 
     it('add project jsstore', async () => {
@@ -204,6 +209,8 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        console.log("txhash jsstore approve", (await tx).hash)
     })
 
     it('add project mahal webpack loader', async () => {
@@ -266,6 +273,9 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        console.log("txhash godam approve", (await tx).hash)
+
     })
 
     it('add project solidity-learning', async () => {
