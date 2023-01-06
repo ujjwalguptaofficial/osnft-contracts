@@ -18,7 +18,8 @@ interface IOSNFTDataType {
     enum NFT_TYPE {
         PercentageCut,
         Share,
-        Equity
+        Equity,
+        Direct
     }
 
     /**

@@ -136,7 +136,13 @@ contract OSNFTBase is
             token.allShareOwner = to;
             token.creator = to;
         } else {
-            require(totalShare < 100, "Require creator cut to be below 100");
+            if (nftType == NFT_TYPE.Direct) {
+                totalShare = 0;
+                nftType = NFT_TYPE.PercentageCut;
+            }
+
+            // percentage cut
+            require(totalShare < 50, "Require creator cut to be below 50");
 
             // take mint payment
 

@@ -9,7 +9,8 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 export enum NFT_TYPE {
     PercentageCut,
     Share,
-    Equity
+    Equity,
+    Direct
 }
 
 export function testMint(payload: IDeployedPayload) {
@@ -103,7 +104,7 @@ export function testMint(payload: IDeployedPayload) {
             30,
         );
 
-        expect(gasForMintingWithSign).within(175654, 175678);
+        expect(gasForMintingWithSign).within(175754, 175778);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -111,7 +112,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(154887);
+        expect(gasForMintingWithoutSign).equal(154964);
     });
 
 
@@ -194,11 +195,11 @@ export function testMint(payload: IDeployedPayload) {
 
             const projectUrl1 = payload.projects["mahal-example"];
 
-            let tx = nft.connect(payload.signer2).mint(projectUrl1, NFT_TYPE.PercentageCut, 101);
-            await expect(tx).to.revertedWith('Require creator cut to be below 100');
+            let tx = nft.connect(payload.signer2).mint(projectUrl1, NFT_TYPE.PercentageCut, 51);
+            await expect(tx).to.revertedWith('Require creator cut to be below 50');
 
-            tx = nft.connect(payload.signer2).mint(projectUrl1, NFT_TYPE.PercentageCut, 100);
-            await expect(tx).to.revertedWith('Require creator cut to be below 100');
+            tx = nft.connect(payload.signer2).mint(projectUrl1, NFT_TYPE.PercentageCut, 50);
+            await expect(tx).to.revertedWith('Require creator cut to be below 50');
         })
 
         it('mint mahal-examples for signer2 user', async () => {
@@ -296,7 +297,7 @@ export function testMint(payload: IDeployedPayload) {
             await expect(tx).revertedWith('Signature expired')
         })
 
-        it('mint mahal-webpack-loader for signer3 user - 0% percentage cut', async () => {
+        it('mint mahal-webpack-loader for signer3 user - direct', async () => {
             const nft = payload.nft;
             const address = payload.signer3.address;
 
@@ -306,7 +307,8 @@ export function testMint(payload: IDeployedPayload) {
             const projectUrl = payload.projects["mahal-webpack-loader"];
             const expectedTokenId = payload.getProjectId(projectUrl);
 
-            const tx = nft.connect(payload.signer3).mint(projectUrl, NFT_TYPE.PercentageCut, 0);
+            // specifying 100 cut but value will be reseted to zero by contract
+            const tx = nft.connect(payload.signer3).mint(projectUrl, NFT_TYPE.Direct, 100);
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero, address, expectedTokenId
             );
