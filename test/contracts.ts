@@ -55,6 +55,7 @@ describe("contracts", () => {
     payload.transactions['buyMahalExample'] = []
     payload.transactions['buyJsStore'] = []
     payload.transactions['bidJsStoreExamples'] = []
+    payload.transactions['bidJsStore'] = []
 
     before(async () => {
         await network.provider.send("hardhat_reset")
@@ -137,7 +138,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(4679205);
+        expect(estimatedGas).equal(4674889);
 
     })
 

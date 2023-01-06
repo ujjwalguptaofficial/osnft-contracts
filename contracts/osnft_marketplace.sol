@@ -331,7 +331,8 @@ contract OSNFTMarketPlace is
             auction.share
         );
 
-        emit Refunded(auctionId, auction.tokenId, auction.share);
+        // tokenid, seller, share etc can be retrieved from nft contract event Transfer and TransferShare
+        emit Refunded(auctionId);
     }
 
     function withdrawEarning(

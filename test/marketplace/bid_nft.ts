@@ -409,6 +409,10 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             expect(balanceOfMarketplaceAfterSale).equal(
                 balanceOfMarketplaceBeforeSale.add(bidAmount)
             )
+
+            payload.transactions['bidJsStore'].push(
+                (await tx).hash
+            )
         })
 
         it('refund when auction is open', async () => {
@@ -505,6 +509,8 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 const shareOfBuyerAfterSale = await payload.nft.shareOf(nftId, buyer);
                 expect(shareOfBuyerAfterSale).equal(shareToTransfer + shareOfBuyerBeforeSale);
+
+                payload.transactions['claimJsStore'] = (await tx).hash;
 
             });
 

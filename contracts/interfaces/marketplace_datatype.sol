@@ -121,9 +121,5 @@ interface IOSNFTMarketPlaceDataType {
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction
-    event Refunded(
-        bytes32 indexed auctionId,
-        bytes32 indexed tokenId,
-        uint32 share
-    );
+    event Refunded(bytes32 indexed auctionId);
 }
