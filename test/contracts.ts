@@ -206,7 +206,9 @@ describe("contracts", () => {
             signer2: payload.signer2.address,
             signer3: payload.signer3.address,
             signer4: payload.signer4.address,
-            operator: payload.operator.address
+            operator: payload.operator.address,
+            erc20Token1: payload.erc20Token1.address,
+            erc20Token2: payload.erc20Token2.address
         };
         // console.log(JSON.stringify(addresses));
         console.table(addresses);

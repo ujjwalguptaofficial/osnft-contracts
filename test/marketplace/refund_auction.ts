@@ -66,6 +66,10 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(1000);
+
+        payload.transactions.sellJsStoreExamples.push(
+            (await tx).hash
+        )
     });
 
     it('refund when auction is open', async () => {
@@ -126,6 +130,10 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         const bidPrice = await marketplace.getBidPrice(auctionId);
         expect(bidPrice).equal(10000);
+
+        payload.transactions.sellJsStore.push(
+            (await tx).hash
+        )
     });
 
     it('expire auction', async () => {
@@ -169,6 +177,8 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         const newOwner = await payload.nft.ownerOf(nftId);
         expect(newOwner).equal(seller);
+
+        payload.transactions.refundAuctionJsStoreExamples = (await tx).hash;
     })
 
     it('successful refund for jsstore ', async () => {
@@ -195,6 +205,8 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         const newShare = await payload.nft.shareOf(nftId, seller);
         expect(newShare).equal(oldShare + 100);
+
+        payload.transactions.refundAuctionJsStore = (await tx).hash;
     })
 
 
