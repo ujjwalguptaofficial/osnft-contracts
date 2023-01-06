@@ -45,14 +45,16 @@ export function testRefundAuction(payload: IDeployedPayload) {
         });
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'Auction').withArgs(
-            projectId,
-            seller,
             auctionId,
-            0,
             1000,
             endAuction,
             payload.erc20Token1.address,
             0
+        )
+        await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+            seller,
+            marketplace.address,
+            projectId
         )
 
         const newOwner = await payload.nft.ownerOf(projectId);
@@ -87,9 +89,10 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const seller = payload.deployer.address;
         // const endAuction = addHours(new Date(), 24).getTime();
         const endAuction = (await time.latest()) + 10;
+        const shareToAuction = 100;
         const tx = marketplace.createAuction({
             tokenId: projectId,
-            share: 100,
+            share: shareToAuction,
             initialBid: 10000,
             endAuction,
             paymentToken: payload.erc20Token1.address,
@@ -97,14 +100,21 @@ export function testRefundAuction(payload: IDeployedPayload) {
         });
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'Auction').withArgs(
-            projectId,
-            seller,
             auctionId,
-            100,
             10000,
             endAuction,
             payload.erc20Token1.address,
             0
+        )
+
+        await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+            seller,
+            marketplace.address,
+            projectId
+        )
+
+        await expect(tx).emit(payload.nft, 'TransferShare').withArgs(
+            shareToAuction
         )
 
         const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);

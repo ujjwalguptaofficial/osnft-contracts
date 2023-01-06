@@ -237,7 +237,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(242670)
+        expect(gas).equal(241257)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -266,15 +266,17 @@ export function testNFTAuction(payload: IDeployedPayload) {
         });
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'Auction').withArgs(
-            projectId,
-            seller,
             auctionId,
-            0,
             1000,
             endAuction,
             payload.erc20Token1.address,
             sellPriority
         )
+        await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+            seller,
+            marketplace.address,
+            projectId,
+        );
 
         const newOwner = await payload.nft.ownerOf(projectId);
         expect(newOwner).equal(marketplace.address);
@@ -291,6 +293,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
         expect(nativeCoinBalanceAfter).equal(
             nativeCoinBalance.sub(expectedDeduction)
         )
+
+        payload.transactions['sellJsStoreExamples'].push(
+            (await tx).hash
+        );
     });
 
     it('require share greater than zero', async () => {
@@ -359,7 +365,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).equal(248047)
+        expect(gas).equal(246634)
     })
 
     describe('createAuctionMeta', () => {
@@ -570,15 +576,21 @@ export function testNFTAuction(payload: IDeployedPayload) {
             });
             const auctionId = payload.getSellId(projectId, seller);
             await expect(tx).emit(marketplace, 'Auction').withArgs(
-                projectId,
-                seller,
                 auctionId,
-                shareToAuction,
                 10000,
                 endAuction,
                 payload.erc20Token1.address,
                 sellPriority
             )
+
+            await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+                seller,
+                marketplace.address,
+                projectId,
+            );
+            await expect(tx).emit(payload.nft, 'TransferShare').withArgs(
+                shareToAuction
+            );
 
             const shareOfMarketPlace = await payload.nft.shareOf(projectId, marketplace.address);
             expect(shareOfMarketPlace).equal(shareToAuction);
@@ -594,6 +606,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
             const expectedDeduction = BigNumber.from(10).pow(15).mul(sellPriority);
             expect(nativeCoinBalanceAfter).equal(
                 nativeCoinBalance.sub(expectedDeduction)
+            )
+
+            payload.transactions.sellJsStore.push(
+                (await tx).hash
             )
         });
 

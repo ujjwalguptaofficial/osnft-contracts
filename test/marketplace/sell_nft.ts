@@ -94,7 +94,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = await marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
+        const gas = await marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
             tokenId,
             share: 0,
             price,
@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(tx).equal(160957);
+        expect(gas).equal(160976);
     });
 
 
@@ -601,7 +601,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(234330, 234346)
+            expect(gas).to.within(234330, 234350)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {

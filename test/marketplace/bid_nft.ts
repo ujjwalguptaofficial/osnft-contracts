@@ -104,6 +104,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             );
             await expect(tx).emit(marketplace, 'Bid').withArgs(
                 auctionId,
+                buyer,
                 bidAmount
             );
 
@@ -120,6 +121,10 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
             const bidPrice = await marketplace.getBidPrice(auctionId);
             expect(bidPrice).equal(bidAmount);
+
+            payload.transactions['bidJsStoreExamples'].push(
+                (await tx).hash
+            )
         })
 
         it('bid with same price', async () => {
@@ -164,6 +169,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             );
             await expect(tx).emit(marketplace, 'Bid').withArgs(
                 auctionId,
+                buyer,
                 bidAmount
             );
 
@@ -187,6 +193,10 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             expect(previousBidOwnerBalanceAfterSale).equal(
                 previousBidOwnerBalance.add(previousBidAmount)
             );
+
+            payload.transactions['bidJsStoreExamples'].push(
+                (await tx).hash
+            )
         })
 
         describe('claim nft jsstore example', async () => {
@@ -256,11 +266,17 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 const tx = marketplace.claimNFT(auctionId);
                 await expect(tx).emit(marketplace, 'Claimed').withArgs(
-                    auctionId, nftId,
-                    0,
+                    auctionId,
                     currentBidAmount,
                     payload.erc20Token1.address
                 );
+                await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+                    payload.marketplace.address,
+                    buyer,
+                    nftId
+                );
+
+
 
                 // check for marketplace earning
 
@@ -295,6 +311,8 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 const newOwnerOfNft = await payload.nft.ownerOf(nftId);
                 expect(newOwnerOfNft).equal(buyer);
+
+                payload.transactions['claimJsStoreExample'] = (await tx).hash;
 
             });
 
@@ -366,6 +384,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             );
             await expect(tx).emit(marketplace, 'Bid').withArgs(
                 auctionId,
+                buyer,
                 bidAmount
             );
 
@@ -443,11 +462,20 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 const tx = marketplace.claimNFT(auctionId);
                 const shareToTransfer = 100;
                 await expect(tx).emit(marketplace, 'Claimed').withArgs(
-                    auctionId, nftId,
-                    shareToTransfer,
+                    auctionId,
                     currentBidAmount,
                     payload.erc20Token1.address
                 );
+
+                await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+                    payload.marketplace.address,
+                    buyer,
+                    nftId
+                );
+                await expect(tx).emit(payload.nft, 'TransferShare').withArgs(
+                    shareToTransfer
+                );
+
 
                 // check for marketplace earning
 

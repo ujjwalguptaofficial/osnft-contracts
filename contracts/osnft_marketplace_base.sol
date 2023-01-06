@@ -169,11 +169,9 @@ contract OSNFTMarketPlaceBase is
         });
 
         // Trigger event and return index of new auction
+        // tokenid, seller, share can be get from transfer event of NFT
         emit Auction(
-            tokenId,
-            seller,
             auctionId,
-            input.share,
             input.initialBid,
             input.endAuction,
             input.paymentToken,

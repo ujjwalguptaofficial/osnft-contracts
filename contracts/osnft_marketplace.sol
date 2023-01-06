@@ -279,7 +279,7 @@ contract OSNFTMarketPlace is
         auction.currentBidPrice = bidAmount;
         auction.bidCount++;
 
-        emit Bid(auctionId, bidAmount);
+        emit Bid(auctionId, newBidder, bidAmount);
     }
 
     function claimNFT(bytes32 auctionId) external nonReentrant {
@@ -305,13 +305,8 @@ contract OSNFTMarketPlace is
             })
         );
 
-        emit Claimed(
-            auctionId,
-            auction.tokenId,
-            auction.share,
-            auction.currentBidPrice,
-            auction.paymentToken
-        );
+        // from, to, share and token id can be extracted from transfer event of erc721
+        emit Claimed(auctionId, auction.currentBidPrice, auction.paymentToken);
     }
 
     function refundAuction(bytes32 auctionId) external {
