@@ -244,6 +244,8 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        payload.transactions['projectApprovedMahalWebpackLoader'] = (await tx).hash;
     })
 
     it('add project godam', async () => {

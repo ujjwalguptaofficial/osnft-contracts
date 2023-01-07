@@ -104,7 +104,7 @@ export function testMint(payload: IDeployedPayload) {
             30,
         );
 
-        expect(gasForMintingWithSign).within(175754, 175778);
+        expect(gasForMintingWithSign).within(175740, 175758);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -319,6 +319,8 @@ export function testMint(payload: IDeployedPayload) {
 
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
+
+            payload.transactions['mintMahalWebpackLoader'] = (await tx).hash;
         });
 
         it('mint godam-vue for signer4 user - to burn', async () => {
