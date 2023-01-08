@@ -436,7 +436,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             await expect(tx).to.revertedWith('Invalid signature');
         });
 
-        it("Valid signature but now owner", async () => {
+        it("Valid signature but not owner", async () => {
             const marketplace = payload.marketplace;
             const relayer = payload.relayer;
             const tokenId = payload.getProjectId(

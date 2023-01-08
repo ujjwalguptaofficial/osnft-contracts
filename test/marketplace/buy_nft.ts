@@ -1,3 +1,5 @@
+import { time } from "@nomicfoundation/hardhat-network-helpers";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, BigNumberish } from "ethers";
 import { ethers } from "hardhat";
@@ -450,114 +452,431 @@ export function testNFTBuy(payload: IDeployedPayload) {
         )
     })
 
-    it('all buy share nft - jsstore', async () => {
-        const marketplace = payload.marketplace;
-        const tokenId = payload.getProjectId(payload.projects["jsstore"]);
-        const seller = payload.signer3.address;
-        const buyer = payload.deployer.address;
+    describe("meta buy", () => {
 
-        const sellId = payload.getSellId(
-            tokenId,
-            seller
-        );
-        expect(buyer).not.equal(seller);
+        const signMessage = async (user: SignerWithAddress, sellId, shareToBuy, price, deadline) => {
 
-        const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const dataType = [
+                { name: "sellId", type: "bytes32" },
+                { name: "share", type: "uint32" },
+                { name: "price", type: "uint256" },
+                { name: "deadline", type: "uint256" },
+            ];
 
-        const price = sellInfoBeforeSale.price;
-
-        await payload.erc20Token1.approve(
-            marketplace.address, ethers.constants.MaxUint256,
-        )
-
-        const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
-        const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
-        const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(marketplace.address);
-        const paymentToken = payload.erc20Token1.address;
-        const shareToBuy = sellInfoBeforeSale.share;
-        expect(shareToBuy).equal(90);
-        console.log("balanceOfBuyerBeforeSale", balanceOfBuyerBeforeSale);
-        const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
-        const shareOfSellerBeforeSale = await payload.nft.shareOf(tokenId, seller);
-        const totalPrice = price.mul(shareToBuy);
-        const tx = marketplace.buyNFT(
-            sellId,
-            shareToBuy,
-            price
-        );
-        await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-            sellId, totalPrice
-        );
-        await expect(tx).emit(payload.nft, 'Transfer').withArgs(
-            seller, buyer, tokenId
-        );
+            const domainData = {
+                name: "OSNFT_RELAYER",
+                version: "1",
+                chainId: await user.getChainId(),
+                verifyingContract: payload.relayer.address.toLowerCase(),
+            };
+            const message = {
+                sellId,
+                share: shareToBuy,
+                price,
+                deadline
+            };
 
 
-        const sellInfoAfterSale = await marketplace.getNFTFromSale(sellId);
-        const expectedVal = {
-            price: 0,
-            seller: ethers.constants.AddressZero,
-            share: 0,
-            paymentToken: ethers.constants.AddressZero,
-            tokenId: '0x0000000000000000000000000000000000000000000000000000000000000000',
-            sellPriority: 0
-        };
-        for (const prop in expectedVal) {
-            expect((sellInfoAfterSale as any)[prop]).equal((expectedVal as any)[prop]);
+            const signatureResult = await user._signTypedData(domainData, {
+                NFTBuyData: dataType,
+            }, message);
+
+
+            return signatureResult;
         }
 
-        expect(sellInfoAfterSale.share).equal(
-            sellInfoBeforeSale.share - shareToBuy
-        )
+        it("passing different from than in sign - Invalid signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
 
-        // seller share should be deducted
-        const shareOfSellerAfterSale = await payload.nft.shareOf(tokenId, seller);
-        expect(shareOfSellerAfterSale).equal(
-            shareOfSellerBeforeSale - shareToBuy
-        );
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
 
-        // check nft owner
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
 
-        const shareOfBuyer = await payload.nft.shareOf(tokenId, buyer);
-        expect(shareOfBuyer).equal(
-            shareOfBuyerBeforeSale + shareToBuy
-        );
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) + 1000;
 
-        // check marketplace money
-        const earningForMarketplace = getPercentage(totalPrice, 2);
-        const earningForSeller = totalPrice.sub(earningForMarketplace); //getPercentage(price, 98);
 
-        // check marketplace money
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
 
-        const balanceOfMarketPlace = await payload.erc20Token1.balanceOf(payload.marketplace.address);
-        console.log('balanceOfMarketPlace', balanceOfMarketPlace);
-        console.log('earningForMarketplace', earningForMarketplace);
-        console.log('balanceOfMarketPlaceBeforeSale', balanceOfMarketPlaceBeforeSale);
-        expect(balanceOfMarketPlace).equal(
-            earningForMarketplace.add(balanceOfMarketPlaceBeforeSale)
-        );
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline,
+                    to: payload.signer2.address
+                },
+                sellId,
+                shareToBuy,
+                price
+            );
+            await expect(tx).to.revertedWith('Invalid signature');
+        });
 
-        const balanceOfSeller = await payload.erc20Token1.balanceOf(seller);
+        it("expired deadline - Invalid signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
 
-        expect(balanceOfSeller.sub(balanceOfSellerBeforeSale)).equal(
-            earningForSeller
-        );
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
 
-        // buyer balance should be deducted
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
 
-        const balanceOfBuyerAfterBuy = await payload.erc20Token1.balanceOf(buyer);
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) - 1000;
 
-        expect(balanceOfBuyerAfterBuy).equal(
-            balanceOfBuyerBeforeSale.sub(
-                price.mul(shareToBuy)
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline,
+                    to: payload.deployer.address
+                },
+                sellId,
+                shareToBuy,
+                price
+            );
+            await expect(tx).to.revertedWith('Signature expired');
+        });
+
+        it("deadline different than signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
+
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
+
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) + 1000;
+
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline: deadline + 2000,
+                    to: payload.deployer.address
+                },
+                sellId,
+                shareToBuy,
+                price
+            );
+            await expect(tx).to.revertedWith('Invalid signature');
+        });
+
+        it("sellid different than signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
+
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
+
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) + 1000;
+
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline: deadline,
+                    to: payload.deployer.address
+                },
+                payload.getSellId(
+                    tokenId,
+                    payload.approver.address
+                ),
+                shareToBuy,
+                price
+            );
+            await expect(tx).to.revertedWith('Invalid signature');
+        });
+
+        it("share different than signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
+
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
+
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) + 1000;
+
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline: deadline,
+                    to: payload.deployer.address
+                },
+                sellId,
+                1,
+                price
+            );
+            await expect(tx).to.revertedWith('Invalid signature');
+        });
+
+        it("price different than signature", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
+
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
+
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) + 1000;
+
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline: deadline,
+                    to: payload.deployer.address
+                },
+                sellId,
+                shareToBuy,
+                price.add(2)
+            );
+            await expect(tx).to.revertedWith('Invalid signature');
+        });
+
+        it("Invalid relayer", async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
+
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
+
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+            const price = sellInfoBeforeSale.price;
+            const shareToBuy = 10;
+            const deadline = (await time.latest()) + 1000;
+
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.marketplace.buyNFTMeta(
+                payload.deployer.address,
+                sellId,
+                shareToBuy,
+                price
+            );
+            await expect(tx).to.revertedWith('Invalid relayer');
+        });
+
+        it('all buy share nft - jsstore', async () => {
+            const marketplace = payload.marketplace;
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const seller = payload.signer3.address;
+            const buyer = payload.deployer.address;
+
+            const sellId = payload.getSellId(
+                tokenId,
+                seller
+            );
+            expect(buyer).not.equal(seller);
+
+            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+
+            const price = sellInfoBeforeSale.price;
+
+            await payload.erc20Token1.approve(
+                marketplace.address, ethers.constants.MaxUint256,
             )
-        )
 
-        expect((earningForMarketplace).add(earningForSeller)).equal(totalPrice);
+            const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(buyer);
+            const balanceOfSellerBeforeSale = await payload.erc20Token1.balanceOf(seller);
+            const balanceOfMarketPlaceBeforeSale = await payload.erc20Token1.balanceOf(marketplace.address);
+            const paymentToken = payload.erc20Token1.address;
+            const shareToBuy = sellInfoBeforeSale.share;
+            expect(shareToBuy).equal(90);
+            console.log("balanceOfBuyerBeforeSale", balanceOfBuyerBeforeSale);
+            const shareOfBuyerBeforeSale = await payload.nft.shareOf(tokenId, buyer);
+            const shareOfSellerBeforeSale = await payload.nft.shareOf(tokenId, seller);
+            const totalPrice = price.mul(shareToBuy);
 
-        payload.transactions['buyJsStore'].push(
-            (await tx).hash
-        )
+            const deadline = (await time.latest()) + 1000;
+
+
+            const signature = await signMessage(
+                payload.deployer,
+                sellId,
+                shareToBuy,
+                price,
+                deadline
+            );
+
+            const tx = payload.relayer.buy(
+                {
+                    signature: signature,
+                    deadline,
+                    to: payload.deployer.address
+                },
+                sellId,
+                shareToBuy,
+                price
+            );
+            await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
+                sellId, totalPrice
+            );
+            await expect(tx).emit(payload.nft, 'Transfer').withArgs(
+                seller, buyer, tokenId
+            );
+
+
+            const sellInfoAfterSale = await marketplace.getNFTFromSale(sellId);
+            const expectedVal = {
+                price: 0,
+                seller: ethers.constants.AddressZero,
+                share: 0,
+                paymentToken: ethers.constants.AddressZero,
+                tokenId: '0x0000000000000000000000000000000000000000000000000000000000000000',
+                sellPriority: 0
+            };
+            for (const prop in expectedVal) {
+                expect((sellInfoAfterSale as any)[prop]).equal((expectedVal as any)[prop]);
+            }
+
+            expect(sellInfoAfterSale.share).equal(
+                sellInfoBeforeSale.share - shareToBuy
+            )
+
+            // seller share should be deducted
+            const shareOfSellerAfterSale = await payload.nft.shareOf(tokenId, seller);
+            expect(shareOfSellerAfterSale).equal(
+                shareOfSellerBeforeSale - shareToBuy
+            );
+
+            // check nft owner
+
+            const shareOfBuyer = await payload.nft.shareOf(tokenId, buyer);
+            expect(shareOfBuyer).equal(
+                shareOfBuyerBeforeSale + shareToBuy
+            );
+
+            // check marketplace money
+            const earningForMarketplace = getPercentage(totalPrice, 2);
+            const earningForSeller = totalPrice.sub(earningForMarketplace); //getPercentage(price, 98);
+
+            // check marketplace money
+
+            const balanceOfMarketPlace = await payload.erc20Token1.balanceOf(payload.marketplace.address);
+            console.log('balanceOfMarketPlace', balanceOfMarketPlace);
+            console.log('earningForMarketplace', earningForMarketplace);
+            console.log('balanceOfMarketPlaceBeforeSale', balanceOfMarketPlaceBeforeSale);
+            expect(balanceOfMarketPlace).equal(
+                earningForMarketplace.add(balanceOfMarketPlaceBeforeSale)
+            );
+
+            const balanceOfSeller = await payload.erc20Token1.balanceOf(seller);
+
+            expect(balanceOfSeller.sub(balanceOfSellerBeforeSale)).equal(
+                earningForSeller
+            );
+
+            // buyer balance should be deducted
+
+            const balanceOfBuyerAfterBuy = await payload.erc20Token1.balanceOf(buyer);
+
+            expect(balanceOfBuyerAfterBuy).equal(
+                balanceOfBuyerBeforeSale.sub(
+                    price.mul(shareToBuy)
+                )
+            )
+
+            expect((earningForMarketplace).add(earningForSeller)).equal(totalPrice);
+
+            payload.transactions['buyJsStore'].push(
+                (await tx).hash
+            )
+        })
+
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by creator', async () => {
