@@ -87,9 +87,7 @@ contract OSDRelayer is OSDRelayerBase {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
-                    keccak256(
-                        "NFTBuyData(bytes32 sellId,uint32 share,uint256 price,uint256 deadline)"
-                    ),
+                    _TYPE_HASH_NFTBuyData,
                     sellId,
                     share,
                     price,
