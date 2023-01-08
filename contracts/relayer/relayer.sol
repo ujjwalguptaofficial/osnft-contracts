@@ -13,8 +13,6 @@ contract OSDRelayer is OSDRelayerBase {
         SignatureMeta calldata signatureData,
         IOSNFTMarketPlace.SellListingInput calldata sellData
     ) external {
-        _requireDeadlineNotExpired(signatureData);
-
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
@@ -28,10 +26,8 @@ contract OSDRelayer is OSDRelayerBase {
                 )
             )
         );
-        require(
-            ECDSA.recover(digest, signatureData.signature) == signatureData.to,
-            "Invalid signature"
-        );
+
+        _requireValidSignature(digest, signatureData);
 
         _marketplace.listNFTOnSaleMeta(signatureData.to, sellData);
     }
@@ -40,8 +36,6 @@ contract OSDRelayer is OSDRelayerBase {
         SignatureMeta calldata signatureData,
         IOSNFTMarketPlace.AuctionListingInput calldata input
     ) external {
-        _requireDeadlineNotExpired(signatureData);
-
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
@@ -56,10 +50,8 @@ contract OSDRelayer is OSDRelayerBase {
                 )
             )
         );
-        require(
-            ECDSA.recover(digest, signatureData.signature) == signatureData.to,
-            "Invalid signature"
-        );
+
+        _requireValidSignature(digest, signatureData);
 
         _marketplace.createAuctionMeta(signatureData.to, input);
     }
@@ -70,8 +62,6 @@ contract OSDRelayer is OSDRelayerBase {
         IOSNFT.NFT_TYPE nftType,
         uint32 totalShare
     ) external {
-        _requireDeadlineNotExpired(signatureData);
-
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
@@ -85,10 +75,8 @@ contract OSDRelayer is OSDRelayerBase {
                 )
             )
         );
-        require(
-            ECDSA.recover(digest, signatureData.signature) == signatureData.to,
-            "Invalid signature"
-        );
+        _requireValidSignature(digest, signatureData);
+
         _nft.mintMeta(signatureData.to, projectUrl, nftType, totalShare);
     }
 }

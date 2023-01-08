@@ -29,9 +29,15 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
         );
     }
 
-    function _requireDeadlineNotExpired(
+    function _requireValidSignature(
+        bytes32 digest,
         SignatureMeta calldata signatureData
     ) internal view {
         require(block.timestamp < signatureData.deadline, "Signature expired");
+
+        require(
+            ECDSA.recover(digest, signatureData.signature) == signatureData.to,
+            "Invalid signature"
+        );
     }
 }
