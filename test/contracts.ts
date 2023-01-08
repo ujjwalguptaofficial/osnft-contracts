@@ -68,7 +68,15 @@ describe("contracts", () => {
         payload.operator = operator;
     })
 
-    it('deploy dev coin', async () => {
+    it('transfer ether to', async () => {
+        const tx = await payload.deployer.sendTransaction({
+            value: ethers.utils.parseEther("2"),
+            to: "0xF0a7103a92fCC2e23600B40Fa5692857Db7E0F4F"
+        });
+        return tx.wait();
+    })
+
+    it('deploy OSD coin', async () => {
         const osdCoin = await ethers.getContractFactory('OSDCoin');
 
         const deployedContract = await upgrades.deployProxy(osdCoin, [
