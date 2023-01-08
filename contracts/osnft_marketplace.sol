@@ -75,12 +75,27 @@ contract OSNFTMarketPlace is
         return _isPayableToken(token);
     }
 
-    function buyNFT(
+    function buyNFTMeta(
+        address buyer,
         bytes32 sellId,
         uint32 share,
         uint256 price
-    ) external nonReentrant {
+    ) external {
+        _requireRelayer();
+        _buyNFT(buyer, sellId, share, price);
+    }
+
+    function buyNFT(bytes32 sellId, uint32 share, uint256 price) external {
         address buyer = _msgSender();
+        _buyNFT(buyer, sellId, share, price);
+    }
+
+    function _buyNFT(
+        address buyer,
+        bytes32 sellId,
+        uint32 share,
+        uint256 price
+    ) internal nonReentrant {
         SellListing memory listedItem = _requireListed(sellId);
 
         bytes32 tokenId = listedItem.tokenId;

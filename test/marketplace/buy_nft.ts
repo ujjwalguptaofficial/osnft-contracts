@@ -74,7 +74,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(218669);
+        expect(gas).equal(218719);
 
     });
 
@@ -106,7 +106,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(184738);
+        expect(gas).equal(184790);
 
     });
 
@@ -297,7 +297,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(194959);
+        expect(gas).equal(195004);
     })
 
     it('buy with zero share', async () => {

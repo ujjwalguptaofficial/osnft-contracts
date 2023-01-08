@@ -65,9 +65,7 @@ contract OSDRelayer is OSDRelayerBase {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
-                    keccak256(
-                        "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare,uint256 deadline)"
-                    ),
+                    _TYPE_HASH_NFTMintData,
                     keccak256(bytes(projectUrl)),
                     nftType,
                     totalShare,
@@ -78,5 +76,30 @@ contract OSDRelayer is OSDRelayerBase {
         _requireValidSignature(digest, signatureData);
 
         _nft.mintMeta(signatureData.to, projectUrl, nftType, totalShare);
+    }
+
+    function buy(
+        SignatureMeta calldata signatureData,
+        bytes32 sellId,
+        uint32 share,
+        uint256 price
+    ) external {
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    keccak256(
+                        "NFTBuyData(bytes32 sellId,uint32 share,uint256 price,uint256 deadline)"
+                    ),
+                    sellId,
+                    share,
+                    price,
+                    signatureData.deadline
+                )
+            )
+        );
+
+        _requireValidSignature(digest, signatureData);
+
+        _marketplace.buyNFTMeta(signatureData.to, sellId, share, price);
     }
 }

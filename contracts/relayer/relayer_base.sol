@@ -14,6 +14,7 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
     IOSNFT internal _nft;
     bytes32 internal immutable _TYPE_HASH_NFTListOnSaleData;
     bytes32 internal immutable _TYPE_HASH_NFTAuctionData;
+    bytes32 internal immutable _TYPE_HASH_NFTMintData;
 
     constructor(
         address marketplace_,
@@ -26,6 +27,9 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
         );
         _TYPE_HASH_NFTAuctionData = keccak256(
             "NFTAuctionData(bytes32 tokenId,uint32 share,uint256 initialBid,uint256 endAuction,address paymentToken,uint32 sellPriority,uint256 deadline)"
+        );
+        _TYPE_HASH_NFTMintData = keccak256(
+            "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare,uint256 deadline)"
         );
     }
 
