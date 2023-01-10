@@ -849,7 +849,7 @@
     },
     "ce32d5ed490a60ddc89bbd5199519487bf9b51be2038b1f6e8aa611f89f0422d": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x694fe4f4fedc092f9814ab2f16c201f51ece62232fab6cfd55704b7e2f660922",
+      "txHash": "0xaea2ef1ac7d667998029a545710702855aa57b207c14236bbcc3adb47a169cde",
       "layout": {
         "storage": [
           {
@@ -1003,7 +1003,7 @@
             "slot": "163",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/os_nft_base.sol:512"
+            "src": "contracts/os_nft_base.sol:515"
           }
         ],
         "types": {

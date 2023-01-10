@@ -61,17 +61,25 @@ export function testNFTBurn(payload: IDeployedPayload) {
                 projectId, from
             )
 
-            expect(shareOf).greaterThan(0);
+            expect(shareOf).equal(100);
             const nativeToken = payload.nativeToken;
             const balanceOfOSD = await nativeToken.balanceOf(from);
 
-            const tx = await nft.burn(projectId);
+            const owner = await nft.ownerOf(projectId);
+
+            expect(owner).equal(from);
+
+            const tx = nft.burn(projectId);
 
             await expect(tx).to.emit(nft, 'Transfer').withArgs(
                 from,
                 constants.AddressZero,
                 projectId
             )
+
+            const ownerAfterBurn = nft.ownerOf(projectId);
+
+            await expect(ownerAfterBurn).to.revertedWith(`ERC721: invalid token ID`);
 
             const balanceofFromAfter = await nft.balanceOf(from);
 

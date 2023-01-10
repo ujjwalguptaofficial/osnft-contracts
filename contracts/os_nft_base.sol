@@ -420,7 +420,10 @@ contract OSNFTBase is
         IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
             .getApprovedProject(tokenId);
 
+        // burn osd worth of project
         _burnProjectWorth(from, projectApproveInfo.worth);
+
+        // decrease token count
         _decreaseBalance(from);
         emit Transfer(from, address(0), tokenId);
     }
