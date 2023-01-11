@@ -181,7 +181,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const sellId = payload.getSellId(projectId, seller);
 
-            const tx = marketplace.connect(payload.signer4).updateSellPriorityOnSale(
+            const tx = marketplace.connect(payload.signer4).updateSellPriority(
                 sellId,
                 10,
             );
@@ -198,7 +198,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 seller
             );
 
-            const tx = marketplace.connect(payload.signer4).updateSellPriorityOnSale(auctionId,
+            const tx = marketplace.connect(payload.signer4).updateSellPriority(auctionId,
                 10);
             await expect(tx).to.revertedWith('Require NFT ownership');
         })
@@ -211,12 +211,12 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
 
-            const gasForPrioritySale = await marketplace.connect(payload.signer2).estimateGas.updateSellPriorityOnSale(
+            const gasForPrioritySale = await marketplace.connect(payload.signer2).estimateGas.updateSellPriority(
                 sellId,
                 10
             );
 
-            expect(gasForPrioritySale).equal(65068);
+            expect(gasForPrioritySale).equal(65069);
         })
 
         it('success', async () => {
@@ -235,7 +235,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const nftSaleInfoBefore = await marketplace.getNFTFromSale(sellId);
             expect(nftSaleInfoBefore.sellPriority).lessThan(sellPriority);
 
-            const tx = marketplace.connect(payload.signer2).updateSellPriorityOnSale(
+            const tx = marketplace.connect(payload.signer2).updateSellPriority(
                 sellId,
                 sellPriority
             );
