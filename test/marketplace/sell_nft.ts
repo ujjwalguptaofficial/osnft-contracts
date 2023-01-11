@@ -13,7 +13,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             { name: "tokenId", type: "bytes32" },
             { name: "share", type: "uint32" },
             { name: "price", type: "uint256" },
-            { name: "erc20token", type: "address" },
+            { name: "paymentToken", type: "address" },
             { name: "sellPriority", type: "uint32" },
             { name: "deadline", type: "uint256" },
         ];
@@ -28,7 +28,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             tokenId,
             share,
             price,
-            erc20token,
+            paymentToken: erc20token,
             sellPriority,
             deadline
         };
@@ -601,7 +601,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(234296, 234299)
+            expect(gas).to.within(234309, 234310)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
