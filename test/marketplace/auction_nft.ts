@@ -160,7 +160,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
 
-        const tx1 = await marketplace.connect(payload.signer4).listNFTOnSale(
+        const tx1 = await marketplace.connect(payload.signer4).sell(
             {
                 tokenId: projectId,
                 share: 0,

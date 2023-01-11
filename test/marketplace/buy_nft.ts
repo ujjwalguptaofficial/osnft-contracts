@@ -985,7 +985,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         // add on sale
 
-        await marketplace.connect(payload.signer2).listNFTOnSale({
+        await marketplace.connect(payload.signer2).sell({
             tokenId, share: 0, price, paymentToken: erc20Token.address, sellPriority: 0
         });
 

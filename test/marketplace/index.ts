@@ -70,7 +70,6 @@ export function testMarketplace(payload: IDeployedPayload) {
         testNFTSale(payload);
     });
 
-    return;
 
     describe('buy nft', () => {
         testNFTBuy(payload);

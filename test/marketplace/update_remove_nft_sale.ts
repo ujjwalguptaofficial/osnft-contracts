@@ -11,7 +11,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
         );
         const seller = payload.signer2.address;
 
-        const tx = await marketplace.connect(payload.signer2).listNFTOnSale(
+        const tx = await marketplace.connect(payload.signer2).sell(
             {
                 tokenId: projectId,
                 share: 0,
@@ -216,7 +216,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10
             );
 
-            expect(gasForPrioritySale).equal(65069);
+            expect(gasForPrioritySale).equal(65023);
         })
 
         it('success', async () => {
