@@ -23,7 +23,7 @@ export function testRelayer(payload: IDeployedPayload) {
         );
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(1509767);
+        expect(estimatedGas).equal(1509575);
     })
 
 }

@@ -72,7 +72,7 @@ contract OSNFTMarketPlace is
         return _isPayableToken(token);
     }
 
-    function buyNFTMeta(
+    function buyMeta(
         address buyer,
         bytes32 sellId,
         uint32 share,
@@ -82,7 +82,7 @@ contract OSNFTMarketPlace is
         _buyNFT(buyer, sellId, share, price);
     }
 
-    function buyNFT(bytes32 sellId, uint32 share, uint256 price) external {
+    function buy(bytes32 sellId, uint32 share, uint256 price) external {
         address buyer = _msgSender();
         _buyNFT(buyer, sellId, share, price);
     }

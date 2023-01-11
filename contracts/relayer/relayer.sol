@@ -98,6 +98,6 @@ contract OSDRelayer is OSDRelayerBase {
 
         _requireValidSignature(digest, signatureData);
 
-        _marketplace.buyNFTMeta(signatureData.to, sellId, share, price);
+        _marketplace.buyMeta(signatureData.to, sellId, share, price);
     }
 }
