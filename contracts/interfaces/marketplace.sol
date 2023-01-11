@@ -7,7 +7,7 @@ import "./marketplace_datatype.sol";
  * @dev Required interface of an marketplace contract
  */
 interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
-    function listNFTOnSale(SellListingInput calldata sellData) external;
+    function sell(SellListingInput calldata sellData) external;
 
     function removeNFTSale(bytes32 tokenId) external;
 
@@ -40,8 +40,5 @@ interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
         AuctionListingInput calldata input
     ) external;
 
-    function listNFTOnSaleMeta(
-        address to,
-        SellListingInput calldata sellData
-    ) external;
+    function sellMeta(address to, SellListingInput calldata sellData) external;
 }

@@ -35,7 +35,7 @@ contract OSNFTMarketPlaceBase is
 
     address internal _relayerAddress;
 
-    function _listNFTOnSale(SellListing memory sellData) internal {
+    function _listOnSale(SellListing memory sellData) internal {
         bytes32 tokenId = sellData.tokenId;
         address seller = sellData.seller;
 

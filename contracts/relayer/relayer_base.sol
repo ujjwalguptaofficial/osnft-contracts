@@ -12,7 +12,7 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
 
     IOSNFTMarketPlace internal _marketplace;
     IOSNFT internal _nft;
-    bytes32 internal immutable _TYPE_HASH_NFTListOnSaleData;
+    bytes32 internal immutable _TYPE_HASH_NFTSellData;
     bytes32 internal immutable _TYPE_HASH_NFTAuctionData;
     bytes32 internal immutable _TYPE_HASH_NFTMintData;
     bytes32 internal immutable _TYPE_HASH_NFTBuyData;
@@ -23,8 +23,8 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
     ) EIP712("OSNFT_RELAYER", "1") {
         _marketplace = IOSNFTMarketPlace(marketplace_);
         _nft = IOSNFT(nft_);
-        _TYPE_HASH_NFTListOnSaleData = keccak256(
-            "NFTListOnSaleData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint32 sellPriority,uint256 deadline)"
+        _TYPE_HASH_NFTSellData = keccak256(
+            "NFTSellData(bytes32 tokenId,uint32 share,uint256 price,address erc20token,uint32 sellPriority,uint256 deadline)"
         );
         _TYPE_HASH_NFTAuctionData = keccak256(
             "NFTAuctionData(bytes32 tokenId,uint32 share,uint256 initialBid,uint256 endAuction,address paymentToken,uint32 sellPriority,uint256 deadline)"

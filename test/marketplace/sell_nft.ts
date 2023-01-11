@@ -35,7 +35,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
 
         const signatureResult = await user._signTypedData(domainData, {
-            NFTListOnSaleData: nftMintDataType,
+            NFTSellData: nftMintDataType,
         }, message);
 
 
@@ -44,7 +44,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     it("add nft on sale by non owner", async () => {
         const marketplace = payload.marketplace;
-        const tx = marketplace.connect(payload.signer4).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer4).sell({
             tokenId: payload.getProjectId(
                 payload.projects["jsstore-example"]
             ),
@@ -67,7 +67,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
 
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale(
+        const tx = marketplace.connect(payload.signer3).sell(
             {
                 tokenId: projectId,
                 share: 0,
@@ -94,7 +94,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const gas = await marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
+        const gas = await marketplace.connect(payload.signer3).estimateGas.sell({
             tokenId,
             share: 0,
             price,
@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(160964);
+        expect(gas).equal(161031);
     });
 
 
@@ -112,7 +112,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             "ffgg"
         );
 
-        const tx = marketplace.listNFTOnSale({
+        const tx = marketplace.sell({
             tokenId: projectId,
             share: 0,
             price: 10,
@@ -127,7 +127,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(
             payload.projects["jsstore-example"]
         );
-        const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
+        const tx = marketplace.connect(payload.signer3).estimateGas.sell({
             tokenId,
             share: 0,
             price: 0,
@@ -145,7 +145,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer3).estimateGas.listNFTOnSale({
+        const tx = marketplace.connect(payload.signer3).estimateGas.sell({
             tokenId,
             share: 0,
             price,
@@ -168,7 +168,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         const from = payload.signer3.address;
         const nativeCoinBalance = await nativeCoin.balanceOf(from);
 
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer3).sell({
             tokenId,
             share: 0,
             price,
@@ -211,7 +211,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore-example"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer3).sell({
             tokenId,
             share: 0,
             price,
@@ -229,7 +229,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore"]
         );
         const price = 10000000000;
-        const tx = marketplace.connect(payload.signer4).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer4).sell({
             tokenId,
             share: 0,
             price,
@@ -250,7 +250,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const price = 10000000000;
             const shareOf = await payload.nft.connect(payload.signer4).shareOf(tokenId, payload.signer4.address);
             expect(shareOf).equal(0);
-            const tx = marketplace.connect(payload.signer4).listNFTOnSale({
+            const tx = marketplace.connect(payload.signer4).sell({
                 tokenId,
                 share: shareOf + 1,
                 price,
@@ -270,7 +270,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const shareOf = await payload.nft.shareOf(tokenId, payload.signer2.address);
             expect(shareOf).greaterThan(0);
 
-            const tx = marketplace.connect(payload.signer2).listNFTOnSale({
+            const tx = marketplace.connect(payload.signer2).sell({
                 tokenId,
                 share: shareOf + 1,
                 price,
@@ -298,7 +298,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         const from = payload.signer3.address;
         const nativeCoinBalance = await nativeCoin.balanceOf(from);
 
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer3).sell({
             tokenId,
             share: shareToSell,
             price,
@@ -348,7 +348,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
         expect(shareOf).greaterThan(shareToSell);
 
-        const tx = marketplace.connect(payload.signer3).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer3).sell({
             tokenId,
             share: shareToSell,
             price,
@@ -368,7 +368,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         const nativeCoin = payload.nativeToken;
         const from = payload.signer2.address;
         const nativeCoinBalance = await nativeCoin.balanceOf(from);
-        const tx = marketplace.connect(payload.signer2).listNFTOnSale({
+        const tx = marketplace.connect(payload.signer2).sell({
             tokenId,
             share: 0,
             price,
@@ -418,7 +418,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const erc20token = payload.erc20Token2.address;
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
-            const tx = relayer.listNFTOnSale(
+            const tx = relayer.sell(
                 {
                     signature,
                     to: payload.signer2.address,
@@ -447,7 +447,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer2, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer2.address;
-            const tx = relayer.listNFTOnSale(
+            const tx = relayer.sell(
                 {
                     signature,
                     to: from,
@@ -476,7 +476,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) - 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer3.address;
-            const tx = relayer.listNFTOnSale(
+            const tx = relayer.sell(
                 {
                     signature,
                     to: from,
@@ -504,7 +504,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) - 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer3.address;
-            const tx = relayer.listNFTOnSale(
+            const tx = relayer.sell(
                 {
                     signature,
                     to: from,
@@ -533,7 +533,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 0, deadline)
             const from = payload.signer3.address;
-            const tx = relayer.listNFTOnSale(
+            const tx = relayer.sell(
                 {
                     signature,
                     to: from,
@@ -562,7 +562,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 10, deadline)
             const from = payload.signer3.address;
-            const tx = marketplace.listNFTOnSaleMeta(
+            const tx = marketplace.sellMeta(
                 from,
                 {
                     tokenId,
@@ -586,7 +586,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 10, deadline)
             const from = payload.signer3.address;
-            const gas = await relayer.estimateGas.listNFTOnSale(
+            const gas = await relayer.estimateGas.sell(
                 {
                     signature,
                     to: from,
@@ -601,7 +601,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(234330, 234370)
+            expect(gas).to.within(234343, 234360)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
@@ -616,7 +616,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             const deadline = (await time.latest()) + 1000;
             const signature = await signMessage(payload.signer3, tokenId, 0, price, erc20token, 10, deadline)
             const from = payload.signer3.address;
-            const tx = relayer.listNFTOnSale(
+            const tx = relayer.sell(
                 {
                     signature,
                     to: from,

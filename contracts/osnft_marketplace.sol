@@ -32,13 +32,10 @@ contract OSNFTMarketPlace is
         _marketPlaceRoyality = value;
     }
 
-    function listNFTOnSaleMeta(
-        address to,
-        SellListingInput calldata sellData
-    ) external {
+    function sellMeta(address to, SellListingInput calldata sellData) external {
         _requireRelayer();
 
-        _listNFTOnSale(
+        _listOnSale(
             SellListing({
                 paymentToken: sellData.paymentToken,
                 share: sellData.share,
@@ -50,8 +47,8 @@ contract OSNFTMarketPlace is
         );
     }
 
-    function listNFTOnSale(SellListingInput calldata sellData) external {
-        _listNFTOnSale(
+    function sell(SellListingInput calldata sellData) external {
+        _listOnSale(
             SellListing({
                 paymentToken: sellData.paymentToken,
                 share: sellData.share,

@@ -9,14 +9,14 @@ contract OSDRelayer is OSDRelayerBase {
         address nft_
     ) OSDRelayerBase(marketplace_, nft_) {}
 
-    function listNFTOnSale(
+    function sell(
         SignatureMeta calldata signatureData,
         IOSNFTMarketPlace.SellListingInput calldata sellData
     ) external {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
-                    _TYPE_HASH_NFTListOnSaleData,
+                    _TYPE_HASH_NFTSellData,
                     sellData.tokenId,
                     sellData.share,
                     sellData.price,
@@ -29,7 +29,7 @@ contract OSDRelayer is OSDRelayerBase {
 
         _requireValidSignature(digest, signatureData);
 
-        _marketplace.listNFTOnSaleMeta(signatureData.to, sellData);
+        _marketplace.sellMeta(signatureData.to, sellData);
     }
 
     function createAuction(
