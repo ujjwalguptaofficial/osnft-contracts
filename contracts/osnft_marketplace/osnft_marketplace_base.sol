@@ -70,7 +70,14 @@ contract OSNFTMarketPlaceBase is
 
         bytes32 tokenId = listedItem.tokenId;
         bool isShareToken = listedItem.share > 0;
+
+        require(
+            price >= listedItem.price,
+            "require_price_above_equal_sell_price"
+        );
+
         uint256 totalPrice = price;
+
         if (isShareToken) {
             require(
                 share <= listedItem.share,
@@ -78,13 +85,7 @@ contract OSNFTMarketPlaceBase is
             );
 
             totalPrice = price * share;
-        }
-        require(
-            price >= listedItem.price,
-            "require_price_above_equal_sell_price"
-        );
 
-        if (isShareToken) {
             // will not underflow  as input share is already checked
             // share will be always less than or equal to stored share
             SellListing storage listedSell = _sellListings[sellId];
