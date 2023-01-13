@@ -101,7 +101,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                     paymentToken: payload.deployer.address,
                     sellPriority: 10,
                 });
-            await expect(tx).to.revertedWith('Invalid payment token');
+            await expect(tx).to.revertedWith('invalid_payment_token');
         })
 
         it('gas estimate', async () => {

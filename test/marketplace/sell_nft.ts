@@ -76,7 +76,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('require_nft_owner transfer approval');
+        await expect(tx).revertedWith('require_nft_transfer_approval');
     });
 
     it('change default marketplace', async () => {
@@ -153,7 +153,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        await expect(tx).revertedWith('Invalid payment token');
+        await expect(tx).revertedWith('invalid_payment_token');
     });
 
 

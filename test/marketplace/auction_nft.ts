@@ -76,7 +76,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('Invalid end date for auction');
+        await expect(tx).revertedWith('invalid_end_auction');
     });
 
     it('auction with zero price', async () => {
@@ -140,7 +140,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('require_nft_owner transfer approval');
+        await expect(tx).revertedWith('require_nft_transfer_approval');
 
     });
 
@@ -201,7 +201,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.deployer.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('Invalid payment token');
+        await expect(tx).revertedWith('invalid_payment_token');
     });
 
     it('not existing token', async () => {

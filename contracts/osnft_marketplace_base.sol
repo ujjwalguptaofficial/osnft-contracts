@@ -121,10 +121,7 @@ contract OSNFTMarketPlaceBase is
         address seller
     ) internal {
         // Check if the endAuction time is valid
-        require(
-            input.endAuction > block.timestamp,
-            "Invalid end date for auction"
-        );
+        require(input.endAuction > block.timestamp, "invalid_end_auction");
 
         // Check if the initial bid price is > 0
         require(input.initialBid > 0, "require_bidprice_above_zero");
@@ -197,7 +194,7 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _requirePayableToken(address payableToken) internal view {
-        require(_isPayableToken(payableToken), "Invalid payment token");
+        require(_isPayableToken(payableToken), "invalid_payment_token");
     }
 
     function _requireTokenApproved(bytes32 tokenId) internal view {
@@ -207,7 +204,7 @@ contract OSNFTMarketPlaceBase is
         require(
             _nftContract.isApprovedForAll(_msgSender(), address(this)) ||
                 _nftContract.getApproved(tokenId) == address(this),
-            "require_nft_owner transfer approval"
+            "require_nft_transfer_approval"
         );
     }
 
