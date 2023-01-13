@@ -76,7 +76,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(218670);
+        expect(gas).equal(218685);
 
     });
 
@@ -108,7 +108,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(184739);
+        expect(gas).equal(184755);
 
     });
 
@@ -299,7 +299,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(194960);
+        expect(gas).equal(194973);
     })
 
     it('buy with zero share', async () => {
@@ -322,7 +322,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price.add(10)
         );
-        await expect(tx).to.revertedWith('require_price_above_equal_sell_price')
+        await expect(tx).to.revertedWith('Input share should be above zero')
     })
 
     it('buy with share greater than listed', async () => {
@@ -346,6 +346,30 @@ export function testNFTBuy(payload: IDeployedPayload) {
             price
         );
         await expect(tx).to.revertedWith('require_input_share_less_equal_sell_share')
+    })
+
+    it('buy with price less than listed', async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+        const seller = payload.signer3.address;
+        const sellId = payload.getSellId(
+            tokenId,
+            seller
+        );
+
+        const price = (await marketplace.getNFTFromSale(sellId)).price;
+
+        await payload.erc20Token1.approve(
+            marketplace.address, ethers.constants.MaxUint256,
+        );
+        const shareToBuy = 10;
+
+        const tx = marketplace.buy(
+            sellId,
+            shareToBuy,
+            price.sub(2)
+        );
+        await expect(tx).to.revertedWith('require_price_above_equal_sell_price')
     })
 
     it('partial buy share nft - jsstore', async () => {
@@ -389,7 +413,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             price
         );
         await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-            sellId, totalPrice
+            sellId, price
         );
         await expect(tx).emit(payload.nft, 'Transfer').withArgs(
             seller, buyer, tokenId
@@ -803,10 +827,13 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 price
             );
             await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-                sellId, totalPrice
+                sellId, price
             );
             await expect(tx).emit(payload.nft, 'Transfer').withArgs(
                 seller, buyer, tokenId
+            );
+            await expect(tx).emit(payload.nft, 'TransferShare').withArgs(
+                shareToBuy
             );
 
 
