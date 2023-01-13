@@ -423,6 +423,9 @@ contract OSNFTBase is
         // burn osd worth of project
         _burnProjectWorth(from, projectApproveInfo.worth);
 
+        // burn NFT
+        _approver.burnProject(tokenId);
+
         // decrease token count
         _decreaseBalance(from);
         emit Transfer(from, address(0), tokenId);

@@ -57,4 +57,11 @@ contract OSNFTApprover is
         // worth can not be more than one token
         return value > _oneToken ? _oneToken : value;
     }
+
+    function burnProject(bytes32 tokenId) external {
+        require(isApprover(_msgSender()), "Only approvers allowed");
+
+        delete _projectsApproved[tokenId];
+        emit ProjectBurned(tokenId);
+    }
 }

@@ -48,13 +48,22 @@ export function testNFTBurn(payload: IDeployedPayload) {
         })
     })
 
+    it('add approver', async () => {
+        const tx = payload.approver.addApprover(payload.nft.address);
+        await expect(tx).emit(payload.approver, 'ApproverAdded').withArgs(
+            payload.nft.address
+        );
+    });
 
     describe('burn success', () => {
         it('share tokens', async () => {
             const nft = payload.nft;
 
+
             const projectId = payload.getProjectId(payload.projects["solidity-learning"]);
             const from = payload.deployer.address;
+
+            const approvedProjectBefore = await payload.approver.getApprovedProject(projectId);
 
             const balanceofFrom = await nft.balanceOf(from);
             const shareOf = await nft.shareOf(
@@ -94,11 +103,21 @@ export function testNFTBurn(payload: IDeployedPayload) {
             await expect(shareOfAfter).to.revertedWith(`ERC721: invalid token ID`);
 
             const balanceOfOSDAfter = await nativeToken.balanceOf(from);
-            const approvedProject = await payload.approver.getApprovedProject(projectId);
             expect(balanceOfOSDAfter).equal(
                 balanceOfOSD.sub(
-                    approvedProject.worth
+                    approvedProjectBefore.worth
                 )
+            );
+
+            // check burn at approver
+
+            const approvedProject = await payload.approver.getApprovedProject(projectId);
+
+            expect(approvedProject.worth).equal(0);
+            expect(approvedProject.mintTo).equal(constants.AddressZero);
+
+            expect(tx).to.emit(payload.approver, "ProjectBurned").withArgs(
+                projectId
             );
         })
 
@@ -116,6 +135,8 @@ export function testNFTBurn(payload: IDeployedPayload) {
 
             const nativeToken = payload.nativeToken;
             const balanceOfOSD = await nativeToken.balanceOf(from);
+
+            const approvedProject = await payload.approver.getApprovedProject(projectId);
 
             const tx = await nft.burn(projectId);
 
@@ -138,12 +159,15 @@ export function testNFTBurn(payload: IDeployedPayload) {
             await expect(creatorCutAfter).to.revertedWith(`ERC721: invalid token ID`);
 
             const balanceOfOSDAfter = await nativeToken.balanceOf(from);
-            const approvedProject = await payload.approver.getApprovedProject(projectId);
+            const approvedProjectAfter = await payload.approver.getApprovedProject(projectId);
             expect(balanceOfOSDAfter).equal(
                 balanceOfOSD.sub(
                     approvedProject.worth
                 )
             );
+
+            expect(approvedProjectAfter.worth).equal(0);
+            expect(approvedProjectAfter.mintTo).equal(constants.AddressZero);
 
         })
     })

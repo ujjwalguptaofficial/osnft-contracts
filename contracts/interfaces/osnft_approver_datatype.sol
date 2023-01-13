@@ -20,6 +20,7 @@ interface IOSNFTApproverDataType {
     }
 
     event ProjectApproved(bytes32 indexed tokenId, address indexed account);
+    event ProjectBurned(bytes32 indexed tokenId);
 
     event ApproverAdded(address account);
 
