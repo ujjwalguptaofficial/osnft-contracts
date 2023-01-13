@@ -134,7 +134,7 @@ export function testMint(payload: IDeployedPayload) {
 
             const tx = relayer.mint({ signature, to: deployerAddress, deadline: timestamp }, projectUrl, NFT_TYPE.PercentageCut, 30);
 
-            await expect(tx).revertedWith('Invalid signature');
+            await expect(tx).revertedWith('invalid_signature');
         })
 
         it('Invalid relayer', async () => {
@@ -276,7 +276,7 @@ export function testMint(payload: IDeployedPayload) {
             const tx = relayer.mint(
                 { signature, to: address, deadline: timestamp }, projectUrl, NFT_TYPE.PercentageCut, 30
             );
-            await expect(tx).revertedWith('Invalid signature')
+            await expect(tx).revertedWith('invalid_signature')
         })
 
         it('Signature expired', async () => {

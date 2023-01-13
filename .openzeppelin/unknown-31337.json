@@ -251,11 +251,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0x172076E0166D1F9Cc711C77Adf8488051744980C",
-      "txHash": "0xf0e550b900ae14c83adc9c1ed10b4d4f7c82aca802b0a5dca6b9056f667a7860",
-      "kind": "transparent"
-    },
-    {
       "address": "0xD84379CEae14AA33C123Af12424A37803F885889",
       "txHash": "0x9cb8e4c5170501da25cee23eac19793eef40916bebfdaf0c61f396800caa5965",
       "kind": "transparent"
@@ -378,6 +373,16 @@
     {
       "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
       "txHash": "0x44689fcfb1c9bc7ce071cce63d393f66f7a5de594b61d1387053a753e651f293",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x172076E0166D1F9Cc711C77Adf8488051744980C",
+      "txHash": "0x73e2f4e4a5943666f35cc29b694d5690281199cfd421170ab5721427606f2148",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2B0d36FACD61B71CC05ab8F3D2355ec3631C0dd5",
+      "txHash": "0xc11e21ce1901571db67e264323894e9547f88f33ab44973df4331cae665c5608",
       "kind": "transparent"
     },
     {
@@ -993,7 +998,7 @@
     },
     "5e09f4cdf983bc72d9b2a18aadc164e428560d03909db029ade0d85d85df22c7": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x5e0eb9da915cdde3df8e386a77e204bddc60ab7ff7342215919992adda420483",
+      "txHash": "0x33a6d80f078865445a9c764335789f24382768b2831945e902c9791e1641e7ba",
       "layout": {
         "storage": [
           {
@@ -1043,15 +1048,15 @@
             "slot": "101",
             "type": "t_mapping(t_address,t_bool)",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:13"
+            "src": "contracts/approver/osnft_approver_base.sol:13"
           },
           {
             "label": "_projectsApproved",
             "offset": 0,
             "slot": "102",
-            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)677_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)942_storage)",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:15"
+            "src": "contracts/approver/osnft_approver_base.sol:15"
           },
           {
             "label": "_worthConstant",
@@ -1059,7 +1064,7 @@
             "slot": "103",
             "type": "t_uint256",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:17"
+            "src": "contracts/approver/osnft_approver_base.sol:17"
           },
           {
             "label": "_oneToken",
@@ -1067,7 +1072,7 @@
             "slot": "104",
             "type": "t_uint256",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:18"
+            "src": "contracts/approver/osnft_approver_base.sol:18"
           },
           {
             "label": "_starConstant",
@@ -1075,7 +1080,7 @@
             "slot": "105",
             "type": "t_uint256",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:20"
+            "src": "contracts/approver/osnft_approver_base.sol:20"
           },
           {
             "label": "_forkConstant",
@@ -1083,7 +1088,7 @@
             "slot": "106",
             "type": "t_uint256",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:21"
+            "src": "contracts/approver/osnft_approver_base.sol:21"
           },
           {
             "label": "__gap",
@@ -1091,7 +1096,7 @@
             "slot": "107",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:44"
+            "src": "contracts/approver/osnft_approver_base.sol:44"
           }
         ],
         "types": {
@@ -1119,11 +1124,11 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)677_storage)": {
+          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)942_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTApproverDataType.ProjectApprovedInfo)",
             "numberOfBytes": "32"
           },
-          "t_struct(ProjectApprovedInfo)677_storage": {
+          "t_struct(ProjectApprovedInfo)942_storage": {
             "label": "struct IOSNFTApproverDataType.ProjectApprovedInfo",
             "members": [
               {

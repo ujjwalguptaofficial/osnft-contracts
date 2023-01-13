@@ -408,7 +408,7 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     describe("sell using meta sign", () => {
 
-        it("passing different from than in sign - Invalid signature", async () => {
+        it("passing different from than in sign - invalid_signature", async () => {
             const marketplace = payload.marketplace;
             const relayer = payload.relayer;
             const tokenId = payload.getProjectId(
@@ -433,7 +433,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            await expect(tx).to.revertedWith('Invalid signature');
+            await expect(tx).to.revertedWith('invalid_signature');
         });
 
         it("Valid signature but not owner", async () => {
@@ -518,7 +518,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                     sellPriority: 0
                 }
             );
-            await expect(tx).to.revertedWith(`Invalid signature`)
+            await expect(tx).to.revertedWith(`invalid_signature`)
         });
 
         it("valid signature valid owner but different sellPriority than signature", async () => {
@@ -547,7 +547,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                     sellPriority: 10
                 }
             );
-            await expect(tx).to.revertedWith(`Invalid signature`)
+            await expect(tx).to.revertedWith(`invalid_signature`)
         });
 
         it("Invalid relayer", async () => {

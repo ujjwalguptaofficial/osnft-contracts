@@ -45,7 +45,7 @@ contract OSDRelayerBase is EIP712, IOsNFTRelayer {
 
         require(
             ECDSA.recover(digest, signatureData.signature) == signatureData.to,
-            "Invalid signature"
+            "invalid_signature"
         );
     }
 }

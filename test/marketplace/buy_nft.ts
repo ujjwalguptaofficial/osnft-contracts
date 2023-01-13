@@ -485,7 +485,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             return signatureResult;
         }
 
-        it("passing different from than in sign - Invalid signature", async () => {
+        it("passing different from than in sign - invalid_signature", async () => {
             const marketplace = payload.marketplace;
             const tokenId = payload.getProjectId(payload.projects["jsstore"]);
             const seller = payload.signer3.address;
@@ -520,10 +520,10 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 shareToBuy,
                 price
             );
-            await expect(tx).to.revertedWith('Invalid signature');
+            await expect(tx).to.revertedWith('invalid_signature');
         });
 
-        it("expired deadline - Invalid signature", async () => {
+        it("expired deadline - invalid_signature", async () => {
             const marketplace = payload.marketplace;
             const tokenId = payload.getProjectId(payload.projects["jsstore"]);
             const seller = payload.signer3.address;
@@ -596,7 +596,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 shareToBuy,
                 price
             );
-            await expect(tx).to.revertedWith('Invalid signature');
+            await expect(tx).to.revertedWith('invalid_signature');
         });
 
         it("sellid different than signature", async () => {
@@ -637,7 +637,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 shareToBuy,
                 price
             );
-            await expect(tx).to.revertedWith('Invalid signature');
+            await expect(tx).to.revertedWith('invalid_signature');
         });
 
         it("share different than signature", async () => {
@@ -675,7 +675,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 1,
                 price
             );
-            await expect(tx).to.revertedWith('Invalid signature');
+            await expect(tx).to.revertedWith('invalid_signature');
         });
 
         it("price different than signature", async () => {
@@ -713,7 +713,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 shareToBuy,
                 price.add(2)
             );
-            await expect(tx).to.revertedWith('Invalid signature');
+            await expect(tx).to.revertedWith('invalid_signature');
         });
 
         it("Invalid relayer", async () => {

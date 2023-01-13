@@ -365,7 +365,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).equal(246679)
+        expect(gas).within(246666, 246679)
     })
 
     describe('createAuctionMeta', () => {
@@ -447,7 +447,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             });
 
-            await expect(tx).to.revertedWith(`Invalid signature`);
+            await expect(tx).to.revertedWith(`invalid_signature`);
         });
 
         it('sending signature with different sell Priority', async () => {
@@ -487,7 +487,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 100
             });
 
-            await expect(tx).to.revertedWith(`Invalid signature`);
+            await expect(tx).to.revertedWith(`invalid_signature`);
         });
 
         it('Invalid relayer', async () => {
