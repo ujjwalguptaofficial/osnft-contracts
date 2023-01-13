@@ -51,8 +51,9 @@ contract OSNFTApprover is
         uint256 starCount,
         uint256 forkCount
     ) public view returns (uint256) {
-        uint256 value = (_worthConstant * starCount * 4) +
-            (_worthConstant * forkCount * 2);
+        uint256 value = (_starConstant * starCount) +
+            (_forkConstant * forkCount);
+        require(value > 0, "Require worth to be above zero");
         // worth can not be more than one token
         return value > _oneToken ? _oneToken : value;
     }

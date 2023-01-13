@@ -73,11 +73,11 @@ export function testApprover(payload: IDeployedPayload) {
             {
                 tokenId,
                 mintTo: address,
-                starCount: 0,
-                forkCount: 0
+                starCount: 10,
+                forkCount: 20
             }
         );
-        await expect(tx).equal(65284);
+        await expect(tx).equal(86978);
     })
 
     it('add project jsstore-example', async () => {
@@ -213,6 +213,29 @@ export function testApprover(payload: IDeployedPayload) {
 
         payload.transactions['projectApprovedJsStore'] = (await tx).hash;
 
+    })
+
+    it('Require worth to be above zero', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["mahal-webpack-loader"]
+        );
+        const address = payload.signer3.address;
+
+        let approvedValue = await payload.approver.getApprovedProject(
+            tokenId
+        );
+
+        expect(approvedValue.mintTo).equal(ethers.constants.AddressZero);
+
+        const tx = payload.approver.approveProject(
+            {
+                tokenId,
+                mintTo: address,
+                starCount: 0,
+                forkCount: 0
+            }
+        );
+        await expect(tx).revertedWith(`Require worth to be above zero`);
     })
 
     it('add project mahal webpack loader', async () => {

@@ -17,9 +17,15 @@ contract OSNFTApproverBase is
     uint256 internal _worthConstant;
     uint256 internal _oneToken;
 
+    uint256 internal _starConstant;
+    uint256 internal _forkConstant;
+
     function __OSNFTApproverInitialize__() internal onlyInitializing {
         _worthConstant = 10 ** 13;
         _oneToken = 10 ** 18;
+
+        _starConstant = _worthConstant * 4;
+        _forkConstant = _worthConstant * 2;
     }
 
     /**
