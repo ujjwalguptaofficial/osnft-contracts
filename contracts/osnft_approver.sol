@@ -53,7 +53,7 @@ contract OSNFTApprover is
     ) public view returns (uint256) {
         uint256 value = (_starConstant * starCount) +
             (_forkConstant * forkCount);
-        require(value > 0, "Require worth to be above zero");
+        require(value > 0, "require_worth_above_zero");
         // worth can not be more than one token
         return value > _oneToken ? _oneToken : value;
     }

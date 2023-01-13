@@ -60,7 +60,7 @@ export function testApprover(payload: IDeployedPayload) {
             starCount: 0,
             forkCount: 0
         });
-        await expect(tx).revertedWith('Only approver allowed');
+        await expect(tx).revertedWith('only_approver_allowed');
     })
 
     it('add project estimate gas', async () => {
@@ -235,7 +235,7 @@ export function testApprover(payload: IDeployedPayload) {
                 forkCount: 0
             }
         );
-        await expect(tx).revertedWith(`Require worth to be above zero`);
+        await expect(tx).revertedWith(`require_worth_above_zero`);
     })
 
     it('add project mahal webpack loader', async () => {

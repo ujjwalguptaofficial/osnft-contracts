@@ -33,7 +33,7 @@ contract OSNFTApproverBase is
     }
 
     function _requireApprover() internal view {
-        require(_isApprover(_msgSender()), "Only approver allowed");
+        require(_isApprover(_msgSender()), "only_approver_allowed");
     }
 
     /**
