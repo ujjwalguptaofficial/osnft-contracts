@@ -23,7 +23,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
             auctionId
         );
 
-        await expect(tx).to.revertedWith('No auction found');
+        await expect(tx).to.revertedWith('no_auction_found');
 
     })
 

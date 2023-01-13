@@ -20,7 +20,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             ),
             1000000
         );
-        await expect(tx).revertedWith('No auction found');
+        await expect(tx).revertedWith('no_auction_found');
     })
 
     it('bid amount less than current bid', async () => {
@@ -326,7 +326,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.claimNFT(auctionId);
-                await expect(tx).to.revertedWith('No auction found');
+                await expect(tx).to.revertedWith('no_auction_found');
             });
 
             it('refund when claimed', async () => {
@@ -339,7 +339,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.refundAuction(auctionId);
-                await expect(tx).to.revertedWith('No auction found');
+                await expect(tx).to.revertedWith('no_auction_found');
             });
         })
     });
@@ -524,7 +524,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.claimNFT(auctionId);
-                await expect(tx).to.revertedWith('No auction found');
+                await expect(tx).to.revertedWith('no_auction_found');
             });
 
             it('refund when claimed', async () => {
@@ -537,7 +537,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.refundAuction(auctionId);
-                await expect(tx).to.revertedWith('No auction found');
+                await expect(tx).to.revertedWith('no_auction_found');
             });
         })
     });

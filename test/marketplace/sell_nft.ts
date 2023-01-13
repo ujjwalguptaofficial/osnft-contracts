@@ -135,7 +135,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        await expect(tx).revertedWith('Price must be above zero');
+        await expect(tx).revertedWith('require_price_above_zero');
     });
 
 

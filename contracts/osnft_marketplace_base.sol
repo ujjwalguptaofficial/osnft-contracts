@@ -224,7 +224,7 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _listItem(SellListing memory sellData) internal {
-        require(sellData.price > 0, "Price must be above zero");
+        require(sellData.price > 0, "require_price_above_zero");
 
         _requirePayableToken(sellData.paymentToken);
 
@@ -316,7 +316,7 @@ contract OSNFTMarketPlaceBase is
         uint256 price
     ) internal {
         ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
-        require(paymentToken.transferFrom(from, to, price), "Payment failed");
+        require(paymentToken.transferFrom(from, to, price), "payment_failed");
     }
 
     function _getSellId(
@@ -332,7 +332,7 @@ contract OSNFTMarketPlaceBase is
         bytes32 auctionId
     ) internal view returns (SellAuction memory) {
         SellAuction memory auction = _auctions[auctionId];
-        require(auction.currentBidPrice > 0, "No auction found");
+        require(auction.currentBidPrice > 0, "no_auction_found");
         return auction;
     }
 
@@ -342,7 +342,7 @@ contract OSNFTMarketPlaceBase is
         address tokenAddress
     ) internal {
         ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
-        require(paymentToken.transfer(to, amount), "Payment failed");
+        require(paymentToken.transfer(to, amount), "payment_failed");
     }
 
     /**

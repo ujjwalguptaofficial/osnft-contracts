@@ -82,7 +82,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                     paymentToken: payload.erc20Token1.address,
                     sellPriority: 10,
                 });
-            await expect(tx).to.revertedWith('Price must be above zero');
+            await expect(tx).to.revertedWith('require_price_above_zero');
         })
 
         it('require payable token', async () => {

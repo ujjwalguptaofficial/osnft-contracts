@@ -160,7 +160,7 @@ contract OSNFTMarketPlace is
         // then someone can change price or something
         _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
 
-        require(sellData.price > 0, "Price must be above zero");
+        require(sellData.price > 0, "require_price_above_zero");
 
         _requirePayableToken(sellData.paymentToken);
 
