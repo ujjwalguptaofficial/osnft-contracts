@@ -87,55 +87,6 @@ contract OSNFTMarketPlace is
         _buyNFT(buyer, sellId, share, price);
     }
 
-    function _buyNFT(
-        address buyer,
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) internal nonReentrant {
-        SellListing memory listedItem = _requireListed(sellId);
-
-        bytes32 tokenId = listedItem.tokenId;
-        bool isShareToken = listedItem.share > 0;
-        if (isShareToken) {
-            require(
-                share <= listedItem.share,
-                "Input share is greater than listed"
-            );
-
-            price = price * share;
-        }
-        require(price >= listedItem.price, "Price not met");
-
-        if (isShareToken) {
-            // will no overflow  as input share is already checked
-            // share will be always less than or equal to stored share
-            SellListing storage listedSell = _sellListings[sellId];
-            unchecked {
-                listedSell.share -= share;
-            }
-            if (listedSell.share == 0) {
-                delete (_sellListings[sellId]);
-            }
-        } else {
-            delete (_sellListings[sellId]);
-        }
-
-        _processNFTSell(
-            SellData({
-                tokenId: tokenId,
-                share: share,
-                buyer: buyer,
-                seller: listedItem.seller,
-                price: price,
-                paymentToken: listedItem.paymentToken,
-                sellType: SELL_TYPE.Buy
-            })
-        );
-
-        emit Sold(sellId, price);
-    }
-
     function removeNFTSale(bytes32 sellId) external {
         // nft should be listed
         SellListing memory listing = _requireListed(sellId);
@@ -247,21 +198,18 @@ contract OSNFTMarketPlace is
         SellAuction storage auction = _auctions[auctionId];
 
         // check if auction is still open
-        require(isAuctionOpen(auctionId), "Auction is not open");
+        require(isAuctionOpen(auctionId), "require_auction_open");
 
         // check if new bid price is higher than the current one
         require(
             bidAmount > auction.currentBidPrice,
-            "New bid price must be higher than current bid"
+            "require_newbid_above_currentbid"
         );
 
         address newBidder = _msgSender();
 
         // check if new bider is not the owner
-        require(
-            newBidder != auction.seller,
-            "Creator of auction cannot place new bid"
-        );
+        require(newBidder != auction.seller, "require_bidder_not_creator");
 
         // transfer token from new bider account to the marketplace account
         // to lock the tokens
@@ -295,7 +243,7 @@ contract OSNFTMarketPlace is
         _requireAuctioned(auctionId);
 
         // Check if the auction is closed
-        require(!isAuctionOpen(auctionId), "Auction is still open");
+        require(!isAuctionOpen(auctionId), "require_auction_close");
 
         // Get auction
         SellAuction memory auction = _auctions[auctionId];
@@ -322,12 +270,9 @@ contract OSNFTMarketPlace is
         SellAuction memory auction = _requireAuctioned(auctionId);
 
         // Check if the auction is closed
-        require(!isAuctionOpen(auctionId), "Auction is still open");
+        require(!isAuctionOpen(auctionId), "require_auction_close");
 
-        require(
-            auction.currentBidOwner == address(0),
-            "Bider exist for this auction"
-        );
+        require(auction.currentBidOwner == address(0), "require_no_bidder");
 
         delete _auctions[auctionId];
 

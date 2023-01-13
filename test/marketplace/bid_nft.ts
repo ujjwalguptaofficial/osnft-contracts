@@ -37,7 +37,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             ),
             bidPrice.sub(1)
         );
-        await expect(tx).revertedWith('New bid price must be higher than current bid');
+        await expect(tx).revertedWith('require_newbid_above_currentbid');
     })
 
     it('bid amount equal to current bid', async () => {
@@ -51,7 +51,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             auctionId,
             bidPrice
         );
-        await expect(tx).revertedWith('New bid price must be higher than current bid');
+        await expect(tx).revertedWith('require_newbid_above_currentbid');
     })
 
     it('bider should not be creator', async () => {
@@ -63,7 +63,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             ),
             1001
         );
-        await expect(tx).revertedWith('Creator of auction cannot place new bid');
+        await expect(tx).revertedWith('require_bidder_not_creator');
     })
 
     describe('successful bid', async () => {
@@ -81,7 +81,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 auctionId,
                 bidAmount
             );
-            await expect(tx).to.revertedWith('New bid price must be higher than current bid');
+            await expect(tx).to.revertedWith('require_newbid_above_currentbid');
         })
 
         it('bid1', async () => {
@@ -140,7 +140,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 auctionId,
                 bidAmount
             );
-            await expect(tx).to.revertedWith('New bid price must be higher than current bid');
+            await expect(tx).to.revertedWith('require_newbid_above_currentbid');
         })
 
         it('bid 2', async () => {
@@ -210,7 +210,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.claimNFT(auctionId);
-                await expect(tx).to.revertedWith('Auction is still open');
+                await expect(tx).to.revertedWith('require_auction_close');
             });
 
             it('expire auction', async () => {
@@ -241,7 +241,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.refundAuction(auctionId);
-                await expect(tx).to.revertedWith('Bider exist for this auction');
+                await expect(tx).to.revertedWith('require_no_bidder');
             });
 
             it('successful claim', async () => {
@@ -359,7 +359,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 auctionId,
                 bidAmount
             );
-            await expect(tx).to.revertedWith('New bid price must be higher than current bid');
+            await expect(tx).to.revertedWith('require_newbid_above_currentbid');
         })
 
         it('bid1', async () => {
@@ -425,7 +425,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             );
 
             const tx = marketplace.refundAuction(auctionId);
-            await expect(tx).to.revertedWith('Auction is still open');
+            await expect(tx).to.revertedWith('require_auction_close');
         });
 
         describe('claim nft jsstore', async () => {
@@ -439,7 +439,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 );
 
                 const tx = marketplace.claimNFT(auctionId);
-                await expect(tx).to.revertedWith('Auction is still open');
+                await expect(tx).to.revertedWith('require_auction_close');
             });
 
             it('successful claim', async () => {

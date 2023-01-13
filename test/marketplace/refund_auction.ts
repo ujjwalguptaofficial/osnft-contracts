@@ -82,7 +82,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         );
 
         const tx = marketplace.refundAuction(auctionId);
-        await expect(tx).to.revertedWith('Auction is still open');
+        await expect(tx).to.revertedWith('require_auction_close');
     })
 
     it('successful share auction for jsstore', async () => {

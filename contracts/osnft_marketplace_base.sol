@@ -60,6 +60,58 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
+    function _buyNFT(
+        address buyer,
+        bytes32 sellId,
+        uint32 share,
+        uint256 price
+    ) internal nonReentrant {
+        SellListing memory listedItem = _requireListed(sellId);
+
+        bytes32 tokenId = listedItem.tokenId;
+        bool isShareToken = listedItem.share > 0;
+        if (isShareToken) {
+            require(
+                share <= listedItem.share,
+                "require_input_share_less_equal_sell_share"
+            );
+
+            price = price * share;
+        }
+        require(
+            price >= listedItem.price,
+            "require_price_above_equal_sell_price"
+        );
+
+        if (isShareToken) {
+            // will no overflow  as input share is already checked
+            // share will be always less than or equal to stored share
+            SellListing storage listedSell = _sellListings[sellId];
+            unchecked {
+                listedSell.share -= share;
+            }
+            if (listedSell.share == 0) {
+                delete (_sellListings[sellId]);
+            }
+        } else {
+            delete (_sellListings[sellId]);
+        }
+
+        _processNFTSell(
+            SellData({
+                tokenId: tokenId,
+                share: share,
+                buyer: buyer,
+                seller: listedItem.seller,
+                price: price,
+                paymentToken: listedItem.paymentToken,
+                sellType: SELL_TYPE.Buy
+            })
+        );
+
+        emit Sold(sellId, price);
+    }
+
     /**
      * @dev Initializes the contract
      */

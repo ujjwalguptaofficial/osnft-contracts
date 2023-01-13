@@ -35,7 +35,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             1000000
         );
-        await expect(tx).revertedWith('Price not met');
+        await expect(tx).revertedWith('require_price_above_equal_sell_price');
     });
 
     it('buy without erc20 allowance of buyer', async () => {
@@ -322,7 +322,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price.add(10)
         );
-        await expect(tx).to.revertedWith('Price not met')
+        await expect(tx).to.revertedWith('require_price_above_equal_sell_price')
     })
 
     it('buy with share greater than listed', async () => {
@@ -345,7 +345,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             1000,
             price
         );
-        await expect(tx).to.revertedWith('Input share is greater than listed')
+        await expect(tx).to.revertedWith('require_input_share_less_equal_sell_share')
     })
 
     it('partial buy share nft - jsstore', async () => {
