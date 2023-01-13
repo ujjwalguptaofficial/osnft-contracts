@@ -221,9 +221,9 @@ describe("contracts", () => {
             erc20Token1: payload.erc20Token1.address,
             erc20Token2: payload.erc20Token2.address
         };
-        // console.log(JSON.stringify(addresses));
+        console.log(JSON.stringify(addresses));
         console.table(addresses);
-        console.table(payload.transactions);
+        // console.table(payload.transactions);
 
         writeJsonFile.sync(`cache/transaction.json`, payload.transactions);
     })
