@@ -5,10 +5,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "./string_helper.sol";
-import "./interfaces/osnft.sol";
-import "./interfaces/marketplace.sol";
-import "./interfaces/erc721_receiver_upgradable.sol";
+import "../string_helper.sol";
+import "../interfaces/osnft.sol";
+import "../interfaces/marketplace.sol";
+import "../interfaces/erc721_receiver_upgradable.sol";
 
 contract OSNFTMarketPlaceBase is
     Initializable,

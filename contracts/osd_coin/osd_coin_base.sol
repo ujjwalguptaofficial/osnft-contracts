@@ -4,7 +4,7 @@
 pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
-import "./interfaces/osd_coin_datatype.sol";
+import "../interfaces/osd_coin_datatype.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.

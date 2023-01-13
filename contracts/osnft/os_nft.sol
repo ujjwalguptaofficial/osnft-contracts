@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./os_nft_base.sol";
-import "./interfaces/osnft.sol";
+import "../interfaces/osnft.sol";
 
 // contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {

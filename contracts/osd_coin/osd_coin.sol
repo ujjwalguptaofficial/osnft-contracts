@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./osd_coin_base.sol";
-import "./interfaces/osd_coin.sol";
+import "../interfaces/osd_coin.sol";
 
 contract OSDCoin is Initializable, OwnableUpgradeable, OSDCoinBase, IOSDCoin {
     function initialize(

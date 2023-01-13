@@ -6,10 +6,10 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./interfaces/osnft_datatype.sol";
-import "./interfaces/erc721_receiver_upgradable.sol";
-import "./interfaces/osnft_approver.sol";
-import "./string_helper.sol";
+import "../interfaces/osnft_datatype.sol";
+import "../interfaces/erc721_receiver_upgradable.sol";
+import "../interfaces/osnft_approver.sol";
+import "../string_helper.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
 contract OSNFTBase is
