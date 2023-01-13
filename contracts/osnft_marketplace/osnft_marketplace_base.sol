@@ -69,7 +69,6 @@ contract OSNFTMarketPlaceBase is
         SellListing memory listedItem = _requireListed(sellId);
 
         bytes32 tokenId = listedItem.tokenId;
-        bool isShareToken = listedItem.share > 0;
 
         require(
             price >= listedItem.price,
@@ -78,7 +77,7 @@ contract OSNFTMarketPlaceBase is
 
         uint256 totalPrice = price;
 
-        if (isShareToken) {
+        if (listedItem.share > 0) {
             require(
                 share <= listedItem.share,
                 "require_input_share_less_equal_sell_share"
