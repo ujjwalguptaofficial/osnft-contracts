@@ -55,7 +55,7 @@ export function testNFTBurn(payload: IDeployedPayload) {
             const projectId = payload.getProjectId(payload.projects["godam-vue"]);
             const tx = nft.burn(projectId);
 
-            await expect(tx).to.revertedWith(`Only approvers allowed`);
+            await expect(tx).to.revertedWith(`Only approver allowed`);
         })
 
         it('add approver', async () => {

@@ -60,7 +60,7 @@ export function testApprover(payload: IDeployedPayload) {
             starCount: 0,
             forkCount: 0
         });
-        await expect(tx).revertedWith('Only approvers allowed');
+        await expect(tx).revertedWith('Only approver allowed');
     })
 
     it('add project estimate gas', async () => {
@@ -77,7 +77,7 @@ export function testApprover(payload: IDeployedPayload) {
                 forkCount: 20
             }
         );
-        await expect(tx).equal(86978);
+        await expect(tx).equal(87002);
     })
 
     it('add project jsstore-example', async () => {

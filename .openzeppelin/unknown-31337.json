@@ -387,34 +387,34 @@
     },
     {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0xda81006a4508794b40b36fc05c296f33eb706f94521f1a9bb54c3953afc4f173",
+      "txHash": "0xa7289e52d00249e568123b993c0ac3a5687006fd7f8e1f103a875f7ba87b7b71",
       "kind": "transparent"
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x1b17925ebdb035f9918ab7af5a620caffcf2625b4d61cb748fead60a47eb8f6f",
+      "txHash": "0xd326975d746c67816b9ed28d1508a3265d3ebae4445f5f59aad6610262c30bb6",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x49defd1c99930050a49f08c183ac464329fd83a05dd243fd79a52aec642b0ed1",
+      "txHash": "0x1f2ed822443b2cc1cb90807f2414079fba565f6865b72b9ffb0fd347b3ecd3d6",
       "kind": "transparent"
     },
     {
       "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
-      "txHash": "0x6abaf17ebba631c14cb49e931bf8cffdab5cec306056c756393f939ff7d75b08",
+      "txHash": "0xf0e5b71399874a07d9d977eb2e461deaf4dca01c8129f8226982383fc2be1d2b",
       "kind": "transparent"
     },
     {
       "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
-      "txHash": "0x24355747fee5874d1ca1821c26aa0671d5b91ac3db142ea72829977543c3f933",
+      "txHash": "0x14d0c920e3b7ea38787dedd11c86dfa164333791c579afa641996e1ffc928023",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-      "txHash": "0xc925db38eb9ed73e341ee4bde8abdd79060529a363bfa39a859d679e258ddee9",
+      "txHash": "0xece3cd7b71d9216c90f6b3dfe5cae2df99f3306bc4837c6f8958686b17b0dc56",
       "layout": {
         "storage": [
           {
@@ -704,7 +704,7 @@
     },
     "df04f409189731079208a018156117617775d4b53abfea5f992a2b4aea65023b": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x6c7eb18e2b110cdf8d6fd7fcb7750030553b87047ffeb3f70d08eb1b3bba9bf6",
+      "txHash": "0xa65f9536c3d26a6ca32d8ed3d3df00b678c5f95d97b0e9dec5acaefb76ab73ed",
       "layout": {
         "storage": [
           {
@@ -989,170 +989,9 @@
         }
       }
     },
-    "a2df899bf36a9dfdd2fcc78658f4939f465d2080061a2c27fa5708b013a00daa": {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x4e18b0c67bfa5318247ba2878060af1a962538ff29ce4fa3e9e568a7130c5131",
-      "layout": {
-        "storage": [
-          {
-            "label": "_initialized",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_uint8",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
-            "retypedFrom": "bool"
-          },
-          {
-            "label": "_initializing",
-            "offset": 1,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
-          },
-          {
-            "label": "_owner",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_address",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
-          },
-          {
-            "label": "_approvers",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_mapping(t_address,t_bool)",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:13"
-          },
-          {
-            "label": "_projectsApproved",
-            "offset": 0,
-            "slot": "102",
-            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)2760_storage)",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:15"
-          },
-          {
-            "label": "_worthConstant",
-            "offset": 0,
-            "slot": "103",
-            "type": "t_uint256",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:17"
-          },
-          {
-            "label": "_oneToken",
-            "offset": 0,
-            "slot": "104",
-            "type": "t_uint256",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:18"
-          },
-          {
-            "label": "_starConstant",
-            "offset": 0,
-            "slot": "105",
-            "type": "t_uint256",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:20"
-          },
-          {
-            "label": "_forkConstant",
-            "offset": 0,
-            "slot": "106",
-            "type": "t_uint256",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:21"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "107",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OSNFTApproverBase",
-            "src": "contracts/osnft_approver_base.sol:36"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
-          },
-          "t_bool": {
-            "label": "bool",
-            "numberOfBytes": "1"
-          },
-          "t_bytes32": {
-            "label": "bytes32",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_address,t_bool)": {
-            "label": "mapping(address => bool)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)2760_storage)": {
-            "label": "mapping(bytes32 => struct IOSNFTApproverDataType.ProjectApprovedInfo)",
-            "numberOfBytes": "32"
-          },
-          "t_struct(ProjectApprovedInfo)2760_storage": {
-            "label": "struct IOSNFTApproverDataType.ProjectApprovedInfo",
-            "members": [
-              {
-                "label": "mintTo",
-                "type": "t_address",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "worth",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "1"
-              }
-            ],
-            "numberOfBytes": "64"
-          },
-          "t_uint256": {
-            "label": "uint256",
-            "numberOfBytes": "32"
-          },
-          "t_uint8": {
-            "label": "uint8",
-            "numberOfBytes": "1"
-          }
-        }
-      }
-    },
     "aaa41cde9335861b2c66cb6efadeb758e5ffc22a7d21f63a7f21bfaa0af7c34f": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0xf07a512f0bc3472ef2f7f1d619211accd7d002d64bcb58e72b0fcef66fbb0b47",
+      "txHash": "0xd1a98e9c9773751b8d289845281ff7aa474dca4025353d5281aa338ac9d63a4e",
       "layout": {
         "storage": [
           {
@@ -1431,6 +1270,167 @@
           "t_uint32": {
             "label": "uint32",
             "numberOfBytes": "4"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "1ab4a12aec780c527905fcb3776840fcd58d0e4b36cf1b5a4d7ffe3633315402": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "txHash": "0xe420704a6bfbba548c7bba37159e3893de56ad972714342cac784609d74c87c5",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_approvers",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:13"
+          },
+          {
+            "label": "_projectsApproved",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)677_storage)",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:15"
+          },
+          {
+            "label": "_worthConstant",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_uint256",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:17"
+          },
+          {
+            "label": "_oneToken",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_uint256",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:18"
+          },
+          {
+            "label": "_starConstant",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_uint256",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:20"
+          },
+          {
+            "label": "_forkConstant",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OSNFTApproverBase",
+            "src": "contracts/osnft_approver_base.sol:44"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(ProjectApprovedInfo)677_storage)": {
+            "label": "mapping(bytes32 => struct IOSNFTApproverDataType.ProjectApprovedInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ProjectApprovedInfo)677_storage": {
+            "label": "struct IOSNFTApproverDataType.ProjectApprovedInfo",
+            "members": [
+              {
+                "label": "mintTo",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "worth",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
           },
           "t_uint8": {
             "label": "uint8",

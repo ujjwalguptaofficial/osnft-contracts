@@ -18,7 +18,7 @@ contract OSNFTApprover is
     }
 
     function approveProject(ProjectApproveRequest calldata data) external {
-        require(isApprover(_msgSender()), "Only approvers allowed");
+        _requireApprover();
 
         _projectsApproved[data.tokenId] = ProjectApprovedInfo({
             mintTo: data.mintTo,
@@ -33,8 +33,8 @@ contract OSNFTApprover is
         return _projectsApproved[tokenId];
     }
 
-    function isApprover(address account) public view returns (bool) {
-        return _approvers[account];
+    function isApprover(address account) external view returns (bool) {
+        return _isApprover(account);
     }
 
     function addApprover(address account) external override onlyOwner {
@@ -59,7 +59,7 @@ contract OSNFTApprover is
     }
 
     function burnProject(bytes32 tokenId) external {
-        require(isApprover(_msgSender()), "Only approvers allowed");
+        _requireApprover();
 
         delete _projectsApproved[tokenId];
         emit ProjectBurned(tokenId);

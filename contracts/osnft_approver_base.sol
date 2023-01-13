@@ -28,6 +28,14 @@ contract OSNFTApproverBase is
         _forkConstant = _worthConstant * 2;
     }
 
+    function _isApprover(address account) internal view returns (bool) {
+        return _approvers[account];
+    }
+
+    function _requireApprover() internal view {
+        require(_isApprover(_msgSender()), "Only approver allowed");
+    }
+
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
