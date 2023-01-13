@@ -63,7 +63,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                     paymentToken: payload.erc20Token2.address,
                     sellPriority: 10,
                 });
-            await expect(tx).to.revertedWith('Require NFT ownership');
+            await expect(tx).to.revertedWith('require_nft_owner');
         })
 
         it('price must be above zero', async () => {
@@ -200,7 +200,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const tx = marketplace.connect(payload.signer4).updateSellPriority(auctionId,
                 10);
-            await expect(tx).to.revertedWith('Require NFT ownership');
+            await expect(tx).to.revertedWith('require_nft_owner');
         })
 
         it('gas estimate', async () => {
@@ -287,7 +287,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             );
 
             const tx = marketplace.connect(payload.signer4).removeNFTSale(auctionId);
-            await expect(tx).to.revertedWith('Require NFT ownership');
+            await expect(tx).to.revertedWith('require_nft_owner');
         })
 
         it('successful remove', async () => {

@@ -100,12 +100,15 @@ contract OSNFTMarketPlaceBase is
         uint32 share
     ) internal view {
         if (_nftContract.isShareToken(tokenId)) {
-            require(share > 0, "Require input share to be above zero");
+            require(share > 0, "require_input_share_above_zero");
             uint32 shareOfOwner = _nftContract.shareOf(tokenId, spender);
-            require(shareOfOwner >= share, "Owns less share than input");
+            require(
+                shareOfOwner >= share,
+                "require_owner_share_above_equal_input"
+            );
         } else {
             address owner = _nftContract.ownerOf(tokenId);
-            require(spender == owner, "Require NFT ownership");
+            require(spender == owner, "require_nft_owner");
         }
     }
 
@@ -204,7 +207,7 @@ contract OSNFTMarketPlaceBase is
         require(
             _nftContract.isApprovedForAll(_msgSender(), address(this)) ||
                 _nftContract.getApproved(tokenId) == address(this),
-            "Require NFT ownership transfer approval"
+            "require_nft_owner transfer approval"
         );
     }
 

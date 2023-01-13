@@ -397,7 +397,7 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xd97ccd991bf5376f4061e82f4f70891d380821e58ee639c45c9c728881812c16",
+      "txHash": "0x94f26afee96d0deada63f3969371d23cfb85b74a7d3717cc0ce80958504ebec6",
       "kind": "transparent"
     },
     {
@@ -1152,9 +1152,9 @@
         }
       }
     },
-    "bd8c693116f1439fa8cf7338870ddcbfd8e373ac4cc00691e8fa82c9691b4cbb": {
+    "a23d3a19cf7fb608d9c58856423f6b8b281ce61366da20d702ac0d143b39c9fd": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x5adf17d5cc00827859feb2b35074920c20e8ab516e38baec21b7687f20122fb9",
+      "txHash": "0x30240bd917005cf166a4e7015d7cc9301f072f1ffa8f6476fa240f32698d6bb1",
       "layout": {
         "storage": [
           {
@@ -1284,7 +1284,7 @@
             "slot": "157",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace_base.sol:353"
+            "src": "contracts/osnft_marketplace_base.sol:356"
           }
         ],
         "types": {

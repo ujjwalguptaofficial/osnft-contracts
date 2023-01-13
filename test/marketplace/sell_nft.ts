@@ -53,7 +53,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('Require NFT ownership');
+        await expect(tx).revertedWith('require_nft_owner');
     });
 
     it("not approved for marketplace", async () => {
@@ -76,7 +76,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('Require NFT ownership transfer approval');
+        await expect(tx).revertedWith('require_nft_owner transfer approval');
     });
 
     it('change default marketplace', async () => {
@@ -237,7 +237,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        await expect(tx).revertedWith('Require input share to be above zero');
+        await expect(tx).revertedWith('require_input_share_above_zero');
     });
 
     describe('add share token on sale with share more than have', async () => {
@@ -258,7 +258,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellPriority: 0
             });
 
-            await expect(tx).revertedWith('Owns less share than input');
+            await expect(tx).revertedWith('require_owner_share_above_equal_input');
         })
 
         it('owner have share more than zero', async () => {
@@ -278,7 +278,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellPriority: 0
             });
 
-            await expect(tx).revertedWith('Owns less share than input');
+            await expect(tx).revertedWith('require_owner_share_above_equal_input');
         })
 
     });
@@ -462,7 +462,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            await expect(tx).to.revertedWith('Require NFT ownership');
+            await expect(tx).to.revertedWith('require_nft_owner');
         });
 
         it("valid signature valid owner but deadline is expired", async () => {

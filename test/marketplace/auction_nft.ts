@@ -114,7 +114,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('Require NFT ownership');
+        await expect(tx).revertedWith('require_nft_owner');
     });
 
     it('require approval', async () => {
@@ -140,7 +140,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('Require NFT ownership transfer approval');
+        await expect(tx).revertedWith('require_nft_owner transfer approval');
 
     });
 
@@ -313,7 +313,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.deployer.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('Require input share to be above zero');
+        await expect(tx).revertedWith('require_input_share_above_zero');
     });
 
     it('Placing share by not owner', async () => {
@@ -330,7 +330,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.deployer.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('Owns less share than input');
+        await expect(tx).revertedWith('require_owner_share_above_equal_input');
     });
 
     it('Placing share greater than own', async () => {
@@ -347,7 +347,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('Owns less share than input');
+        await expect(tx).revertedWith('require_owner_share_above_equal_input');
     });
 
     it('estimate gas for successful share auction', async () => {
