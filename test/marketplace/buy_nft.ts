@@ -962,6 +962,11 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
 
         expect((earningForMarketplace).add(earningForSeller)).equal(price);
+
+        payload.transactions['buyMahalWebpackLoader'].push(
+            (await tx).hash
+        )
+
     });
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by not creator', async () => {

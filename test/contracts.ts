@@ -51,11 +51,14 @@ describe("contracts", () => {
     payload.transactions['sellJsStoreExamples'] = []
     payload.transactions['sellJsStore'] = []
     payload.transactions['sellMahalExamples'] = []
+    payload.transactions['sellMahalWebpackLoader'] = []
     payload.transactions['buyJsStoreExample'] = []
     payload.transactions['buyMahalExample'] = []
     payload.transactions['buyJsStore'] = []
     payload.transactions['bidJsStoreExamples'] = []
     payload.transactions['bidJsStore'] = []
+    payload.transactions['buyMahalWebpackLoader'] = []
+
 
     before(async () => {
         await network.provider.send("hardhat_reset")

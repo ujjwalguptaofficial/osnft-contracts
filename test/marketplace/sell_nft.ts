@@ -650,6 +650,9 @@ export function testNFTSale(payload: IDeployedPayload) {
             expect(nftData.tokenId).equal(tokenId);
             expect(nftData.sellPriority).equal(10);
 
+            payload.transactions['sellMahalWebpackLoader'].push(
+                (await tx).hash
+            )
         });
     })
 
