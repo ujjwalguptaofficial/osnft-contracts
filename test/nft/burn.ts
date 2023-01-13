@@ -48,12 +48,23 @@ export function testNFTBurn(payload: IDeployedPayload) {
         })
     })
 
-    it('add approver', async () => {
-        const tx = payload.approver.addApprover(payload.nft.address);
-        await expect(tx).emit(payload.approver, 'ApproverAdded').withArgs(
-            payload.nft.address
-        );
-    });
+
+    describe("burn when nft is not approved", () => {
+        it('Only approver allowed', async () => {
+            const nft = payload.nft.connect(payload.signer4);
+            const projectId = payload.getProjectId(payload.projects["godam-vue"]);
+            const tx = nft.burn(projectId);
+
+            await expect(tx).to.revertedWith(`Only approvers allowed`);
+        })
+
+        it('add approver', async () => {
+            const tx = payload.approver.addApprover(payload.nft.address);
+            await expect(tx).emit(payload.approver, 'ApproverAdded').withArgs(
+                payload.nft.address
+            );
+        });
+    })
 
     describe('burn success', () => {
         it('share tokens', async () => {
