@@ -95,7 +95,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('Require bid price above zero');
+        await expect(tx).revertedWith('require_bidprice_above_zero');
     });
 
     it('should be nft owner', async () => {
@@ -179,7 +179,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx2).revertedWith('Already on sale');
+        await expect(tx2).revertedWith('already_on_sale');
 
         await await marketplace.connect(payload.signer4).removeNFTSale(
             payload.getSellId(projectId, payload.signer4.address)
@@ -526,7 +526,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-            await expect(tx).revertedWith(`Invalid relayer`)
+            await expect(tx).revertedWith(`invalid_relayer`)
 
 
         });

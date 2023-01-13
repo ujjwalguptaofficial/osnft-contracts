@@ -22,7 +22,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             1000000
         );
-        await expect(tx).revertedWith('Require NFT listed');
+        await expect(tx).revertedWith('require_on_sale');
     });
 
     it('price less than listed', async () => {
@@ -747,7 +747,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 shareToBuy,
                 price
             );
-            await expect(tx).to.revertedWith('Invalid relayer');
+            await expect(tx).to.revertedWith('invalid_relayer');
         });
 
         it('all buy share nft - jsstore', async () => {

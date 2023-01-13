@@ -219,7 +219,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        await expect(tx).revertedWith('Already on sale');
+        await expect(tx).revertedWith('already_on_sale');
     });
 
 
@@ -355,7 +355,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('Already on sale')
+        await expect(tx).revertedWith('already_on_sale')
 
     });
 
@@ -572,7 +572,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                     sellPriority: 10
                 }
             );
-            await expect(tx).revertedWith(`Invalid relayer`)
+            await expect(tx).revertedWith(`invalid_relayer`)
         });
 
         it("gas estimate", async () => {

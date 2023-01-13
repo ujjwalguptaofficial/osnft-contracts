@@ -44,7 +44,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            await expect(tx).to.revertedWith('Require NFT listed');
+            await expect(tx).to.revertedWith('require_on_sale');
         })
 
         it('non owner', async () => {
@@ -186,7 +186,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10,
             );
 
-            await expect(tx).to.revertedWith('Require NFT listed');
+            await expect(tx).to.revertedWith('require_on_sale');
         })
 
         it('non owner', async () => {
@@ -274,7 +274,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 sellId
             );
 
-            await expect(tx).to.revertedWith('Require NFT listed');
+            await expect(tx).to.revertedWith('require_on_sale');
         })
 
         it('remove by non owner', async () => {

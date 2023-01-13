@@ -75,14 +75,14 @@ contract OSNFTMarketPlaceBase is
 
     function _requireNotListed(bytes32 sellId) internal view {
         SellListing memory listing = _sellListings[sellId];
-        require(listing.price == 0, "Already on sale");
+        require(listing.price == 0, "already_on_sale");
     }
 
     function _requireListed(
         bytes32 sellId
     ) internal view returns (SellListing memory) {
         SellListing memory listing = _sellListings[sellId];
-        require(listing.price > 0, "Require NFT listed");
+        require(listing.price > 0, "require_on_sale");
         return listing;
     }
 
@@ -90,7 +90,7 @@ contract OSNFTMarketPlaceBase is
         bytes32 sellId
     ) internal view returns (SellListing storage) {
         SellListing storage listing = _sellListings[sellId];
-        require(listing.price > 0, "Require NFT listed");
+        require(listing.price > 0, "require_on_sale");
         return listing;
     }
 
@@ -110,7 +110,7 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _requireRelayer() internal view {
-        require(_msgSender() == _relayerAddress, "Invalid relayer");
+        require(_msgSender() == _relayerAddress, "invalid_relayer");
     }
 
     function _createAuction(
@@ -124,7 +124,7 @@ contract OSNFTMarketPlaceBase is
         );
 
         // Check if the initial bid price is > 0
-        require(input.initialBid > 0, "Require bid price above zero");
+        require(input.initialBid > 0, "require_bidprice_above_zero");
 
         bytes32 tokenId = input.tokenId;
 
