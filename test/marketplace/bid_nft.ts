@@ -268,7 +268,8 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 await expect(tx).emit(marketplace, 'Claimed').withArgs(
                     auctionId,
                     currentBidAmount,
-                    payload.erc20Token1.address
+                    payload.erc20Token1.address,
+                    seller
                 );
                 await expect(tx).emit(payload.nft, 'Transfer').withArgs(
                     payload.marketplace.address,
@@ -468,7 +469,8 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 await expect(tx).emit(marketplace, 'Claimed').withArgs(
                     auctionId,
                     currentBidAmount,
-                    payload.erc20Token1.address
+                    payload.erc20Token1.address,
+                    seller
                 );
 
                 await expect(tx).emit(payload.nft, 'Transfer').withArgs(

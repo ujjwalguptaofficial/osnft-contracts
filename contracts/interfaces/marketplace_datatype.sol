@@ -116,7 +116,8 @@ interface IOSNFTMarketPlaceDataType {
     event Claimed(
         bytes32 indexed auctionId,
         uint256 price,
-        address paymentToken
+        address paymentToken,
+        address seller
     );
 
     // Public event to notify that an NFT has been refunded to the
