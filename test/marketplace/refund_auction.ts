@@ -129,7 +129,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
 
         const bidPrice = await marketplace.getBidPrice(auctionId);
-        expect(bidPrice).equal(10000);
+        expect(bidPrice).equal(10000 * shareToAuction);
 
         payload.transactions.sellJsStore.push(
             (await tx).hash

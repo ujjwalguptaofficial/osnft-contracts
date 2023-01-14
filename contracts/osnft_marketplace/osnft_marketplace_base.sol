@@ -216,7 +216,9 @@ contract OSNFTMarketPlaceBase is
             seller: seller,
             paymentToken: input.paymentToken,
             currentBidOwner: address(0),
-            currentBidPrice: input.initialBid,
+            currentBidPrice: input.share > 0
+                ? input.initialBid * input.share
+                : input.initialBid,
             endAuction: input.endAuction,
             bidCount: 0
         });

@@ -370,7 +370,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 nftId,
                 seller
             );
-            const bidAmount = 100001;
+            const bidAmount = 1000001;
             const buyer = payload.signer2.address;
             const balanceOfBuyerBeforeSale = await payload.erc20Token1.balanceOf(
                 buyer

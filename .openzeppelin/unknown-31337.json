@@ -402,24 +402,24 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xeb10637ab0809ebdbe20cd562c343a72ec097510d0d52539ad853a2f8f919191",
+      "txHash": "0xa9030a4fc0d2c9e7eb161be856fa4b70f347a541685b30eb9f396e456e752b1a",
       "kind": "transparent"
     },
     {
       "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
-      "txHash": "0x083e6861aaa370581bc9ca833c31d0d57fb409bc24f98b638e17d004c42917d3",
+      "txHash": "0xb705efb0db6582953291fb420c02030b0433499d2ba1960800b7827ea6247af4",
       "kind": "transparent"
     },
     {
       "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
-      "txHash": "0x6a5856dd6c387e4a0277a2ce0823379cf5c92ff8adb4ea6b38823325ee375c20",
+      "txHash": "0x442e9924325fec081a42b1102e12de4228b35e862217fd677e32fcf85d49f085",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-      "txHash": "0x239f37e3f518c8db380e0f8fb1b7841710fe17fd83789f6256ffffb592799265",
+      "txHash": "0xe77d0f71676947c2b687d38a962025c6bc0f74ce45fec0cb7f541f4ee1efbddb",
       "layout": {
         "storage": [
           {
@@ -1157,9 +1157,9 @@
         }
       }
     },
-    "01d742497cfc02e9e471fb3a42c43f2191068291a1a192b0b442932fef3be3fd": {
+    "e10a9bee7b07941149d7ef2d1d5704a9f0d34de8eccc9c340595fda259140151": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xa2a71e15a7c47772bd5e310373141adecfbea715d6fd64828c2ca64af64ebc12",
+      "txHash": "0xab28fe914bed8d8a6239ac860871a4fb1203bbeb36f398aa93d49fdd178a6483",
       "layout": {
         "storage": [
           {
@@ -1289,7 +1289,7 @@
             "slot": "157",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:406"
+            "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:408"
           }
         ],
         "types": {
