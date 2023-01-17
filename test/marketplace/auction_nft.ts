@@ -336,6 +336,9 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
     it('placing on sale after successful auction', async () => {
@@ -715,6 +718,9 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
             expect(isSellActive).equal(true);
             expect(isNFTOnSale).equal(true);
+
+            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+            expect(shareOnSale).equal(100);
         })
     })
 }

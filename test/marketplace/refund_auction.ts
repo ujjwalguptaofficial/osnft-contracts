@@ -164,6 +164,9 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
     it('successful refund for jsstore example', async () => {
@@ -203,6 +206,9 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(false);
         expect(isNFTOnSale).equal(false);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
     it('expect isSellActive true after auction is closed', async () => {
@@ -215,6 +221,9 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(100);
     })
 
     it('successful refund for jsstore ', async () => {
@@ -255,6 +264,9 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(false);
         expect(isNFTOnSale).equal(false);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
 

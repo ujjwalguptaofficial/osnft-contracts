@@ -157,16 +157,39 @@ contract OSNFTMarketPlace is
         emit SalePriorityUpdated(sellId, sellPriority);
     }
 
-    function getSell(
-        bytes32 sellId
-    ) external view returns (SellListing memory) {
+    function getSell(bytes32 sellId) public view returns (SellListing memory) {
         return _sellListings[sellId];
     }
 
     function getAuction(
         bytes32 auctionId
-    ) external view returns (SellAuction memory) {
+    ) public view returns (SellAuction memory) {
         return _auctions[auctionId];
+    }
+
+    function getShareOnSale(
+        bytes32 tokenId,
+        address owner
+    ) external view returns (uint32) {
+        bytes32 sellId = _getSellId(tokenId, owner);
+        SellListing memory sellInfo = getSell(sellId);
+        if (sellInfo.price > 0) {
+            return sellInfo.share;
+        }
+        return getAuction(sellId).share;
+    }
+
+    function isNFTOnSale(
+        bytes32 tokenId,
+        address owner
+    ) external view returns (bool) {
+        bytes32 sellId = _getSellId(tokenId, owner);
+        return isSellActive(sellId);
+    }
+
+    function isSellActive(bytes32 sellId) public view returns (bool) {
+        if (_sellListings[sellId].price > 0) return true;
+        return getAuction(sellId).currentBidPrice > 0;
     }
 
     function createAuctionMeta(
@@ -183,32 +206,6 @@ contract OSNFTMarketPlace is
 
     function isAuctionOpen(bytes32 auctionId) public view returns (bool) {
         return _auctions[auctionId].endAuction > block.timestamp;
-    }
-
-    function getShareOnSale(
-        bytes32 tokenId,
-        address owner
-    ) external view returns (uint32) {
-        bytes32 sellId = _getSellId(tokenId, owner);
-        SellListing memory sellInfo = _sellListings[sellId];
-        if (sellInfo.price > 0) {
-            return sellInfo.share;
-        }
-        SellAuction memory auction = _auctions[sellId];
-        return auction.share;
-    }
-
-    function isNFTOnSale(
-        bytes32 tokenId,
-        address owner
-    ) external view returns (bool) {
-        bytes32 sellId = _getSellId(tokenId, owner);
-        return isSellActive(sellId);
-    }
-
-    function isSellActive(bytes32 sellId) public view returns (bool) {
-        if (_sellListings[sellId].price > 0) return true;
-        return _auctions[sellId].currentBidPrice > 0;
     }
 
     function getBidOwner(bytes32 auctionId) external view returns (address) {

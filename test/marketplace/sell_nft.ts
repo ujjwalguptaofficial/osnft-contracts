@@ -216,6 +216,9 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
 
@@ -363,6 +366,9 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(100);
     })
 
     it('add share token again on sale', async () => {
@@ -469,6 +475,9 @@ export function testNFTSale(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
     describe("sell using meta sign", () => {
@@ -732,6 +741,9 @@ export function testNFTSale(payload: IDeployedPayload) {
 
             expect(isSellActive).equal(true);
             expect(isNFTOnSale).equal(true);
+
+            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+            expect(shareOnSale).equal(0);
         })
     })
 

@@ -207,6 +207,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
             expect(isSellActive).equal(false);
             expect(isNFTOnSale).equal(false);
+
+            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+            expect(shareOnSale).equal(0);
         })
 
 
@@ -305,6 +308,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
             expect(isSellActive).equal(false);
             expect(isNFTOnSale).equal(false);
+
+            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+            expect(shareOnSale).equal(0);
         })
     });
 
@@ -416,6 +422,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, seller);
+        expect(shareOnSale).equal(sellInfoBeforeSale.share);
+
         const price = sellInfoBeforeSale.price;
 
         await payload.erc20Token1.approve(
@@ -516,6 +525,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(90);
     })
 
     describe("meta buy", () => {
@@ -956,6 +968,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
             expect(isSellActive).equal(false);
             expect(isNFTOnSale).equal(false);
+
+            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+            expect(shareOnSale).equal(0);
         })
 
     })
@@ -970,6 +985,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(true);
         expect(isNFTOnSale).equal(true);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by creator', async () => {
@@ -1072,6 +1090,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(false);
         expect(isNFTOnSale).equal(false);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by not creator', async () => {
@@ -1178,5 +1199,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(false);
         expect(isNFTOnSale).equal(false);
+
+        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
+        expect(shareOnSale).equal(0);
     })
 }
