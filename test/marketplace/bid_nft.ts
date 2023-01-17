@@ -485,13 +485,9 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 const marketplace = payload.marketplace;
                 const sellId = payload.getSellId(tokenId, from);
                 const isSellActive = await marketplace.isSellActive(sellId);
-                const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
                 expect(isSellActive).equal(true);
-                expect(isNFTOnSale).equal(true);
 
-                const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-                expect(shareOnSale).equal(100);
             })
 
             it('successful claim', async () => {
@@ -589,13 +585,8 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 const marketplace = payload.marketplace;
                 const sellId = payload.getSellId(tokenId, from);
                 const isSellActive = await marketplace.isSellActive(sellId);
-                const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
                 expect(isSellActive).equal(false);
-                expect(isNFTOnSale).equal(false);
-
-                const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-                expect(shareOnSale).equal(0);
             })
 
             it('when auction no exist', async () => {

@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(161022);
+        expect(gas).equal(160999);
     });
 
 
@@ -212,13 +212,8 @@ export function testNFTSale(payload: IDeployedPayload) {
         const from = payload.signer3.address;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
     })
 
 
@@ -362,13 +357,8 @@ export function testNFTSale(payload: IDeployedPayload) {
         const from = payload.signer3.address;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(100);
     })
 
     it('add share token again on sale', async () => {
@@ -471,13 +461,9 @@ export function testNFTSale(payload: IDeployedPayload) {
         const from = payload.signer2.address;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
 
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
     })
 
     describe("sell using meta sign", () => {
@@ -675,7 +661,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(234365, 234372)
+            expect(gas).to.within(234343, 234372)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
@@ -737,13 +723,9 @@ export function testNFTSale(payload: IDeployedPayload) {
             const from = payload.signer3.address;
             const sellId = payload.getSellId(tokenId, from);
             const isSellActive = await marketplace.isSellActive(sellId);
-            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
             expect(isSellActive).equal(true);
-            expect(isNFTOnSale).equal(true);
 
-            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-            expect(shareOnSale).equal(0);
         })
     })
 

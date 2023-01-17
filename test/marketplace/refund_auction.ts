@@ -160,13 +160,8 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
-        expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
+        expect(isSellActive).equal(true);         
     })
 
     it('successful refund for jsstore example', async () => {
@@ -202,13 +197,10 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(false);
-        expect(isNFTOnSale).equal(false);
 
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
+         
     })
 
     it('expect isSellActive true after auction is closed', async () => {
@@ -217,13 +209,9 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(100);
+         
     })
 
     it('successful refund for jsstore ', async () => {
@@ -260,13 +248,8 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(false);
-        expect(isNFTOnSale).equal(false);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
     })
 
 

@@ -76,7 +76,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(218697);
+        expect(gas).equal(218673);
 
     });
 
@@ -108,7 +108,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(184768);
+        expect(gas).equal(184741);
 
     });
 
@@ -203,13 +203,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
             const from = payload.signer3.address;
             const sellId = payload.getSellId(tokenId, from);
             const isSellActive = await marketplace.isSellActive(sellId);
-            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
             expect(isSellActive).equal(false);
-            expect(isNFTOnSale).equal(false);
-
-            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-            expect(shareOnSale).equal(0);
         })
 
 
@@ -304,13 +299,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
             const from = payload.signer2.address;
             const sellId = payload.getSellId(tokenId, from);
             const isSellActive = await marketplace.isSellActive(sellId);
-            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
             expect(isSellActive).equal(false);
-            expect(isNFTOnSale).equal(false);
-
-            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-            expect(shareOnSale).equal(0);
         })
     });
 
@@ -335,7 +325,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(194985);
+        expect(gas).equal(194962);
     })
 
     it('buy with zero share', async () => {
@@ -421,10 +411,6 @@ export function testNFTBuy(payload: IDeployedPayload) {
         expect(buyer).not.equal(seller);
 
         const sellInfoBeforeSale = await marketplace.getSell(sellId);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, seller);
-        expect(shareOnSale).equal(sellInfoBeforeSale.share);
-
         const price = sellInfoBeforeSale.price;
 
         await payload.erc20Token1.approve(
@@ -521,13 +507,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(90);
     })
 
     describe("meta buy", () => {
@@ -964,13 +945,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
             const marketplace = payload.marketplace;
             const sellId = payload.getSellId(tokenId, from);
             const isSellActive = await marketplace.isSellActive(sellId);
-            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
             expect(isSellActive).equal(false);
-            expect(isNFTOnSale).equal(false);
-
-            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-            expect(shareOnSale).equal(0);
         })
 
     })
@@ -981,13 +957,8 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
-
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by creator', async () => {
@@ -1086,13 +1057,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(false);
-        expect(isNFTOnSale).equal(false);
 
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by not creator', async () => {
@@ -1195,12 +1162,9 @@ export function testNFTBuy(payload: IDeployedPayload) {
         const marketplace = payload.marketplace;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(false);
-        expect(isNFTOnSale).equal(false);
 
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
+
     })
 }

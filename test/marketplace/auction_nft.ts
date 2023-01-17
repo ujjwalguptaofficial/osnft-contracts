@@ -237,7 +237,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(239336)
+        expect(gas).equal(239313)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -332,13 +332,9 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const from = payload.signer4.address;
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
-        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
         expect(isSellActive).equal(true);
-        expect(isNFTOnSale).equal(true);
 
-        const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-        expect(shareOnSale).equal(0);
     })
 
     it('placing on sale after successful auction', async () => {
@@ -433,7 +429,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(245232, 245242)
+        expect(gas).within(245210, 245212)
     })
 
     describe('createAuctionMeta', () => {
@@ -714,13 +710,8 @@ export function testNFTAuction(payload: IDeployedPayload) {
             const from = payload.deployer.address;
             const sellId = payload.getSellId(tokenId, from);
             const isSellActive = await marketplace.isSellActive(sellId);
-            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
 
             expect(isSellActive).equal(true);
-            expect(isNFTOnSale).equal(true);
-
-            const shareOnSale = await marketplace.getShareOnSale(tokenId, from);
-            expect(shareOnSale).equal(100);
         })
     })
 }

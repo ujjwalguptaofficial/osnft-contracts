@@ -167,26 +167,6 @@ contract OSNFTMarketPlace is
         return _auctions[auctionId];
     }
 
-    function getShareOnSale(
-        bytes32 tokenId,
-        address owner
-    ) external view returns (uint32) {
-        bytes32 sellId = _getSellId(tokenId, owner);
-        SellListing memory sellInfo = getSell(sellId);
-        if (sellInfo.price > 0) {
-            return sellInfo.share;
-        }
-        return getAuction(sellId).share;
-    }
-
-    function isNFTOnSale(
-        bytes32 tokenId,
-        address owner
-    ) external view returns (bool) {
-        bytes32 sellId = _getSellId(tokenId, owner);
-        return isSellActive(sellId);
-    }
-
     function isSellActive(bytes32 sellId) public view returns (bool) {
         if (getSell(sellId).price > 0) return true;
         return getAuction(sellId).currentBidPrice > 0;
