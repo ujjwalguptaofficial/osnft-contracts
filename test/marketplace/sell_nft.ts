@@ -204,6 +204,20 @@ export function testNFTSale(payload: IDeployedPayload) {
         payload.transactions['sellJsStoreExamples'].push(txhash);
     });
 
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const marketplace = payload.marketplace;
+        const from = payload.signer3.address;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(true);
+        expect(isNFTOnSale).equal(true);
+    })
+
 
     it("add listed item on sale again", async () => {
         const marketplace = payload.marketplace;
@@ -337,6 +351,20 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     });
 
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const marketplace = payload.marketplace;
+        const from = payload.signer3.address;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(true);
+        expect(isNFTOnSale).equal(true);
+    })
+
     it('add share token again on sale', async () => {
         const marketplace = payload.marketplace;
         const tokenId = payload.getProjectId(
@@ -428,6 +456,20 @@ export function testNFTSale(payload: IDeployedPayload) {
         // console.log("txhash",);
         payload.transactions['sellMahalExamples'].push(txhash);
     });
+
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["mahal-example"]
+        );
+        const marketplace = payload.marketplace;
+        const from = payload.signer2.address;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(true);
+        expect(isNFTOnSale).equal(true);
+    })
 
     describe("sell using meta sign", () => {
 
@@ -677,6 +719,20 @@ export function testNFTSale(payload: IDeployedPayload) {
                 (await tx).hash
             )
         });
+
+        it('isSellActive', async () => {
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-webpack-loader"]
+            );
+            const marketplace = payload.marketplace;
+            const from = payload.signer3.address;
+            const sellId = payload.getSellId(tokenId, from);
+            const isSellActive = await marketplace.isSellActive(sellId);
+            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+            expect(isSellActive).equal(true);
+            expect(isNFTOnSale).equal(true);
+        })
     })
 
 }

@@ -195,6 +195,21 @@ export function testNFTBuy(payload: IDeployedPayload) {
             )
         });
 
+        it('isSellActive', async () => {
+            const tokenId = payload.getProjectId(
+                payload.projects["jsstore-example"]
+            );
+            const marketplace = payload.marketplace;
+            const from = payload.signer3.address;
+            const sellId = payload.getSellId(tokenId, from);
+            const isSellActive = await marketplace.isSellActive(sellId);
+            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+            expect(isSellActive).equal(false);
+            expect(isNFTOnSale).equal(false);
+        })
+
+
         it('seller is creator', async () => {
             const marketplace = payload.marketplace;
             const tokenId = payload.getProjectId(payload.projects["mahal-example"]);
@@ -275,6 +290,21 @@ export function testNFTBuy(payload: IDeployedPayload) {
             payload.transactions['buyMahalExample'].push(
                 (await tx).hash
             )
+        })
+
+
+        it('isSellActive', async () => {
+            const tokenId = payload.getProjectId(
+                payload.projects["mahal-example"]
+            );
+            const marketplace = payload.marketplace;
+            const from = payload.signer2.address;
+            const sellId = payload.getSellId(tokenId, from);
+            const isSellActive = await marketplace.isSellActive(sellId);
+            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+            expect(isSellActive).equal(false);
+            expect(isNFTOnSale).equal(false);
         })
     });
 
@@ -474,6 +504,18 @@ export function testNFTBuy(payload: IDeployedPayload) {
         payload.transactions['buyJsStore'].push(
             (await tx).hash
         )
+    })
+
+    it('isSellActive after partial transfer', async () => {
+        const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+        const from = payload.signer3.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(true);
+        expect(isNFTOnSale).equal(true);
     })
 
     describe("meta buy", () => {
@@ -904,6 +946,30 @@ export function testNFTBuy(payload: IDeployedPayload) {
             )
         })
 
+        it('isSellActive', async () => {
+            const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+            const from = payload.signer3.address;
+            const marketplace = payload.marketplace;
+            const sellId = payload.getSellId(tokenId, from);
+            const isSellActive = await marketplace.isSellActive(sellId);
+            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+            expect(isSellActive).equal(false);
+            expect(isNFTOnSale).equal(false);
+        })
+
+    })
+
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(payload.projects["mahal-webpack-loader"]);
+        const from = payload.signer3.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(true);
+        expect(isNFTOnSale).equal(true);
     })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by creator', async () => {
@@ -995,6 +1061,18 @@ export function testNFTBuy(payload: IDeployedPayload) {
         )
 
     });
+
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(payload.projects["mahal-webpack-loader"]);
+        const from = payload.signer3.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(false);
+        expect(isNFTOnSale).equal(false);
+    })
 
     it('buy mahal webpack loader - 0 % percentage cut, price - max uint value, selled by not creator', async () => {
         const marketplace = payload.marketplace;
@@ -1090,4 +1168,15 @@ export function testNFTBuy(payload: IDeployedPayload) {
         expect((earningForMarketplace).add(earningForSeller)).equal(price);
     });
 
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(payload.projects["mahal-webpack-loader"]);
+        const from = payload.signer2.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(false);
+        expect(isNFTOnSale).equal(false);
+    })
 }

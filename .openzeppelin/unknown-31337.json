@@ -402,24 +402,24 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x5242731500805488b2cae197eaedbbdd430289ecfe5836690642d404e523d53b",
+      "txHash": "0xa255e01c96d5fe1695a694d6c58ab85b9cf302af90ee031d490775507a8da463",
       "kind": "transparent"
     },
     {
       "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
-      "txHash": "0x0c0f7671a33cf9d38f2a7c4de94004dfc8beea93c7cb0eb31d0ae77e602dd714",
+      "txHash": "0x01e1ae3ae4a7e4d77ff8c08c36ce8be05fd65f9b4570e2c336822b5889553d21",
       "kind": "transparent"
     },
     {
       "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
-      "txHash": "0x66d8ee8d62c2a5f9da38b7887f91f1b71ce4a4aaa0b9b20196a36b5ec026b604",
+      "txHash": "0x9eb77993690df5857cb36170a227b277d62d840fc7e916d6198899a00ef409ca",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-      "txHash": "0xe3df31201bcd86c91d92612b78ea497e383de5e1be1a1a3b8be4576cce57faa9",
+      "txHash": "0x6222dbe160a1bcaa602eeae355ad0260e2997ae817ab7f1f393bb9fdbfe16d94",
       "layout": {
         "storage": [
           {
@@ -1157,9 +1157,9 @@
         }
       }
     },
-    "5f271a669a30429c0124ac86f496e31c2c7dedd6fca2dc6e8f982c7abc4dc668": {
+    "5118289c8de545edb9526f37d7cff159a7578d81658647bbb6972acd7c69f597": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xa37c4ba40456aa0e546c58175ce5df680a746bf20d790a83636468759e27529c",
+      "txHash": "0x9a03707006e61ed5b5b8e58629b8ee3041d3d72b7aaa3399dcf7e7c5b90248f3",
       "layout": {
         "storage": [
           {
@@ -1223,7 +1223,7 @@
             "label": "_sellListings",
             "offset": 0,
             "slot": "151",
-            "type": "t_mapping(t_bytes32,t_struct(SellListing)3197_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(SellListing)1642_storage)",
             "contract": "OSNFTMarketPlaceBase",
             "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:22"
           },
@@ -1239,7 +1239,7 @@
             "label": "_nftContract",
             "offset": 0,
             "slot": "153",
-            "type": "t_contract(IOSNFT)3511",
+            "type": "t_contract(IOSNFT)1956",
             "contract": "OSNFTMarketPlaceBase",
             "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:26"
           },
@@ -1255,7 +1255,7 @@
             "label": "_auctions",
             "offset": 0,
             "slot": "154",
-            "type": "t_mapping(t_bytes32,t_struct(SellAuction)3221_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(SellAuction)1666_storage)",
             "contract": "OSNFTMarketPlaceBase",
             "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:30"
           },
@@ -1313,7 +1313,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFT)3511": {
+          "t_contract(IOSNFT)1956": {
             "label": "contract IOSNFT",
             "numberOfBytes": "20"
           },
@@ -1321,15 +1321,15 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(SellAuction)3221_storage)": {
+          "t_mapping(t_bytes32,t_struct(SellAuction)1666_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTMarketPlaceDataType.SellAuction)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(SellListing)3197_storage)": {
+          "t_mapping(t_bytes32,t_struct(SellListing)1642_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTMarketPlaceDataType.SellListing)",
             "numberOfBytes": "32"
           },
-          "t_struct(SellAuction)3221_storage": {
+          "t_struct(SellAuction)1666_storage": {
             "label": "struct IOSNFTMarketPlaceDataType.SellAuction",
             "members": [
               {
@@ -1383,7 +1383,7 @@
             ],
             "numberOfBytes": "224"
           },
-          "t_struct(SellListing)3197_storage": {
+          "t_struct(SellListing)1642_storage": {
             "label": "struct IOSNFTMarketPlaceDataType.SellListing",
             "members": [
               {

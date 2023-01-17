@@ -176,8 +176,7 @@ contract OSNFTMarketPlace is
     }
 
     function isAuctionOpen(bytes32 auctionId) public view returns (bool) {
-        SellAuction storage auction = _auctions[auctionId];
-        return auction.endAuction > block.timestamp;
+        return _auctions[auctionId].endAuction > block.timestamp;
     }
 
     function isNFTOnSale(

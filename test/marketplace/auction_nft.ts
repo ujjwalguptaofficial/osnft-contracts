@@ -299,6 +299,20 @@ export function testNFTAuction(payload: IDeployedPayload) {
         );
     });
 
+    it('isSellActive', async () => {
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const marketplace = payload.marketplace;
+        const from = payload.signer4.address;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(true);
+        expect(isNFTOnSale).equal(true);
+    })
+
     it('placing on sale after successful auction', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
@@ -648,5 +662,18 @@ export function testNFTAuction(payload: IDeployedPayload) {
             )
         });
 
+        it('isSellActive', async () => {
+            const tokenId = payload.getProjectId(
+                payload.projects["jsstore"]
+            );
+            const marketplace = payload.marketplace;
+            const from = payload.deployer.address;
+            const sellId = payload.getSellId(tokenId, from);
+            const isSellActive = await marketplace.isSellActive(sellId);
+            const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+            expect(isSellActive).equal(true);
+            expect(isNFTOnSale).equal(true);
+        })
     })
 }
