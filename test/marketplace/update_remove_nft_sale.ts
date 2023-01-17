@@ -216,7 +216,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10
             );
 
-            expect(gasForPrioritySale).equal(65069);
+            expect(gasForPrioritySale).equal(65047);
         })
 
         it('success', async () => {

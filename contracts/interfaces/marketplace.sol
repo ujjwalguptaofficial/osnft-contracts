@@ -29,7 +29,12 @@ interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
         bytes32 sellId
     ) external view returns (SellListing memory);
 
-    // function isNFTOnSale(bytes32 sellId) external view returns (bool);
+    function isNFTOnSale(
+        bytes32 tokenId,
+        address owner
+    ) external view returns (bool);
+
+    function isSellActive(bytes32 sellId) external view returns (bool);
 
     function addPayableToken(address token) external;
 

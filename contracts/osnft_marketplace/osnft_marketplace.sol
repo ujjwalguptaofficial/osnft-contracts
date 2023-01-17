@@ -180,6 +180,20 @@ contract OSNFTMarketPlace is
         return auction.endAuction > block.timestamp;
     }
 
+    function isNFTOnSale(
+        bytes32 tokenId,
+        address owner
+    ) external view returns (bool) {
+        bytes32 sellId = _getSellId(tokenId, owner);
+        return isSellActive(sellId);
+    }
+
+    function isSellActive(bytes32 sellId) public view returns (bool) {
+        if (_sellListings[sellId].price > 0) return true;
+        if (isAuctionOpen(sellId)) return true;
+        return false;
+    }
+
     function getBidOwner(bytes32 auctionId) external view returns (address) {
         SellAuction memory auction = _requireAuctioned(auctionId);
         return auction.currentBidOwner;
