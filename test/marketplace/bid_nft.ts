@@ -513,7 +513,6 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 expect(shareOfBuyerAfterSale).equal(shareToTransfer + shareOfBuyerBeforeSale);
 
                 payload.transactions['claimJsStore'] = (await tx).hash;
-
             });
 
             it('when auction no exist', async () => {

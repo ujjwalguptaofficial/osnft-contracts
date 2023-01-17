@@ -402,7 +402,7 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x6198d7ee3edbb933b0de9edb7ad06e50b22ba8d82f525d76e70e0926b2067758",
+      "txHash": "0xe7157c659e0242c8601b037d5e662bc2d8db76d4f41fffcbce8ac05933af4363",
       "kind": "transparent"
     },
     {
@@ -1157,9 +1157,9 @@
         }
       }
     },
-    "b9eaeb23b36cb875a4749760492ed614ac6f1b8aaa37a3a45b93166ca3b4ec44": {
+    "c9ce8958d5b01646d8696089f6b70c6dd9783aed094a1f059749a071fa71fb8d": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x8cf7f7990a572d9ae76a6e498daf7068f34a660878ab34d944ddebc8b787e00d",
+      "txHash": "0xb51a4b541d80cdf7d7e4935e3c28d4c6a49d439efa1425010b7f0137e52cde28",
       "layout": {
         "storage": [
           {

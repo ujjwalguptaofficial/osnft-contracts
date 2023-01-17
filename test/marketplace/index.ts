@@ -117,4 +117,26 @@ export function testMarketplace(payload: IDeployedPayload) {
 
         })
     })
+
+    describe("check jsstore shares owner", () => {
+        it('check owners', async () => {
+            const nft = payload.nft;
+            // const tokenId = payload.getProjectId(payload.projects.jsstore);
+
+            // const user1Share = await nft.shareOf(tokenId, payload.deployer.address);
+            // const user2Share = await nft.shareOf(tokenId, payload.signer2.address);
+            // const user3Share = await nft.shareOf(tokenId, payload.signer3.address);
+            // const marketplace = await nft.shareOf(tokenId, payload.marketplace.address);
+
+            // console.log("user1Share", user1Share);
+            // console.log("user2Share", user2Share);
+            // console.log("user3Share", user3Share);
+            // console.log("marketplace", marketplace);
+
+            const owner = await nft.ownerOf(
+                payload.getProjectId(payload.projects["mahal-example"])
+            );
+            console.log("owner of mahal examples", owner, owner.toLowerCase() === payload.deployer.address.toLowerCase());
+        })
+    })
 }

@@ -6,20 +6,20 @@ pragma solidity ^0.8.17;
  */
 interface IOSNFTMarketPlaceDataType {
     struct SellListingInput {
+        bytes32 tokenId;
         uint256 price;
         uint32 share;
         address paymentToken;
-        bytes32 tokenId;
         uint32 sellPriority;
     }
 
     struct AuctionListingInput {
         bytes32 tokenId;
-        uint32 share;
         uint256 initialBid;
-        uint256 endAuction;
+        uint32 share;
         address paymentToken;
         uint32 sellPriority;
+        uint256 endAuction;
     }
 
     struct SellUpdateInput {
