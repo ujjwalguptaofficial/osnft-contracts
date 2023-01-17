@@ -147,6 +147,11 @@ contract OSNFTMarketPlaceBase is
         return listing;
     }
 
+    function _requireSeller(bytes32 sellId, address seller) internal view {
+        SellListing memory listing = _sellListings[sellId];
+        require(listing.seller == seller, "require_caller_tobe_seller");
+    }
+
     function _requireNftOwner(
         bytes32 tokenId,
         address spender,
@@ -161,6 +166,7 @@ contract OSNFTMarketPlaceBase is
             );
         } else {
             address owner = _nftContract.ownerOf(tokenId);
+            require(share == 0, "require_input_share_zero");
             require(spender == owner, "require_nft_owner");
         }
     }

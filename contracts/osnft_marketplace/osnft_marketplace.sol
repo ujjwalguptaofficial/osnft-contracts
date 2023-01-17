@@ -91,25 +91,29 @@ contract OSNFTMarketPlace is
         // nft should be listed
         SellListing memory listing = _requireListed(sellId);
 
-        // should be owner
-        _requireNftOwner(listing.tokenId, _msgSender(), listing.share);
+        address seller = _msgSender();
+
+        // should be seller
+        _requireSeller(sellId, seller);
 
         delete _sellListings[sellId];
-        emit SaleCanceled(sellId, listing.tokenId, _msgSender());
+        emit SaleCanceled(sellId, listing.tokenId, seller);
     }
 
     function updateNFTOnSale(
         bytes32 sellId,
         SellUpdateInput calldata sellData
     ) external {
+        address seller = _msgSender();
+
         SellListing storage listedNft = _requireListedStorage(sellId);
 
-        address seller = _msgSender();
+        _requireSeller(sellId, seller);
 
         // should be owner
         // if update allowed other than owner,
         // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
+        _requireNftOwner(listedNft.tokenId, seller, sellData.share);
 
         require(sellData.price > 0, "require_price_above_zero");
 
