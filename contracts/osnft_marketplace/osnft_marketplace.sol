@@ -188,7 +188,7 @@ contract OSNFTMarketPlace is
     }
 
     function isSellActive(bytes32 sellId) public view returns (bool) {
-        if (_sellListings[sellId].price > 0) return true;
+        if (getSell(sellId).price > 0) return true;
         return getAuction(sellId).currentBidPrice > 0;
     }
 
@@ -250,7 +250,7 @@ contract OSNFTMarketPlace is
         );
 
         // new bid is valid so must refund the current bid owner (if there is one!)
-        if (auction.bidCount > 0) {
+        if (auction.currentBidOwner != address(0)) {
             _requireTransferFromMarketplace(
                 auction.currentBidOwner,
                 auction.currentBidPrice,
@@ -262,7 +262,6 @@ contract OSNFTMarketPlace is
 
         auction.currentBidOwner = newBidder;
         auction.currentBidPrice = bidAmount;
-        auction.bidCount++;
 
         emit Bid(auctionId, newBidder, bidAmount);
     }

@@ -53,7 +53,6 @@ interface IOSNFTMarketPlaceDataType {
         address currentBidOwner; // Address of the highest bider
         uint256 currentBidPrice; // Current highest bid for the auction
         uint256 endAuction; // Timestamp for the end day&time of the auction
-        uint256 bidCount; // Number of bid placed on the auction
     }
 
     enum SELL_TYPE {

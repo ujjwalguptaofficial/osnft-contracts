@@ -132,7 +132,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 currentBidOwner: buyer, // Address of the highest bider
                 currentBidPrice: bidPrice, // Current highest bid for the auction
                 endAuction: auction.endAuction, // Timestamp for the end day&time of the auction
-                bidCount: 1 //
+                // bidCount: 1 //
             };
             for (const prop in expectedAuction) {
                 expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
@@ -224,7 +224,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 currentBidOwner: buyer, // Address of the highest bider
                 currentBidPrice: bidPrice, // Current highest bid for the auction
                 endAuction: auction.endAuction, // Timestamp for the end day&time of the auction
-                bidCount: 2 //
+                // bidCount: 2 //
             };
             for (const prop in expectedAuction) {
                 expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
@@ -573,7 +573,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                     currentBidOwner: ethers.constants.AddressZero, // Address of the highest bider
                     currentBidPrice: 0, // Current highest bid for the auction
                     endAuction: 0, // Timestamp for the end day&time of the auction
-                    bidCount: 0 //
+                    // bidCount: 0 //
                 };
                 for (const prop in expectedAuction) {
                     expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);

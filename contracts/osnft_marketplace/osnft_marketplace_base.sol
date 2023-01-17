@@ -219,8 +219,7 @@ contract OSNFTMarketPlaceBase is
             currentBidPrice: input.share > 0
                 ? input.initialBid * input.share
                 : input.initialBid,
-            endAuction: input.endAuction,
-            bidCount: 0
+            endAuction: input.endAuction
         });
 
         // Trigger event and return index of new auction
