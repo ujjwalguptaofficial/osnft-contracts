@@ -122,6 +122,22 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             const bidPrice = await marketplace.getBidPrice(auctionId);
             expect(bidPrice).equal(bidAmount);
 
+            const auction = await marketplace.getAuction(auctionId);
+
+            const expectedAuction = {
+                tokenId: nftId,
+                share: 0,
+                seller: seller,
+                paymentToken: payload.erc20Token1.address, // Address of the ERC20 Payment Token contract
+                currentBidOwner: buyer, // Address of the highest bider
+                currentBidPrice: bidPrice, // Current highest bid for the auction
+                endAuction: auction.endAuction, // Timestamp for the end day&time of the auction
+                bidCount: 1 //
+            };
+            for (const prop in expectedAuction) {
+                expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
+            }
+
             payload.transactions['bidJsStoreExamples'].push(
                 (await tx).hash
             )
@@ -193,6 +209,26 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
             expect(previousBidOwnerBalanceAfterSale).equal(
                 previousBidOwnerBalance.add(previousBidAmount)
             );
+
+            payload.transactions['bidJsStoreExamples'].push(
+                (await tx).hash
+            )
+
+            const auction = await marketplace.getAuction(auctionId);
+
+            const expectedAuction = {
+                tokenId: nftId,
+                share: 0,
+                seller: seller,
+                paymentToken: payload.erc20Token1.address, // Address of the ERC20 Payment Token contract
+                currentBidOwner: buyer, // Address of the highest bider
+                currentBidPrice: bidPrice, // Current highest bid for the auction
+                endAuction: auction.endAuction, // Timestamp for the end day&time of the auction
+                bidCount: 2 //
+            };
+            for (const prop in expectedAuction) {
+                expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
+            }
 
             payload.transactions['bidJsStoreExamples'].push(
                 (await tx).hash
@@ -523,6 +559,22 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 const shareOfBuyerAfterSale = await payload.nft.shareOf(nftId, buyer);
                 expect(shareOfBuyerAfterSale).equal(shareToTransfer + shareOfBuyerBeforeSale);
+
+                const auction = await marketplace.getAuction(auctionId);
+
+                const expectedAuction = {
+                    tokenId: '0x0000000000000000000000000000000000000000000000000000000000000000',
+                    share: 0,
+                    seller: ethers.constants.AddressZero,
+                    paymentToken: ethers.constants.AddressZero, // Address of the ERC20 Payment Token contract
+                    currentBidOwner: ethers.constants.AddressZero, // Address of the highest bider
+                    currentBidPrice: 0, // Current highest bid for the auction
+                    endAuction: 0, // Timestamp for the end day&time of the auction
+                    bidCount: 0 //
+                };
+                for (const prop in expectedAuction) {
+                    expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
+                }
 
                 payload.transactions['claimJsStore'] = (await tx).hash;
             });

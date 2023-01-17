@@ -256,10 +256,12 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const from = seller;
         const nativeCoinBalance = await nativeCoin.balanceOf(from);
 
+        const initialBid = 1000;
+
         const tx = marketplace.connect(payload.signer4).createAuction({
             tokenId: projectId,
             share: 0,
-            initialBid: 1000,
+            initialBid: initialBid,
             endAuction,
             paymentToken: payload.erc20Token1.address,
             sellPriority: sellPriority
@@ -267,7 +269,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const auctionId = payload.getSellId(projectId, seller);
         await expect(tx).emit(marketplace, 'Auction').withArgs(
             auctionId,
-            1000,
+            initialBid,
             endAuction,
             payload.erc20Token1.address,
             sellPriority
@@ -294,10 +296,33 @@ export function testNFTAuction(payload: IDeployedPayload) {
             nativeCoinBalance.sub(expectedDeduction)
         )
 
+        // check auction
+
+
+
+        const auction = await marketplace.getAuction(auctionId);
+
+        const expectedAuction = {
+            tokenId: projectId,
+            share: 0,
+            seller: from,
+            paymentToken: payload.erc20Token1.address, // Address of the ERC20 Payment Token contract
+            currentBidOwner: ethers.constants.AddressZero, // Address of the highest bider
+            currentBidPrice: initialBid, // Current highest bid for the auction
+            endAuction: endAuction, // Timestamp for the end day&time of the auction
+            bidCount: 0 //
+        };
+        for (const prop in expectedAuction) {
+            expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
+        }
+
+
         payload.transactions['sellJsStoreExamples'].push(
             (await tx).hash
         );
     });
+
+
 
     it('isSellActive', async () => {
         const tokenId = payload.getProjectId(
@@ -656,6 +681,22 @@ export function testNFTAuction(payload: IDeployedPayload) {
             expect(nativeCoinBalanceAfter).equal(
                 nativeCoinBalance.sub(expectedDeduction)
             )
+
+            const auction = await marketplace.getAuction(auctionId);
+
+            const expectedAuction = {
+                tokenId: projectId,
+                share: shareToAuction,
+                seller: from,
+                paymentToken: payload.erc20Token1.address, // Address of the ERC20 Payment Token contract
+                currentBidOwner: ethers.constants.AddressZero, // Address of the highest bider
+                currentBidPrice: initialBid * shareToAuction, // Current highest bid for the auction
+                endAuction: endAuction, // Timestamp for the end day&time of the auction
+                bidCount: 0 //
+            };
+            for (const prop in expectedAuction) {
+                expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
+            }
 
             payload.transactions.sellJsStore.push(
                 (await tx).hash
