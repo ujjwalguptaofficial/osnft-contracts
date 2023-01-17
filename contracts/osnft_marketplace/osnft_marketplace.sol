@@ -179,6 +179,19 @@ contract OSNFTMarketPlace is
         return _auctions[auctionId].endAuction > block.timestamp;
     }
 
+    function getShareOnSale(
+        bytes32 tokenId,
+        address owner
+    ) external view returns (uint32) {
+        bytes32 sellId = _getSellId(tokenId, owner);
+        SellListing memory sellInfo = _sellListings[sellId];
+        if (sellInfo.price > 0) {
+            return sellInfo.share;
+        }
+        SellAuction memory auction = _auctions[sellId];
+        return auction.share;
+    }
+
     function isNFTOnSale(
         bytes32 tokenId,
         address owner
