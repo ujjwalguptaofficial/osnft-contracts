@@ -163,6 +163,12 @@ contract OSNFTMarketPlace is
         return _sellListings[sellId];
     }
 
+    function getAuction(
+        bytes32 auctionId
+    ) external view returns (SellAuction memory) {
+        return _auctions[auctionId];
+    }
+
     function createAuctionMeta(
         address to,
         AuctionListingInput calldata input
