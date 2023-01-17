@@ -359,6 +359,29 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     });
 
+    it('add share token which on sale to auction', async () => {
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const price = 10000000000;
+        const shareToSell = 100;
+
+        const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
+        expect(shareOf).greaterThan(shareToSell);
+
+        const tx = marketplace.connect(payload.signer3).createAuction({
+            tokenId,
+            share: shareToSell,
+            initialBid: price,
+            paymentToken: payload.erc20Token1.address,
+            sellPriority: 0,
+            endAuction: new Date().getTime()
+        });
+        await expect(tx).revertedWith('already_on_sale')
+
+    });
+
     it("add mahal-example (percentage cut) on sale", async () => {
         const marketplace = payload.marketplace;
         const tokenId = payload.getProjectId(

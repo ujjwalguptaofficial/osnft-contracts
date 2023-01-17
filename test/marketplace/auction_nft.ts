@@ -299,6 +299,32 @@ export function testNFTAuction(payload: IDeployedPayload) {
         );
     });
 
+    it('placing on sale after successful auction', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const seller = payload.signer4.address;
+
+
+        const endAuction = (await time.latest()) + 100; // Math.floor(Date.now() / 1000) + 10000;
+        //        (await time.latest()) + 100000000; // new Date().getTime(); //+ 1000; //addHours(, 24).getTime();
+        console.log('endAuction', endAuction);
+        const sellPriority = 100;
+        const nativeCoin = payload.nativeToken;
+        const from = seller;
+        const nativeCoinBalance = await nativeCoin.balanceOf(from);
+
+        const tx = marketplace.connect(payload.signer4).sell({
+            tokenId: projectId,
+            share: 0,
+            price: 1000,
+            paymentToken: payload.erc20Token1.address,
+            sellPriority: sellPriority
+        });
+        await expect(tx).revertedWith('require_nft_owner');
+    });
+
     it('require share greater than zero', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
