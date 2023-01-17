@@ -443,6 +443,18 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
                 await expect(tx).to.revertedWith('require_auction_close');
             });
 
+            it('expect isSellActive true', async () => {
+                const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+                const from = payload.deployer.address;
+                const marketplace = payload.marketplace;
+                const sellId = payload.getSellId(tokenId, from);
+                const isSellActive = await marketplace.isSellActive(sellId);
+                const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+                expect(isSellActive).equal(true);
+                expect(isNFTOnSale).equal(true);
+            })
+
             it('successful claim', async () => {
 
                 const erc20Token = payload.erc20Token1;
@@ -514,6 +526,19 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 payload.transactions['claimJsStore'] = (await tx).hash;
             });
+
+
+            it('expect isSellActive false', async () => {
+                const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+                const from = payload.deployer.address;
+                const marketplace = payload.marketplace;
+                const sellId = payload.getSellId(tokenId, from);
+                const isSellActive = await marketplace.isSellActive(sellId);
+                const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+                expect(isSellActive).equal(false);
+                expect(isNFTOnSale).equal(false);
+            })
 
             it('when auction no exist', async () => {
                 const marketplace = payload.marketplace;

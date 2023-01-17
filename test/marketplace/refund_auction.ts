@@ -154,6 +154,18 @@ export function testRefundAuction(payload: IDeployedPayload) {
         expect(isAuctionOpenAfter).equal(false);
     });
 
+    it('expect isSellActive false after auction is closed', async () => {
+        const tokenId = payload.getProjectId(payload.projects["jsstore-example"]);
+        const from = payload.signer2.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(false);
+        expect(isNFTOnSale).equal(false);
+    })
+
     it('successful refund for jsstore example', async () => {
         const marketplace = payload.marketplace;
         const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
@@ -179,6 +191,30 @@ export function testRefundAuction(payload: IDeployedPayload) {
         expect(newOwner).equal(seller);
 
         payload.transactions.refundAuctionJsStoreExamples = (await tx).hash;
+    })
+
+    it('expect isSellActive false', async () => {
+        const tokenId = payload.getProjectId(payload.projects["jsstore-example"]);
+        const from = payload.signer2.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(false);
+        expect(isNFTOnSale).equal(false);
+    })
+
+    it('expect isSellActive false after auction is closed', async () => {
+        const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+        const from = payload.deployer.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(false);
+        expect(isNFTOnSale).equal(false);
     })
 
     it('successful refund for jsstore ', async () => {
@@ -207,6 +243,18 @@ export function testRefundAuction(payload: IDeployedPayload) {
         expect(newShare).equal(oldShare + 100);
 
         payload.transactions.refundAuctionJsStore = (await tx).hash;
+    })
+
+    it('expect isSellActive false', async () => {
+        const tokenId = payload.getProjectId(payload.projects["jsstore"]);
+        const from = payload.deployer.address;
+        const marketplace = payload.marketplace;
+        const sellId = payload.getSellId(tokenId, from);
+        const isSellActive = await marketplace.isSellActive(sellId);
+        const isNFTOnSale = await marketplace.isNFTOnSale(tokenId, from);
+
+        expect(isSellActive).equal(false);
+        expect(isNFTOnSale).equal(false);
     })
 
 
