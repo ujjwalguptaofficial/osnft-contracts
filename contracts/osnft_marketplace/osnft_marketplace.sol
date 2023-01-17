@@ -142,7 +142,7 @@ contract OSNFTMarketPlace is
         );
     }
 
-    function updateSellPriority(bytes32 sellId, uint32 sellPriority) external {
+    function setSellPriority(bytes32 sellId, uint32 sellPriority) external {
         SellListing storage listedNft = _requireListedStorage(sellId);
 
         address seller = _msgSender();

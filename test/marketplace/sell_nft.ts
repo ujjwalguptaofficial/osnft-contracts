@@ -301,7 +301,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore"]
         );
         const price = 10000000000;
-        const shareToSell = 100;
+        const shareToSell = 99;
 
         const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
         expect(shareOf).greaterThan(shareToSell);
@@ -348,6 +348,53 @@ export function testNFTSale(payload: IDeployedPayload) {
         payload.transactions['sellJsStore'].push(txhash);
 
     });
+
+    it('update sell', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore"]
+        );
+        const seller = payload.signer3.address;
+        const sellId = payload.getSellId(projectId, seller);
+
+        const nativeCoin = payload.nativeToken;
+        const from = seller;
+        const nativeCoinBalance = await nativeCoin.balanceOf(from);
+        const sellPriority = 1;
+        const price = 10000000000;
+        const shareToSell = 100;
+        const nftSaleInfoBefore = await marketplace.getSell(sellId);
+        expect(nftSaleInfoBefore.sellPriority).equal(sellPriority);
+
+        const tx = marketplace.connect(payload.signer3).updateSell(
+            sellId,
+            {
+                share: shareToSell,
+                price: price,
+                paymentToken: payload.erc20Token1.address,
+                sellPriority: sellPriority,
+            }
+        );
+
+        await expect(tx).to.emit(marketplace, 'SellUpdate').withArgs(
+            sellId, shareToSell, price,
+            payload.erc20Token1.address, sellPriority
+        );
+
+        const nftSaleInfo = await marketplace.getSell(sellId);
+
+        expect(nftSaleInfo.tokenId).equal(projectId);
+        expect(nftSaleInfo.seller).equal(from);
+        expect(nftSaleInfo.price).equal(price);
+        expect(nftSaleInfo.paymentToken).equal(payload.erc20Token1.address);
+        expect(nftSaleInfo.share).equal(shareToSell);
+        expect(nftSaleInfo.sellPriority).equal(sellPriority);
+
+        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
+        expect(nativeCoinBalanceAfter).equal(
+            nativeCoinBalance
+        );
+    })
 
     it('isSellActive', async () => {
         const tokenId = payload.getProjectId(

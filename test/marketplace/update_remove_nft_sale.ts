@@ -203,7 +203,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const sellId = payload.getSellId(projectId, seller);
 
-            const tx = marketplace.connect(payload.signer4).updateSellPriority(
+            const tx = marketplace.connect(payload.signer4).setSellPriority(
                 sellId,
                 10,
             );
@@ -220,7 +220,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 seller
             );
 
-            const tx = marketplace.connect(payload.signer4).updateSellPriority(auctionId,
+            const tx = marketplace.connect(payload.signer4).setSellPriority(auctionId,
                 10);
             await expect(tx).to.revertedWith('require_caller_tobe_seller');
         })
@@ -233,12 +233,12 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
 
-            const gasForPrioritySale = await marketplace.connect(payload.signer2).estimateGas.updateSellPriority(
+            const gasForPrioritySale = await marketplace.connect(payload.signer2).estimateGas.setSellPriority(
                 sellId,
                 10
             );
 
-            expect(gasForPrioritySale).equal(44352);
+            expect(gasForPrioritySale).equal(44330);
         })
 
         it('success', async () => {
@@ -257,7 +257,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const nftSaleInfoBefore = await marketplace.getSell(sellId);
             expect(nftSaleInfoBefore.sellPriority).lessThan(sellPriority);
 
-            const tx = marketplace.connect(payload.signer2).updateSellPriority(
+            const tx = marketplace.connect(payload.signer2).setSellPriority(
                 sellId,
                 sellPriority
             );
