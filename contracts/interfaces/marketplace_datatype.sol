@@ -70,7 +70,7 @@ interface IOSNFTMarketPlaceDataType {
         SELL_TYPE sellType;
     }
 
-    event Sale(
+    event Sell(
         bytes32 indexed tokenId,
         address indexed seller,
         bytes32 indexed sellId,
@@ -80,7 +80,7 @@ interface IOSNFTMarketPlaceDataType {
         uint32 sellPriority
     );
 
-    event SaleUpdated(
+    event SellUpdate(
         bytes32 indexed sellId,
         uint32 share,
         uint256 price,
@@ -88,9 +88,9 @@ interface IOSNFTMarketPlaceDataType {
         uint32 sellPriority
     );
 
-    event SalePriorityUpdated(bytes32 indexed sellId, uint32 sellPriority);
+    event SellPriorityUpdate(bytes32 indexed sellId, uint32 sellPriority);
 
-    event SaleCanceled(
+    event SellCancel(
         bytes32 indexed auctionId,
         bytes32 indexed tokenId,
         address canceledBy
@@ -112,7 +112,7 @@ interface IOSNFTMarketPlaceDataType {
 
     // Public event to notify that winner of an
     // auction claim for his reward
-    event Claimed(
+    event Claim(
         bytes32 indexed auctionId,
         uint256 price,
         address paymentToken,
@@ -121,5 +121,5 @@ interface IOSNFTMarketPlaceDataType {
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction
-    event Refunded(bytes32 indexed auctionId);
+    event Refund(bytes32 indexed auctionId);
 }

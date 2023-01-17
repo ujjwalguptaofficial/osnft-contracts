@@ -49,7 +49,7 @@ contract OSNFTMarketPlaceBase is
 
         _listItem(sellData);
 
-        emit Sale(
+        emit Sell(
             tokenId,
             seller,
             sellId,

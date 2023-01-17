@@ -301,7 +301,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
 
                 const tx = marketplace.claimNFT(auctionId);
-                await expect(tx).emit(marketplace, 'Claimed').withArgs(
+                await expect(tx).emit(marketplace, 'Claim').withArgs(
                     auctionId,
                     currentBidAmount,
                     payload.erc20Token1.address,
@@ -513,7 +513,7 @@ export function testBidNFTAuction(payload: IDeployedPayload) {
 
                 const tx = marketplace.claimNFT(auctionId);
                 const shareToTransfer = 100;
-                await expect(tx).emit(marketplace, 'Claimed').withArgs(
+                await expect(tx).emit(marketplace, 'Claim').withArgs(
                     auctionId,
                     currentBidAmount,
                     payload.erc20Token1.address,

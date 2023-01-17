@@ -87,7 +87,7 @@ contract OSNFTMarketPlace is
         _buyNFT(buyer, sellId, share, price);
     }
 
-    function removeNFTSale(bytes32 sellId) external {
+    function removeSell(bytes32 sellId) external {
         // nft should be listed
         SellListing memory listing = _requireListed(sellId);
 
@@ -97,10 +97,10 @@ contract OSNFTMarketPlace is
         _requireSeller(sellId, seller);
 
         delete _sellListings[sellId];
-        emit SaleCanceled(sellId, listing.tokenId, seller);
+        emit SellCancel(sellId, listing.tokenId, seller);
     }
 
-    function updateNFTOnSale(
+    function updateSell(
         bytes32 sellId,
         SellUpdateInput calldata sellData
     ) external {
@@ -133,7 +133,7 @@ contract OSNFTMarketPlace is
 
         _sellListings[sellId] = listedNft;
 
-        emit SaleUpdated(
+        emit SellUpdate(
             sellId,
             sellData.share,
             sellData.price,
@@ -158,7 +158,7 @@ contract OSNFTMarketPlace is
         );
         listedNft.sellPriority = sellPriority;
 
-        emit SalePriorityUpdated(sellId, sellPriority);
+        emit SellPriorityUpdate(sellId, sellPriority);
     }
 
     function getSell(bytes32 sellId) public view returns (SellListing memory) {
@@ -274,7 +274,7 @@ contract OSNFTMarketPlace is
         );
 
         // from, to, share and token id can be extracted from transfer event of erc721
-        emit Claimed(
+        emit Claim(
             auctionId,
             auction.currentBidPrice,
             auction.paymentToken,
@@ -302,7 +302,7 @@ contract OSNFTMarketPlace is
         );
 
         // tokenid, seller, share etc can be retrieved from nft contract event Transfer and TransferShare
-        emit Refunded(auctionId);
+        emit Refund(auctionId);
     }
 
     function withdrawEarning(

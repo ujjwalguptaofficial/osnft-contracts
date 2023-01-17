@@ -9,7 +9,7 @@ import "./marketplace_datatype.sol";
 interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
     function sell(SellListingInput calldata sellData) external;
 
-    function removeNFTSale(bytes32 tokenId) external;
+    function removeSell(bytes32 tokenId) external;
 
     function buyMeta(
         address buyer,
@@ -20,7 +20,7 @@ interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
 
     function buy(bytes32 sellId, uint32 share, uint256 price) external;
 
-    function updateNFTOnSale(
+    function updateSell(
         bytes32 sellId,
         SellUpdateInput calldata sellData
     ) external;

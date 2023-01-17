@@ -181,7 +181,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
         );
         await expect(tx2).revertedWith('already_on_sale');
 
-        await await marketplace.connect(payload.signer4).removeNFTSale(
+        await await marketplace.connect(payload.signer4).removeSell(
             payload.getSellId(projectId, payload.signer4.address)
         )
 
@@ -237,7 +237,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(239343)
+        expect(gas).equal(239365)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -429,7 +429,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(245210, 245212)
+        expect(gas).within(245232, 245233)
     })
 
     describe('createAuctionMeta', () => {

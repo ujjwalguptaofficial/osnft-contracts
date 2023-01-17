@@ -34,7 +34,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const sellId = payload.getSellId(projectId, seller);
 
-            const tx = marketplace.connect(payload.signer4).updateNFTOnSale(
+            const tx = marketplace.connect(payload.signer4).updateSell(
                 sellId,
                 {
                     share: 100,
@@ -56,7 +56,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 seller
             );
 
-            const tx = marketplace.connect(payload.signer4).updateNFTOnSale(auctionId,
+            const tx = marketplace.connect(payload.signer4).updateSell(auctionId,
                 {
                     share: 100,
                     price: 10000,
@@ -78,7 +78,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const shareOfOwner = payload.nft.shareOf(nftId, seller);
             console.log('shareOfOwner', shareOfOwner);
 
-            const tx = marketplace.connect(payload.signer2).updateNFTOnSale(auctionId,
+            const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
                 {
                     share: 101,
                     price: 0,
@@ -97,7 +97,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 seller
             );
 
-            const tx = marketplace.connect(payload.signer2).updateNFTOnSale(auctionId,
+            const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
                 {
                     share: 0,
                     price: 0,
@@ -116,7 +116,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 seller
             );
 
-            const tx = marketplace.connect(payload.signer2).updateNFTOnSale(auctionId,
+            const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
                 {
                     share: 0,
                     price: 10000,
@@ -133,7 +133,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             );
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
-            const gas = await marketplace.connect(payload.signer2).estimateGas.updateNFTOnSale(
+            const gas = await marketplace.connect(payload.signer2).estimateGas.updateSell(
                 sellId,
                 {
                     share: 0,
@@ -143,7 +143,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).within(115864, 115874);
+            expect(gas).within(115798, 115799);
         })
 
         it('success', async () => {
@@ -161,7 +161,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const nftSaleInfoBefore = await marketplace.getSell(sellId);
             expect(nftSaleInfoBefore.sellPriority).lessThan(sellPriority);
 
-            const tx = marketplace.connect(payload.signer2).updateNFTOnSale(
+            const tx = marketplace.connect(payload.signer2).updateSell(
                 sellId,
                 {
                     share: 0,
@@ -171,7 +171,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            await expect(tx).to.emit(marketplace, 'SaleUpdated').withArgs(
+            await expect(tx).to.emit(marketplace, 'SellUpdate').withArgs(
                 sellId, 0, 10000,
                 payload.erc20Token2.address, sellPriority
             );
@@ -262,7 +262,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 sellPriority
             );
 
-            await expect(tx).to.emit(marketplace, 'SalePriorityUpdated').withArgs(
+            await expect(tx).to.emit(marketplace, 'SellPriorityUpdate').withArgs(
                 sellId, sellPriority
             );
 
@@ -292,7 +292,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const sellId = payload.getSellId(projectId, seller);
 
-            const tx = marketplace.connect(payload.signer4).removeNFTSale(
+            const tx = marketplace.connect(payload.signer4).removeSell(
                 sellId
             );
 
@@ -308,7 +308,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 seller
             );
 
-            const tx = marketplace.connect(payload.signer4).removeNFTSale(auctionId);
+            const tx = marketplace.connect(payload.signer4).removeSell(auctionId);
             await expect(tx).to.revertedWith('require_caller_tobe_seller');
         })
 
@@ -320,11 +320,11 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
 
-            const tx = marketplace.connect(payload.signer2).removeNFTSale(
+            const tx = marketplace.connect(payload.signer2).removeSell(
                 sellId
             );
 
-            await expect(tx).emit(marketplace, 'SaleCanceled').withArgs(
+            await expect(tx).emit(marketplace, 'SellCancel').withArgs(
                 sellId, projectId, seller
             );
         });

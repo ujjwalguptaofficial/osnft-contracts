@@ -176,7 +176,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
         const sellId = payload.getSellId(tokenId, from);
-        await expect(tx).emit(marketplace, 'Sale').withArgs(
+        await expect(tx).emit(marketplace, 'Sell').withArgs(
             tokenId,
             from,
             sellId,
@@ -318,7 +318,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 1
         });
         const sellId = payload.getSellId(tokenId, from);
-        await expect(tx).emit(marketplace, 'Sale').withArgs(
+        await expect(tx).emit(marketplace, 'Sell').withArgs(
             tokenId,
             from,
             sellId,
@@ -423,7 +423,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 100
         });
         const sellId = payload.getSellId(tokenId, from);
-        await expect(tx).emit(marketplace, 'Sale').withArgs(
+        await expect(tx).emit(marketplace, 'Sell').withArgs(
             tokenId,
             from,
             sellId,
@@ -691,7 +691,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
             const sellId = payload.getSellId(tokenId, from);
-            await expect(tx).emit(marketplace, 'Sale').withArgs(
+            await expect(tx).emit(marketplace, 'Sell').withArgs(
                 tokenId,
                 from,
                 sellId,
