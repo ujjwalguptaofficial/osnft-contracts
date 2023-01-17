@@ -44,7 +44,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             payload.getProjectId(payload.projects["jsstore-example"]),
             payload.signer3.address
         );
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
         const tx = marketplace.buy(
             sellId,
             0,
@@ -63,7 +63,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         );
         const creatorOf = await payload.nft.creatorOf(tokenId);
         expect(creatorOf).not.equal(seller);
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
         const buyer = payload.signer4.address;
 
         expect(creatorOf).not.equal(buyer);
@@ -76,7 +76,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(218673);
+        expect(gas).equal(218697);
 
     });
 
@@ -97,7 +97,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(buyer).not.equal(seller);
 
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
 
         await payload.erc20Token1.approve(
             marketplace.address, ethers.constants.MaxUint256,
@@ -108,7 +108,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(184741);
+        expect(gas).equal(184768);
 
     });
 
@@ -125,7 +125,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             expect(creatorOf).not.equal(seller);
             const percentageOfCreator = await payload.nft.creatorCut(tokenId);
 
-            const price = (await marketplace.getNFTFromSale(sellId)).price;
+            const price = (await marketplace.getSell(sellId)).price;
             const buyer = payload.signer4.address;
 
             expect(creatorOf).not.equal(buyer);
@@ -227,7 +227,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
             expect(buyer).not.equal(seller);
 
-            const price = (await marketplace.getNFTFromSale(sellId)).price;
+            const price = (await marketplace.getSell(sellId)).price;
 
             await payload.erc20Token1.approve(
                 marketplace.address, ethers.constants.MaxUint256,
@@ -317,7 +317,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             seller
         );
 
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
         const buyer = payload.signer4.address;
 
         await payload.erc20Token1.approve(
@@ -329,7 +329,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(194962);
+        expect(gas).equal(194985);
     })
 
     it('buy with zero share', async () => {
@@ -341,7 +341,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             seller
         );
 
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
 
         await payload.erc20Token1.approve(
             marketplace.address, ethers.constants.MaxUint256,
@@ -364,7 +364,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             seller
         );
 
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
 
         await payload.erc20Token1.approve(
             marketplace.address, ethers.constants.MaxUint256,
@@ -387,7 +387,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             seller
         );
 
-        const price = (await marketplace.getNFTFromSale(sellId)).price;
+        const price = (await marketplace.getSell(sellId)).price;
 
         await payload.erc20Token1.approve(
             marketplace.address, ethers.constants.MaxUint256,
@@ -414,7 +414,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         );
         expect(buyer).not.equal(seller);
 
-        const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+        const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
         const price = sellInfoBeforeSale.price;
 
@@ -450,7 +450,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         );
 
 
-        const sellInfoAfterSale = await marketplace.getNFTFromSale(sellId);
+        const sellInfoAfterSale = await marketplace.getSell(sellId);
 
         expect(sellInfoAfterSale.share).equal(
             sellInfoBeforeSale.share - shareToBuy
@@ -561,7 +561,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -599,7 +599,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -637,7 +637,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -675,7 +675,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -716,7 +716,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -754,7 +754,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -792,7 +792,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 seller
             );
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
             const shareToBuy = 10;
@@ -828,7 +828,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             );
             expect(buyer).not.equal(seller);
 
-            const sellInfoBeforeSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoBeforeSale = await marketplace.getSell(sellId);
 
             const price = sellInfoBeforeSale.price;
 
@@ -879,7 +879,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             );
 
 
-            const sellInfoAfterSale = await marketplace.getNFTFromSale(sellId);
+            const sellInfoAfterSale = await marketplace.getSell(sellId);
             const expectedVal = {
                 price: 0,
                 seller: ethers.constants.AddressZero,
@@ -992,7 +992,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(buyer).not.equal(seller);
 
-        const price = ethers.constants.MaxUint256; //(await marketplace.getNFTFromSale(sellId)).price;
+        const price = ethers.constants.MaxUint256; //(await marketplace.getSell(sellId)).price;
 
         await erc20Token.connect(payload.signer2).approve(marketplace.address, ethers.constants.MaxUint256);
 
@@ -1109,7 +1109,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
 
         expect(buyer).not.equal(seller);
 
-        //(await marketplace.getNFTFromSale(sellId)).price;
+        //(await marketplace.getSell(sellId)).price;
 
         await erc20Token.connect(payload.signer4).approve(marketplace.address, ethers.constants.MaxUint256);
 

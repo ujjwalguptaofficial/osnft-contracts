@@ -25,7 +25,7 @@ interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
         SellUpdateInput calldata sellData
     ) external;
 
-    function getNFTFromSale(
+    function getSell(
         bytes32 sellId
     ) external view returns (SellListing memory);
 

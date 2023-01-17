@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(160999);
+        expect(gas).equal(161022);
     });
 
 
@@ -186,7 +186,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             0
         );
 
-        const nftData = await marketplace.getNFTFromSale(sellId);
+        const nftData = await marketplace.getSell(sellId);
 
         expect(nftData.seller).equal(from);
         expect(nftData.paymentToken).equal(payload.erc20Token1.address);
@@ -330,7 +330,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             1
         );
 
-        const nftData = await marketplace.getNFTFromSale(sellId);
+        const nftData = await marketplace.getSell(sellId);
 
         expect(nftData.seller).equal(from);
         expect(nftData.paymentToken).equal(payload.erc20Token1.address);
@@ -437,7 +437,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             100
         );
 
-        const nftData = await marketplace.getNFTFromSale(sellId);
+        const nftData = await marketplace.getSell(sellId);
 
         expect(nftData.seller).equal(from);
         expect(nftData.paymentToken).equal(payload.erc20Token1.address);
@@ -706,7 +706,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 10
             );
 
-            const nftData = await marketplace.getNFTFromSale(sellId);
+            const nftData = await marketplace.getSell(sellId);
 
             expect(nftData.seller).equal(from);
             expect(nftData.paymentToken).equal(payload.erc20Token2.address);

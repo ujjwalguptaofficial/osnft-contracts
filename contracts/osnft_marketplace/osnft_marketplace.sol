@@ -157,7 +157,7 @@ contract OSNFTMarketPlace is
         emit SalePriorityUpdated(sellId, sellPriority);
     }
 
-    function getNFTFromSale(
+    function getSell(
         bytes32 sellId
     ) external view returns (SellListing memory) {
         return _sellListings[sellId];

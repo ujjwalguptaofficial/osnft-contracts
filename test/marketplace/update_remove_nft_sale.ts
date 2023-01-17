@@ -136,7 +136,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const from = seller;
             const nativeCoinBalance = await nativeCoin.balanceOf(from);
             const sellPriority = 10;
-            const nftSaleInfoBefore = await marketplace.getNFTFromSale(sellId);
+            const nftSaleInfoBefore = await marketplace.getSell(sellId);
             expect(nftSaleInfoBefore.sellPriority).lessThan(sellPriority);
 
             const tx = marketplace.connect(payload.signer2).updateNFTOnSale(
@@ -154,7 +154,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 payload.erc20Token2.address, sellPriority
             );
 
-            const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
+            const nftSaleInfo = await marketplace.getSell(sellId);
 
             expect(nftSaleInfo.price).equal(10000);
             expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
@@ -216,7 +216,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10
             );
 
-            expect(gasForPrioritySale).equal(65069);
+            expect(gasForPrioritySale).equal(65092);
         })
 
         it('success', async () => {
@@ -232,7 +232,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const nativeCoinBalance = await nativeCoin.balanceOf(from);
             const sellPriority = 101;
 
-            const nftSaleInfoBefore = await marketplace.getNFTFromSale(sellId);
+            const nftSaleInfoBefore = await marketplace.getSell(sellId);
             expect(nftSaleInfoBefore.sellPriority).lessThan(sellPriority);
 
             const tx = marketplace.connect(payload.signer2).updateSellPriority(
@@ -244,7 +244,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 sellId, sellPriority
             );
 
-            const nftSaleInfo = await marketplace.getNFTFromSale(sellId);
+            const nftSaleInfo = await marketplace.getSell(sellId);
 
             expect(nftSaleInfo.price).equal(10000);
             expect(nftSaleInfo.paymentToken).equal(payload.erc20Token2.address);
