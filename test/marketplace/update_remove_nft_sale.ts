@@ -143,7 +143,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).within(115798, 115799);
+            expect(gas).within(113475, 113480);
         })
 
         it('success', async () => {

@@ -131,8 +131,6 @@ contract OSNFTMarketPlace is
         // setting sellPriority after taking payments
         listedNft.sellPriority = sellData.sellPriority;
 
-        _sellListings[sellId] = listedNft;
-
         emit SellUpdate(
             sellId,
             sellData.share,
