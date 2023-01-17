@@ -189,7 +189,7 @@ contract OSNFTMarketPlace is
 
     function isSellActive(bytes32 sellId) public view returns (bool) {
         if (_sellListings[sellId].price > 0) return true;
-        if (isAuctionOpen(sellId)) return true;
+        if (_auctions[sellId].currentBidPrice > 0) return true;
         return false;
     }
 
