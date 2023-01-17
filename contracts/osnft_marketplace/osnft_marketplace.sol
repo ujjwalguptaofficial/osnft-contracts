@@ -150,7 +150,7 @@ contract OSNFTMarketPlace is
         // should be owner
         // if update allowed other than owner,
         // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, seller, listedNft.share);
+        _requireSeller(sellId, seller);
 
         _takePaymentForSellPriority(
             sellPriority - listedNft.sellPriority,

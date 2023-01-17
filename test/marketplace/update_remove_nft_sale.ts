@@ -222,7 +222,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const tx = marketplace.connect(payload.signer4).updateSellPriority(auctionId,
                 10);
-            await expect(tx).to.revertedWith('require_nft_owner');
+            await expect(tx).to.revertedWith('require_caller_tobe_seller');
         })
 
         it('gas estimate', async () => {
@@ -238,7 +238,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10
             );
 
-            expect(gasForPrioritySale).equal(65122);
+            expect(gasForPrioritySale).equal(44352);
         })
 
         it('success', async () => {
