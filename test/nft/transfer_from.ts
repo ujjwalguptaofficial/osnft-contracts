@@ -288,6 +288,9 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             await payload.nft.connect(payload.signer3)["approve(address,bytes32)"](payload.operator.address, expectedTokenId);
 
+            const approvalAddressBefore = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, from);
+            expect(approvalAddressBefore).equal(payload.operator.address);
+
             const value = payload.nft.connect(payload.operator)["transferFrom(address,address,bytes32,uint32)"](
                 from,
                 to,
@@ -317,6 +320,11 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             const shareOfToAfterTransfer = await payload.nft.shareOf(expectedTokenId, to);
             expect(shareOfToAfterTransfer).equal(10000);
+
+            // check clearance of approvals
+
+            const approvalAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, from);
+            expect(approvalAddress).equal(ethers.constants.AddressZero);
         })
 
         it('transfer jsstore to signer3', async () => {
