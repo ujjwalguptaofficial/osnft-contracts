@@ -162,17 +162,18 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
      * @dev See {IERC721-approve}.
      */
     function approve(address to, bytes32 tokenId, address shareOwner) public {
+        address caller = _msgSender();
         if (_isShareToken(tokenId)) {
             // in case it is called by approved all address
-            if (_msgSender() != shareOwner) {
+            if (caller != shareOwner) {
                 require(
                     _shareOf(tokenId, shareOwner) > 0,
                     "ERC721: invalid share owner"
                 );
             }
             require(
-                _shareOf(tokenId, _msgSender()) > 0 ||
-                    _isApprovedForAll(shareOwner, _msgSender()),
+                _shareOf(tokenId, caller) > 0 ||
+                    _isApprovedForAll(shareOwner, caller),
                 "ERC721: approve caller is not token owner nor approved for all"
             );
             _approve(to, tokenId, shareOwner);
@@ -181,7 +182,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
             require(to != owner, "ERC721: approval to current owner");
 
             require(
-                _msgSender() == owner || _isApprovedForAll(owner, _msgSender()),
+                caller == owner || _isApprovedForAll(owner, caller),
                 "ERC721: approve caller is not token owner nor approved for all"
             );
             _approve(to, tokenId);
