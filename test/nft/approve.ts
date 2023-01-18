@@ -84,6 +84,30 @@ export function testApprove(payload: IDeployedPayload) {
         })
     })
 
+    it('approve jsstore examples to signer2', async () => {
+
+        const expectedTokenId = payload.getProjectId(payload.projects["jsstore-example"]);
+        let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+        expect(approvedAddress).equal(constants.AddressZero);
+
+
+        const owner = await payload.nft.ownerOf(expectedTokenId);
+        expect(owner).equal(payload.deployer.address);
+
+        const tx = payload.nft.connect(payload.deployer)["approve(address,bytes32)"](
+            payload.signer2.address,
+            expectedTokenId,
+        );
+        await expect(tx).to.emit(payload.nft, "Approval").withArgs(
+            owner,
+            payload.signer2.address,
+            expectedTokenId
+        );
+
+        approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+        expect(approvedAddress).equal(payload.signer2.address);
+    })
+
     it('approve jsstore to signer4', async () => {
         const projectUrl = payload.projects.jsstore;
         const expectedTokenId = payload.getProjectId(projectUrl);

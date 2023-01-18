@@ -66,6 +66,9 @@ export function testTransferFrom(payload: IDeployedPayload) {
             const from = payload.deployer.address;
             const to = payload.signer3.address;
 
+            const approvalAddressBefore = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            expect(approvalAddressBefore).equal(payload.signer2.address);
+
             const balanceOfFrom = await payload.nft.balanceOf(from);
             expect(balanceOfFrom).equal(3);
 
@@ -94,6 +97,11 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             owner = await payload.nft.ownerOf(expectedTokenId);
             expect(owner).equal(to);
+
+            // check clearance of approval
+
+            const approvalAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            expect(approvalAddress).equal(ethers.constants.AddressZero);
         })
     })
 
