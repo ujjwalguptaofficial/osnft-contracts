@@ -870,7 +870,7 @@
     },
     "82f128c0a3162b2aecc6cb2251926d3f96e8598e52a19b6c94460ef72ada108a": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x4f9112a80b27b6ed44419287bf0f8f2e1e78b6a96c7244f8510f9f1ba9ae7438",
+      "txHash": "0x426c931aef106fa951c40c5198fc51faad8a4bf50062ca3cce4f6c2a2f43ac35",
       "layout": {
         "storage": [
           {
@@ -1149,9 +1149,9 @@
         }
       }
     },
-    "490f7296724a0b8c186913c19fc5c3a1da17fc9a20319b8a6345d780578a6e8c": {
+    "7b5d4cb838ee416b525c32e51d093179197245781ea569bd1f76d21a5e57ff94": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0xc232e33dd33dd1cbacead15c676bbb91edc6bf33af79150319c1c7391f42ba13",
+      "txHash": "0x8a750aa6995d14e5981d92945bfe2e7938c0140581b217249dc16a2e215e387e",
       "layout": {
         "storage": [
           {
@@ -1239,7 +1239,7 @@
             "label": "_shareTokens",
             "offset": 0,
             "slot": "155",
-            "type": "t_mapping(t_bytes32,t_struct(ShareToken)2801_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ShareToken)4696_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/osnft/os_nft_base.sol:37"
           },
@@ -1247,7 +1247,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "156",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)2808_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)4703_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/osnft/os_nft_base.sol:39"
           },
@@ -1287,7 +1287,7 @@
             "label": "_approver",
             "offset": 0,
             "slot": "161",
-            "type": "t_contract(IOSNFTApprover)2752",
+            "type": "t_contract(IOSNFTApprover)4647",
             "contract": "OSNFTBase",
             "src": "contracts/osnft/os_nft_base.sol:52"
           },
@@ -1333,7 +1333,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFTApprover)2752": {
+          "t_contract(IOSNFTApprover)4647": {
             "label": "contract IOSNFTApprover",
             "numberOfBytes": "20"
           },
@@ -1357,11 +1357,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageToken)2808_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageToken)4703_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.PercentageToken)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ShareToken)2801_storage)": {
+          "t_mapping(t_bytes32,t_struct(ShareToken)4696_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.ShareToken)",
             "numberOfBytes": "32"
           },
@@ -1369,7 +1369,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(PercentageToken)2808_storage": {
+          "t_struct(PercentageToken)4703_storage": {
             "label": "struct IOSNFTDataType.PercentageToken",
             "members": [
               {
@@ -1393,7 +1393,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(ShareToken)2801_storage": {
+          "t_struct(ShareToken)4696_storage": {
             "label": "struct IOSNFTDataType.ShareToken",
             "members": [
               {

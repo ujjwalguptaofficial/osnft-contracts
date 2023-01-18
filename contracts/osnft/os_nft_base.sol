@@ -154,7 +154,7 @@ contract OSNFTBase is
         }
 
         emit Transfer(address(0), to, tokenId);
-        emit ProjectAdded(projectUrl, nftType, totalShare);
+        emit ProjectMint(projectUrl, nftType, totalShare);
     }
 
     function _burnProjectWorth(address to, uint256 worth) internal {

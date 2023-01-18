@@ -54,7 +54,7 @@ interface IOSNFTDataType {
     /**
      * @dev Emitted when new project id is created.
      */
-    event ProjectAdded(
+    event ProjectMint(
         string indexed projectUrl,
         NFT_TYPE nftType,
         uint32 share

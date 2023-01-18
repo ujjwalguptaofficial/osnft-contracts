@@ -169,7 +169,7 @@ export function testMint(payload: IDeployedPayload) {
             await expect(tx).emit(nft, 'Transfer').withArgs(
                 ethers.constants.AddressZero, deployerAddress, expectedTokenId
             );
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl, NFT_TYPE.PercentageCut, 30
             );
 
@@ -221,7 +221,7 @@ export function testMint(payload: IDeployedPayload) {
                 ethers.constants.AddressZero, address, expectedTokenId
             );
 
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl1, NFT_TYPE.PercentageCut, 40
             );
 
@@ -313,7 +313,7 @@ export function testMint(payload: IDeployedPayload) {
                 ethers.constants.AddressZero, address, expectedTokenId
             );
 
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl, NFT_TYPE.PercentageCut, 0
             );
 
@@ -338,7 +338,7 @@ export function testMint(payload: IDeployedPayload) {
                 ethers.constants.AddressZero, address, expectedTokenId
             );
 
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl, 0, 10
             );
 
@@ -423,7 +423,7 @@ export function testMint(payload: IDeployedPayload) {
                 address,
                 expectedTokenId
             );
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl, NFT_TYPE.Share, 10000
             );
 
@@ -520,7 +520,7 @@ export function testMint(payload: IDeployedPayload) {
                     address,
                     expectedTokenId
                 );
-                await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+                await expect(tx).emit(nft, 'ProjectMint').withArgs(
                     projectUrl, NFT_TYPE.Share, 10000
                 );
 
@@ -568,7 +568,7 @@ export function testMint(payload: IDeployedPayload) {
                 address,
                 expectedTokenId
             );
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl, NFT_TYPE.Share, 100
             );
 
@@ -613,7 +613,7 @@ export function testMint(payload: IDeployedPayload) {
                 address,
                 expectedTokenId
             );
-            await expect(tx).emit(nft, 'ProjectAdded').withArgs(
+            await expect(tx).emit(nft, 'ProjectMint').withArgs(
                 projectUrl, NFT_TYPE.Share, 100
             );
 
