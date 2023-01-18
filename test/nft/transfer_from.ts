@@ -139,7 +139,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(94575);
+            expect(value).equal(94585);
 
         });
 

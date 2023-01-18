@@ -249,10 +249,10 @@ contract OSNFTBase is
         address owner,
         address operator
     ) internal view returns (bool) {
-        if (operator == _defaultMarketPlace) {
-            return true;
-        }
-        return _operatorApprovals[owner][operator];
+        return
+            operator == _defaultMarketPlace
+                ? true
+                : _operatorApprovals[owner][operator];
     }
 
     function _isApprovedOrShareOwner(

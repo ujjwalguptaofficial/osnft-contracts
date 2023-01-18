@@ -397,12 +397,12 @@
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x6faae60a4cfea1852ef409e6ef972eae825bd6928a095be11174c0d40525b350",
+      "txHash": "0x4900b7819d3b1964dc4835cce24cafbc3740aa219e68292227498bb52e81ae7a",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x9aa5a095f9e7e16f277d00fc02bb37369dcc31028c776852a604f6c77686aea2",
+      "txHash": "0xc3284942840853c59d3a7883ecc83da5c71ef6141f3db7b948d0039c63e6e694",
       "kind": "transparent"
     },
     {
@@ -870,7 +870,7 @@
     },
     "82f128c0a3162b2aecc6cb2251926d3f96e8598e52a19b6c94460ef72ada108a": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xf4ce09e251329f2f7c44b801142bb131bd6ab4534deab212d0c8c5421ecb9991",
+      "txHash": "0x4f9112a80b27b6ed44419287bf0f8f2e1e78b6a96c7244f8510f9f1ba9ae7438",
       "layout": {
         "storage": [
           {
@@ -1149,9 +1149,9 @@
         }
       }
     },
-    "5bac51b1682ee189c78b286ab66dc51b316bedfd29fc56c2fcd1ad01c9d2c76e": {
+    "490f7296724a0b8c186913c19fc5c3a1da17fc9a20319b8a6345d780578a6e8c": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0xa136488ca7f9c6a7c5e9e08fbc91b627caa77deb7d0c6852d9cf39d1bd35304f",
+      "txHash": "0xc232e33dd33dd1cbacead15c676bbb91edc6bf33af79150319c1c7391f42ba13",
       "layout": {
         "storage": [
           {
@@ -1239,7 +1239,7 @@
             "label": "_shareTokens",
             "offset": 0,
             "slot": "155",
-            "type": "t_mapping(t_bytes32,t_struct(ShareToken)4696_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ShareToken)2801_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/osnft/os_nft_base.sol:37"
           },
@@ -1247,7 +1247,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "156",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)4703_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)2808_storage)",
             "contract": "OSNFTBase",
             "src": "contracts/osnft/os_nft_base.sol:39"
           },
@@ -1287,7 +1287,7 @@
             "label": "_approver",
             "offset": 0,
             "slot": "161",
-            "type": "t_contract(IOSNFTApprover)4647",
+            "type": "t_contract(IOSNFTApprover)2752",
             "contract": "OSNFTBase",
             "src": "contracts/osnft/os_nft_base.sol:52"
           },
@@ -1333,7 +1333,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFTApprover)4647": {
+          "t_contract(IOSNFTApprover)2752": {
             "label": "contract IOSNFTApprover",
             "numberOfBytes": "20"
           },
@@ -1357,11 +1357,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageToken)4703_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageToken)2808_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.PercentageToken)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ShareToken)4696_storage)": {
+          "t_mapping(t_bytes32,t_struct(ShareToken)2801_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.ShareToken)",
             "numberOfBytes": "32"
           },
@@ -1369,7 +1369,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(PercentageToken)4703_storage": {
+          "t_struct(PercentageToken)2808_storage": {
             "label": "struct IOSNFTDataType.PercentageToken",
             "members": [
               {
@@ -1393,7 +1393,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(ShareToken)4696_storage": {
+          "t_struct(ShareToken)2801_storage": {
             "label": "struct IOSNFTDataType.ShareToken",
             "members": [
               {
