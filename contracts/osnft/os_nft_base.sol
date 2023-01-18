@@ -365,6 +365,8 @@ contract OSNFTBase is
             // if from does not have any share left then decrease the balance
             if (equityToken.shares[from] == 0) {
                 _decreaseBalance(from);
+                // Clear approvals from the previous owner
+                delete _tokenApprovals[tokenId];
             }
 
             uint32 totalShare = equityToken.totalNoOfShare;
