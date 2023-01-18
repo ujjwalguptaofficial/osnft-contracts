@@ -65,7 +65,7 @@ contract OSNFTMarketPlaceBase is
         bytes32 sellId,
         uint32 share,
         uint256 price
-    ) internal nonReentrant {
+    ) internal {
         SellListing memory listedItem = _requireListed(sellId);
 
         bytes32 tokenId = listedItem.tokenId;

@@ -82,7 +82,11 @@ contract OSNFTMarketPlace is
         _buyNFT(buyer, sellId, share, price);
     }
 
-    function buy(bytes32 sellId, uint32 share, uint256 price) external {
+    function buy(
+        bytes32 sellId,
+        uint32 share,
+        uint256 price
+    ) external nonReentrant {
         address buyer = _msgSender();
         _buyNFT(buyer, sellId, share, price);
     }
