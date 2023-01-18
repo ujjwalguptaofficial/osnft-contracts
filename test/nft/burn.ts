@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { constants } from "ethers";
+import { ethers } from "hardhat";
 import { IDeployedPayload } from "../interfaces";
 
 export function testNFTBurn(payload: IDeployedPayload) {
@@ -67,6 +68,36 @@ export function testNFTBurn(payload: IDeployedPayload) {
     })
 
     describe('burn success', () => {
+
+        it('approve to signer4', async () => {
+            const projectUrl = payload.projects["solidity-learning"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+
+            let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            expect(approvedAddress).equal(constants.AddressZero);
+
+
+            const owner = await payload.nft.ownerOf(expectedTokenId);
+
+            const tx = payload.nft["approve(address,bytes32,address)"](
+                payload.signer4.address,
+                expectedTokenId,
+                payload.deployer.address
+            );
+            await expect(tx).to.emit(payload.nft, "Approval").withArgs(
+                owner,
+                payload.signer4.address,
+                expectedTokenId
+            );
+
+            approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+            expect(approvedAddress).equal(payload.signer4.address);
+
+            const approvedValueWithoutShare = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
+
+        })
+
         it('share tokens', async () => {
             const nft = payload.nft;
 
@@ -130,6 +161,19 @@ export function testNFTBurn(payload: IDeployedPayload) {
             expect(tx).to.emit(payload.approver, "ProjectBurned").withArgs(
                 projectId
             );
+        })
+
+        it('check approval after burn', async () => {
+            const projectUrl = payload.projects["solidity-learning"];
+            const expectedTokenId = payload.getProjectId(projectUrl);
+            const owner = payload.deployer.address;
+
+            let approvedAddress = payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+            await expect(approvedAddress).revertedWith(`ERC721: invalid token ID`);
+
+            const approvedValueWithoutShare = payload.nft["getApproved(bytes32)"](expectedTokenId);
+            await expect(approvedValueWithoutShare).revertedWith(`ERC721: invalid token ID`);
+
         })
 
         it('percentagecut tokens', async () => {

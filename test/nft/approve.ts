@@ -109,7 +109,7 @@ export function testApprove(payload: IDeployedPayload) {
         expect(approvedAddress).equal(payload.signer4.address);
 
         const approvedValueWithoutShare = await payload.nft["getApproved(bytes32)"](expectedTokenId);
-        expect(approvedValueWithoutShare).equal(approvedAddress);
+        expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
 
     })
 

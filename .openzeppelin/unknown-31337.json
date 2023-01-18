@@ -161,11 +161,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
-      "txHash": "0x1cb7025d37fc09248f13b43a27ffa27d9f3004a5f95cf241186dec651dbf5172",
-      "kind": "transparent"
-    },
-    {
       "address": "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d",
       "txHash": "0x7f25eff1749e332f8df7ced00375dbec4c6338c16f158c87497fcad6445d330e",
       "kind": "transparent"
@@ -351,11 +346,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
-      "txHash": "0x2f2bdc9326706d290254acf37c0c32ff2fb72a46204a64dbd49abdeb8598d5da",
-      "kind": "transparent"
-    },
-    {
       "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
       "txHash": "0x4617438fd9f5b743f8a6b2ff59a76af319c751b87b22263aac22fd019e01f1de",
       "kind": "transparent"
@@ -386,6 +376,16 @@
       "kind": "transparent"
     },
     {
+      "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+      "txHash": "0xc663a08a3494130042a940ca85d08d48b4344774f2a9408fbba9c2628a83d0f1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
+      "txHash": "0xc71c6e3a69a5b2f1aa50f9ee7178b83243a2648cdfbb2bdf100982e06eb98ff6",
+      "kind": "transparent"
+    },
+    {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0xe65f5cc661d4ea28a29179c7dd9e9a8d752e1d7b844bd04ff6f918f6a6aed8aa",
       "kind": "transparent"
@@ -397,29 +397,29 @@
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0xafdebacb99c8569edfb7105e8bc8390a6879f3ac00c737e2696f33ed6636cf59",
+      "txHash": "0x0de72ca5526baec248f9007374aafbda0a926e8a53ee0e500d98fb612bac90be",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x2d1949e477519dab8670983384ec91b650cee65be3f44717e423ab89a79dc987",
+      "txHash": "0x640f6d01792fdbbc2636a111e94f20be6e0fdc55c780ff50ee0b7dcbbf612d35",
       "kind": "transparent"
     },
     {
-      "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
-      "txHash": "0xc663a08a3494130042a940ca85d08d48b4344774f2a9408fbba9c2628a83d0f1",
+      "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+      "txHash": "0xf2b75285fba89d844321bcbc4600c7c1c6fb9cffcad0e1d611d22e745d08163d",
       "kind": "transparent"
     },
     {
-      "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
-      "txHash": "0xc71c6e3a69a5b2f1aa50f9ee7178b83243a2648cdfbb2bdf100982e06eb98ff6",
+      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+      "txHash": "0xf8526481b3813a0003f3ccdef0c2284f31a4df8dea690619804ba4585c971c3c",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
-      "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-      "txHash": "0x2465b5b2de3d097fd92072f86eae8a780ef102c8872666234ed8b29b9d2d79fc",
+      "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+      "txHash": "0x1618563a44ed83bffb11a3d08a3ab1ff9ce53b026762db011f73ffac8f69a4a8",
       "layout": {
         "storage": [
           {
@@ -870,7 +870,7 @@
     },
     "82f128c0a3162b2aecc6cb2251926d3f96e8598e52a19b6c94460ef72ada108a": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x273fcd3e0f8396ec49cf3946bf7a52523c1d7bb575b7df48d9e7ade506cf379e",
+      "txHash": "0x91c0e04bf27120bf3fa85851522599f3caffb4cb9103e983c07f57fa7054d880",
       "layout": {
         "storage": [
           {
@@ -1149,9 +1149,9 @@
         }
       }
     },
-    "c5013858fe9c57c6aedec0b330b8600fb2e9773d670206683c1d8df22e5cf1fd": {
+    "4ec250c7fc28ca0329d2ef038f5c8efcb3a9d6d4eb0016b6beb4c0642a6b9230": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x361b1123a6baf626ff0f3f25bf564f19e40fca4c44ef6ef17d844629e48e6253",
+      "txHash": "0x3f80a77b35adad514180375b6bbc2d61c44b103a470e90222e92d2d19c048395",
       "layout": {
         "storage": [
           {
@@ -1305,7 +1305,7 @@
             "slot": "163",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/osnft/os_nft_base.sol:520"
+            "src": "contracts/osnft/os_nft_base.sol:521"
           }
         ],
         "types": {

@@ -144,7 +144,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
      * @dev See {IERC721-getApproved}.
      */
     function getApproved(bytes32 tokenId) external view returns (address) {
-        return _getApproved(tokenId, _msgSender());
+        return _getApproved(tokenId);
     }
 
     function getApproved(

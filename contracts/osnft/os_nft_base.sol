@@ -231,7 +231,7 @@ contract OSNFTBase is
     }
 
     function _getApproved(bytes32 tokenId) internal view returns (address) {
-        return _getApproved(tokenId, _msgSender());
+        return _getApproved(tokenId, address(0));
     }
 
     function _getApproved(
@@ -430,6 +430,7 @@ contract OSNFTBase is
 
         // decrease token count
         _decreaseBalance(from);
+        delete _tokenApprovals[tokenId];
         emit Transfer(from, address(0), tokenId);
     }
 
