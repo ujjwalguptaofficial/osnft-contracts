@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 interface IOSNFTDataType {
-    struct StockToken {
+    struct ShareToken {
         uint32 totalNoOfShare;
         mapping(address => uint32) shares;
         address allShareOwner;

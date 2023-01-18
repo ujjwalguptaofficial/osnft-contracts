@@ -34,7 +34,7 @@ contract OSNFTBase is
 
     address internal _nativeToken;
 
-    mapping(bytes32 => StockToken) internal _stockTokens;
+    mapping(bytes32 => ShareToken) internal _shareTokens;
 
     mapping(bytes32 => PercentageToken) internal _percentageTokens;
 
@@ -130,7 +130,7 @@ contract OSNFTBase is
 
             // take mint payment
 
-            StockToken storage token = _stockTokens[tokenId];
+            ShareToken storage token = _shareTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
             token.allShareOwner = to;
@@ -200,8 +200,8 @@ contract OSNFTBase is
         if (percentageToken.owner != address(0)) {
             return percentageToken.owner;
         }
-        if (_stockTokens[tokenId].totalNoOfShare > 0) {
-            return _stockTokens[tokenId].allShareOwner;
+        if (_shareTokens[tokenId].totalNoOfShare > 0) {
+            return _shareTokens[tokenId].allShareOwner;
         }
         return address(0);
     }
@@ -270,7 +270,7 @@ contract OSNFTBase is
         bytes32 tokenId,
         address owner
     ) internal view returns (uint32) {
-        return _stockTokens[tokenId].shares[owner];
+        return _shareTokens[tokenId].shares[owner];
     }
 
     /**
@@ -345,7 +345,7 @@ contract OSNFTBase is
         } else {
             require(share > 0, "Input share should be above zero");
 
-            StockToken storage equityToken = _stockTokens[tokenId];
+            ShareToken storage equityToken = _shareTokens[tokenId];
 
             require(
                 equityToken.shares[from] >= share,
@@ -405,7 +405,7 @@ contract OSNFTBase is
     }
 
     function _isShareToken(bytes32 tokenId) internal view returns (bool) {
-        return _stockTokens[tokenId].totalNoOfShare > 0;
+        return _shareTokens[tokenId].totalNoOfShare > 0;
     }
 
     function _burn(bytes32 tokenId) internal {
@@ -415,7 +415,7 @@ contract OSNFTBase is
         require(_ownerOf(tokenId) == from, "Only owner can burn");
 
         if (_isShareToken(tokenId)) {
-            delete _stockTokens[tokenId];
+            delete _shareTokens[tokenId];
             delete _tokenApprovals[_getTokenId(tokenId, from)];
         } else {
             delete _percentageTokens[tokenId];

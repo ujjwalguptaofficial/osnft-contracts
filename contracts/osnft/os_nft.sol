@@ -107,7 +107,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     function totalShareOf(bytes32 tokenId) external view returns (uint32) {
         _requireMinted(tokenId);
 
-        return _stockTokens[tokenId].totalNoOfShare;
+        return _shareTokens[tokenId].totalNoOfShare;
     }
 
     /**
