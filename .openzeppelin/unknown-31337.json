@@ -386,6 +386,16 @@
       "kind": "transparent"
     },
     {
+      "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
+      "txHash": "0x8a6fb8e900b5094ca45a7becc2bcc77669e9ba5cc73f289c6f50c1dde693c959",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
+      "txHash": "0xcac3f0d2354b2d7333afea5cfb1b7f76a06dba56d70bf2ce8fe601cdc024a6b2",
+      "kind": "transparent"
+    },
+    {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0xe65f5cc661d4ea28a29179c7dd9e9a8d752e1d7b844bd04ff6f918f6a6aed8aa",
       "kind": "transparent"
@@ -397,29 +407,19 @@
     },
     {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x5bde8bb91518a5e22a094a71825800ae15e41ca01bc998b3b2fa295240acf821",
+      "txHash": "0x6faae60a4cfea1852ef409e6ef972eae825bd6928a095be11174c0d40525b350",
       "kind": "transparent"
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x8f86417fea56bf4b102cbf0e348594053d02bce23b87728438267eee4f58bf08",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
-      "txHash": "0x9fc5c541ca7e585e5ffdc538f61bc1c82bc7458f71292d8e56b0fe85b020e751",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
-      "txHash": "0xebdfe066d061aa807f1ee530eef66d0d08466bff26306f861f15dbb74b6d6b9c",
+      "txHash": "0x9aa5a095f9e7e16f277d00fc02bb37369dcc31028c776852a604f6c77686aea2",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
-      "txHash": "0x94564dcf13b87dd399c4f46bc169bb433152f894f29cc339407ca0047030026c",
+      "txHash": "0xa84a0b4cfa8191bfde00e8d1d6d06c3c8a2b662e7425a1d10037b8b8af970337",
       "layout": {
         "storage": [
           {
@@ -870,7 +870,7 @@
     },
     "82f128c0a3162b2aecc6cb2251926d3f96e8598e52a19b6c94460ef72ada108a": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x4d597324266fc36353cd14e1eea6da0a4770b4239187915980550754a7b4c529",
+      "txHash": "0xfd7bf3877cf3fa7ce6b8d63217e4ddb2f72c724250f55704e5ee3d4e71fb1b69",
       "layout": {
         "storage": [
           {
@@ -1149,9 +1149,9 @@
         }
       }
     },
-    "991e17f1fcfe8479c01558dea6897b9ec4d99d406f48b180ee0a5da255a64604": {
+    "5bac51b1682ee189c78b286ab66dc51b316bedfd29fc56c2fcd1ad01c9d2c76e": {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x1d8046937c0b97cf3cf1ea47946699a1d1919914ca4023d575dbcd31b19f80ca",
+      "txHash": "0x0f3aa5b4f863359d11fc4f865e6578b0ad1ac4a8ef8d46f5f2bd9981d209242c",
       "layout": {
         "storage": [
           {
@@ -1305,7 +1305,7 @@
             "slot": "163",
             "type": "t_array(t_uint256)44_storage",
             "contract": "OSNFTBase",
-            "src": "contracts/osnft/os_nft_base.sol:521"
+            "src": "contracts/osnft/os_nft_base.sol:523"
           }
         ],
         "types": {

@@ -416,8 +416,10 @@ contract OSNFTBase is
 
         if (_isShareToken(tokenId)) {
             delete _stockTokens[tokenId];
+            delete _tokenApprovals[_getTokenId(tokenId, from)];
         } else {
             delete _percentageTokens[tokenId];
+            delete _tokenApprovals[tokenId];
         }
         IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
             .getApprovedProject(tokenId);
@@ -430,7 +432,7 @@ contract OSNFTBase is
 
         // decrease token count
         _decreaseBalance(from);
-        delete _tokenApprovals[tokenId];
+
         emit Transfer(from, address(0), tokenId);
     }
 
