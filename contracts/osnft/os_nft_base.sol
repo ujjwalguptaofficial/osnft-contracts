@@ -371,6 +371,7 @@ contract OSNFTBase is
 
             uint32 totalShare = equityToken.totalNoOfShare;
 
+            // calculate totalShareOwner on each call
             address totalShareOwner = address(this);
             if (equityToken.shares[to] == totalShare) {
                 totalShareOwner = to;
