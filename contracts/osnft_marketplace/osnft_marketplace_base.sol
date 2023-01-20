@@ -308,7 +308,7 @@ contract OSNFTMarketPlaceBase is
         address seller = sellData.seller;
 
         bool isBuySell = sellData.sellType == SELL_TYPE.Buy;
-        address nftOwner = isBuySell ? seller : address(this);
+        address marketplace = address(this);
 
         uint256 price = sellData.price;
         bytes32 nftId = sellData.tokenId;
@@ -322,7 +322,7 @@ contract OSNFTMarketPlaceBase is
         }
 
         // transfer nft from owner to buyer
-        _transferNFT(nftOwner, sellData.buyer, nftId, sellData.share);
+        _transferNFT(marketplace, sellData.buyer, nftId, sellData.share);
 
         address tokenCreator = _nftContract.creatorOf(nftId);
 

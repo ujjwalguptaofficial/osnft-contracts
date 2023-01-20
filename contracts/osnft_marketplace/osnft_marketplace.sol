@@ -112,18 +112,15 @@ contract OSNFTMarketPlace is
 
         SellListing storage listedNft = _requireListedStorage(sellId);
 
-        _requireSeller(sellId, seller);
-
-        // should be owner
-        // if update allowed other than owner,
+        // should be seller
+        // if update allowed other than seller,
         // then someone can change price or something
-        _requireNftOwner(listedNft.tokenId, seller, sellData.share);
+        _requireSeller(sellId, seller);
 
         require(sellData.price > 0, "require_price_above_zero");
 
         _requirePayableToken(sellData.paymentToken);
 
-        listedNft.share = sellData.share;
         listedNft.price = sellData.price;
         listedNft.paymentToken = sellData.paymentToken;
 
@@ -137,7 +134,6 @@ contract OSNFTMarketPlace is
 
         emit SellUpdate(
             sellId,
-            sellData.share,
             sellData.price,
             sellData.paymentToken,
             sellData.sellPriority

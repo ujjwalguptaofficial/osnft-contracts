@@ -24,7 +24,6 @@ interface IOSNFTMarketPlaceDataType {
 
     struct SellUpdateInput {
         uint256 price;
-        uint32 share;
         address paymentToken;
         uint32 sellPriority;
     }
@@ -82,7 +81,6 @@ interface IOSNFTMarketPlaceDataType {
 
     event SellUpdate(
         bytes32 indexed sellId,
-        uint32 share,
         uint256 price,
         address paymentToken,
         uint32 sellPriority

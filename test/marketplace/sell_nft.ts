@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(195100);
+        expect(gas).equal(195122);
     });
 
 
@@ -301,7 +301,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             payload.projects["jsstore"]
         );
         const price = 10000000000;
-        const shareToSell = 99;
+        const shareToSell = 100;
 
         const shareOf = await payload.nft.connect(payload.signer3).shareOf(tokenId, payload.signer3.address);
         expect(shareOf).greaterThan(shareToSell);
@@ -351,34 +351,6 @@ export function testNFTSale(payload: IDeployedPayload) {
 
     describe("update sell with shares", () => {
 
-        it('share greater than owns', async () => {
-            const marketplace = payload.marketplace;
-            const projectId = payload.getProjectId(
-                payload.projects["jsstore"]
-            );
-            const seller = payload.signer3.address;
-            const sellId = payload.getSellId(projectId, seller);
-
-            const nativeCoin = payload.nativeToken;
-            const from = seller;
-            const sellPriority = 1;
-            const price = 10000000000;
-            const shareOfOwner = await payload.nft.shareOf(projectId, seller);
-            const shareToSell = shareOfOwner + 1;
-
-            const tx = marketplace.connect(payload.signer3).updateSell(
-                sellId,
-                {
-                    share: shareToSell,
-                    price: price,
-                    paymentToken: payload.erc20Token1.address,
-                    sellPriority: sellPriority,
-                }
-            );
-
-            await expect(tx).to.revertedWith(`require_owner_share_above_equal_input`);
-        })
-
         it('update success', async () => {
             const marketplace = payload.marketplace;
             const projectId = payload.getProjectId(
@@ -392,14 +364,12 @@ export function testNFTSale(payload: IDeployedPayload) {
             const nativeCoinBalance = await nativeCoin.balanceOf(from);
             const sellPriority = 1;
             const price = 10000000000;
-            const shareToSell = 100;
             const nftSaleInfoBefore = await marketplace.getSell(sellId);
             expect(nftSaleInfoBefore.sellPriority).equal(sellPriority);
 
             const tx = marketplace.connect(payload.signer3).updateSell(
                 sellId,
                 {
-                    share: shareToSell,
                     price: price,
                     paymentToken: payload.erc20Token1.address,
                     sellPriority: sellPriority,
@@ -407,7 +377,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             );
 
             await expect(tx).to.emit(marketplace, 'SellUpdate').withArgs(
-                sellId, shareToSell, price,
+                sellId, price,
                 payload.erc20Token1.address, sellPriority
             );
 
@@ -417,7 +387,6 @@ export function testNFTSale(payload: IDeployedPayload) {
             expect(nftSaleInfo.seller).equal(from);
             expect(nftSaleInfo.price).equal(price);
             expect(nftSaleInfo.paymentToken).equal(payload.erc20Token1.address);
-            expect(nftSaleInfo.share).equal(shareToSell);
             expect(nftSaleInfo.sellPriority).equal(sellPriority);
 
             const nativeCoinBalanceAfter = await nativeCoin.balanceOf(from);
@@ -742,7 +711,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(251266, 251269)
+            expect(gas).to.within(251266, 251276)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
