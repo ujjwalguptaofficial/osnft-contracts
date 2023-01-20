@@ -101,6 +101,8 @@ contract OSNFTMarketPlace is
         _requireSeller(sellId, seller);
 
         delete _sellListings[sellId];
+
+        _transferNFT(address(this), seller, listing.tokenId, listing.share);
         emit SellCancel(sellId, listing.tokenId, seller);
     }
 

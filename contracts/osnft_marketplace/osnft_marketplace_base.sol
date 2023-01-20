@@ -158,25 +158,6 @@ contract OSNFTMarketPlaceBase is
         require(listing.seller == seller, "require_caller_tobe_seller");
     }
 
-    function _requireNftOwner(
-        bytes32 tokenId,
-        address spender,
-        uint32 share
-    ) internal view {
-        if (_nftContract.isShareToken(tokenId)) {
-            require(share > 0, "require_input_share_above_zero");
-            uint32 shareOfOwner = _nftContract.shareOf(tokenId, spender);
-            require(
-                shareOfOwner >= share,
-                "require_owner_share_above_equal_input"
-            );
-        } else {
-            address owner = _nftContract.ownerOf(tokenId);
-            require(share == 0, "require_input_share_zero");
-            require(spender == owner, "require_nft_owner");
-        }
-    }
-
     function _requireRelayer() internal view {
         require(_msgSender() == _relayerAddress, "invalid_relayer");
     }
@@ -192,10 +173,6 @@ contract OSNFTMarketPlaceBase is
         require(input.initialBid > 0, "require_bidprice_above_zero");
 
         bytes32 tokenId = input.tokenId;
-
-        _requireNftOwner(tokenId, seller, input.share);
-
-        _requireTokenApproved(tokenId);
 
         bytes32 auctionId = _getSellId(tokenId, seller);
 
@@ -265,17 +242,6 @@ contract OSNFTMarketPlaceBase is
 
     function _requirePayableToken(address payableToken) internal view {
         require(_isPayableToken(payableToken), "invalid_payment_token");
-    }
-
-    function _requireTokenApproved(bytes32 tokenId) internal view {
-        // token should be approved for marketplace, so that it can transfer to buyer
-        // in case of osnft, it won't happen but let's add this
-
-        require(
-            _nftContract.isApprovedForAll(_msgSender(), address(this)) ||
-                _nftContract.getApproved(tokenId) == address(this),
-            "require_nft_transfer_approval"
-        );
     }
 
     function _takePaymentForSellPriority(

@@ -114,35 +114,35 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 sellPriority: 0
             }
         );
-        await expect(tx).revertedWith('require_nft_owner');
+        await expect(tx).revertedWith('ERC721: transfer from incorrect owner');
     });
 
-    it('require approval', async () => {
+    // it('require approval', async () => {
 
-        // change default marketplace to default
+    //     // change default marketplace to default
 
-        const defaultMarketPlace = payload.operator.address;
-        await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);
+    //     const defaultMarketPlace = payload.operator.address;
+    //     await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);
 
 
-        const marketplace = payload.marketplace;
-        const projectId = payload.getProjectId(
-            payload.projects["jsstore-example"]
-        );
+    //     const marketplace = payload.marketplace;
+    //     const projectId = payload.getProjectId(
+    //         payload.projects["jsstore-example"]
+    //     );
 
-        const tx = marketplace.connect(payload.signer4).createAuction(
-            {
-                tokenId: projectId,
-                share: 0,
-                initialBid: 10,
-                endAuction: new Date().getTime(),
-                paymentToken: payload.erc20Token1.address,
-                sellPriority: 0
-            }
-        );
-        await expect(tx).revertedWith('require_nft_transfer_approval');
+    //     const tx = marketplace.connect(payload.signer4).createAuction(
+    //         {
+    //             tokenId: projectId,
+    //             share: 0,
+    //             initialBid: 10,
+    //             endAuction: new Date().getTime(),
+    //             paymentToken: payload.erc20Token1.address,
+    //             sellPriority: 0
+    //         }
+    //     );
+    //     await expect(tx).revertedWith('require_nft_transfer_approval');
 
-    });
+    // });
 
     it('change default marketplace', async () => {
         const defaultMarketPlace = payload.marketplace.address;
@@ -180,10 +180,31 @@ export function testNFTAuction(payload: IDeployedPayload) {
             }
         );
         await expect(tx2).revertedWith('already_on_sale');
+    });
 
-        await await marketplace.connect(payload.signer4).removeSell(
-            payload.getSellId(projectId, payload.signer4.address)
+    it('removeSell for jsstore example', async () => {
+        const marketplace = payload.marketplace;
+        const projectId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const seller = payload.signer4.address;
+        const sellId = payload.getSellId(projectId, seller);
+
+
+        const tx = marketplace.connect(payload.signer4).removeSell(
+            sellId
         )
+
+        await expect(tx).emit(marketplace, "SellCancel").withArgs(
+            sellId, projectId, seller
+        )
+        await expect(tx).emit(payload.nft, "Transfer").withArgs(
+            marketplace.address, seller, projectId
+        );
+
+        const owner = await payload.nft.ownerOf(projectId);
+
+        expect(owner).equal(seller);
 
     });
 
@@ -216,17 +237,20 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 share: 0,
                 initialBid: 10,
                 endAuction: new Date().getTime(),
-                paymentToken: payload.deployer.address,
+                paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
         await expect(tx).revertedWith('ERC721: invalid token ID');
     });
+
+
 
     it('estimate gas for successful auction', async () => {
         const marketplace = payload.marketplace;
         const projectId = payload.getProjectId(
             payload.projects["jsstore-example"]
         );
+
         const endAuction = new Date().getTime(); //+ 1000; //addHours(, 24).getTime();
         const gas = await marketplace.connect(payload.signer4).estimateGas.createAuction(
             {
@@ -237,7 +261,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(239389)
+        expect(gas).equal(228792)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -360,7 +384,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: sellPriority
         });
-        await expect(tx).revertedWith('require_nft_owner');
+        await expect(tx).revertedWith('ERC721: transfer from incorrect owner');
     });
 
     it('require share greater than zero', async () => {
@@ -374,7 +398,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 0,
             initialBid: 1000,
             endAuction: new Date().getTime(),
-            paymentToken: payload.deployer.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
         await expect(tx).revertedWith('require_input_share_above_zero');
@@ -391,10 +415,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
             share: 1,
             initialBid: 1000,
             endAuction: new Date().getTime(),
-            paymentToken: payload.deployer.address,
+            paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('require_owner_share_above_equal_input');
+        await expect(tx).revertedWith('require_input_share_less_equal_owner_share');
     });
 
     it('Placing share greater than own', async () => {
@@ -411,7 +435,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('require_owner_share_above_equal_input');
+        await expect(tx).revertedWith('require_input_share_less_equal_owner_share');
     });
 
     it('estimate gas for successful share auction', async () => {
@@ -429,7 +453,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(245257, 245259)
+        expect(gas).within(235958, 235968)
     })
 
     describe('createAuctionMeta', () => {
