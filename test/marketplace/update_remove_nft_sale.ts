@@ -313,6 +313,9 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const seller = payload.signer2.address;
             const sellId = payload.getSellId(projectId, seller);
 
+            const ownerOfNftBefore = await payload.nft.ownerOf(projectId);
+            expect(ownerOfNftBefore).equal(marketplace.address);
+
             const tx = marketplace.connect(payload.signer2).removeSell(
                 sellId
             );
@@ -320,6 +323,9 @@ export function testRemoveSale(payload: IDeployedPayload) {
             await expect(tx).emit(marketplace, 'SellCancel').withArgs(
                 sellId, projectId, seller
             );
+
+            const ownerOfNftAfter = await payload.nft.ownerOf(projectId);
+            expect(ownerOfNftAfter).equal(seller);
         });
 
     })
