@@ -237,7 +237,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).equal(239345)
+        expect(gas).equal(239389)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -429,7 +429,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(245212, 245213)
+        expect(gas).within(245257, 245259)
     })
 
     describe('createAuctionMeta', () => {

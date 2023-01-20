@@ -199,12 +199,7 @@ contract OSNFTMarketPlaceBase is
         _requirePayableToken(input.paymentToken);
 
         // Lock NFT in Marketplace contract
-        _nftContract.safeTransferFrom(
-            seller,
-            address(this),
-            input.tokenId,
-            input.share
-        );
+        _transferNFT(seller, address(this), input.tokenId, input.share);
 
         if (input.sellPriority > 0) {
             _requirePayment(
@@ -237,6 +232,15 @@ contract OSNFTMarketPlaceBase is
             input.paymentToken,
             input.sellPriority
         );
+    }
+
+    function _transferNFT(
+        address from,
+        address to,
+        bytes32 tokenId,
+        uint32 share
+    ) internal {
+        _nftContract.safeTransferFrom(from, to, tokenId, share);
     }
 
     function onERC721Received(
@@ -326,12 +330,7 @@ contract OSNFTMarketPlaceBase is
         }
 
         // transfer nft from owner to buyer
-        _nftContract.safeTransferFrom(
-            nftOwner,
-            sellData.buyer,
-            nftId,
-            sellData.share
-        );
+        _transferNFT(nftOwner, sellData.buyer, nftId, sellData.share);
 
         address tokenCreator = _nftContract.creatorOf(nftId);
 
