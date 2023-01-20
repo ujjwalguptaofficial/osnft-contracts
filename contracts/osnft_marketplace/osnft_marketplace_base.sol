@@ -47,7 +47,13 @@ contract OSNFTMarketPlaceBase is
         // should be owner
         _transferNFT(seller, address(this), tokenId, sellData.share);
 
-        _listItem(sellData);
+        require(sellData.price > 0, "require_price_above_zero");
+
+        _requirePayableToken(sellData.paymentToken);
+
+        _takePaymentForSellPriority(sellData.sellPriority, sellData.seller);
+
+        _sellListings[sellId] = sellData;
 
         emit Sell(
             tokenId,
@@ -285,20 +291,6 @@ contract OSNFTMarketPlaceBase is
                 sellPriority * _sellPriorityConstant
             );
         }
-    }
-
-    function _listItem(SellListing memory sellData) internal {
-        require(sellData.price > 0, "require_price_above_zero");
-
-        _requirePayableToken(sellData.paymentToken);
-
-        // _requireTokenApproved(sellData.tokenId);
-
-        bytes32 sellId = _getSellId(sellData.tokenId, sellData.seller);
-
-        _takePaymentForSellPriority(sellData.sellPriority, sellData.seller);
-
-        _sellListings[sellId] = sellData;
     }
 
     function _percentageOf(
