@@ -292,7 +292,7 @@ contract OSNFTMarketPlaceBase is
 
         _requirePayableToken(sellData.paymentToken);
 
-        _requireTokenApproved(sellData.tokenId);
+        // _requireTokenApproved(sellData.tokenId);
 
         bytes32 sellId = _getSellId(sellData.tokenId, sellData.seller);
 

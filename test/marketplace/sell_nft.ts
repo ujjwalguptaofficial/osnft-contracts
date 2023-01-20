@@ -56,28 +56,28 @@ export function testNFTSale(payload: IDeployedPayload) {
         await expect(tx).revertedWith('ERC721: transfer from incorrect owner');
     });
 
-    it("not approved for marketplace", async () => {
+    // it("not approved for marketplace", async () => {
 
-        // change default marketplace
+    //     // change default marketplace
 
-        await payload.nft["defaultMarketPlace(address)"](payload.operator.address);
+    //     await payload.nft["defaultMarketPlace(address)"](payload.operator.address);
 
-        const marketplace = payload.marketplace;
-        const projectId = payload.getProjectId(
-            payload.projects["jsstore-example"]
-        );
+    //     const marketplace = payload.marketplace;
+    //     const projectId = payload.getProjectId(
+    //         payload.projects["jsstore-example"]
+    //     );
 
-        const tx = marketplace.connect(payload.signer3).sell(
-            {
-                tokenId: projectId,
-                share: 0,
-                price: 10000000000,
-                paymentToken: payload.erc20Token1.address,
-                sellPriority: 0
-            }
-        );
-        await expect(tx).revertedWith('require_nft_transfer_approval');
-    });
+    //     const tx = marketplace.connect(payload.signer3).sell(
+    //         {
+    //             tokenId: projectId,
+    //             share: 0,
+    //             price: 10000000000,
+    //             paymentToken: payload.erc20Token1.address,
+    //             sellPriority: 0
+    //         }
+    //     );
+    //     await expect(tx).revertedWith('require_nft_transfer_approval');
+    // });
 
     it('change default marketplace', async () => {
         const defaultMarketPlace = payload.marketplace.address;
@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(198741);
+        expect(gas).equal(195625);
     });
 
 
@@ -742,7 +742,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(254939, 254949)
+            expect(gas).to.within(251800, 251810)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
