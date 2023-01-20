@@ -37,7 +37,6 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const tx = marketplace.connect(payload.signer4).updateSell(
                 sellId,
                 {
-                    share: 100,
                     price: 10000,
                     paymentToken: payload.erc20Token2.address,
                     sellPriority: 10,
@@ -58,7 +57,6 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const tx = marketplace.connect(payload.signer4).updateSell(auctionId,
                 {
-                    share: 100,
                     price: 10000,
                     paymentToken: payload.erc20Token2.address,
                     sellPriority: 10,
@@ -66,27 +64,26 @@ export function testRemoveSale(payload: IDeployedPayload) {
             await expect(tx).to.revertedWith('require_caller_tobe_seller');
         })
 
-        it('share greater than owns', async () => {
-            const marketplace = payload.marketplace;
-            const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
-            const seller = payload.signer2.address;
-            const auctionId = payload.getSellId(
-                nftId,
-                seller
-            );
+        // it('share greater than owns', async () => {
+        //     const marketplace = payload.marketplace;
+        //     const nftId = payload.getProjectId(payload.projects["jsstore-example"]);
+        //     const seller = payload.signer2.address;
+        //     const auctionId = payload.getSellId(
+        //         nftId,
+        //         seller
+        //     );
 
-            const shareOfOwner = payload.nft.shareOf(nftId, seller);
-            console.log('shareOfOwner', shareOfOwner);
+        //     const shareOfOwner = payload.nft.shareOf(nftId, seller);
+        //     console.log('shareOfOwner', shareOfOwner);
 
-            const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
-                {
-                    share: 101,
-                    price: 0,
-                    paymentToken: payload.erc20Token1.address,
-                    sellPriority: 10,
-                });
-            await expect(tx).to.revertedWith('require_input_share_zero');
-        })
+        //     const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
+        //         {
+        //             price: 0,
+        //             paymentToken: payload.erc20Token1.address,
+        //             sellPriority: 10,
+        //         });
+        //     await expect(tx).to.revertedWith('require_input_share_zero');
+        // })
 
         it('price must be above zero', async () => {
             const marketplace = payload.marketplace;
@@ -99,7 +96,6 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
                 {
-                    share: 0,
                     price: 0,
                     paymentToken: payload.erc20Token1.address,
                     sellPriority: 10,
@@ -118,7 +114,6 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const tx = marketplace.connect(payload.signer2).updateSell(auctionId,
                 {
-                    share: 0,
                     price: 10000,
                     paymentToken: payload.deployer.address,
                     sellPriority: 10,
@@ -136,14 +131,13 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const gas = await marketplace.connect(payload.signer2).estimateGas.updateSell(
                 sellId,
                 {
-                    share: 0,
                     price: 10000,
                     paymentToken: payload.erc20Token2.address,
                     sellPriority: 10,
                 }
             );
 
-            expect(gas).within(113475, 113480);
+            expect(gas).within(88086, 88096);
         })
 
         it('success', async () => {
@@ -164,7 +158,6 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const tx = marketplace.connect(payload.signer2).updateSell(
                 sellId,
                 {
-                    share: 0,
                     price: 10000,
                     paymentToken: payload.erc20Token2.address,
                     sellPriority: sellPriority,
@@ -172,7 +165,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
             );
 
             await expect(tx).to.emit(marketplace, 'SellUpdate').withArgs(
-                sellId, 0, 10000,
+                sellId, 10000,
                 payload.erc20Token2.address, sellPriority
             );
 

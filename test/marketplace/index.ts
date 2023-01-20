@@ -80,7 +80,6 @@ export function testMarketplace(payload: IDeployedPayload) {
         testNFTAuction(payload);
     });
 
-    return;
 
     describe('bid nft', () => {
         testBidNFTAuction(payload);
