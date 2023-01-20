@@ -329,7 +329,7 @@ contract OSNFTMarketPlaceBase is
         address from,
         address to,
         uint256 price
-    ) internal {
+    ) internal nonReentrant {
         ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
         require(paymentToken.transferFrom(from, to, price), "payment_failed");
     }
@@ -355,7 +355,7 @@ contract OSNFTMarketPlaceBase is
         address to,
         uint256 amount,
         address tokenAddress
-    ) internal {
+    ) internal nonReentrant {
         ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
         require(paymentToken.transfer(to, amount), "payment_failed");
     }

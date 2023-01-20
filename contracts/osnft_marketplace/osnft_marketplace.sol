@@ -82,11 +82,7 @@ contract OSNFTMarketPlace is
         _buyNFT(buyer, sellId, share, price);
     }
 
-    function buy(
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) external nonReentrant {
+    function buy(bytes32 sellId, uint32 share, uint256 price) external {
         address buyer = _msgSender();
         _buyNFT(buyer, sellId, share, price);
     }
@@ -202,10 +198,7 @@ contract OSNFTMarketPlace is
         return auction.currentBidPrice;
     }
 
-    function placeBid(
-        bytes32 auctionId,
-        uint256 bidAmount
-    ) external nonReentrant {
+    function placeBid(bytes32 auctionId, uint256 bidAmount) external {
         _requireAuctioned(auctionId);
         SellAuction storage auction = _auctions[auctionId];
 
@@ -250,7 +243,7 @@ contract OSNFTMarketPlace is
         emit Bid(auctionId, newBidder, bidAmount);
     }
 
-    function claimNFT(bytes32 auctionId) external nonReentrant {
+    function claimNFT(bytes32 auctionId) external {
         _requireAuctioned(auctionId);
 
         // Check if the auction is closed

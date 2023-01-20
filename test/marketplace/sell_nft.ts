@@ -702,7 +702,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(248768, 248769)
+            expect(gas).to.within(254085, 254098)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
