@@ -91,7 +91,7 @@ interface IOSNFTMarketPlaceDataType {
         address canceledBy
     );
 
-    event Sold(bytes32 indexed sellId, uint256 price);
+    event Sold(bytes32 indexed sellId, uint256 price, address seller);
 
     // Public event to notify that a new auction has been created
     event Auction(
@@ -107,12 +107,7 @@ interface IOSNFTMarketPlaceDataType {
 
     // Public event to notify that winner of an
     // auction claim for his reward
-    event Claim(
-        bytes32 indexed auctionId,
-        uint256 price,
-        address paymentToken,
-        address seller
-    );
+    event Claim(bytes32 indexed auctionId, uint256 price, address seller);
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction

@@ -113,7 +113,7 @@ contract OSNFTMarketPlaceBase is
             })
         );
 
-        emit Sold(sellId, price);
+        emit Sold(sellId, price, listedItem.seller);
     }
 
     /**

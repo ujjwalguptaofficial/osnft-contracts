@@ -76,7 +76,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(206523);
+        expect(gas).equal(206326);
 
     });
 
@@ -109,7 +109,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             0,
             price
         );
-        expect(gas).equal(169705);
+        expect(gas).equal(169682);
 
     });
 
@@ -148,7 +148,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             );
 
             await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-                sellId, price
+                sellId, price, seller
             );
 
             // check nft owner
@@ -244,7 +244,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             );
 
             await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-                sellId, price
+                sellId, price, seller
             );
 
             // check nft owner
@@ -326,7 +326,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(179894);
+        expect(gas).equal(179658);
     })
 
     it('buy with zero share', async () => {
@@ -439,7 +439,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             price
         );
         await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-            sellId, price
+            sellId, price, seller
         );
         await expect(tx).emit(payload.nft, 'Transfer').withArgs(
             marketplace.address, buyer, tokenId
@@ -864,7 +864,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
                 price
             );
             await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-                sellId, price
+                sellId, price, seller
             );
             await expect(tx).emit(payload.nft, 'Transfer').withArgs(
                 marketplace.address, buyer, tokenId
@@ -998,7 +998,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             price
         );
         await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-            sellId, price
+            sellId, price, seller
         );
 
         // check nft owner
@@ -1115,7 +1115,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
         );
 
         await expect(tx).emit(payload.marketplace, 'Sold').withArgs(
-            sellId, price
+            sellId, price, seller
         );
 
         // check nft owner

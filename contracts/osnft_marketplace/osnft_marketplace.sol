@@ -267,12 +267,7 @@ contract OSNFTMarketPlace is
         );
 
         // from, to, share and token id can be extracted from transfer event of erc721
-        emit Claim(
-            auctionId,
-            auction.currentBidPrice,
-            auction.paymentToken,
-            auction.seller
-        );
+        emit Claim(auctionId, auction.currentBidPrice, auction.seller);
     }
 
     function refundAuction(bytes32 auctionId) external {
