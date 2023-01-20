@@ -130,8 +130,7 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _requireNotListed(bytes32 sellId) internal view {
-        SellListing memory listing = _sellListings[sellId];
-        require(listing.price == 0, "already_on_sale");
+        require(_sellListings[sellId].price == 0, "already_on_sale");
     }
 
     function _requireListed(
@@ -151,8 +150,10 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _requireSeller(bytes32 sellId, address seller) internal view {
-        SellListing memory listing = _sellListings[sellId];
-        require(listing.seller == seller, "require_caller_tobe_seller");
+        require(
+            _sellListings[sellId].seller == seller,
+            "require_caller_tobe_seller"
+        );
     }
 
     function _requireRelayer() internal view {
