@@ -33,7 +33,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 payload.signer3.address,
                 projectId,
             );
-            expect(value).equal(55471);
+            expect(value).equal(56377);
         });
 
         it('invalid project', async () => {
@@ -57,7 +57,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
             );
 
-            await expect(value).to.revertedWith('Input share should be above zero');
+            await expect(value).to.revertedWith('require_input_share_above_zero');
         });
 
         it('transfer to signer3 from deployer as owner', async () => {
@@ -117,7 +117,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            await expect(value).to.revertedWith('ERC721: owner share is less than requested');
+            await expect(value).to.revertedWith('require_input_share_less_equal_owner_share');
             // await expect(value).to.revertedWith('ERC721: owner share is less than requested');
         });
 
@@ -139,7 +139,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(94585);
+            expect(value).equal(95963);
 
         });
 
@@ -176,7 +176,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 0
             );
 
-            await expect(value).to.revertedWith('Input share should be above zero');
+            await expect(value).to.revertedWith('require_input_share_above_zero');
         });
 
         it('transfer to signer3 from signer2 as owner', async () => {

@@ -45,7 +45,7 @@ contract OSNFTMarketPlaceBase is
         _requireNotListed(sellId);
 
         // should be owner
-        _requireNftOwner(tokenId, seller, sellData.share);
+        _transferNFT(seller, address(this), tokenId, sellData.share);
 
         _listItem(sellData);
 

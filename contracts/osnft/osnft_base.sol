@@ -319,6 +319,7 @@ contract OSNFTBase is
         uint32 share
     ) internal {
         require(to != address(0), "ERC721: transfer to the zero address");
+        _requireMinted(tokenId);
 
         PercentageToken memory token = _percentageTokens[tokenId];
 
@@ -343,13 +344,13 @@ contract OSNFTBase is
             }
             _percentageTokens[tokenId].owner = to;
         } else {
-            require(share > 0, "Input share should be above zero");
+            // do not remove this
+            require(share > 0, "require_input_share_above_zero");
 
             ShareToken storage equityToken = _shareTokens[tokenId];
-
             require(
                 equityToken.shares[from] >= share,
-                "ERC721: owner share is less than requested"
+                "require_input_share_less_equal_owner_share"
             );
 
             // if to does not own any share then increase the balance

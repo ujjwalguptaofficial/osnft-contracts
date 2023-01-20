@@ -53,7 +53,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        await expect(tx).revertedWith('require_nft_owner');
+        await expect(tx).revertedWith('ERC721: transfer from incorrect owner');
     });
 
     it("not approved for marketplace", async () => {
@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(161019);
+        expect(gas).equal(198741);
     });
 
 
@@ -270,7 +270,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellPriority: 0
             });
 
-            await expect(tx).revertedWith('require_owner_share_above_equal_input');
+            await expect(tx).revertedWith('require_input_share_less_equal_owner_share');
         })
 
         it('owner have share more than zero', async () => {
@@ -290,7 +290,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 sellPriority: 0
             });
 
-            await expect(tx).revertedWith('require_owner_share_above_equal_input');
+            await expect(tx).revertedWith('require_input_share_less_equal_owner_share');
         })
 
     });
@@ -603,7 +603,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            await expect(tx).to.revertedWith('require_nft_owner');
+            await expect(tx).to.revertedWith('ERC721: transfer from incorrect owner');
         });
 
         it("valid signature valid owner but deadline is expired", async () => {
@@ -742,7 +742,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(234343, 234372)
+            expect(gas).to.within(254939, 254949)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
