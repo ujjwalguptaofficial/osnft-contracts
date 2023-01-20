@@ -321,10 +321,8 @@ contract OSNFTBase is
         require(to != address(0), "ERC721: transfer to the zero address");
         _requireMinted(tokenId);
 
-        PercentageToken memory token = _percentageTokens[tokenId];
-
         // if token is percentage
-        if (token.creator != address(0)) {
+        if (_percentageTokens[tokenId].creator != address(0)) {
             require(
                 _requireValidOwner(tokenId) == from,
                 "ERC721: transfer from incorrect owner"

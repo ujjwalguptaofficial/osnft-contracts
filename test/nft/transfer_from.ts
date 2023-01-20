@@ -33,7 +33,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 payload.signer3.address,
                 projectId,
             );
-            expect(value).equal(56377);
+            expect(value).equal(55902);
         });
 
         it('invalid project', async () => {
@@ -139,7 +139,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(95963);
+            expect(value).equal(95486);
 
         });
 
