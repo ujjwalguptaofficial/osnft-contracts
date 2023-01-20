@@ -70,10 +70,7 @@ interface IOSNFTMarketPlaceDataType {
     }
 
     event Sell(
-        bytes32 indexed tokenId,
-        address indexed seller,
         bytes32 indexed sellId,
-        uint32 share,
         uint256 price,
         address paymentToken,
         uint32 sellPriority

@@ -56,10 +56,7 @@ contract OSNFTMarketPlaceBase is
         _sellListings[sellId] = sellData;
 
         emit Sell(
-            tokenId,
-            seller,
             sellId,
-            sellData.share,
             sellData.price,
             sellData.paymentToken,
             sellData.sellPriority

@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(195122);
+        expect(gas).equal(193972);
     });
 
 
@@ -177,10 +177,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         });
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'Sell').withArgs(
-            tokenId,
-            from,
             sellId,
-            0,
             price,
             payload.erc20Token1.address,
             0
@@ -319,10 +316,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         });
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'Sell').withArgs(
-            tokenId,
-            from,
             sellId,
-            shareToSell,
             price,
             payload.erc20Token1.address,
             1
@@ -474,10 +468,7 @@ export function testNFTSale(payload: IDeployedPayload) {
         });
         const sellId = payload.getSellId(tokenId, from);
         await expect(tx).emit(marketplace, 'Sell').withArgs(
-            tokenId,
-            from,
             sellId,
-            0,
             price,
             payload.erc20Token1.address,
             100
@@ -711,7 +702,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(251266, 251276)
+            expect(gas).to.within(250102, 250105)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {
@@ -742,10 +733,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             );
             const sellId = payload.getSellId(tokenId, from);
             await expect(tx).emit(marketplace, 'Sell').withArgs(
-                tokenId,
-                from,
                 sellId,
-                0,
                 price,
                 payload.erc20Token2.address,
                 10
