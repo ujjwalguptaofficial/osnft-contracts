@@ -35,31 +35,11 @@ contract OSNFTMarketPlace is
     function sellMeta(address to, SellListingInput calldata sellData) external {
         _requireRelayer();
 
-        _listOnSale(
-            SellListing({
-                paymentToken: sellData.paymentToken,
-                share: sellData.share,
-                price: sellData.price,
-                tokenId: sellData.tokenId,
-                sellPriority: sellData.sellPriority,
-                seller: to,
-                sellTimestamp: block.timestamp
-            })
-        );
+        _listOnSale(to, sellData);
     }
 
     function sell(SellListingInput calldata sellData) external {
-        _listOnSale(
-            SellListing({
-                paymentToken: sellData.paymentToken,
-                share: sellData.share,
-                price: sellData.price,
-                tokenId: sellData.tokenId,
-                sellPriority: sellData.sellPriority,
-                seller: _msgSender(),
-                sellTimestamp: block.timestamp
-            })
-        );
+        _listOnSale(_msgSender(), sellData);
     }
 
     function addPayableToken(address token) external onlyOwner {

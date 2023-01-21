@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(215136);
+        expect(gas).equal(216486);
     });
 
 
@@ -703,7 +703,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(277088, 277100)
+            expect(gas).to.within(278485, 278489)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {

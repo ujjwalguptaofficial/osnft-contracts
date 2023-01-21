@@ -35,9 +35,11 @@ contract OSNFTMarketPlaceBase is
 
     address internal _relayerAddress;
 
-    function _listOnSale(SellListing memory sellData) internal {
+    function _listOnSale(
+        address seller,
+        SellListingInput calldata sellData
+    ) internal {
         bytes32 tokenId = sellData.tokenId;
-        address seller = sellData.seller;
 
         bytes32 sellId = _getSellId(tokenId, seller);
 
@@ -51,9 +53,17 @@ contract OSNFTMarketPlaceBase is
 
         _requirePayableToken(sellData.paymentToken);
 
-        _takePaymentForSellPriority(sellData.sellPriority, sellData.seller);
+        _takePaymentForSellPriority(sellData.sellPriority, seller);
 
-        _sellListings[sellId] = sellData;
+        _sellListings[sellId] = SellListing({
+            paymentToken: sellData.paymentToken,
+            share: sellData.share,
+            price: sellData.price,
+            tokenId: sellData.tokenId,
+            sellPriority: sellData.sellPriority,
+            seller: seller,
+            sellTimestamp: block.timestamp
+        });
 
         emit Sell(
             sellId,

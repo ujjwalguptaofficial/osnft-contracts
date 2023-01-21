@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "compile": "hardhat compile",
-    "test": "cross-env REPORT_GAS=trues hardhat test",
+    "test": "cross-env REPORT_GAS=true hardhat test",
     "dev": "hardhat node",
     "deploy:contracts": "hardhat run --network localhost scripts/deploy.ts",
     "deploy:task": "hardhat deploy:contracts --show-stack-traces"
