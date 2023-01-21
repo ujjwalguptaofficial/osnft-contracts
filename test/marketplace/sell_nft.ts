@@ -102,7 +102,7 @@ export function testNFTSale(payload: IDeployedPayload) {
             sellPriority: 0
         });
 
-        expect(gas).equal(192652);
+        expect(gas).equal(215136);
     });
 
 
@@ -372,7 +372,8 @@ export function testNFTSale(payload: IDeployedPayload) {
 
             await expect(tx).to.emit(marketplace, 'SellUpdate').withArgs(
                 sellId, price,
-                payload.erc20Token1.address, sellPriority
+                payload.erc20Token1.address, sellPriority,
+                nftSaleInfoBefore.sellTimestamp
             );
 
             const nftSaleInfo = await marketplace.getSell(sellId);
@@ -702,7 +703,7 @@ export function testNFTSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).to.within(254085, 254098)
+            expect(gas).to.within(277100, 277105)
         });
 
         it("add mahal-webpack-loader (percentage cut) on sale", async () => {

@@ -113,7 +113,7 @@ contract OSNFTMarketPlaceBase is
             })
         );
 
-        emit Sold(sellId, price, listedItem.seller);
+        emit Sold(sellId, price, listedItem.seller, listedItem.sellTimestamp);
     }
 
     /**
@@ -201,7 +201,8 @@ contract OSNFTMarketPlaceBase is
             currentBidPrice: input.share > 0
                 ? input.initialBid * input.share
                 : input.initialBid,
-            endAuction: input.endAuction
+            endAuction: input.endAuction,
+            sellTimestamp: block.timestamp
         });
 
         // Trigger event and return index of new auction

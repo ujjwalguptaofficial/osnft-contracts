@@ -190,13 +190,14 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const seller = payload.signer4.address;
         const sellId = payload.getSellId(projectId, seller);
 
+        const auction = await marketplace.getSell(sellId);
 
         const tx = marketplace.connect(payload.signer4).removeSell(
             sellId
         )
 
         await expect(tx).emit(marketplace, "SellCancel").withArgs(
-            sellId, projectId, seller
+            sellId, projectId, seller, auction.sellTimestamp
         )
         await expect(tx).emit(payload.nft, "Transfer").withArgs(
             marketplace.address, seller, projectId
@@ -261,7 +262,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).within(219234, 219247)
+        expect(gas).within(241730, 241732)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -453,7 +454,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(226412, 226415)
+        expect(gas).within(248896, 248899)
     })
 
     describe('createAuctionMeta', () => {

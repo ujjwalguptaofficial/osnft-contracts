@@ -35,6 +35,7 @@ interface IOSNFTMarketPlaceDataType {
         address paymentToken;
         bytes32 tokenId;
         uint32 sellPriority;
+        uint256 sellTimestamp;
     }
 
     struct SignatureMeta {
@@ -52,6 +53,7 @@ interface IOSNFTMarketPlaceDataType {
         address currentBidOwner; // Address of the highest bider
         uint256 currentBidPrice; // Current highest bid for the auction
         uint256 endAuction; // Timestamp for the end day&time of the auction
+        uint256 sellTimestamp;
     }
 
     enum SELL_TYPE {
@@ -80,18 +82,29 @@ interface IOSNFTMarketPlaceDataType {
         bytes32 indexed sellId,
         uint256 price,
         address paymentToken,
-        uint32 sellPriority
+        uint32 sellPriority,
+        uint256 sellTimestamp
     );
 
-    event SellPriorityUpdate(bytes32 indexed sellId, uint32 sellPriority);
+    event SellPriorityUpdate(
+        bytes32 indexed sellId,
+        uint32 sellPriority,
+        uint256 sellTimestamp
+    );
 
     event SellCancel(
         bytes32 indexed auctionId,
         bytes32 indexed tokenId,
-        address canceledBy
+        address canceledBy,
+        uint256 sellTimestamp
     );
 
-    event Sold(bytes32 indexed sellId, uint256 price, address seller);
+    event Sold(
+        bytes32 indexed sellId,
+        uint256 price,
+        address seller,
+        uint256 sellTimestamp
+    );
 
     // Public event to notify that a new auction has been created
     event Auction(
@@ -103,13 +116,23 @@ interface IOSNFTMarketPlaceDataType {
     );
 
     // Public event to notify that a new bid has been placed
-    event Bid(bytes32 tokenId, address bidder, uint256 bidAmount);
+    event Bid(
+        bytes32 tokenId,
+        address bidder,
+        uint256 bidAmount,
+        uint256 sellTimestamp
+    );
 
     // Public event to notify that winner of an
     // auction claim for his reward
-    event Claim(bytes32 indexed auctionId, uint256 price, address seller);
+    event Claim(
+        bytes32 indexed auctionId,
+        uint256 price,
+        address seller,
+        uint256 sellTimestamp
+    );
 
     // Public event to notify that an NFT has been refunded to the
     // creator of an auction
-    event Refund(bytes32 indexed auctionId);
+    event Refund(bytes32 indexed auctionId, uint256 sellTimestamp);
 }

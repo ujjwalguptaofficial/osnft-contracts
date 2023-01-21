@@ -137,7 +137,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 }
             );
 
-            expect(gas).within(90293, 90295);
+            expect(gas).within(92864, 92869);
         })
 
         it('success', async () => {
@@ -166,7 +166,9 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             await expect(tx).to.emit(marketplace, 'SellUpdate').withArgs(
                 sellId, 10000,
-                payload.erc20Token2.address, sellPriority
+                payload.erc20Token2.address,
+                sellPriority,
+                nftSaleInfoBefore.sellTimestamp
             );
 
             const nftSaleInfo = await marketplace.getSell(sellId);
@@ -231,7 +233,7 @@ export function testRemoveSale(payload: IDeployedPayload) {
                 10
             );
 
-            expect(gasForPrioritySale).equal(39343);
+            expect(gasForPrioritySale).equal(41216);
         })
 
         it('success', async () => {
@@ -256,7 +258,8 @@ export function testRemoveSale(payload: IDeployedPayload) {
             );
 
             await expect(tx).to.emit(marketplace, 'SellPriorityUpdate').withArgs(
-                sellId, sellPriority
+                sellId, sellPriority,
+                nftSaleInfoBefore.sellTimestamp
             );
 
             const nftSaleInfo = await marketplace.getSell(sellId);
@@ -316,12 +319,14 @@ export function testRemoveSale(payload: IDeployedPayload) {
             const ownerOfNftBefore = await payload.nft.ownerOf(projectId);
             expect(ownerOfNftBefore).equal(marketplace.address);
 
+            const sellInfo = await marketplace.getSell(sellId);
+
             const tx = marketplace.connect(payload.signer2).removeSell(
                 sellId
             );
 
             await expect(tx).emit(marketplace, 'SellCancel').withArgs(
-                sellId, projectId, seller
+                sellId, projectId, seller, sellInfo.sellTimestamp
             );
 
             const ownerOfNftAfter = await payload.nft.ownerOf(projectId);

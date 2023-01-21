@@ -161,7 +161,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const sellId = payload.getSellId(tokenId, from);
         const isSellActive = await marketplace.isSellActive(sellId);
 
-        expect(isSellActive).equal(true);         
+        expect(isSellActive).equal(true);
     })
 
     it('successful refund for jsstore example', async () => {
@@ -173,12 +173,14 @@ export function testRefundAuction(payload: IDeployedPayload) {
             seller
         );
 
+        const auctionInfo = await marketplace.getAuction(auctionId);
+
         const oldOwner = await payload.nft.ownerOf(nftId);
         expect(oldOwner).equal(marketplace.address);
 
         const tx = marketplace.refundAuction(auctionId);
         await expect(tx).emit(marketplace, 'Refund').withArgs(
-            auctionId
+            auctionId, auctionInfo.sellTimestamp
         )
 
         await expect(tx).emit(payload.nft, 'Transfer').withArgs(
@@ -200,7 +202,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
 
         expect(isSellActive).equal(false);
 
-         
+
     })
 
     it('expect isSellActive true after auction is closed', async () => {
@@ -211,7 +213,7 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const isSellActive = await marketplace.isSellActive(sellId);
 
         expect(isSellActive).equal(true);
-         
+
     })
 
     it('successful refund for jsstore ', async () => {
@@ -222,12 +224,13 @@ export function testRefundAuction(payload: IDeployedPayload) {
             nftId,
             seller
         );
+        const sellInfo = await marketplace.getAuction(auctionId);
 
         const oldShare = await payload.nft.shareOf(nftId, seller);
 
         const tx = marketplace.refundAuction(auctionId);
         await expect(tx).emit(marketplace, 'Refund').withArgs(
-            auctionId
+            auctionId, sellInfo.sellTimestamp
         )
         await expect(tx).emit(payload.nft, 'Transfer').withArgs(
             marketplace.address, seller, nftId
