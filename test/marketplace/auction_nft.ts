@@ -343,7 +343,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
 
         payload.transactions['sellJsStoreExamples'].push(
-            (await tx).hash
+            {
+                txHash: (await tx).hash,
+                expires: endAuction
+            }
         );
     });
 
@@ -723,7 +726,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
             }
 
             payload.transactions.sellJsStore.push(
-                (await tx).hash
+                {
+                    txHash: (await tx).hash,
+                    expires: endAuction
+                }
             )
         });
 
