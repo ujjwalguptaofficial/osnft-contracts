@@ -196,10 +196,10 @@ export function testMint(payload: IDeployedPayload) {
             const projectUrl1 = payload.projects["mahal-example"];
 
             let tx = nft.connect(payload.signer2).mint(projectUrl1, NFT_TYPE.PercentageCut, 51);
-            await expect(tx).to.revertedWith('Require creator cut to be below 50');
+            await expect(tx).to.revertedWith('require_creator_cut_below_50');
 
             tx = nft.connect(payload.signer2).mint(projectUrl1, NFT_TYPE.PercentageCut, 50);
-            await expect(tx).to.revertedWith('Require creator cut to be below 50');
+            await expect(tx).to.revertedWith('require_creator_cut_below_50');
         })
 
         it('mint mahal-examples for signer2 user', async () => {

@@ -128,8 +128,6 @@ contract OSNFTBase is
         if (nftType == NFT_TYPE.Share) {
             require(totalShare > 0, "Total share should not be zero");
 
-            // take mint payment
-
             ShareToken storage token = _shareTokens[tokenId];
             token.totalNoOfShare = totalShare;
             token.shares[to] = totalShare;
@@ -142,9 +140,7 @@ contract OSNFTBase is
             }
 
             // percentage cut
-            require(totalShare < 50, "Require creator cut to be below 50");
-
-            // take mint payment
+            require(totalShare < 50, "require_creator_cut_below_50");
 
             _percentageTokens[tokenId] = PercentageToken({
                 creator: to,
