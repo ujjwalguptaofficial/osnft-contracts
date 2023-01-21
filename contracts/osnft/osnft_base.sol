@@ -10,7 +10,7 @@ import "../interfaces/osnft_datatype.sol";
 import "../interfaces/erc721_receiver_upgradable.sol";
 import "../interfaces/osnft_approver.sol";
 import "../string_helper.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import "../interfaces/osd_coin.sol";
 
 contract OSNFTBase is
     Initializable,
@@ -154,9 +154,7 @@ contract OSNFTBase is
     }
 
     function _burnProjectWorth(address to, uint256 worth) internal {
-        ERC20BurnableUpgradeable paymentToken = ERC20BurnableUpgradeable(
-            _nativeToken
-        );
+        IOSDCoin paymentToken = IOSDCoin(_nativeToken);
 
         paymentToken.burnFrom(to, worth);
     }

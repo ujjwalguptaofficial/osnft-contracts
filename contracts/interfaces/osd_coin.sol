@@ -79,4 +79,6 @@ interface IOSDCoin is IOSDCoinDataTye {
         address to,
         uint256 amount
     ) external returns (bool);
+
+    function burnFrom(address account, uint256 amount) external;
 }
