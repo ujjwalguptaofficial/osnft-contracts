@@ -402,24 +402,24 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x4e4feaf3269e37bb7511b881d46953ca6af8a50e30e9f746af291f6025575bae",
+      "txHash": "0x72a3e01f7ac1196660b8b223df59caf870222fa3e3631760d9fba8a6f1813fa1",
       "kind": "transparent"
     },
     {
       "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
-      "txHash": "0x22c480d8d74bca7d5e47259160f52fb0d8eabc488b26172437cce96ac79ca168",
+      "txHash": "0x0ba18e5de29a056c5cfa7858a62dd466336b24d0325527b2b2bca2da7e914568",
       "kind": "transparent"
     },
     {
       "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
-      "txHash": "0x6d538131d0c6b11f0777c0bcc66db49c7e27053ce33984f81e8f19ee46c4bc78",
+      "txHash": "0x622f45438b41a7ff11bfaeb5b1f09b5bac4d43c1434273a12dc770ef4f67af28",
       "kind": "transparent"
     }
   ],
   "impls": {
     "ebf160b4792cce3d47a18e80c7cae43691e9dfc0a6bf00dcf17713d08e8d17a2": {
       "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
-      "txHash": "0x53798522ebf10b92b3cfa2aae06461bad7d8228691dbc029514ca66aa3ca505b",
+      "txHash": "0x76c7753ddf47ebde29ae066b9f0c1a4afac68d2692a155e5682f64423a3c837f",
       "layout": {
         "storage": [
           {
@@ -1157,9 +1157,9 @@
         }
       }
     },
-    "41ae5dcdd6a6d2f19455b4c2fc7b776fc004d970f76c8d668e387696060a0df1": {
+    "c09c41d44e44d9290e4e7c1d6e84b913cd67a41d3f7bd6db2932b9cd07f50db3": {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x942f574953a9506814620241f53098a60b56ed4e30c0487a8abfa03f05fc0fda",
+      "txHash": "0x2b9e62459102df23ef334e43698ce504aea6837fac3ea630c30a981e57ea8a9a",
       "layout": {
         "storage": [
           {
@@ -1289,7 +1289,7 @@
             "slot": "157",
             "type": "t_array(t_uint256)49_storage",
             "contract": "OSNFTMarketPlaceBase",
-            "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:369"
+            "src": "contracts/osnft_marketplace/osnft_marketplace_base.sol:365"
           }
         ],
         "types": {

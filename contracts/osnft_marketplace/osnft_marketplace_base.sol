@@ -262,11 +262,7 @@ contract OSNFTMarketPlaceBase is
         uint256 value,
         uint8 percentage
     ) internal pure returns (uint256) {
-        // will overflow only if value is zero
-        // percentage is greather than 100 - which comes from nft contract
-        unchecked {
-            return (value / 100) * percentage;
-        }
+        return (value / 100) * percentage;
     }
 
     function _processNFTSell(SellData memory sellData) internal {
