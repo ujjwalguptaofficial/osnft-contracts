@@ -13,7 +13,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: process.env.NODE_ENV === 'production' ? {
         enabled: true,
-        runs: 1000,
+        runs: 2000,
       } : {},
     }
   },
