@@ -2,6 +2,9 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import "hardhat-gas-reporter";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -24,9 +27,9 @@ const config: HardhatUserConfig = {
       chainId: 80001,
     },
   },
-  // etherscan:{
-  //   apiKey
-  // }
+  etherscan: {
+    apiKey: process.env.POLYGONSCAN_API_KEY
+  }
 };
 
 task("deploy:contracts", "Deploy all contracts").setAction(async (taskArgs, hre) => {
