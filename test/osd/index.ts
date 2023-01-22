@@ -131,7 +131,7 @@ export function testOSD(payload: IDeployedPayload) {
             const user = payload.signer2.address;
             const gas = await nativeToken.estimateGas.transfer(user, oneToken);
 
-            expect(gas).equal(59897);
+            expect(gas).equal(59216);
         })
 
         it('success', async () => {
@@ -196,7 +196,7 @@ export function testOSD(payload: IDeployedPayload) {
                 [oneToken, twoToken]
             );
 
-            expect(gas).equal(87668);
+            expect(gas).equal(86645);
         });
 
         it('batchTransfer', async () => {

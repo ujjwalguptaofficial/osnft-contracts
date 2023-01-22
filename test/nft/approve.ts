@@ -56,7 +56,7 @@ export function testApprove(payload: IDeployedPayload) {
                 payload.signer2.address
             );
 
-            expect(gas).equal(64490);
+            expect(gas).equal(61305);
         });
 
         it('transaction', async () => {

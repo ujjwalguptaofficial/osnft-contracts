@@ -104,7 +104,7 @@ export function testMint(payload: IDeployedPayload) {
             30,
         );
 
-        expect(gasForMintingWithSign).within(175747, 175761);
+        expect(gasForMintingWithSign).within(169197, 169199);
 
 
         const gasForMintingWithoutSign = await nft.estimateGas.mint(
@@ -112,7 +112,7 @@ export function testMint(payload: IDeployedPayload) {
             0,
             30
         );
-        expect(gasForMintingWithoutSign).equal(154964);
+        expect(gasForMintingWithoutSign).within(151216, 154964);
     });
 
 

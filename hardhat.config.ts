@@ -11,10 +11,10 @@ const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.17",
     settings: {
-      optimizer: process.env.NODE_ENV === 'production' ? {
+      optimizer: {
         enabled: true,
         runs: 2000,
-      } : {},
+      }
     }
   },
   gasReporter: {
