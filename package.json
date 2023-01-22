@@ -8,7 +8,8 @@
     "run:test": "hardhat run --network localhost scripts/test.ts",
     "deploy:task": "hardhat deploy:contracts --show-stack-traces",
     "deploy:mytoken:mumbai": "hardhat run --network mumbai scripts/deploy_mytoken.ts --show-stack-traces",
-    "deploy:osd:mumbai": "hardhat run --network mumbai scripts/deploy_osd.ts --show-stack-traces"
+    "deploy:osd:mumbai": "hardhat run --network mumbai scripts/deploy_osd.ts --show-stack-traces",
+    "deploy:approver:mumbai": "hardhat run --network mumbai scripts/deploy_approver.ts --show-stack-traces"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
