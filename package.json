@@ -5,11 +5,13 @@
     "compile": "hardhat compile",
     "test": "cross-env REPORT_GAS=true hardhat test",
     "dev": "hardhat node",
-    "deploy:contracts": "hardhat run --network localhost scripts/deploy.ts",
-    "deploy:task": "hardhat deploy:contracts --show-stack-traces"
+    "run:test": "hardhat run --network localhost scripts/test.ts",
+    "deploy:task": "hardhat deploy:contracts --show-stack-traces",
+    "deploy:mytoken:mumbai": "hardhat run --network mumbai scripts/deploy_mytoken.ts --show-stack-traces"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/hardware-wallets": "^5.7.0",
     "@ethersproject/providers": "^5.7.1",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
@@ -31,6 +33,7 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "@anders-t/ethers-ledger": "^1.0.4",
     "@metamask/eth-sig-util": "^5.0.2",
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.0",
