@@ -14,7 +14,8 @@
     "deploy:marketplace:mumbai": "hardhat run --network mumbai scripts/deploy_marketplace.ts --show-stack-traces",
     "deploy:relayer:mumbai": "hardhat run --network mumbai scripts/deploy_relayer.ts --show-stack-traces",
     "mint:osd:mumbai": "hardhat run --network mumbai scripts/mint_osd.ts --show-stack-traces",
-    "transfer:osd:mumbai": "hardhat run --network mumbai scripts/transfer_osd.ts --show-stack-traces"
+    "transfer:osd:mumbai": "hardhat run --network mumbai scripts/transfer_osd.ts --show-stack-traces",
+    "add:approver:mumbai": "hardhat run --network mumbai scripts/add_approver.ts --show-stack-traces"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
