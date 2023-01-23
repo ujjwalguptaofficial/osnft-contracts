@@ -2,6 +2,7 @@
   "name": "osnft-contracts",
   "private": true,
   "scripts": {
+    "clean": "hardhat clean",
     "compile": "hardhat compile",
     "test": "cross-env REPORT_GAS=true hardhat test",
     "dev": "hardhat node",
@@ -15,7 +16,8 @@
     "deploy:relayer:mumbai": "hardhat run --network mumbai scripts/deploy_relayer.ts --show-stack-traces",
     "mint:osd:mumbai": "hardhat run --network mumbai scripts/mint_osd.ts --show-stack-traces",
     "transfer:osd:mumbai": "hardhat run --network mumbai scripts/transfer_osd.ts --show-stack-traces",
-    "add:approver:mumbai": "hardhat run --network mumbai scripts/add_approver.ts --show-stack-traces"
+    "add:approver:mumbai": "hardhat run --network mumbai scripts/add_approver.ts --show-stack-traces",
+    "add:osd:operator:mumbai": "hardhat run --network mumbai scripts/add_default_operator_in_osd.ts --show-stack-traces"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
