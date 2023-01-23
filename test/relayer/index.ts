@@ -5,7 +5,7 @@ import { IDeployedPayload } from "../interfaces";
 export function testRelayer(payload: IDeployedPayload) {
 
     it('deploy relayer', async () => {
-        const osdCoin = await ethers.getContractFactory('OSDRelayer');
+        const osdCoin = await ethers.getContractFactory('OSNFTRelayer');
 
         const relayerContract = await osdCoin.deploy(
             payload.marketplace.address,
@@ -15,7 +15,7 @@ export function testRelayer(payload: IDeployedPayload) {
     })
 
     it('gasestimate for deployment', async () => {
-        const osdCoin = await ethers.getContractFactory('OSDRelayer');
+        const osdCoin = await ethers.getContractFactory('OSNFTRelayer');
 
         const deploymentData = osdCoin.getDeployTransaction(
             payload.marketplace.address,

@@ -3,11 +3,11 @@ pragma solidity ^0.8.17;
 
 import "./relayer_base.sol";
 
-contract OSDRelayer is OSDRelayerBase {
+contract OSNFTRelayer is OSNFTRelayerBase {
     constructor(
         address marketplace_,
         address nft_
-    ) OSDRelayerBase(marketplace_, nft_) {}
+    ) OSNFTRelayerBase(marketplace_, nft_) {}
 
     function sell(
         SignatureMeta calldata signatureData,

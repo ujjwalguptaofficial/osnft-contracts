@@ -7,7 +7,7 @@ import "../interfaces/relayer.sol";
 import "../interfaces/marketplace.sol";
 import "../interfaces/osnft.sol";
 
-contract OSDRelayerBase is EIP712, IOsNFTRelayer {
+contract OSNFTRelayerBase is EIP712, IOsNFTRelayer {
     using ECDSA for bytes32;
 
     IOSNFTMarketPlace internal _marketplace;
