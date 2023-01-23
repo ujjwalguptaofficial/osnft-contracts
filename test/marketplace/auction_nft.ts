@@ -192,6 +192,10 @@ export function testNFTAuction(payload: IDeployedPayload) {
 
         const auction = await marketplace.getSell(sellId);
 
+        const nativeCoin = payload.nativeToken;
+
+        const nativeCoinBalance = await nativeCoin.balanceOf(seller);
+
         const tx = marketplace.connect(payload.signer4).removeSell(
             sellId
         )
@@ -206,6 +210,13 @@ export function testNFTAuction(payload: IDeployedPayload) {
         const owner = await payload.nft.ownerOf(projectId);
 
         expect(owner).equal(seller);
+
+
+        const nativeCoinBalanceAfter = await nativeCoin.balanceOf(seller);
+        const expectedDeduction = ethers.utils.parseEther("0.01");
+        expect(nativeCoinBalanceAfter).equal(
+            nativeCoinBalance.sub(expectedDeduction)
+        )
 
     });
 

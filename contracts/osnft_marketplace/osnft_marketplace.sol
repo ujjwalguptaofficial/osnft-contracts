@@ -78,6 +78,12 @@ contract OSNFTMarketPlace is
         // should be seller
         _requireSeller(sellId, seller);
 
+        _requirePayment(
+            _nativeCoinAddress,
+            seller,
+            address(this),
+            10000000000000000 // 0.01 OSD
+        );
         delete _sellListings[sellId];
 
         _transferNFT(address(this), seller, listing.tokenId, listing.share);
