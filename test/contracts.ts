@@ -12,15 +12,12 @@ import { deployNFTContract } from "./nft/deploy_contract";
 import { testSetMarketPlace } from "./nft/set_makrketplace";
 import { testOSD } from "./osd";
 import { testRelayer } from "./relayer";
+import { getProjectId } from "./utils";
 const writeJsonFile = require("write-json");
 
 
 
-function getProjectId(projectUrl: string) {
-    return ethers.utils.keccak256(
-        toUtf8Bytes(projectUrl)
-    );
-}
+
 function getSellId(tokenId: string, from: string) {
     return ethers.utils.keccak256(
         ethers.utils.defaultAbiCoder.encode(['bytes32', 'address'], [tokenId, from])

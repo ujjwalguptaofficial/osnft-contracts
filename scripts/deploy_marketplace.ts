@@ -1,24 +1,23 @@
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { getProjectId } from "../test/utils";
 const { LedgerSigner } = require("@anders-t/ethers-ledger");
 
 
 async function main() {
     const ledger = new LedgerSigner(ethers.provider);
 
-    const marketplaceAddress = process.env.MARKETPLACE_ADDRESS;
+    const osdAddress = process.env.OSD_ADDRESS;
     const nftAddress = process.env.NFT_ADDRESS;
 
-    const marketplaceContract = await ethers.getContractFactory('OSNFTMarketPlace');
-    const marketplaceContractFactory = await marketplaceContract.connect(ledger);
+    console.log("osdAddress", osdAddress);
+    console.log("nftAddress", nftAddress);
 
-    const marketplaceContractInstance = await marketplaceContractFactory.attach(marketplaceAddress as string);
+    const osdContract = await ethers.getContractFactory('OSDCoin');
+    const osdContractFactory = await osdContract.connect(ledger);
+    const osdContractInstance = await osdContractFactory.attach(osdAddress as string);
 
-    let isAuctionOpen = await marketplaceContractInstance.isAuctionOpen(
-        getProjectId("github.com/ujjwalguptaofficial/jsstore-examples")
-    );
-    expect(isAuctionOpen).equal(false);
+    let name = await osdContractInstance.name();
+    expect(name).equal('OpenSourceDevCoin');
 
     const nftContract = await ethers.getContractFactory('OSNFT');
     const nftContractFactory = await nftContract.connect(ledger);
@@ -29,14 +28,20 @@ async function main() {
 
     console.log("all verified");
 
-    const contract = await ethers.getContractFactory('OSNFTRelayer');
+    const contract = await ethers.getContractFactory('OSNFTMarketPlace');
+
+
     const contractFactory = contract.connect(ledger);
 
-    const deployedContract = await contractFactory.deploy(
-
-        marketplaceAddress as string,
-        nftAddress as string,
-
+    const deployedContract = await upgrades.deployProxy(
+        contractFactory,
+        [
+            nftAddress,
+            osdAddress
+        ],
+        {
+            initializer: 'initialize'
+        }
     );
 
     await deployedContract.deployed();
