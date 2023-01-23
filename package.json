@@ -18,7 +18,9 @@
     "transfer:osd:mumbai": "hardhat run --network mumbai scripts/transfer_osd.ts --show-stack-traces",
     "add:approver:mumbai": "hardhat run --network mumbai scripts/add_approver.ts --show-stack-traces",
     "add:osd:operator:mumbai": "hardhat run --network mumbai scripts/add_default_operator_in_osd.ts --show-stack-traces",
-    "add:payment_token:mumbai": "hardhat run --network mumbai scripts/add_payment_token.ts --show-stack-traces"
+    "add:payment_token:mumbai": "hardhat run --network mumbai scripts/add_payment_token.ts --show-stack-traces",
+    "add:nft_relayer:mumbai": "hardhat run --network mumbai scripts/add_nft_relayer.ts --show-stack-traces",
+    "add:marketplace_relayer:mumbai": "hardhat run --network mumbai scripts/add_marketplace_relayer.ts --show-stack-traces"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
