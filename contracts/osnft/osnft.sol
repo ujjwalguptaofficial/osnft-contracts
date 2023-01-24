@@ -5,7 +5,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./osnft_base.sol";
 import "../interfaces/osnft.sol";
 
-// contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase {
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     using StringHelper for bytes32;
 
