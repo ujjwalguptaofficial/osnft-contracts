@@ -15,8 +15,8 @@ async function main() {
 
     const osdContractInstance = await contractFactory.attach(approverAddress as string);
 
-    const addressToApprover = process.env.NFT_ADDRESS as string;
-    // const addressToApprover = "0xF0a7103a92fCC2e23600B40Fa5692857Db7E0F4F";
+    // const addressToApprover = process.env.NFT_ADDRESS as string;
+    const addressToApprover = "0xF0a7103a92fCC2e23600B40Fa5692857Db7E0F4F";
 
     let isAprover = await osdContractInstance.isApprover(addressToApprover);
     expect(isAprover).equal(false);
