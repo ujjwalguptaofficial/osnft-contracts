@@ -15,7 +15,7 @@ async function main() {
 
         ],
         {
-            initializer: 'initialize'
+            initializer: 'initialize',
         }
     );
 

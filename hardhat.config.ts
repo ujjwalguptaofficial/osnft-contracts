@@ -26,6 +26,10 @@ const config: HardhatUserConfig = {
       url: `https://rpc.ankr.com/polygon_mumbai`,
       chainId: 80001,
     },
+    polygon: {
+      url: `https://polygon-rpc.com`,
+      chainId: 137,
+    },
   },
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY
