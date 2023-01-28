@@ -15,12 +15,14 @@ async function main() {
 
     const contractInstance = await contractFactory.attach(marketplaceAddress as string);
 
-    const tokenAddress = "0x91CfF5eC3086Ae4d0aBADaBdCC9F11d1b11975F8";
+    const tokenAddress = "0xae740d42e4ff0c5086b2b5b5d149eb2f9e1a754f";
 
     let isPayableToken = await contractInstance.isPayableToken(tokenAddress);
     expect(isPayableToken).equal(false);
 
-    const tx = await contractInstance.addPayableToken(tokenAddress);
+    const tx = await contractInstance.addPayableToken(tokenAddress, {
+        maxPriorityFeePerGas: 30000000000
+    });
     await tx.wait();
 
     isPayableToken = await contractInstance.isPayableToken(tokenAddress);
