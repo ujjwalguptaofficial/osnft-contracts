@@ -32,7 +32,8 @@
     "add:osd:operator:polygon": "hardhat run --network polygon scripts/add_default_operator_in_osd.ts --show-stack-traces",
     "add:payment_token:polygon": "hardhat run --network polygon scripts/add_payment_token.ts --show-stack-traces",
     "add:nft_relayer:polygon": "hardhat run --network polygon scripts/add_nft_relayer.ts --show-stack-traces",
-    "add:marketplace_relayer:polygon": "hardhat run --network polygon scripts/add_marketplace_relayer.ts --show-stack-traces"
+    "add:marketplace_relayer:polygon": "hardhat run --network polygon scripts/add_marketplace_relayer.ts --show-stack-traces",
+    "verify:relayer": "hardhat verify --network polygon 0x8CE6cB2982339c11f4643fDA2d4448A424AA5847 0xC8E36f023121827A87dB59C62355EAe632500c70 0xf8c8c9315c9A0434B7077AB519F0Ed1A8E0CC749"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
