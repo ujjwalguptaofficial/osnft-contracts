@@ -24,7 +24,10 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                 }
             );
             const auctionId = payload.getSellId(projectId, seller);
-
+            payload.transactions['sellJsStoreExamples'].push({
+                txHash: await tx.hash,
+                "expires": endAuction
+            });
         });
 
         describe("update sellPriority", () => {
@@ -105,7 +108,7 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                 const nativeCoin = payload.nativeToken;
                 const from = seller;
                 const nativeCoinBalance = await nativeCoin.balanceOf(from);
-                const sellPriority = 101;
+                const sellPriority = 54;
 
                 const nftSaleInfoBefore = await marketplace.getAuction(sellId);
                 expect(nftSaleInfoBefore.sellPriority).lessThan(sellPriority);
@@ -132,6 +135,10 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                 expect(nativeCoinBalanceAfter).equal(
                     nativeCoinBalance.sub(expectedDeduction)
                 )
+
+                payload.transactions['sellPriorityJsStoreExamples'].push(
+                    (await tx).hash
+                )
             })
 
             it('refund NFT', async () => {
@@ -153,6 +160,10 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                 await expect(tx).emit(marketplace, 'Refund').withArgs(
                     auctionId, auctionInfo.sellTimestamp
                 )
+
+                payload.transactions.refundAuctionJsStoreExamples.push(
+                    (await tx).hash
+                );
             });
 
         })
@@ -179,6 +190,9 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                 }
             );
             const auctionId = payload.getSellId(projectId, seller);
+            payload.transactions['sellJsStoreExamples'].push(
+                await tx.hash
+            )
         });
 
         describe("update sellPriority", () => {
@@ -283,6 +297,10 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                 const expectedDeduction = BigNumber.from(10).pow(15).mul(sellPriority - nftSaleInfoBefore.sellPriority);
                 expect(nativeCoinBalanceAfter).equal(
                     nativeCoinBalance.sub(expectedDeduction)
+                )
+
+                payload.transactions['sellPriorityJsStoreExamples'].push(
+                    (await tx).hash
                 )
             })
         })

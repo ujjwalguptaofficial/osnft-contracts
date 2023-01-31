@@ -56,6 +56,9 @@ describe("contracts", () => {
     payload.transactions['bidJsStore'] = []
     payload.transactions['buyMahalWebpackLoader'] = []
 
+    payload.transactions['sellPriorityJsStoreExamples'] = []
+    payload.transactions['refundAuctionJsStoreExamples'] = []
+
 
     before(async () => {
         await network.provider.send("hardhat_reset")

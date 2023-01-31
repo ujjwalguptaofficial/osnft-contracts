@@ -196,7 +196,9 @@ export function testRefundAuction(payload: IDeployedPayload) {
         const newOwner = await payload.nft.ownerOf(nftId);
         expect(newOwner).equal(seller);
 
-        payload.transactions.refundAuctionJsStoreExamples = (await tx).hash;
+        payload.transactions.refundAuctionJsStoreExamples.push(
+            (await tx).hash
+        );
     })
 
     it('expect isSellActive false', async () => {
