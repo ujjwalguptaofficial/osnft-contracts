@@ -137,11 +137,6 @@ contract OSNFTMarketPlace is
 
         address seller = _msgSender();
 
-        // should be owner
-        // if update allowed other than owner,
-        // then someone can change price or something
-        _requireSeller(sellId, seller);
-
         require(
             sellPriority > listedNft.sellPriority,
             "sell_priority_should_be_above_current_sell_priority"
@@ -151,6 +146,7 @@ contract OSNFTMarketPlace is
             sellPriority - listedNft.sellPriority,
             seller
         );
+
         listedNft.sellPriority = sellPriority;
 
         emit SellPriorityUpdate(sellId, sellPriority, listedNft.sellTimestamp);
