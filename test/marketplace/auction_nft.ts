@@ -273,7 +273,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
                 paymentToken: payload.erc20Token1.address,
                 sellPriority: 0
             });
-        expect(gas).within(236256, 236266)
+        expect(gas).within(238756, 238856)
     })
 
     it('successful auction for jsstore example', async () => {
@@ -346,7 +346,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             currentBidOwner: ethers.constants.AddressZero, // Address of the highest bider
             currentBidPrice: initialBid, // Current highest bid for the auction
             endAuction: endAuction, // Timestamp for the end day&time of the auction
-            // bidCount: 0 //
+            sellPriority: 100
         };
         for (const prop in expectedAuction) {
             expect((expectedAuction as any)[prop]).equal((auction as any)[prop]);
@@ -468,7 +468,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(242510, 242520)
+        expect(gas).within(245010, 245020)
     })
 
     describe('createAuctionMeta', () => {

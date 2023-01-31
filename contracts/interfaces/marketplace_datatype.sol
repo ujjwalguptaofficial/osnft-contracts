@@ -54,6 +54,7 @@ interface IOSNFTMarketPlaceDataType {
         uint256 currentBidPrice; // Current highest bid for the auction
         uint256 endAuction; // Timestamp for the end day&time of the auction
         uint256 sellTimestamp;
+        uint32 sellPriority;
     }
 
     enum SELL_TYPE {

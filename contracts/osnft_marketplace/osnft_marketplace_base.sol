@@ -212,7 +212,8 @@ contract OSNFTMarketPlaceBase is
                 ? input.initialBid * input.share
                 : input.initialBid,
             endAuction: input.endAuction,
-            sellTimestamp: block.timestamp
+            sellTimestamp: block.timestamp,
+            sellPriority: input.sellPriority
         });
 
         // Trigger event and return index of new auction
