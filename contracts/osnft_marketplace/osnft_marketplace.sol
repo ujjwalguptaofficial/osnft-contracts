@@ -156,6 +156,35 @@ contract OSNFTMarketPlace is
         emit SellPriorityUpdate(sellId, sellPriority, listedNft.sellTimestamp);
     }
 
+    function setAuctionSellPriority(
+        bytes32 auctionId,
+        uint32 sellPriority
+    ) external {
+        _requireAuctioned(auctionId);
+
+        address seller = _msgSender();
+
+        // should be owner
+        // if update allowed other than owner,
+        // then someone can change price or something
+        _requireAuctionSeller(auctionId, seller);
+
+        SellAuction storage auction = _auctions[auctionId];
+
+        require(
+            sellPriority > auction.sellPriority,
+            "sell_priority_should_be_above_current_sell_priority"
+        );
+
+        _takePaymentForSellPriority(
+            sellPriority - auction.sellPriority,
+            seller
+        );
+        auction.sellPriority = sellPriority;
+
+        emit SellPriorityUpdate(auctionId, sellPriority, auction.sellTimestamp);
+    }
+
     function getSell(bytes32 sellId) public view returns (SellListing memory) {
         return _sellListings[sellId];
     }

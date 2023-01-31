@@ -166,6 +166,16 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
+    function _requireAuctionSeller(
+        bytes32 auctionId,
+        address seller
+    ) internal view {
+        require(
+            _auctions[auctionId].seller == seller,
+            "require_caller_tobe_seller"
+        );
+    }
+
     function _requireRelayer() internal view {
         require(_msgSender() == _relayerAddress, "invalid_relayer");
     }
