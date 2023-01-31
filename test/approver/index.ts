@@ -335,6 +335,9 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        payload.transactions['projectApprovedSolidityLearning'] = (await tx).hash;
+
     })
 
     it('add project godam vue', async () => {
@@ -366,6 +369,9 @@ export function testApprover(payload: IDeployedPayload) {
         );
 
         expect(approvedValue.mintTo).equal(address);
+
+        payload.transactions['projectApprovedGodamVue'] = (await tx).hash;
+
     })
 
 }

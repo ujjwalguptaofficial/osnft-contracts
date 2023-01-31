@@ -344,6 +344,9 @@ export function testMint(payload: IDeployedPayload) {
 
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
+
+            payload.transactions['mintGodamVue'] = (await tx).hash;
+
         });
 
     })
@@ -619,6 +622,8 @@ export function testMint(payload: IDeployedPayload) {
 
             const balanceAfterMint = await nft.balanceOf(address);
             expect(balanceAfterMint).equal(balance.add(1));
+            payload.transactions['mintSolidityLearning'] = (await tx).hash;
+
         });
     })
 

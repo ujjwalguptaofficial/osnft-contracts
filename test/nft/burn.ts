@@ -161,6 +161,9 @@ export function testNFTBurn(payload: IDeployedPayload) {
             expect(tx).to.emit(payload.approver, "ProjectBurned").withArgs(
                 projectId
             );
+
+            payload.transactions['burnSolidityLearning'] = (await tx).hash;
+
         })
 
         it('check approval after burn', async () => {
@@ -223,6 +226,8 @@ export function testNFTBurn(payload: IDeployedPayload) {
 
             expect(approvedProjectAfter.worth).equal(0);
             expect(approvedProjectAfter.mintTo).equal(constants.AddressZero);
+
+            payload.transactions['burnGodamVue'] = (await tx).hash;
 
         })
     })
