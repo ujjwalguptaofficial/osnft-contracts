@@ -110,6 +110,11 @@ contract OSNFTMarketPlace is
         listedNft.price = sellData.price;
         listedNft.paymentToken = sellData.paymentToken;
 
+        require(
+            sellData.sellPriority >= listedNft.sellPriority,
+            "sell_priority_should_be_above_equal_current_sell_priority"
+        );
+
         // osd is official coin so no chance of reentrancy attack
         _takePaymentForSellPriority(
             sellData.sellPriority - listedNft.sellPriority,
@@ -136,6 +141,11 @@ contract OSNFTMarketPlace is
         // if update allowed other than owner,
         // then someone can change price or something
         _requireSeller(sellId, seller);
+
+        require(
+            sellPriority > listedNft.sellPriority,
+            "sell_priority_should_be_above_current_sell_priority"
+        );
 
         _takePaymentForSellPriority(
             sellPriority - listedNft.sellPriority,

@@ -10,6 +10,7 @@ import { testRefundAuction } from "./refund_auction";
 import { testRemoveSale } from "./update_remove_nft_sale";
 import { testNFTSale } from "./sell_nft";
 import { testWithdrawPayment } from "./withdraw_payment";
+import { testSetSellPriority } from "./set_sell_priority";
 
 
 export function testMarketplace(payload: IDeployedPayload) {
@@ -90,6 +91,10 @@ export function testMarketplace(payload: IDeployedPayload) {
 
     describe('withdraw payment', () => {
         testWithdrawPayment(payload);
+    });
+
+    describe('set sell priority', () => {
+        testSetSellPriority(payload);
     });
 
     describe('remove sale nft', () => {
