@@ -12,7 +12,7 @@ import "../interfaces/osnft_approver.sol";
 import "../string_helper.sol";
 import "../interfaces/osd_coin.sol";
 
-contract OSNFTBase is
+contract OSNFTBaseV2 is
     Initializable,
     ContextUpgradeable,
     OwnableUpgradeable,
@@ -255,9 +255,10 @@ contract OSNFTBase is
         address owner,
         uint32 share
     ) internal view virtual returns (bool) {
-        return (_isApprovedForAll(owner, spender) ||
-            _getApproved(tokenId, owner) == spender ||
-            _shareOf(tokenId, spender) >= share);
+        uint32 shareOfOwner = _shareOf(tokenId, spender);
+        return ((shareOfOwner > 0 && shareOfOwner >= share) ||
+            _isApprovedForAll(owner, spender) ||
+            _getApproved(tokenId, owner) == spender);
     }
 
     function _shareOf(
