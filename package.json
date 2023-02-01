@@ -38,6 +38,7 @@
     "add:nft_relayer:polygon": "hardhat run --network polygon scripts/add_nft_relayer.ts --show-stack-traces",
     "add:marketplace_relayer:polygon": "hardhat run --network polygon scripts/add_marketplace_relayer.ts --show-stack-traces",
     "verify:relayer": "hardhat verify --network polygon 0x8CE6cB2982339c11f4643fDA2d4448A424AA5847 0xC8E36f023121827A87dB59C62355EAe632500c70 0xf8c8c9315c9A0434B7077AB519F0Ed1A8E0CC749",
+    "verify:OSD": "hardhat verify --network polygon 0xe1b183ff79ad9b41ae05f4ae6026d8d8b8a04b50",
     "is:payment_token:polygon": "hardhat run --network polygon scripts/is_payment_token.ts --show-stack-traces",
     "add:nft_marketplace:polygon": "hardhat run --network polygon scripts/add_default_marketplace_in_nft.ts --show-stack-traces"
   },
