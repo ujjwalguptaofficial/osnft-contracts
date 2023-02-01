@@ -160,11 +160,6 @@ contract OSNFTMarketPlace is
 
         address seller = _msgSender();
 
-        // should be owner
-        // if update allowed other than owner,
-        // then someone can change price or something
-        _requireAuctionSeller(auctionId, seller);
-
         SellAuction storage auction = _auctions[auctionId];
 
         require(
