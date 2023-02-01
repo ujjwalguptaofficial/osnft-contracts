@@ -79,6 +79,31 @@ export function testNFTSale(payload: IDeployedPayload) {
     //     await expect(tx).revertedWith('require_nft_transfer_approval');
     // });
 
+    it("sell when defaultMarketplace is not set in nft - should revert", async () => {
+
+        const defaultMarketPlace = ethers.constants.AddressZero;
+        const tx = await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);
+
+        const defaultMarketPlaceValue = await payload.nft["defaultMarketPlace()"]();
+
+        expect(defaultMarketPlaceValue).equal(defaultMarketPlace);
+
+        const marketplace = payload.marketplace;
+        const tokenId = payload.getProjectId(
+            payload.projects["jsstore-example"]
+        );
+        const price = 10000000000;
+        const gas = marketplace.connect(payload.signer3).estimateGas.sell({
+            tokenId,
+            share: 0,
+            price,
+            paymentToken: payload.erc20Token1.address,
+            sellPriority: 0
+        });
+
+        await expect(gas).revertedWith(`ERC721: caller is not token owner nor approved`);
+    });
+
     it('change default marketplace', async () => {
         const defaultMarketPlace = payload.marketplace.address;
         const tx = await payload.nft["defaultMarketPlace(address)"](defaultMarketPlace);

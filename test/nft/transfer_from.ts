@@ -189,6 +189,40 @@ export function testTransferFrom(payload: IDeployedPayload) {
             await expect(value).to.revertedWith('require_input_share_above_zero');
         });
 
+        it('transferring zero share directly without share method', async () => {
+
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32)"](
+                payload.signer2.address,
+                payload.signer3.address,
+                projectId,
+            );
+
+            await expect(value).to.revertedWith('require_input_share_above_zero');
+        });
+
+        it('transferring zero share directly without share method and invalid operator', async () => {
+
+            const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,bytes32)"](
+                payload.signer2.address,
+                payload.signer3.address,
+                projectId,
+            );
+
+            await expect(value).to.revertedWith('ERC721: caller is not token owner nor approved');
+        });
+
+        it('transferring zero share directly without share method and invalid operator', async () => {
+
+            const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,bytes32,uint32)"](
+                payload.signer2.address,
+                payload.signer3.address,
+                projectId,
+                0
+            );
+
+            await expect(value).to.revertedWith('ERC721: caller is not token owner nor approved');
+        });
+
         it('transfer to signer3 from signer2 as owner', async () => {
             const projectUrl = payload.projects["mahal"];
             const expectedTokenId = payload.getProjectId(projectUrl);
