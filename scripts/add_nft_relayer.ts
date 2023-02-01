@@ -20,7 +20,9 @@ async function main() {
     let relayer = await contractInstance["relayer()"]();
     expect(relayer).equal(ethers.constants.AddressZero);
 
-    const tx = await contractInstance["relayer(address)"](relayerAddress);
+    const tx = await contractInstance["relayer(address)"](relayerAddress, {
+        maxPriorityFeePerGas: 30000000000
+    });
     await tx.wait();
 
     relayer = await contractInstance["relayer()"]();
