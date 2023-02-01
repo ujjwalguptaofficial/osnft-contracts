@@ -22,4 +22,6 @@ interface IOSDCoinDataTye {
         address indexed spender,
         uint256 value
     );
+
+    event DefaultOperatorRemoved(address indexed operator);
 }

@@ -47,6 +47,40 @@ export function testOSD(payload: IDeployedPayload) {
             const allowance = await nativeToken.allowance(payload.signer2.address, operator);
             expect(allowance).equal(ethers.constants.MaxUint256);
         })
+
+        it('by owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const operator = payload.signer4.address;
+            const tx = nativeToken.connect(payload.deployer).addDefaultOperator(operator);
+            await expect(tx).to.emit(nativeToken, 'DefaultOperatorAdded').withArgs(
+                operator
+            );
+
+            const allowance = await nativeToken.allowance(payload.signer2.address, operator);
+            expect(allowance).equal(ethers.constants.MaxUint256);
+        })
+    })
+
+    describe("removeDefaultOperator", async () => {
+        it('by not owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const tx = nativeToken.connect(payload.operator).removeDefaultOperator(payload.signer2.address);
+            await expect(tx).to.revertedWith(`Ownable: caller is not the owner`)
+        })
+
+        it('by owner', async () => {
+            const nativeToken = payload.nativeToken;
+            const operator = payload.signer4.address;
+            const tx = nativeToken.connect(payload.deployer).removeDefaultOperator(operator);
+            await expect(tx).to.emit(nativeToken, 'DefaultOperatorRemoved').withArgs(
+                operator
+            );
+
+            const allowance = await nativeToken.allowance(payload.signer2.address, operator);
+            expect(allowance).equal(0);
+        })
+
+
     })
 
     describe("mint", () => {
@@ -131,7 +165,7 @@ export function testOSD(payload: IDeployedPayload) {
             const user = payload.signer2.address;
             const gas = await nativeToken.estimateGas.transfer(user, oneToken);
 
-            expect(gas).equal(59216);
+            expect(gas).equal(59261);
         })
 
         it('success', async () => {

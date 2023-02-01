@@ -81,6 +81,21 @@ describe("contracts", () => {
         }) as any;
 
         payload.nativeToken = deployedContract;
+
+        const osdCoinV2 = await ethers.getContractFactory('OSDCoinV2');
+
+        // const isValid = await upgrades.validateUpgrade(
+        //     payload.nativeToken.address,
+        //     osdCoinV2
+        // )
+
+        const v2DeployedContract = await upgrades.upgradeProxy(
+            payload.nativeToken.address,
+            osdCoinV2
+        );
+
+        payload.nativeToken = v2DeployedContract as any;
+
     })
 
     describe('OSD coin', async () => {
