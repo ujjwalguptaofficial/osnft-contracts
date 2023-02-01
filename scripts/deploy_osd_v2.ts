@@ -5,19 +5,12 @@ const { LedgerSigner } = require("@anders-t/ethers-ledger");
 
 async function main() {
     const ledger = new LedgerSigner(ethers.provider);
-    const contract = await ethers.getContractFactory('OSDCoin');
+    const contract = await ethers.getContractFactory('OSDCoinV2');
+    const osdAddress = process.env.OSD_ADDRESS as string;
 
     const contractFactory = contract.connect(ledger);
 
-    const deployedContract = await upgrades.deployProxy(
-        contractFactory,
-        [
-            'OpenSourceDevCoin', 'OSD'
-        ],
-        {
-            initializer: 'initialize'
-        },
-    );
+    const deployedContract = await upgrades.upgradeProxy(osdAddress, contractFactory);
 
     await deployedContract.deployed();
 

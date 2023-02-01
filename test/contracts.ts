@@ -94,6 +94,8 @@ describe("contracts", () => {
             osdCoinV2
         );
 
+        await v2DeployedContract.deployed();
+
         payload.nativeToken = v2DeployedContract as any;
 
     })
