@@ -27,6 +27,16 @@ export function testTransferFrom(payload: IDeployedPayload) {
             await expect(value).to.revertedWith('ERC721: caller is not token owner nor approved');
         });
 
+        it('transfer from incorrect operator with share 0', async () => {
+            const value = payload.nft.estimateGas["transferFrom(address,address,bytes32,uint32)"](
+                payload.deployer.address,
+                payload.signer3.address,
+                projectId,
+                0
+            );
+            await expect(value).to.revertedWith('ERC721: caller is not token share owner nor approved');
+        });
+
         it('estimate gas', async () => {
             const value = await payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,bytes32)"](
                 payload.signer2.address,
@@ -139,7 +149,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(90736);
+            expect(value).equal(80851);
 
         });
 
