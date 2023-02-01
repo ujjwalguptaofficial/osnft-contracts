@@ -36,7 +36,9 @@ async function main() {
 
         marketplaceAddress as string,
         nftAddress as string,
-
+        {
+            maxPriorityFeePerGas: 30000000000
+        }
     );
 
     await deployedContract.deployed();
