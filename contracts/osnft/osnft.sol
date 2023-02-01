@@ -192,13 +192,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
      * @dev See {IERC721-transferFrom}.
      */
     function transferFrom(address from, address to, bytes32 tokenId) external {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
-
-        _transfer(from, to, tokenId, 0);
+        transferFrom(from, to, tokenId, 0);
     }
 
     function transferFrom(
@@ -206,13 +200,19 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         address to,
         bytes32 tokenId,
         uint32 share
-    ) external {
+    ) public {
         //solhint-disable-next-line max-line-length
-
-        require(
-            _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
-            "ERC721: caller is not token share owner nor approved"
-        );
+        if (share > 0) {
+            require(
+                _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
+                "ERC721: caller is not token share owner nor approved"
+            );
+        } else {
+            require(
+                _isApprovedOrOwner(_msgSender(), tokenId),
+                "ERC721: caller is not token owner nor approved"
+            );
+        }
 
         _transfer(from, to, tokenId, share);
     }
@@ -246,10 +246,6 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         bytes32 tokenId,
         bytes memory data
     ) public {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
         _safeTransfer(from, to, tokenId, 0, data);
     }
 
@@ -260,10 +256,17 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         uint32 share,
         bytes memory data
     ) public {
-        require(
-            _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
-            "ERC721: caller is not token share owner nor approved"
-        );
+        if (share > 0) {
+            require(
+                _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
+                "ERC721: caller is not token share owner nor approved"
+            );
+        } else {
+            require(
+                _isApprovedOrOwner(_msgSender(), tokenId),
+                "ERC721: caller is not token owner nor approved"
+            );
+        }
         _safeTransfer(from, to, tokenId, share, data);
     }
 

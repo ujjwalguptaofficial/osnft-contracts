@@ -34,7 +34,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 0
             );
-            await expect(value).to.revertedWith('ERC721: caller is not token share owner nor approved');
+            await expect(value).to.revertedWith('ERC721: caller is not token owner nor approved');
         });
 
         it('estimate gas', async () => {
@@ -43,7 +43,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 payload.signer3.address,
                 projectId,
             );
-            expect(value).equal(54323);
+            expect(value).equal(54393);
         });
 
         it('invalid project', async () => {
@@ -149,7 +149,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 projectId,
                 1
             );
-            expect(value).equal(80851);
+            expect(value).equal(80888);
 
         });
 
