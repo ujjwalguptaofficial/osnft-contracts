@@ -15,15 +15,21 @@ async function main() {
 
     const contractInstance = await contractFactory.attach(marketplaceAddress as string);
 
-    const tokenAddress = "0xae740d42e4ff0c5086b2b5b5d149eb2f9e1a754f";
+    const tokenAddress = "0xe1b183ff79AD9b41AE05F4ae6026d8d8B8A04B50";
 
     let isPayableToken = await contractInstance.isPayableToken(tokenAddress);
     expect(isPayableToken).equal(false);
+
+    console.log("payable", isPayableToken);
 
     const tx = await contractInstance.addPayableToken(tokenAddress, {
         maxPriorityFeePerGas: 30000000000
     });
     await tx.wait();
+    // wait for 10 sec to reflect the data
+    await new Promise((res) => {
+        setTimeout(res, 10000);
+    })
 
     isPayableToken = await contractInstance.isPayableToken(tokenAddress);
     expect(isPayableToken).equal(true);
