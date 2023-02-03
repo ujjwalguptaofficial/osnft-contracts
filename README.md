@@ -1,13 +1,13 @@
-# Sample Hardhat Project
+[![CI](https://github.com/osnftofficial/osnft-contracts/actions/workflows/ci.yml/badge.svg)](https://github.com/osnftofficial/osnft-contracts/actions/workflows/ci.yml)
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+# OSNFT contracts
 
-Try running some of the following tasks:
+All contracts for OSNFT. The project has been created using Hardhat as development tools and solidity language.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+# Commands
+
+* `npm run test` - Run the test cases for all contracts
+* `npm run dev` - Run hardhat devlopment node
+* `npm run compile` - Compile contracts
+* `npm run clean` - Clean hardhat cache
+
