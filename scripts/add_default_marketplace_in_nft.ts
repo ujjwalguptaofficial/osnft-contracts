@@ -20,17 +20,6 @@ async function main() {
     let defaultMarketplace = await contractInstance["defaultMarketPlace()"]();
     expect(defaultMarketplace).equal(ethers.constants.AddressZero);
 
-
-    let isApprovedForAll = await contractInstance["isApprovedForAll"](
-        "0x0FA4EA6F5A540BA18c477087007098AF954048Be",
-        marketplaceAddress
-    );
-
-    console.log("isApprovedForAll", isApprovedForAll)
-
-    return;
-
-
     console.log("defaultMarketplace", defaultMarketplace);
 
     const tx = await contractInstance["defaultMarketPlace(address)"](marketplaceAddress, {

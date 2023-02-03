@@ -15,7 +15,7 @@ async function main() {
 
     const osdContractInstance = await contractFactory.attach(osdAddress as string);
 
-    const operatorAddress = process.env.NFT_ADDRESS as string;
+    const operatorAddress = process.env.MARKETPLACE_ADDRESS as string;
 
     // to check allowance
     const anyAddress = "0xF0a7103a92fCC2e23600B40Fa5692857Db7E0F4F";

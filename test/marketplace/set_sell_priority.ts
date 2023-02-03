@@ -176,12 +176,13 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                     payload.projects["jsstore-example"]
                 );
                 const seller = payload.signer2.address;
+
                 const auctionId = payload.getSellId(
                     nftId,
                     seller
                 );
-                const tx = marketplace.refundAuction(auctionId);
                 const auctionInfo = await marketplace.getAuction(auctionId);
+                const tx = marketplace.refundAuction(auctionId);
 
                 await expect(tx).emit(marketplace, 'Refund').withArgs(
                     auctionId, auctionInfo.sellTimestamp

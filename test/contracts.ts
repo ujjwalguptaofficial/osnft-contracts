@@ -58,6 +58,7 @@ describe("contracts", () => {
 
     payload.transactions['sellPriorityJsStoreExamples'] = []
     payload.transactions['refundAuctionJsStoreExamples'] = []
+    payload.transactions['removeJsStoreExamples'] = []
 
 
     before(async () => {

@@ -218,6 +218,9 @@ export function testNFTAuction(payload: IDeployedPayload) {
             nativeCoinBalance.sub(expectedDeduction)
         )
 
+        payload.transactions['removeJsStoreExamples'].push(
+            (await tx).hash
+        )
     });
 
     it('require payable token', async () => {

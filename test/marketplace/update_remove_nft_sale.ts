@@ -242,6 +242,10 @@ export function testRemoveSale(payload: IDeployedPayload) {
 
             const ownerOfNftAfter = await payload.nft.ownerOf(projectId);
             expect(ownerOfNftAfter).equal(seller);
+
+            payload.transactions['removeJsStoreExamples'].push(
+                (await tx).hash
+            )
         });
 
     })
