@@ -1466,7 +1466,7 @@
             "label": "_shareTokens",
             "offset": 0,
             "slot": "155",
-            "type": "t_mapping(t_bytes32,t_struct(ShareToken)5067_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(ShareToken)2139_storage)",
             "contract": "OSNFTBaseV2",
             "src": "contracts/osnft/osnft_base_v2.sol:37"
           },
@@ -1474,7 +1474,7 @@
             "label": "_percentageTokens",
             "offset": 0,
             "slot": "156",
-            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)5074_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(PercentageToken)2146_storage)",
             "contract": "OSNFTBaseV2",
             "src": "contracts/osnft/osnft_base_v2.sol:39"
           },
@@ -1514,7 +1514,7 @@
             "label": "_approver",
             "offset": 0,
             "slot": "161",
-            "type": "t_contract(IOSNFTApprover)5018",
+            "type": "t_contract(IOSNFTApprover)2090",
             "contract": "OSNFTBaseV2",
             "src": "contracts/osnft/osnft_base_v2.sol:52"
           },
@@ -1560,7 +1560,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IOSNFTApprover)5018": {
+          "t_contract(IOSNFTApprover)2090": {
             "label": "contract IOSNFTApprover",
             "numberOfBytes": "20"
           },
@@ -1584,11 +1584,11 @@
             "label": "mapping(bytes32 => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(PercentageToken)5074_storage)": {
+          "t_mapping(t_bytes32,t_struct(PercentageToken)2146_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.PercentageToken)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(ShareToken)5067_storage)": {
+          "t_mapping(t_bytes32,t_struct(ShareToken)2139_storage)": {
             "label": "mapping(bytes32 => struct IOSNFTDataType.ShareToken)",
             "numberOfBytes": "32"
           },
@@ -1596,7 +1596,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(PercentageToken)5074_storage": {
+          "t_struct(PercentageToken)2146_storage": {
             "label": "struct IOSNFTDataType.PercentageToken",
             "members": [
               {
@@ -1620,7 +1620,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(ShareToken)5067_storage": {
+          "t_struct(ShareToken)2139_storage": {
             "label": "struct IOSNFTDataType.ShareToken",
             "members": [
               {
