@@ -22,6 +22,21 @@ export function testNFT(payload: IDeployedPayload) {
         await expect(tx).revertedWith(`Initializable: contract is already initialized`);
     })
 
+    describe('check supports interface', () => {
+        it('erc721', async () => {
+            const isERC721Supported = await payload.nft.supportsInterface('0x80ac58cd');
+            expect(isERC721Supported).equal(true);
+        });
+        it('erc1155', async () => {
+            const isERC721Supported = await payload.nft.supportsInterface('0xd9b67a26');
+            expect(isERC721Supported).equal(false);
+        });
+        it('erc721 meta data', async () => {
+            const isERC721Supported = await payload.nft.supportsInterface('0x5b5e139f');
+            expect(isERC721Supported).equal(true);
+        });
+    })
+
     describe('meta data', () => {
         runPublicState(payload);
     })
