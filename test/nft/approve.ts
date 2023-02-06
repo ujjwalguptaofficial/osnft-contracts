@@ -36,7 +36,7 @@ export function testApprove(payload: IDeployedPayload) {
         const projectUrl = payload.projects["jsstore-example"];
         const expectedTokenId = payload.getProjectId(projectUrl);
 
-        const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32)"](
+        const tx = payload.nft.connect(payload.signer2)["approve(address,uint256)"](
             payload.signer3.address,
             expectedTokenId
         );
@@ -50,25 +50,25 @@ export function testApprove(payload: IDeployedPayload) {
         const expectedTokenId = payload.getProjectId(projectUrl);
 
         it('estimate gas', async () => {
-            const gas = await payload.nft.connect(payload.signer2).estimateGas["approve(address,bytes32,address)"](
+            const gas = await payload.nft.connect(payload.signer2).estimateGas["approve(address,uint256,address)"](
                 payload.signer3.address,
                 expectedTokenId,
                 payload.signer2.address
             );
 
-            expect(gas).equal(61305);
+            expect(gas).equal(65770);
         });
 
         it('transaction', async () => {
 
-            let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            let approvedAddress = await payload.nft["getApproved(uint256)"](expectedTokenId);
             expect(approvedAddress).equal(constants.AddressZero);
 
 
             const owner = await payload.nft.ownerOf(expectedTokenId);
             expect(owner).equal(payload.signer2.address);
 
-            const tx = payload.nft.connect(payload.signer2)["approve(address,bytes32,address)"](
+            const tx = payload.nft.connect(payload.signer2)["approve(address,uint256,address)"](
                 payload.signer3.address,
                 expectedTokenId,
                 payload.signer2.address
@@ -79,7 +79,7 @@ export function testApprove(payload: IDeployedPayload) {
                 expectedTokenId
             );
 
-            approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+            approvedAddress = await payload.nft["getApproved(uint256,address)"](expectedTokenId, owner);
             expect(approvedAddress).equal(payload.signer3.address);
         })
     })
@@ -87,14 +87,14 @@ export function testApprove(payload: IDeployedPayload) {
     it('approve jsstore examples to signer2', async () => {
 
         const expectedTokenId = payload.getProjectId(payload.projects["jsstore-example"]);
-        let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+        let approvedAddress = await payload.nft["getApproved(uint256)"](expectedTokenId);
         expect(approvedAddress).equal(constants.AddressZero);
 
 
         const owner = await payload.nft.ownerOf(expectedTokenId);
         expect(owner).equal(payload.deployer.address);
 
-        const tx = payload.nft.connect(payload.deployer)["approve(address,bytes32)"](
+        const tx = payload.nft.connect(payload.deployer)["approve(address,uint256)"](
             payload.signer2.address,
             expectedTokenId,
         );
@@ -104,7 +104,7 @@ export function testApprove(payload: IDeployedPayload) {
             expectedTokenId
         );
 
-        approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+        approvedAddress = await payload.nft["getApproved(uint256,address)"](expectedTokenId, owner);
         expect(approvedAddress).equal(payload.signer2.address);
     })
 
@@ -112,13 +112,13 @@ export function testApprove(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const expectedTokenId = payload.getProjectId(projectUrl);
 
-        let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+        let approvedAddress = await payload.nft["getApproved(uint256)"](expectedTokenId);
         expect(approvedAddress).equal(constants.AddressZero);
 
 
         const owner = await payload.nft.ownerOf(expectedTokenId);
 
-        const tx = payload.nft["approve(address,bytes32,address)"](
+        const tx = payload.nft["approve(address,uint256,address)"](
             payload.signer4.address,
             expectedTokenId,
             payload.deployer.address
@@ -129,10 +129,10 @@ export function testApprove(payload: IDeployedPayload) {
             expectedTokenId
         );
 
-        approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+        approvedAddress = await payload.nft["getApproved(uint256,address)"](expectedTokenId, owner);
         expect(approvedAddress).equal(payload.signer4.address);
 
-        const approvedValueWithoutShare = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+        const approvedValueWithoutShare = await payload.nft["getApproved(uint256)"](expectedTokenId);
         expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
 
     })

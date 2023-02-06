@@ -78,7 +78,7 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                     10
                 );
 
-                expect(gasForPrioritySale).equal(86305);
+                expect(gasForPrioritySale).equal(86352);
             })
 
             it('non owner - success', async () => {
@@ -271,7 +271,7 @@ export function testSetSellPriority(payload: IDeployedPayload) {
                     10
                 );
 
-                expect(gasForPrioritySale).equal(74770);
+                expect(gasForPrioritySale).equal(74746);
             })
 
             it('non owner should be success', async () => {

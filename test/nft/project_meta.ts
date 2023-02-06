@@ -72,6 +72,6 @@ export function testProjectMeta(payload: IDeployedPayload) {
         const value = await payload.nft.tokenURI(
             projectId
         );
-        expect(value.toLowerCase()).equal('https://ujjwalnft.com/metadata/' + projectId.toLowerCase());
+        expect(value.toLowerCase()).equal('https://ujjwalnft.com/metadata/' + projectId.toString().toLowerCase());
     })
 }

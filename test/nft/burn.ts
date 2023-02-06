@@ -73,13 +73,13 @@ export function testNFTBurn(payload: IDeployedPayload) {
             const projectUrl = payload.projects["solidity-learning"];
             const expectedTokenId = payload.getProjectId(projectUrl);
 
-            let approvedAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            let approvedAddress = await payload.nft["getApproved(uint256)"](expectedTokenId);
             expect(approvedAddress).equal(constants.AddressZero);
 
 
             const owner = await payload.nft.ownerOf(expectedTokenId);
 
-            const tx = payload.nft["approve(address,bytes32,address)"](
+            const tx = payload.nft["approve(address,uint256,address)"](
                 payload.signer4.address,
                 expectedTokenId,
                 payload.deployer.address
@@ -90,10 +90,10 @@ export function testNFTBurn(payload: IDeployedPayload) {
                 expectedTokenId
             );
 
-            approvedAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+            approvedAddress = await payload.nft["getApproved(uint256,address)"](expectedTokenId, owner);
             expect(approvedAddress).equal(payload.signer4.address);
 
-            const approvedValueWithoutShare = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            const approvedValueWithoutShare = await payload.nft["getApproved(uint256)"](expectedTokenId);
             expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
 
 
@@ -175,10 +175,10 @@ export function testNFTBurn(payload: IDeployedPayload) {
             const expectedTokenId = payload.getProjectId(projectUrl);
             const owner = payload.deployer.address;
 
-            let approvedAddress = payload.nft["getApproved(bytes32,address)"](expectedTokenId, owner);
+            let approvedAddress = payload.nft["getApproved(uint256,address)"](expectedTokenId, owner);
             await expect(approvedAddress).revertedWith(`ERC721: invalid token ID`);
 
-            const approvedValueWithoutShare = payload.nft["getApproved(bytes32)"](expectedTokenId);
+            const approvedValueWithoutShare = payload.nft["getApproved(uint256)"](expectedTokenId);
             await expect(approvedValueWithoutShare).revertedWith(`ERC721: invalid token ID`);
 
         })

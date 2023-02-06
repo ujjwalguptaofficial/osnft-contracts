@@ -1,6 +1,6 @@
 
 import { expect } from "chai";
-import { toUtf8Bytes } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
 import { ethers, network, upgrades } from "hardhat"
 import { describe } from "mocha";
 import { testApprover } from "./approver";
@@ -17,8 +17,7 @@ const writeJsonFile = require("write-json");
 
 
 
-
-function getSellId(tokenId: string, from: string) {
+function getSellId(tokenId: BigNumber, from: string) {
     return ethers.utils.keccak256(
         ethers.utils.defaultAbiCoder.encode(['bytes32', 'address'], [tokenId, from])
     );
@@ -116,6 +115,7 @@ describe("contracts", () => {
         await deployNFTContract(payload);
     })
 
+
     it('value of native token', async () => {
         const result = await payload.nft.getNativeToken();
         expect(result).equal(payload.nativeToken.address);
@@ -149,7 +149,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).within(3002100, 3002200);
+        expect(estimatedGas).within(2946003, 2946013);
     })
 
     it('check for gas in deployment of marketplace', async () => {
@@ -159,7 +159,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).equal(3024167);
+        expect(estimatedGas).equal(3025439);
 
     })
 
@@ -206,6 +206,7 @@ describe("contracts", () => {
     describe('Approver', () => {
         testApprover(payload);
     });
+
 
     describe('OSNFT', () => {
         testNFT(payload);

@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { OSDCoin, OSDCoinV2, OSDRelayer, OSNFT, OSNFTApprover, OSNFTMarketPlace } from "../typechain-types";
+import { BigNumber } from "ethers";
+import { OSDCoin, OSDCoinV2, OSNFTRelayer, OSNFT, OSNFTApprover, OSNFTMarketPlace } from "../typechain-types";
 import { MyToken } from "../typechain-types/contracts/erc20.sol";
 
 export interface IDeployedPayload {
@@ -14,7 +15,7 @@ export interface IDeployedPayload {
     erc20Token1: MyToken,
     erc20Token2: MyToken,
     nativeToken: OSDCoinV2,
-    relayer: OSDRelayer,
+    relayer: OSNFTRelayer,
     projects: {
         'jsstore-example': string;
         'mahal-example': string;
@@ -26,8 +27,8 @@ export interface IDeployedPayload {
         'godam-vue': string;
         'solidity-tip': string;
     },
-    getProjectId: (projectUrl: string) => string
-    getSellId: (tokenId: string, from: string) => string,
+    getProjectId: (projectUrl: string) => BigNumber
+    getSellId: (tokenId: BigNumber, from: string) => string,
 
     transactions: {
         [key: string]: any

@@ -10,7 +10,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
         const projectId = payload.getProjectId(projectUrl);
 
         it('transfer from incorrect owner as from value', async () => {
-            const value = payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,bytes32)"](
+            const value = payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,uint256)"](
                 payload.deployer.address,
                 payload.signer3.address,
                 projectId,
@@ -19,7 +19,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
         });
 
         it('transfer from incorrect operator', async () => {
-            const value = payload.nft.estimateGas["transferFrom(address,address,bytes32)"](
+            const value = payload.nft.estimateGas["transferFrom(address,address,uint256)"](
                 payload.deployer.address,
                 payload.signer3.address,
                 projectId,
@@ -28,7 +28,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
         });
 
         it('transfer from incorrect operator with share 0', async () => {
-            const value = payload.nft.estimateGas["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.estimateGas["transferFrom(address,address,uint256,uint32)"](
                 payload.deployer.address,
                 payload.signer3.address,
                 projectId,
@@ -38,18 +38,18 @@ export function testTransferFrom(payload: IDeployedPayload) {
         });
 
         it('estimate gas', async () => {
-            const value = await payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,bytes32)"](
+            const value = await payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,uint256)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
             );
-            expect(value).equal(54393);
+            expect(value).equal(54416);
         });
 
         it('invalid project', async () => {
             const projectUrl = 'github.com/ujjwalguptaofficial/abc'
             const expectedTokenId = payload.getProjectId(projectUrl);
-            const value = payload.nft["transferFrom(address,address,bytes32)"](
+            const value = payload.nft["transferFrom(address,address,uint256)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 expectedTokenId
@@ -61,7 +61,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
             const projectUrl = payload.projects["mahal"];
             const projectId = payload.getProjectId(projectUrl);
 
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32)"](
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,uint256)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
@@ -76,7 +76,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
             const from = payload.deployer.address;
             const to = payload.signer3.address;
 
-            const approvalAddressBefore = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            const approvalAddressBefore = await payload.nft["getApproved(uint256)"](expectedTokenId);
             expect(approvalAddressBefore).equal(payload.signer2.address);
 
             const balanceOfFrom = await payload.nft.balanceOf(from);
@@ -88,7 +88,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
             let owner = await payload.nft.ownerOf(expectedTokenId);
             expect(owner).equal(from);
 
-            const value = payload.nft["transferFrom(address,address,bytes32)"](
+            const value = payload.nft["transferFrom(address,address,uint256)"](
                 from,
                 to,
                 expectedTokenId
@@ -110,7 +110,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             // check clearance of approval
 
-            const approvalAddress = await payload.nft["getApproved(bytes32)"](expectedTokenId);
+            const approvalAddress = await payload.nft["getApproved(uint256)"](expectedTokenId);
             expect(approvalAddress).equal(ethers.constants.AddressZero);
         })
     })
@@ -121,7 +121,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
         const projectId = payload.getProjectId(projectUrl);
 
         it('transfer from incorrect owner as from value', async () => {
-            const value = payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,uint256,uint32)"](
                 payload.deployer.address,
                 payload.signer3.address,
                 projectId,
@@ -132,7 +132,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
         });
 
         it('transfer from incorrect operator', async () => {
-            const value = payload.nft.estimateGas["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.estimateGas["transferFrom(address,address,uint256,uint32)"](
                 payload.deployer.address,
                 payload.signer3.address,
                 projectId,
@@ -143,20 +143,20 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
         it('estimate gas', async () => {
 
-            const value = await payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,bytes32,uint32)"](
+            const value = await payload.nft.connect(payload.signer2).estimateGas["transferFrom(address,address,uint256,uint32)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
                 1
             );
-            expect(value).equal(90815);
+            expect(value).equal(95068);
 
         });
 
         it('invalid project', async () => {
             const projectUrl = 'github.com/ujjwalguptaofficial/abc'
             const expectedTokenId = payload.getProjectId(projectUrl);
-            const value = payload.nft["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft["transferFrom(address,address,uint256,uint32)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 expectedTokenId,
@@ -167,7 +167,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
         it('transferring share more than available', async () => {
 
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,uint256,uint32)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
@@ -179,7 +179,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
         it('transferring zero share', async () => {
 
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,uint256,uint32)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
@@ -191,7 +191,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
         it('transferring zero share directly without share method', async () => {
 
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32)"](
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,uint256)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
@@ -202,7 +202,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
         it('transferring zero share directly without share method and invalid operator', async () => {
 
-            const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,bytes32)"](
+            const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,uint256)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
@@ -213,7 +213,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
         it('transferring zero share directly without share method and invalid operator', async () => {
 
-            const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,uint256,uint32)"](
                 payload.signer2.address,
                 payload.signer3.address,
                 projectId,
@@ -240,7 +240,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             const shareOfFrom = await payload.nft.shareOf(expectedTokenId, from);
 
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,uint256,uint32)"](
                 from,
                 to,
                 expectedTokenId,
@@ -285,7 +285,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             const shareOfFrom = await payload.nft.shareOf(expectedTokenId, from);
 
-            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.signer2)["transferFrom(address,address,uint256,uint32)"](
                 from,
                 to,
                 expectedTokenId,
@@ -330,12 +330,12 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             // approve to operator
 
-            await payload.nft.connect(payload.signer3)["approve(address,bytes32)"](payload.operator.address, expectedTokenId);
+            await payload.nft.connect(payload.signer3)["approve(address,uint256)"](payload.operator.address, expectedTokenId);
 
-            const approvalAddressBefore = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, from);
+            const approvalAddressBefore = await payload.nft["getApproved(uint256,address)"](expectedTokenId, from);
             expect(approvalAddressBefore).equal(payload.operator.address);
 
-            const value = payload.nft.connect(payload.operator)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.operator)["transferFrom(address,address,uint256,uint32)"](
                 from,
                 to,
                 expectedTokenId,
@@ -367,7 +367,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             // check clearance of approvals
 
-            const approvalAddress = await payload.nft["getApproved(bytes32,address)"](expectedTokenId, from);
+            const approvalAddress = await payload.nft["getApproved(uint256,address)"](expectedTokenId, from);
             expect(approvalAddress).equal(ethers.constants.AddressZero);
         })
 
@@ -383,7 +383,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
             const shareToTransfer = 100;
 
-            const value = payload.nft["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft["transferFrom(address,address,uint256,uint32)"](
                 from,
                 to,
                 expectedTokenId,
@@ -436,7 +436,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
             const ownerValue = await payload.nft.ownerOf(expectedTokenId);
             expect(ownerValue).equal(payload.nft.address);
 
-            const value = payload.nft.connect(payload.operator)["transferFrom(address,address,bytes32,uint32)"](
+            const value = payload.nft.connect(payload.operator)["transferFrom(address,address,uint256,uint32)"](
                 from,
                 to,
                 expectedTokenId,
@@ -487,7 +487,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 const ownerValue = await payload.nft.ownerOf(expectedTokenId);
                 expect(ownerValue).equal(payload.nft.address);
 
-                const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,bytes32,uint32)"](
+                const value = payload.nft.connect(payload.signer4)["transferFrom(address,address,uint256,uint32)"](
                     from,
                     to,
                     expectedTokenId,
@@ -539,10 +539,10 @@ export function testTransferFrom(payload: IDeployedPayload) {
 
                 const nftWithSigner4 = payload.nft.connect(payload.signer4);
 
-                const approvedValueWithoutShare = await nftWithSigner4["getApproved(bytes32)"](expectedTokenId);
+                const approvedValueWithoutShare = await nftWithSigner4["getApproved(uint256)"](expectedTokenId);
                 expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
 
-                const approvedValueWithShare = await nftWithSigner4["getApproved(bytes32,address)"](expectedTokenId,
+                const approvedValueWithShare = await nftWithSigner4["getApproved(uint256,address)"](expectedTokenId,
                     from
                 );
                 expect(approvedValueWithShare).equal(ethers.constants.AddressZero);
@@ -554,7 +554,7 @@ export function testTransferFrom(payload: IDeployedPayload) {
                 expect(isApprovedForAll).equal(false);
 
 
-                const value = nftWithSigner4["transferFrom(address,address,bytes32,uint32)"](
+                const value = nftWithSigner4["transferFrom(address,address,uint256,uint32)"](
                     from,
                     to,
                     expectedTokenId,

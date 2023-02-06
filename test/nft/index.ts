@@ -66,6 +66,7 @@ export function testNFT(payload: IDeployedPayload) {
         testMint(payload);
     })
 
+
     describe('owner of', async () => {
         testOwnerOf(payload);
     })
@@ -73,6 +74,7 @@ export function testNFT(payload: IDeployedPayload) {
     describe('project meta', async () => {
         testProjectMeta(payload);
     })
+
 
     describe('approve', async () => {
         testApprove(payload);

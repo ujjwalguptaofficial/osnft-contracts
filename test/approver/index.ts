@@ -77,7 +77,7 @@ export function testApprover(payload: IDeployedPayload) {
                 forkCount: 20
             }
         );
-        await expect(tx).equal(85990);
+        await expect(tx).equal(86002);
     })
 
     it('add project jsstore-example', async () => {
