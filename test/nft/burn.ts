@@ -96,6 +96,7 @@ export function testNFTBurn(payload: IDeployedPayload) {
             const approvedValueWithoutShare = await payload.nft["getApproved(bytes32)"](expectedTokenId);
             expect(approvedValueWithoutShare).equal(ethers.constants.AddressZero);
 
+
         })
 
         it('share tokens', async () => {
@@ -162,6 +163,9 @@ export function testNFTBurn(payload: IDeployedPayload) {
                 projectId
             );
 
+            const totalSupply = await payload.nft.totalSupply();
+            expect(totalSupply).equal(7);
+
             payload.transactions['burnSolidityLearning'] = (await tx).hash;
 
         })
@@ -226,6 +230,9 @@ export function testNFTBurn(payload: IDeployedPayload) {
 
             expect(approvedProjectAfter.worth).equal(0);
             expect(approvedProjectAfter.mintTo).equal(constants.AddressZero);
+
+            const totalSupply = await payload.nft.totalSupply();
+            expect(totalSupply).equal(6);
 
             payload.transactions['burnGodamVue'] = (await tx).hash;
 

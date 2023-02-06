@@ -183,6 +183,9 @@ export function testMint(payload: IDeployedPayload) {
             );
             expect(owner).equal(deployerAddress);
 
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(1);
+
             payload.transactions['mintJsStoreExample'] = (await tx).hash
         })
 
@@ -227,6 +230,9 @@ export function testMint(payload: IDeployedPayload) {
 
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
+
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(2);
 
             payload.transactions['mintMahalExample'] = (await tx).hash;
         });
@@ -320,6 +326,9 @@ export function testMint(payload: IDeployedPayload) {
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
 
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(3);
+
             payload.transactions['mintMahalWebpackLoader'] = (await tx).hash;
         });
 
@@ -344,6 +353,9 @@ export function testMint(payload: IDeployedPayload) {
 
             balance = await nft.balanceOf(address);
             expect(balance).equal(1);
+
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(4);
 
             payload.transactions['mintGodamVue'] = (await tx).hash;
 
@@ -450,6 +462,10 @@ export function testMint(payload: IDeployedPayload) {
 
             console.log("txhash", (await tx).hash)
 
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(5);
+
+
             payload.transactions['mintMahal'] = (await tx).hash;
         });
 
@@ -530,6 +546,10 @@ export function testMint(payload: IDeployedPayload) {
                 balance = await nft.balanceOf(address);
                 expect(balance).equal(2);
 
+
+                const totalSupply = await nft.totalSupply();
+                expect(totalSupply).equal(6);
+
                 payload.transactions['mintJsStore'] = (await tx).hash;
 
             });
@@ -578,6 +598,9 @@ export function testMint(payload: IDeployedPayload) {
             const balanceAfterMint = await nft.balanceOf(address);
             expect(balanceAfterMint).equal(balance.add(1));
 
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(7);
+
             console.log("txhash", (await tx).hash)
             payload.transactions['mintGodam'] = (await tx).hash;
         });
@@ -622,6 +645,10 @@ export function testMint(payload: IDeployedPayload) {
 
             const balanceAfterMint = await nft.balanceOf(address);
             expect(balanceAfterMint).equal(balance.add(1));
+
+            const totalSupply = await nft.totalSupply();
+            expect(totalSupply).equal(8);
+
             payload.transactions['mintSolidityLearning'] = (await tx).hash;
 
         });
