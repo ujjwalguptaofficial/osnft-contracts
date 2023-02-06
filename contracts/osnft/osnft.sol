@@ -4,6 +4,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./osnft_base.sol";
 import "../interfaces/osnft.sol";
+import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
 
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     using StringHelper for bytes32;
@@ -192,13 +195,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
      * @dev See {IERC721-transferFrom}.
      */
     function transferFrom(address from, address to, bytes32 tokenId) external {
-        //solhint-disable-next-line max-line-length
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
-
-        _transfer(from, to, tokenId, 0);
+        transferFrom(from, to, tokenId, 0);
     }
 
     function transferFrom(
@@ -206,13 +203,19 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         address to,
         bytes32 tokenId,
         uint32 share
-    ) external {
+    ) public {
         //solhint-disable-next-line max-line-length
-
-        require(
-            _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
-            "ERC721: caller is not token share owner nor approved"
-        );
+        if (share > 0) {
+            require(
+                _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
+                "ERC721: caller is not token share owner nor approved"
+            );
+        } else {
+            require(
+                _isApprovedOrOwner(_msgSender(), tokenId),
+                "ERC721: caller is not token owner nor approved"
+            );
+        }
 
         _transfer(from, to, tokenId, share);
     }
@@ -246,10 +249,6 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         bytes32 tokenId,
         bytes memory data
     ) public {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: caller is not token owner nor approved"
-        );
         _safeTransfer(from, to, tokenId, 0, data);
     }
 
@@ -260,10 +259,17 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         uint32 share,
         bytes memory data
     ) public {
-        require(
-            _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
-            "ERC721: caller is not token share owner nor approved"
-        );
+        if (share > 0) {
+            require(
+                _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
+                "ERC721: caller is not token share owner nor approved"
+            );
+        } else {
+            require(
+                _isApprovedOrOwner(_msgSender(), tokenId),
+                "ERC721: caller is not token owner nor approved"
+            );
+        }
         _safeTransfer(from, to, tokenId, share, data);
     }
 
@@ -291,5 +297,23 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
 
     function isShareToken(bytes32 tokenId) external view returns (bool) {
         return _isShareToken(tokenId);
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        virtual
+        override(ERC165Upgradeable, IERC165Upgradeable)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC721Upgradeable).interfaceId ||
+            interfaceId == type(IERC721MetadataUpgradeable).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }
