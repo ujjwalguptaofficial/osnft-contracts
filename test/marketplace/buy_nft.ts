@@ -328,7 +328,7 @@ export function testNFTBuy(payload: IDeployedPayload) {
             10,
             price.add(10)
         );
-        expect(gas).equal(171983);
+        expect(gas).equal(174238);
     })
 
     it('buy with zero share', async () => {

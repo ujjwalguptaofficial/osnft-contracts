@@ -149,7 +149,7 @@ describe("contracts", () => {
         });
         const estimatedGas = await ethers.provider.estimateGas({ data: deploymentData.data });
 
-        expect(estimatedGas).within(3000636, 3000646);
+        expect(estimatedGas).within(3002100, 3002200);
     })
 
     it('check for gas in deployment of marketplace', async () => {

@@ -471,7 +471,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             paymentToken: payload.erc20Token1.address,
             sellPriority: 0
         });
-        expect(gas).within(245340, 245350)
+        expect(gas).within(245310, 245350)
     })
 
     describe('createAuctionMeta', () => {

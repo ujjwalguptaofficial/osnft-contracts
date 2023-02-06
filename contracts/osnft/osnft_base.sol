@@ -259,9 +259,9 @@ contract OSNFTBase is
         uint32 share
     ) internal view virtual returns (bool) {
         uint32 shareOfOwner = _shareOf(tokenId, spender);
-        return ((shareOfOwner > 0 && shareOfOwner >= share) ||
-            _isApprovedForAll(owner, spender) ||
-            _getApproved(tokenId, owner) == spender);
+        return (_isApprovedForAll(owner, spender) ||
+            _getApproved(tokenId, owner) == spender ||
+            (shareOfOwner > 0 && shareOfOwner >= share));
     }
 
     function _shareOf(
