@@ -23,8 +23,8 @@ export async function deployNFTContract(payload: IDeployedPayload) {
     // const ctV2 = await ethers.getContractFactory('OSNFTV2');
     // await upgrades.upgradeProxy(payload.nft.address, ctV2);
 
-    const ctV3 = await ethers.getContractFactory('OSNFTV3');
-    await upgrades.upgradeProxy(payload.nft.address, ctV3);
+    // const ctV3 = await ethers.getContractFactory('OSNFTV3');
+    // await upgrades.upgradeProxy(payload.nft.address, ctV3);
 
     console.log('nft deployed');
 }

@@ -52,6 +52,7 @@ contract OSNFTBase is
     IOSNFTApprover private _approver;
 
     address internal _relayerAddress;
+    uint256 internal _totalSupply;
 
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
@@ -115,10 +116,6 @@ contract OSNFTBase is
             .getApprovedProject(tokenId);
         require(projectApproveInfo.mintTo == to, "project not approved");
 
-        _burnProjectWorth(to, projectApproveInfo.worth);
-
-        _increaseBalance(to);
-
         if (nftType == NFT_TYPE.Equity) {
             totalShare = 100;
             nftType = NFT_TYPE.Share;
@@ -149,6 +146,12 @@ contract OSNFTBase is
             });
         }
 
+        _burnProjectWorth(to, projectApproveInfo.worth);
+
+        _increaseBalance(to);
+        unchecked {
+            ++_totalSupply;
+        }
         emit Transfer(address(0), to, tokenId);
         emit ProjectMint(projectUrl, nftType, totalShare);
     }
@@ -427,6 +430,10 @@ contract OSNFTBase is
 
         // decrease token count
         _decreaseBalance(from);
+
+        unchecked {
+            --_totalSupply;
+        }
 
         emit Transfer(from, address(0), tokenId);
     }

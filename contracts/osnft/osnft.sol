@@ -22,6 +22,10 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         __Ownable_init();
     }
 
+    function totalSupply() external view returns (uint256) {
+        return _totalSupply;
+    }
+
     function burn(bytes32 tokenId) external {
         _burn(tokenId);
     }
