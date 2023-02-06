@@ -21,4 +21,11 @@ export function runPublicState(payload: IDeployedPayload) {
         const ownerAddress = await payload.nft.owner();
         expect(ownerAddress).equal(payload.deployer.address);
     })
+
+    it('totalSupply', async () => {
+        const totalSupply = await payload.nft.totalSupply();
+        expect(totalSupply).equal(0);
+    })
+
+
 }
