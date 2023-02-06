@@ -34,15 +34,15 @@ contract OSNFTBase is
 
     address internal _nativeToken;
 
-    mapping(bytes32 => ShareToken) internal _shareTokens;
+    mapping(uint256 => ShareToken) internal _shareTokens;
 
-    mapping(bytes32 => PercentageToken) internal _percentageTokens;
+    mapping(uint256 => PercentageToken) internal _percentageTokens;
 
     // Mapping owner address to token count
     mapping(address => uint256) internal _balances;
 
     // Mapping from token ID to approved address
-    mapping(bytes32 => address) private _tokenApprovals;
+    mapping(uint256 => address) private _tokenApprovals;
 
     // Mapping from owner to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
@@ -79,10 +79,13 @@ contract OSNFTBase is
     }
 
     function _getTokenId(
-        bytes32 tokenId,
+        uint256 tokenId,
         address shareOwner
-    ) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked(tokenId.toString(), shareOwner));
+    ) internal pure returns (uint256) {
+        return
+            uint256(
+                keccak256(abi.encodePacked(tokenId.toString(), shareOwner))
+            );
     }
 
     function _requireRelayer() internal view {
@@ -107,7 +110,7 @@ contract OSNFTBase is
         NFT_TYPE nftType,
         uint32 totalShare
     ) internal virtual {
-        bytes32 tokenId = keccak256(abi.encodePacked(projectUrl));
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(projectUrl)));
 
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
@@ -185,14 +188,14 @@ contract OSNFTBase is
      * Tokens start existing when they are minted (`_mint`),
      * and stop existing when they are burned (`_burn`).
      */
-    function _exists(bytes32 tokenId) internal view virtual returns (bool) {
+    function _exists(uint256 tokenId) internal view virtual returns (bool) {
         return _ownerOf(tokenId) != address(0);
     }
 
     /**
      * @dev Returns the owner of the `tokenId`. Does NOT revert if token doesn't exist
      */
-    function _ownerOf(bytes32 tokenId) internal view returns (address) {
+    function _ownerOf(uint256 tokenId) internal view returns (address) {
         PercentageToken memory percentageToken = _percentageTokens[tokenId];
         if (percentageToken.owner != address(0)) {
             return percentageToken.owner;
@@ -206,7 +209,7 @@ contract OSNFTBase is
     /**
      * @dev Reverts if the `tokenId` has not been minted yet.
      */
-    function _requireMinted(bytes32 tokenId) internal view virtual {
+    function _requireMinted(uint256 tokenId) internal view virtual {
         require(_exists(tokenId), "ERC721: invalid token ID");
     }
 
@@ -219,7 +222,7 @@ contract OSNFTBase is
      */
     function _isApprovedOrOwner(
         address spender,
-        bytes32 tokenId
+        uint256 tokenId
     ) internal view virtual returns (bool) {
         address owner = _requireValidOwner(tokenId);
         return (spender == owner ||
@@ -227,12 +230,12 @@ contract OSNFTBase is
             _getApproved(tokenId) == spender);
     }
 
-    function _getApproved(bytes32 tokenId) internal view returns (address) {
+    function _getApproved(uint256 tokenId) internal view returns (address) {
         return _getApproved(tokenId, address(0));
     }
 
     function _getApproved(
-        bytes32 tokenId,
+        uint256 tokenId,
         address shareOwner
     ) internal view returns (address) {
         _requireMinted(tokenId);
@@ -254,7 +257,7 @@ contract OSNFTBase is
 
     function _isApprovedOrShareOwner(
         address spender,
-        bytes32 tokenId,
+        uint256 tokenId,
         address owner,
         uint32 share
     ) internal view virtual returns (bool) {
@@ -265,7 +268,7 @@ contract OSNFTBase is
     }
 
     function _shareOf(
-        bytes32 tokenId,
+        uint256 tokenId,
         address owner
     ) internal view returns (uint32) {
         return _shareTokens[tokenId].shares[owner];
@@ -276,7 +279,7 @@ contract OSNFTBase is
      *
      * Emits an {Approval} event.
      */
-    function _approve(address to, bytes32 tokenId) internal virtual {
+    function _approve(address to, uint256 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
 
         emit Approval(_requireValidOwner(tokenId), to, tokenId);
@@ -284,7 +287,7 @@ contract OSNFTBase is
 
     function _approve(
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         address shareOwner
     ) internal virtual {
         _tokenApprovals[_getTokenId(tokenId, shareOwner)] = to;
@@ -292,7 +295,7 @@ contract OSNFTBase is
     }
 
     function _requireValidOwner(
-        bytes32 tokenId
+        uint256 tokenId
     ) internal view returns (address) {
         address owner = _ownerOf(tokenId);
         require(owner != address(0), "ERC721: invalid token ID");
@@ -313,7 +316,7 @@ contract OSNFTBase is
     function _transfer(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share
     ) internal {
         require(to != address(0), "ERC721: transfer to the zero address");
@@ -402,11 +405,11 @@ contract OSNFTBase is
         }
     }
 
-    function _isShareToken(bytes32 tokenId) internal view returns (bool) {
+    function _isShareToken(uint256 tokenId) internal view returns (bool) {
         return _shareTokens[tokenId].totalNoOfShare > 0;
     }
 
-    function _burn(bytes32 tokenId) internal {
+    function _burn(uint256 tokenId) internal {
         _requireMinted(tokenId);
 
         address from = _msgSender();
@@ -459,7 +462,7 @@ contract OSNFTBase is
     function _safeTransfer(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share,
         bytes memory data
     ) internal virtual {
@@ -483,7 +486,7 @@ contract OSNFTBase is
     function _checkOnERC721Received(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share,
         bytes memory data
     ) private returns (bool) {

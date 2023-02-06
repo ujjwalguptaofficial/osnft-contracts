@@ -6,7 +6,7 @@ pragma solidity ^0.8.17;
  */
 interface IOSNFTMarketPlaceDataType {
     struct SellListingInput {
-        bytes32 tokenId;
+        uint256 tokenId;
         uint256 price;
         uint32 share;
         address paymentToken;
@@ -14,7 +14,7 @@ interface IOSNFTMarketPlaceDataType {
     }
 
     struct AuctionListingInput {
-        bytes32 tokenId;
+        uint256 tokenId;
         uint256 initialBid;
         uint32 share;
         address paymentToken;
@@ -33,7 +33,7 @@ interface IOSNFTMarketPlaceDataType {
         address seller;
         uint32 share;
         address paymentToken;
-        bytes32 tokenId;
+        uint256 tokenId;
         uint32 sellPriority;
         uint256 sellTimestamp;
     }
@@ -46,7 +46,7 @@ interface IOSNFTMarketPlaceDataType {
 
     // Structure to define auction properties
     struct SellAuction {
-        bytes32 tokenId;
+        uint256 tokenId;
         uint32 share;
         address seller;
         address paymentToken; // Address of the ERC20 Payment Token contract
@@ -63,7 +63,7 @@ interface IOSNFTMarketPlaceDataType {
     }
 
     struct SellData {
-        bytes32 tokenId;
+        uint256 tokenId;
         uint32 share;
         address seller;
         address paymentToken;
@@ -95,7 +95,7 @@ interface IOSNFTMarketPlaceDataType {
 
     event SellCancel(
         bytes32 indexed auctionId,
-        bytes32 indexed tokenId,
+        uint256 indexed tokenId,
         address canceledBy,
         uint256 sellTimestamp
     );
@@ -118,7 +118,7 @@ interface IOSNFTMarketPlaceDataType {
 
     // Public event to notify that a new bid has been placed
     event Bid(
-        bytes32 tokenId,
+        bytes32 auctionId,
         address bidder,
         uint256 bidAmount,
         uint256 sellTimestamp

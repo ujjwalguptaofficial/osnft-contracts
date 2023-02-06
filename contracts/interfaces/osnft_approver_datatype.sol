@@ -13,14 +13,14 @@ interface IOSNFTApproverDataType {
     }
 
     struct ProjectApproveRequest {
-        bytes32 tokenId;
+        uint256 tokenId;
         address mintTo;
         uint256 starCount;
         uint256 forkCount;
     }
 
-    event ProjectApproved(bytes32 indexed tokenId, address indexed account);
-    event ProjectBurned(bytes32 indexed tokenId);
+    event ProjectApproved(uint256 indexed tokenId, address indexed account);
+    event ProjectBurned(uint256 indexed tokenId);
 
     event ApproverAdded(address account);
 

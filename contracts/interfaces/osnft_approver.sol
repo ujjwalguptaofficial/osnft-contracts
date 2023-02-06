@@ -18,8 +18,8 @@ interface IOSNFTApprover is IOSNFTApproverDataType {
     function approveProject(ProjectApproveRequest memory data) external;
 
     function getApprovedProject(
-        bytes32 tokenId
+        uint256 tokenId
     ) external view returns (ProjectApprovedInfo memory);
 
-    function burnProject(bytes32 tokenId) external;
+    function burnProject(uint256 tokenId) external;
 }

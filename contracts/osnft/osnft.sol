@@ -5,11 +5,13 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./osnft_base.sol";
 import "../interfaces/osnft.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
 
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     using StringHelper for bytes32;
+    using StringsUpgradeable for uint256;
 
     function initialize(
         string calldata name_,
@@ -26,7 +28,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         return _totalSupply;
     }
 
-    function burn(bytes32 tokenId) external {
+    function burn(uint256 tokenId) external {
         _burn(tokenId);
     }
 
@@ -71,7 +73,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(bytes32 tokenId) external view returns (address) {
+    function ownerOf(uint256 tokenId) external view returns (address) {
         return _requireValidOwner(tokenId);
     }
 
@@ -88,13 +90,13 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
 
     // percentage methods
 
-    function creatorOf(bytes32 tokenId) external view returns (address) {
+    function creatorOf(uint256 tokenId) external view returns (address) {
         _requireMinted(tokenId);
 
         return _percentageTokens[tokenId].creator;
     }
 
-    function creatorCut(bytes32 tokenId) external view returns (uint8) {
+    function creatorCut(uint256 tokenId) external view returns (uint8) {
         _requireMinted(tokenId);
 
         return _percentageTokens[tokenId].creatorCut;
@@ -103,14 +105,14 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     // equity methods
 
     function shareOf(
-        bytes32 tokenId,
+        uint256 tokenId,
         address owner
     ) external view returns (uint32) {
         _requireMinted(tokenId);
         return _shareOf(tokenId, owner);
     }
 
-    function totalShareOf(bytes32 tokenId) external view returns (uint32) {
+    function totalShareOf(uint256 tokenId) external view returns (uint32) {
         _requireMinted(tokenId);
 
         return _shareTokens[tokenId].totalNoOfShare;
@@ -126,7 +128,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(bytes32 tokenId) external view returns (string memory) {
+    function tokenURI(uint256 tokenId) external view returns (string memory) {
         _requireMinted(tokenId);
 
         string memory baseURI = _baseTokenURI;
@@ -149,25 +151,25 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(bytes32 tokenId) external view returns (address) {
+    function getApproved(uint256 tokenId) external view returns (address) {
         return _getApproved(tokenId);
     }
 
     function getApproved(
-        bytes32 tokenId,
+        uint256 tokenId,
         address shareOwner
     ) external view returns (address) {
         return _getApproved(tokenId, shareOwner);
     }
 
-    function approve(address to, bytes32 tokenId) external {
+    function approve(address to, uint256 tokenId) external {
         approve(to, tokenId, _msgSender());
     }
 
     /**
      * @dev See {IERC721-approve}.
      */
-    function approve(address to, bytes32 tokenId, address shareOwner) public {
+    function approve(address to, uint256 tokenId, address shareOwner) public {
         address caller = _msgSender();
         if (_isShareToken(tokenId)) {
             // in case it is called by approved all address
@@ -198,14 +200,14 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     /**
      * @dev See {IERC721-transferFrom}.
      */
-    function transferFrom(address from, address to, bytes32 tokenId) external {
+    function transferFrom(address from, address to, uint256 tokenId) external {
         transferFrom(from, to, tokenId, 0);
     }
 
     function transferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share
     ) public {
         //solhint-disable-next-line max-line-length
@@ -230,7 +232,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId
+        uint256 tokenId
     ) external {
         safeTransferFrom(from, to, tokenId, 0, "");
     }
@@ -238,7 +240,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share
     ) external {
         safeTransferFrom(from, to, tokenId, share, "");
@@ -250,7 +252,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         bytes memory data
     ) public {
         _safeTransfer(from, to, tokenId, 0, data);
@@ -259,7 +261,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share,
         bytes memory data
     ) public {
@@ -299,7 +301,7 @@ contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
         return _nativeToken;
     }
 
-    function isShareToken(bytes32 tokenId) external view returns (bool) {
+    function isShareToken(uint256 tokenId) external view returns (bool) {
         return _isShareToken(tokenId);
     }
 

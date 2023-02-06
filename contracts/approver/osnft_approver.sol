@@ -28,7 +28,7 @@ contract OSNFTApprover is
     }
 
     function getApprovedProject(
-        bytes32 tokenId
+        uint256 tokenId
     ) external view override returns (ProjectApprovedInfo memory) {
         return _projectsApproved[tokenId];
     }
@@ -58,7 +58,7 @@ contract OSNFTApprover is
         return value > _oneToken ? _oneToken : value;
     }
 
-    function burnProject(bytes32 tokenId) external {
+    function burnProject(uint256 tokenId) external {
         _requireApprover();
 
         delete _projectsApproved[tokenId];

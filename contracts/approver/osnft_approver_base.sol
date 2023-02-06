@@ -12,7 +12,7 @@ contract OSNFTApproverBase is
 {
     mapping(address => bool) internal _approvers;
 
-    mapping(bytes32 => ProjectApprovedInfo) internal _projectsApproved;
+    mapping(uint256 => ProjectApprovedInfo) internal _projectsApproved;
 
     uint256 internal _worthConstant;
     uint256 internal _oneToken;

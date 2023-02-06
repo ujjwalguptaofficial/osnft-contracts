@@ -39,7 +39,7 @@ contract OSNFTMarketPlaceBase is
         address seller,
         SellListingInput calldata sellData
     ) internal {
-        bytes32 tokenId = sellData.tokenId;
+        uint256 tokenId = sellData.tokenId;
 
         bytes32 sellId = _getSellId(tokenId, seller);
 
@@ -81,7 +81,7 @@ contract OSNFTMarketPlaceBase is
     ) internal {
         SellListing memory listedItem = _requireListed(sellId);
 
-        bytes32 tokenId = listedItem.tokenId;
+        uint256 tokenId = listedItem.tokenId;
 
         require(
             price >= listedItem.price,
@@ -190,7 +190,7 @@ contract OSNFTMarketPlaceBase is
         // Check if the initial bid price is > 0
         require(input.initialBid > 0, "require_bidprice_above_zero");
 
-        bytes32 tokenId = input.tokenId;
+        uint256 tokenId = input.tokenId;
 
         bytes32 auctionId = _getSellId(tokenId, seller);
 
@@ -240,7 +240,7 @@ contract OSNFTMarketPlaceBase is
     function _transferNFT(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share
     ) internal {
         _nftContract.safeTransferFrom(from, to, tokenId, share);
@@ -249,7 +249,7 @@ contract OSNFTMarketPlaceBase is
     function onERC721Received(
         address operator,
         address from,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share,
         bytes calldata data
     ) external pure returns (bytes4) {
@@ -293,7 +293,7 @@ contract OSNFTMarketPlaceBase is
         address marketplace = address(this);
 
         uint256 price = sellData.price;
-        bytes32 nftId = sellData.tokenId;
+        uint256 nftId = sellData.tokenId;
 
         address paymentToken = sellData.paymentToken;
 
@@ -353,7 +353,7 @@ contract OSNFTMarketPlaceBase is
     }
 
     function _getSellId(
-        bytes32 nftId,
+        uint256 nftId,
         address seller
     ) internal pure returns (bytes32) {
         // encodePacked can have hashed collision with multiple arguments,

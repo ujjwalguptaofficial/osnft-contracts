@@ -28,10 +28,10 @@ interface IOSNFTDataType {
     event Transfer(
         address indexed from,
         address indexed to,
-        bytes32 indexed tokenId
+        uint256 indexed tokenId
     );
 
-    event TransferShare(uint32 share);
+    event TransferShare(uint256 share);
 
     /**
      * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
@@ -39,7 +39,7 @@ interface IOSNFTDataType {
     event Approval(
         address indexed owner,
         address indexed approved,
-        bytes32 indexed tokenId
+        uint256 indexed tokenId
     );
 
     /**

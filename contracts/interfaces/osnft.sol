@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "./osnft_datatype.sol";
 
-interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
+interface IOSNFT is IERC165Upgradeable, IOSNFTDataType {
     function mintMeta(
         address to,
         string calldata projectUrl,
@@ -25,7 +25,7 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
     /**
      * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
-    function tokenURI(bytes32 tokenId) external view returns (string memory);
+    function tokenURI(uint256 tokenId) external view returns (string memory);
 
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
@@ -39,7 +39,7 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
      *
      * - `tokenId` must exist.
      */
-    function ownerOf(bytes32 tokenId) external view returns (address owner);
+    function ownerOf(uint256 tokenId) external view returns (address owner);
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`.
@@ -57,14 +57,14 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         bytes calldata data
     ) external;
 
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share,
         bytes calldata data
     ) external;
@@ -86,13 +86,13 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId
+        uint256 tokenId
     ) external;
 
     function safeTransferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share
     ) external;
 
@@ -112,12 +112,12 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address from, address to, bytes32 tokenId) external;
+    function transferFrom(address from, address to, uint256 tokenId) external;
 
     function transferFrom(
         address from,
         address to,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share
     ) external;
 
@@ -134,7 +134,7 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
      *
      * Emits an {Approval} event.
      */
-    function approve(address to, bytes32 tokenId) external;
+    function approve(address to, uint256 tokenId) external;
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
@@ -156,7 +156,7 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
      * - `tokenId` must exist.
      */
     function getApproved(
-        bytes32 tokenId
+        uint256 tokenId
     ) external view returns (address operator);
 
     /**
@@ -169,14 +169,14 @@ interface IOSNFT is IERC165Upgradeable,IOSNFTDataType {
         address operator
     ) external view returns (bool);
 
-    function isShareToken(bytes32 tokenId) external view returns (bool);
+    function isShareToken(uint256 tokenId) external view returns (bool);
 
     function shareOf(
-        bytes32 tokenId,
+        uint256 tokenId,
         address owner
     ) external view returns (uint32);
 
-    function creatorCut(bytes32 tokenId) external view returns (uint8);
+    function creatorCut(uint256 tokenId) external view returns (uint8);
 
-    function creatorOf(bytes32 tokenId) external view returns (address);
+    function creatorOf(uint256 tokenId) external view returns (address);
 }

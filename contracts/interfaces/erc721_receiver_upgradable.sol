@@ -21,7 +21,7 @@ interface IERC721ReceiverUpgradeable {
     function onERC721Received(
         address operator,
         address from,
-        bytes32 tokenId,
+        uint256 tokenId,
         uint32 share,
         bytes calldata data
     ) external returns (bytes4);
