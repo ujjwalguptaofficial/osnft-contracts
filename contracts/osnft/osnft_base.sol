@@ -82,10 +82,7 @@ contract OSNFTBase is
         uint256 tokenId,
         address shareOwner
     ) internal pure returns (uint256) {
-        return
-            uint256(
-                keccak256(abi.encodePacked(tokenId.toString(), shareOwner))
-            );
+        return uint256(keccak256(abi.encode(tokenId.toString(), shareOwner)));
     }
 
     function _requireRelayer() internal view {
