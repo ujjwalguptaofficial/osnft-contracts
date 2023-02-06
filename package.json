@@ -41,7 +41,7 @@
     "verify:OSD": "hardhat verify --network polygon 0xe1b183ff79ad9b41ae05f4ae6026d8d8b8a04b50",
     "is:payment_token:polygon": "hardhat run --network polygon scripts/is_payment_token.ts --show-stack-traces",
     "add:nft_marketplace:polygon": "hardhat run --network polygon scripts/add_default_marketplace_in_nft.ts --show-stack-traces",
-    "verify:NFT": "hardhat verify --network mumbai 0xdE6a87D3Ca3C3B82CDe48F090839597D829FcdA9",
+    "verify:NFT": "hardhat verify --network mumbai 0x7Ee5f4f074a36Db8Ac1d3b1Cb84FFfC5C13Ea312",
     "deploy:nft_v3:mumbai": "hardhat run --network mumbai scripts/deploy_nft_v3.ts --show-stack-traces",
     "deploy:nft_v3:polygon": "hardhat run --network polygon scripts/deploy_nft_v3.ts --show-stack-traces"
   },

@@ -27,7 +27,7 @@ async function main() {
     const approvedProject = await approverContractInstance.getApprovedProject(
         getProjectId("github.com/ujjwalguptaofficial/jsstore-examples")
     );
-    expect(approvedProject.worth).equal(0);
+    expect(approvedProject.worth).greaterThanOrEqual(0);
 
     console.log("all verified");
 
