@@ -10,7 +10,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
 
 contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
-    using StringHelper for bytes32;
     using StringsUpgradeable for uint256;
 
     function initialize(

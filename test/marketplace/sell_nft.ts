@@ -10,7 +10,7 @@ export function testNFTSale(payload: IDeployedPayload) {
     const signMessage = async (user: SignerWithAddress, tokenId, share, price, erc20token, sellPriority, deadline) => {
 
         const nftMintDataType = [
-            { name: "tokenId", type: "bytes32" },
+            { name: "tokenId", type: "uint256" },
             { name: "share", type: "uint32" },
             { name: "price", type: "uint256" },
             { name: "paymentToken", type: "address" },

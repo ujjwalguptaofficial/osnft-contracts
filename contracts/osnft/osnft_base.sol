@@ -9,7 +9,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/osnft_datatype.sol";
 import "../interfaces/erc721_receiver_upgradable.sol";
 import "../interfaces/osnft_approver.sol";
-import "../string_helper.sol";
 import "../interfaces/osd_coin.sol";
 
 contract OSNFTBase is
@@ -21,7 +20,6 @@ contract OSNFTBase is
 {
     using AddressUpgradeable for address;
     using StringsUpgradeable for uint256;
-    using StringHelper for bytes32;
 
     // Token name
     string internal _name;
