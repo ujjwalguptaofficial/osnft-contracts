@@ -22,7 +22,7 @@ export function testNFTAuction(payload: IDeployedPayload) {
             { name: "verifyingContract", type: "address" },
         ];
         const nftMintDataType = [
-            { name: "tokenId", type: "bytes32" },
+            { name: "tokenId", type: "uint256" },
             { name: "share", type: "uint32" },
             { name: "initialBid", type: "uint256" },
             { name: "endAuction", type: "uint256" },

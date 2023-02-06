@@ -27,7 +27,7 @@ contract OSNFTRelayerBase is EIP712, IOsNFTRelayer {
             "NFTSellData(uint256 tokenId,uint32 share,uint256 price,address paymentToken,uint32 sellPriority,uint256 deadline)"
         );
         _TYPE_HASH_NFTAuctionData = keccak256(
-            "NFTAuctionData(bytes32 tokenId,uint32 share,uint256 initialBid,uint256 endAuction,address paymentToken,uint32 sellPriority,uint256 deadline)"
+            "NFTAuctionData(uint256 tokenId,uint32 share,uint256 initialBid,uint256 endAuction,address paymentToken,uint32 sellPriority,uint256 deadline)"
         );
         _TYPE_HASH_NFTMintData = keccak256(
             "NFTMintData(string projectUrl,uint8 nftType,uint32 totalShare,uint256 deadline)"
