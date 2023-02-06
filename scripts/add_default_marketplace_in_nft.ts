@@ -27,7 +27,7 @@ async function main() {
     });
     await tx.wait();
 
-    defaultMarketplace = await contractInstance["relayer()"]();
+    defaultMarketplace = await contractInstance["defaultMarketPlace()"]();
     expect(defaultMarketplace).equal(marketplaceAddress);
 }
 

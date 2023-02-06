@@ -15,14 +15,20 @@ async function main() {
 
     const contractInstance = await contractFactory.attach(marketplaceAddress as string);
 
-    const tokenAddress = "0xe1b183ff79AD9b41AE05F4ae6026d8d8B8A04B50";
+    const tokenAddresses = ['0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4', '0xbbba073c31bf03b8acf7c28ef0738decf3695683', '0x2e1ad108ff1d8c782fcbbb89aad783ac49586756', '0xe1b183ff79ad9b41ae05f4ae6026d8d8b8a04b50']
+    
+    let results = await Promise.all(
+        tokenAddresses.map(tokenAddress => {
+            return contractInstance.isPayableToken(tokenAddress);
+        })
+    );
 
-    let isPayableToken = await contractInstance.isPayableToken(tokenAddress);
-    expect(isPayableToken).equal(false);
+    results.forEach((isPayableToken, index) => {
+        console.log("payable", isPayableToken, index);
+        expect(isPayableToken).equal(false);
+    });
 
-    console.log("payable", isPayableToken);
-
-    const tx = await contractInstance.addPayableToken(tokenAddress, {
+    const tx = await contractInstance.addPayableTokens(tokenAddresses, {
         maxPriorityFeePerGas: 30000000000
     });
     await tx.wait();
@@ -31,8 +37,16 @@ async function main() {
         setTimeout(res, 10000);
     })
 
-    isPayableToken = await contractInstance.isPayableToken(tokenAddress);
-    expect(isPayableToken).equal(true);
+    results = await Promise.all(
+        tokenAddresses.map(tokenAddress => {
+            return contractInstance.isPayableToken(tokenAddress);
+        })
+    );
+
+    results.forEach((isPayableToken, index) => {
+        console.log("payable", isPayableToken, index);
+        expect(isPayableToken).equal(true);
+    });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

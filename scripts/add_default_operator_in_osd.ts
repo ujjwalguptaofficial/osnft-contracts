@@ -23,7 +23,9 @@ async function main() {
     let allowance = await osdContractInstance.allowance(anyAddress, operatorAddress);
     expect(allowance).equal(0);
 
-    const tx = await osdContractInstance.addDefaultOperator(operatorAddress);
+    const tx = await osdContractInstance.addDefaultOperator(operatorAddress, {
+        // maxPriorityFeePerGas: 30000000000
+    });
     await tx.wait();
 
     allowance = await osdContractInstance.allowance(anyAddress, operatorAddress);
