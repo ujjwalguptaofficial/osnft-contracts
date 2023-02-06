@@ -42,8 +42,10 @@ contract OSNFTMarketPlace is
         _listOnSale(_msgSender(), sellData);
     }
 
-    function addPayableToken(address token) external onlyOwner {
-        _erc20TokensAllowed[token] = true;
+    function addPayableTokens(address[] calldata tokens) external onlyOwner {
+        for (uint256 index = 0; index < tokens.length; index++) {
+            _erc20TokensAllowed[tokens[index]] = true;
+        }
     }
 
     function removePayableToken(address token) external onlyOwner {

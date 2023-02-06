@@ -4,8 +4,8 @@ import { IDeployedPayload } from "../interfaces";
 export function testPayableToken(payload: IDeployedPayload) {
     it("add payable by non owner", async () => {
         const marketplace = payload.marketplace;
-        const tx = marketplace.connect(payload.signer2).addPayableToken(
-            payload.signer2.address
+        const tx = marketplace.connect(payload.signer2).addPayableTokens(
+            [payload.signer2.address]
         );
         await expect(tx).revertedWith('Ownable: caller is not the owner')
     })
@@ -29,8 +29,8 @@ export function testPayableToken(payload: IDeployedPayload) {
     it("add payable", async () => {
         const marketplace = payload.marketplace;
         const tokenAddress = payload.erc20Token1.address;
-        const tx = await marketplace.addPayableToken(
-            tokenAddress
+        const tx = await marketplace.addPayableTokens(
+            [tokenAddress]
         );
         const isPayableToken = await marketplace.isPayableToken(
             tokenAddress
@@ -41,8 +41,8 @@ export function testPayableToken(payload: IDeployedPayload) {
     it("remove payable", async () => {
         const marketplace = payload.marketplace;
         const tokenAddress = payload.signer4.address;
-        let tx = await marketplace.addPayableToken(
-            tokenAddress
+        let tx = await marketplace.addPayableTokens(
+            [tokenAddress]
         );
         let isPayableToken = await marketplace.isPayableToken(
             tokenAddress
@@ -66,8 +66,8 @@ export function testPayableToken(payload: IDeployedPayload) {
             tokenAddress
         );
         expect(isPayableTokenBefore).equal(false);
-        const tx = await marketplace.addPayableToken(
-            tokenAddress
+        const tx = await marketplace.addPayableTokens(
+            [tokenAddress]
         );
         const isPayableToken = await marketplace.isPayableToken(
             tokenAddress
