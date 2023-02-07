@@ -21,7 +21,10 @@ async function main() {
     let isAprover = await osdContractInstance.isApprover(addressToApprover);
     expect(isAprover).equal(false);
 
-    const tx = await osdContractInstance.addApprover(addressToApprover);
+    const tx = await osdContractInstance.addApprover(addressToApprover,{
+        maxPriorityFeePerGas: 30000000000
+
+    });
     await tx.wait();
 
     isAprover = await osdContractInstance.isApprover(addressToApprover);
