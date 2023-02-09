@@ -42,7 +42,8 @@
     "is:payment_token:polygon": "hardhat run --network polygon scripts/is_payment_token.ts --show-stack-traces",
     "add:nft_marketplace:mumbai": "hardhat run --network mumbai scripts/add_default_marketplace_in_nft.ts --show-stack-traces",
     "add:nft_marketplace:polygon": "hardhat run --network polygon scripts/add_default_marketplace_in_nft.ts --show-stack-traces",
-    "verify:NFT": "hardhat verify --network polygon 0xBe612bAFd6fe01045e804FD5C93e2453B7017c54",
+    "verify:contract:mumbai": "hardhat verify --network mumbai 0xB2EfC4059803a2aF0a5c8CF218DF4188f76f8Abb",
+    "verify:contract:polygon": "hardhat verify --network polygon 0x96E4003411772873051A19Bc278d8d8bC86E5525",
     "deploy:nft_v3:mumbai": "hardhat run --network mumbai scripts/deploy_nft_v3.ts --show-stack-traces",
     "deploy:nft_v3:polygon": "hardhat run --network polygon scripts/deploy_nft_v3.ts --show-stack-traces"
   },
