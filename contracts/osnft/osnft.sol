@@ -1,324 +1,122 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.17;
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./osnft_base.sol";
-import "../interfaces/osnft.sol";
-import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
 
-contract OSNFT is Initializable, OwnableUpgradeable, OSNFTBase, IOSNFT {
-    using StringsUpgradeable for uint256;
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "../interfaces/erc4907.sol";
 
-    function initialize(
-        string calldata name_,
-        string calldata symbol_,
-        string calldata baseTokenURI_,
-        address approver_,
-        address nativeToken_
-    ) external initializer {
-        __ERC721_init(name_, symbol_, baseTokenURI_, approver_, nativeToken_);
-        __Ownable_init();
+contract OSNFT is ERC721Upgradeable, IERC4907 {
+    struct TokenInformation {
+        uint64 expires;
+        address owner;
+        address creator;
     }
+
+    /**
+     * @dev Emitted when new project id is created.
+     */
+    event ProjectMint(string indexed projectUrl, uint256 index);
+
+    mapping(uint256 => TokenInformation) internal _tokens;
+    mapping(uint256 => uint256) public tokenCount;
+    uint256 internal _totalSupply;
 
     function totalSupply() external view returns (uint256) {
         return _totalSupply;
     }
 
-    function burn(uint256 tokenId) external {
-        _burn(tokenId);
+    function initialize(
+        string memory name_,
+        string memory symbol_
+    ) public initializer {
+        __ERC721_init(name_, symbol_);
     }
 
-    function relayer() external view returns (address) {
-        return _relayerAddress;
-    }
-
-    function relayer(address relayerAddress_) external onlyOwner {
-        _relayerAddress = relayerAddress_;
-    }
-
-    function defaultMarketPlace(address value) external onlyOwner {
-        _defaultMarketPlace = value;
-    }
-
-    function defaultMarketPlace() external view returns (address) {
-        return _defaultMarketPlace;
-    }
-
-    function baseTokenURI(string calldata baseTokenURI_) external onlyOwner {
-        _baseTokenURI = baseTokenURI_;
-    }
-
-    function baseTokenURI() external view returns (string memory) {
-        return _baseTokenURI;
-    }
-
-    /**
-     * @dev See {IERC721Metadata-name}.
-     */
-    function name() external view virtual returns (string memory) {
-        return _name;
-    }
-
-    /**
-     * @dev See {IERC721Metadata-symbol}.
-     */
-    function symbol() external view virtual returns (string memory) {
-        return _symbol;
-    }
-
-    /**
-     * @dev See {IERC721-ownerOf}.
-     */
-    function ownerOf(uint256 tokenId) external view returns (address) {
-        return _requireValidOwner(tokenId);
-    }
-
-    /**
-     * @dev See {IERC721-balanceOf}.
-     */
-    function balanceOf(address owner) external view returns (uint256) {
-        require(
-            owner != address(0),
-            "ERC721: address zero is not a valid owner"
+    function mint(string calldata projectUrl) external {
+        uint256 projectHash = uint256(keccak256(abi.encodePacked(projectUrl)));
+        uint256 newTokenIndex = ++tokenCount[projectHash];
+        uint256 tokenId = uint256(
+            keccak256(abi.encode(projectUrl, newTokenIndex))
         );
-        return _balances[owner];
+        address caller = _msgSender();
+        _mint(caller, tokenId);
+
+        ++_totalSupply;
+        _tokens[tokenId].creator = caller;
+        // emit event for index mint
+        emit ProjectMint(projectUrl, newTokenIndex);
     }
 
-    // percentage methods
+    function setUser(uint256 tokenId, address user, uint64 expires) public {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: transfer caller is not owner nor approved"
+        );
+        TokenInformation storage info = _tokens[tokenId];
+        info.owner = user;
+        info.expires = expires;
+        emit UpdateUser(tokenId, user, expires);
+    }
+
+    function refill(uint256 tokenId, uint64 expires) external {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: transfer caller is not owner nor approved"
+        );
+        TokenInformation storage info = _tokens[tokenId];
+        info.expires = expires;
+        emit UpdateUser(tokenId, info.owner, expires);
+    }
+
+    function changeUser(uint256 tokenId, address user) public {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: transfer caller is not owner nor approved"
+        );
+        TokenInformation storage info = _tokens[tokenId];
+        info.owner = user;
+        emit UpdateUser(tokenId, user, info.expires);
+    }
+
+    function userOf(uint256 tokenId) public view returns (address) {
+        TokenInformation memory token = _tokens[tokenId];
+        if (uint256(token.expires) >= block.timestamp) {
+            return token.owner;
+        }
+        return address(0);
+    }
+
+    function userExpires(
+        uint256 tokenId
+    ) public view virtual override returns (uint256) {
+        return _tokens[tokenId].expires;
+    }
 
     function creatorOf(uint256 tokenId) external view returns (address) {
-        _requireMinted(tokenId);
-
-        return _percentageTokens[tokenId].creator;
+        return _tokens[tokenId].creator;
     }
 
-    function creatorCut(uint256 tokenId) external view returns (uint8) {
-        _requireMinted(tokenId);
-
-        return _percentageTokens[tokenId].creatorCut;
-    }
-
-    // equity methods
-
-    function shareOf(
-        uint256 tokenId,
-        address owner
-    ) external view returns (uint32) {
-        _requireMinted(tokenId);
-        return _shareOf(tokenId, owner);
-    }
-
-    function totalShareOf(uint256 tokenId) external view returns (uint32) {
-        _requireMinted(tokenId);
-
-        return _shareTokens[tokenId].totalNoOfShare;
-    }
-
-    /**
-     * @dev See {IERC721-setApprovalForAll}.
-     */
-    function setApprovalForAll(address operator, bool approved) external {
-        _setApprovalForAll(_msgSender(), operator, approved);
-    }
-
-    /**
-     * @dev See {IERC721Metadata-tokenURI}.
-     */
-    function tokenURI(uint256 tokenId) external view returns (string memory) {
-        _requireMinted(tokenId);
-
-        string memory baseURI = _baseTokenURI;
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, tokenId.toString()))
-                : "";
-    }
-
-    /**
-     * @dev See {IERC721-isApprovedForAll}.
-     */
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) external view returns (bool) {
-        return _isApprovedForAll(owner, operator);
-    }
-
-    /**
-     * @dev See {IERC721-getApproved}.
-     */
-    function getApproved(uint256 tokenId) external view returns (address) {
-        return _getApproved(tokenId);
-    }
-
-    function getApproved(
-        uint256 tokenId,
-        address shareOwner
-    ) external view returns (address) {
-        return _getApproved(tokenId, shareOwner);
-    }
-
-    function approve(address to, uint256 tokenId) external {
-        approve(to, tokenId, _msgSender());
-    }
-
-    /**
-     * @dev See {IERC721-approve}.
-     */
-    function approve(address to, uint256 tokenId, address shareOwner) public {
-        address caller = _msgSender();
-        if (_isShareToken(tokenId)) {
-            // in case it is called by approved all address
-            if (caller != shareOwner) {
-                require(
-                    _shareOf(tokenId, shareOwner) > 0,
-                    "ERC721: invalid share owner"
-                );
-            }
-            require(
-                _shareOf(tokenId, caller) > 0 ||
-                    _isApprovedForAll(shareOwner, caller),
-                "ERC721: approve caller is not token owner nor approved for all"
-            );
-            _approve(to, tokenId, shareOwner);
-        } else {
-            address owner = _requireValidOwner(tokenId);
-            require(to != owner, "ERC721: approval to current owner");
-
-            require(
-                caller == owner || _isApprovedForAll(owner, caller),
-                "ERC721: approve caller is not token owner nor approved for all"
-            );
-            _approve(to, tokenId);
-        }
-    }
-
-    /**
-     * @dev See {IERC721-transferFrom}.
-     */
-    function transferFrom(address from, address to, uint256 tokenId) external {
-        transferFrom(from, to, tokenId, 0);
-    }
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint32 share
-    ) public {
-        //solhint-disable-next-line max-line-length
-        if (share > 0) {
-            require(
-                _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
-                "ERC721: caller is not token share owner nor approved"
-            );
-        } else {
-            require(
-                _isApprovedOrOwner(_msgSender(), tokenId),
-                "ERC721: caller is not token owner nor approved"
-            );
-        }
-
-        _transfer(from, to, tokenId, share);
-    }
-
-    /**
-     * @dev See {IERC721-safeTransferFrom}.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external {
-        safeTransferFrom(from, to, tokenId, 0, "");
-    }
-
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint32 share
-    ) external {
-        safeTransferFrom(from, to, tokenId, share, "");
-    }
-
-    /**
-     * @dev See {IERC721-safeTransferFrom}.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public {
-        _safeTransfer(from, to, tokenId, 0, data);
-    }
-
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint32 share,
-        bytes memory data
-    ) public {
-        if (share > 0) {
-            require(
-                _isApprovedOrShareOwner(_msgSender(), tokenId, from, share),
-                "ERC721: caller is not token share owner nor approved"
-            );
-        } else {
-            require(
-                _isApprovedOrOwner(_msgSender(), tokenId),
-                "ERC721: caller is not token owner nor approved"
-            );
-        }
-        _safeTransfer(from, to, tokenId, share, data);
-    }
-
-    function mintMeta(
-        address to,
-        string calldata projectUrl,
-        NFT_TYPE nftType,
-        uint32 totalShare
-    ) external {
-        _requireRelayer();
-        _mint(to, projectUrl, nftType, totalShare);
-    }
-
-    function mint(
-        string calldata projectUrl,
-        NFT_TYPE nftType,
-        uint32 shares
-    ) external {
-        _mint(_msgSender(), projectUrl, nftType, shares);
-    }
-
-    function getNativeToken() external view returns (address) {
-        return _nativeToken;
-    }
-
-    function isShareToken(uint256 tokenId) external view returns (bool) {
-        return _isShareToken(tokenId);
-    }
-
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
     function supportsInterface(
         bytes4 interfaceId
-    )
-        public
-        view
-        virtual
-        override(ERC165Upgradeable, IERC165Upgradeable)
-        returns (bool)
-    {
+    ) public view virtual override returns (bool) {
         return
-            interfaceId == type(IERC721Upgradeable).interfaceId ||
-            interfaceId == type(IERC721MetadataUpgradeable).interfaceId ||
+            interfaceId == type(IERC4907).interfaceId ||
             super.supportsInterface(interfaceId);
     }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint256 batchSize
+    ) internal virtual override {
+        require(userOf(tokenId) == address(0), "Token is in use");
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
