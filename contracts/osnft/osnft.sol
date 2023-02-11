@@ -26,13 +26,13 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
      */
     event Refill(uint256 indexed tokenId, uint64 expires);
 
+    IOSNFTApprover private _approver;
+
     mapping(uint256 => TokenInformation) internal _tokens;
     mapping(uint256 => uint256) public tokenCount;
     uint256 internal _totalSupply;
     string internal _baseTokenURI;
     address internal _nativeToken;
-
-    IOSNFTApprover private _approver;
 
     function totalSupply() external view returns (uint256) {
         return _totalSupply;
@@ -55,7 +55,11 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
         return _baseTokenURI;
     }
 
-    function mint(string calldata projectUrl, uint8 creatorCut) external {
+    function mint(
+        string calldata projectUrl,
+        uint8 creatorCut,
+        uint64 expires
+    ) external {
         uint256 projectHash = uint256(keccak256(abi.encodePacked(projectUrl)));
         address caller = _msgSender();
 
@@ -70,9 +74,13 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
         _mint(caller, tokenId);
         _burnProjectWorth(caller, projectApproveInfo.worth);
         ++_totalSupply;
-        TokenInformation storage token = _tokens[tokenId];
-        token.creator = caller;
-        token.sellPercentageCut = creatorCut;
+
+        _tokens[tokenId] = TokenInformation({
+            creator: caller,
+            sellPercentageCut: creatorCut,
+            expires: expires,
+            user: address(0)
+        });
 
         emit ProjectMint(projectUrl, newTokenIndex);
     }
