@@ -3,12 +3,17 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "../interfaces/erc4907.sol";
+import "../interfaces/osnft_approver.sol";
+import "../interfaces/osd_coin.sol";
 
 contract OSNFT is ERC721Upgradeable, IERC4907 {
     struct TokenInformation {
         uint64 expires;
-        address owner;
+        // user represents user of token - used for renting
+        address user;
+        // represents creator of token
         address creator;
+        uint8 sellPercentageCut;
     }
 
     /**
@@ -16,9 +21,18 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
      */
     event ProjectMint(string indexed projectUrl, uint256 index);
 
+    /**
+     * @dev Emitted when new project id is created.
+     */
+    event Refill(uint256 indexed tokenId, uint64 expires);
+
     mapping(uint256 => TokenInformation) internal _tokens;
     mapping(uint256 => uint256) public tokenCount;
     uint256 internal _totalSupply;
+    string internal _baseTokenURI;
+    address internal _nativeToken;
+
+    IOSNFTApprover private _approver;
 
     function totalSupply() external view returns (uint256) {
         return _totalSupply;
@@ -26,24 +40,53 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
 
     function initialize(
         string memory name_,
-        string memory symbol_
+        string memory symbol_,
+        string calldata baseTokenURI_,
+        address approver_,
+        address nativeToken_
     ) public initializer {
         __ERC721_init(name_, symbol_);
+        _baseTokenURI = baseTokenURI_;
+        _approver = IOSNFTApprover(approver_);
+        _nativeToken = nativeToken_;
     }
 
-    function mint(string calldata projectUrl) external {
+    function _baseURI() internal view override returns (string memory) {
+        return _baseTokenURI;
+    }
+
+    function mint(string calldata projectUrl, uint8 creatorCut) external {
         uint256 projectHash = uint256(keccak256(abi.encodePacked(projectUrl)));
+        address caller = _msgSender();
+
+        IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
+            .getApprovedProject(projectHash);
+        require(projectApproveInfo.mintTo == caller, "Project not approved");
+
         uint256 newTokenIndex = ++tokenCount[projectHash];
         uint256 tokenId = uint256(
             keccak256(abi.encode(projectUrl, newTokenIndex))
         );
-        address caller = _msgSender();
         _mint(caller, tokenId);
-
+        _burnProjectWorth(caller, projectApproveInfo.worth);
         ++_totalSupply;
-        _tokens[tokenId].creator = caller;
-        // emit event for index mint
+        TokenInformation storage token = _tokens[tokenId];
+        token.creator = caller;
+        token.sellPercentageCut = creatorCut;
+
         emit ProjectMint(projectUrl, newTokenIndex);
+    }
+
+    function burn(uint256 tokenId) external {
+        IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
+            .getApprovedProject(tokenId);
+
+        // burn osd worth of project
+        _burnProjectWorth(_msgSender(), projectApproveInfo.worth);
+        _burn(tokenId);
+
+        // burn NFT
+        _approver.burnProject(tokenId);
     }
 
     function setUser(uint256 tokenId, address user, uint64 expires) public {
@@ -52,9 +95,15 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
             "ERC721: transfer caller is not owner nor approved"
         );
         TokenInformation storage info = _tokens[tokenId];
-        info.owner = user;
+        info.user = user;
         info.expires = expires;
         emit UpdateUser(tokenId, user, expires);
+    }
+
+    function _burnProjectWorth(address to, uint256 worth) internal {
+        IOSDCoin paymentToken = IOSDCoin(_nativeToken);
+
+        paymentToken.burnFrom(to, worth);
     }
 
     function refill(uint256 tokenId, uint64 expires) external {
@@ -64,7 +113,7 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
         );
         TokenInformation storage info = _tokens[tokenId];
         info.expires = expires;
-        emit UpdateUser(tokenId, info.owner, expires);
+        emit Refill(tokenId, expires);
     }
 
     function changeUser(uint256 tokenId, address user) public {
@@ -73,14 +122,14 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
             "ERC721: transfer caller is not owner nor approved"
         );
         TokenInformation storage info = _tokens[tokenId];
-        info.owner = user;
+        info.user = user;
         emit UpdateUser(tokenId, user, info.expires);
     }
 
     function userOf(uint256 tokenId) public view returns (address) {
         TokenInformation memory token = _tokens[tokenId];
         if (uint256(token.expires) >= block.timestamp) {
-            return token.owner;
+            return token.user;
         }
         return address(0);
     }

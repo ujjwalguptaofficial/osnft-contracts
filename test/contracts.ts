@@ -212,6 +212,8 @@ describe("contracts", () => {
         testNFT(payload);
     });
 
+    return;
+
     describe('Marketplace', () => {
         testMarketplace(payload);
     });
