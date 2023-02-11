@@ -18,7 +18,6 @@ contract OSNFTRelayer is OSNFTRelayerBase {
                 abi.encode(
                     _TYPE_HASH_NFTSellData,
                     sellData.tokenId,
-                    sellData.share,
                     sellData.price,
                     sellData.paymentToken,
                     sellData.sellPriority,
@@ -41,7 +40,6 @@ contract OSNFTRelayer is OSNFTRelayerBase {
                 abi.encode(
                     _TYPE_HASH_NFTAuctionData,
                     input.tokenId,
-                    input.share,
                     input.initialBid,
                     input.endAuction,
                     input.paymentToken,
@@ -59,23 +57,23 @@ contract OSNFTRelayer is OSNFTRelayerBase {
     function mint(
         SignatureMeta calldata signatureData,
         string calldata projectUrl,
-        IOSNFT.NFT_TYPE nftType,
-        uint32 totalShare
+        uint8 creatorCut,
+        uint64 expires
     ) external {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
                     _TYPE_HASH_NFTMintData,
                     keccak256(bytes(projectUrl)),
-                    nftType,
-                    totalShare,
+                    creatorCut,
+                    expires,
                     signatureData.deadline
                 )
             )
         );
         _requireValidSignature(digest, signatureData);
 
-        _nft.mintMeta(signatureData.to, projectUrl, nftType, totalShare);
+        _nft.mintMeta(signatureData.to, projectUrl, creatorCut, expires);
     }
 
     function buy(
@@ -98,6 +96,6 @@ contract OSNFTRelayer is OSNFTRelayerBase {
 
         _requireValidSignature(digest, signatureData);
 
-        _marketplace.buyMeta(signatureData.to, sellId, share, price);
+        _marketplace.buyMeta(signatureData.to, sellId, price);
     }
 }

@@ -56,19 +56,14 @@ contract OSNFTMarketPlace is
         return _isPayableToken(token);
     }
 
-    function buyMeta(
-        address buyer,
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) external {
+    function buyMeta(address buyer, bytes32 sellId, uint256 price) external {
         _requireRelayer();
-        _buyNFT(buyer, sellId, share, price);
+        _buyNFT(buyer, sellId, price);
     }
 
-    function buy(bytes32 sellId, uint32 share, uint256 price) external {
+    function buy(bytes32 sellId, uint256 price) external {
         address buyer = _msgSender();
-        _buyNFT(buyer, sellId, share, price);
+        _buyNFT(buyer, sellId, price);
     }
 
     function removeSell(bytes32 sellId) external {
@@ -88,7 +83,7 @@ contract OSNFTMarketPlace is
         );
         delete _sellListings[sellId];
 
-        _transferNFT(address(this), seller, listing.tokenId, listing.share);
+        _transferNFT(address(this), seller, listing.tokenId);
         emit SellCancel(sellId, listing.tokenId, seller, listing.sellTimestamp);
     }
 
@@ -278,7 +273,6 @@ contract OSNFTMarketPlace is
         _processNFTSell(
             SellData({
                 tokenId: auction.tokenId,
-                share: auction.share,
                 buyer: auction.currentBidOwner,
                 seller: auction.seller,
                 price: auction.currentBidPrice,
@@ -311,8 +305,7 @@ contract OSNFTMarketPlace is
         _nftContract.transferFrom(
             address(this),
             auction.seller,
-            auction.tokenId,
-            auction.share
+            auction.tokenId
         );
 
         // tokenid, seller, share etc can be retrieved from nft contract event Transfer and TransferShare

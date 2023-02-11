@@ -5,34 +5,18 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "../interfaces/erc4907.sol";
 import "../interfaces/osnft_approver.sol";
 import "../interfaces/osd_coin.sol";
+import "../interfaces/osnft.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract OSNFT is ERC721Upgradeable, IERC4907 {
-    struct TokenInformation {
-        uint64 expires;
-        // user represents user of token - used for renting
-        address user;
-        // represents creator of token
-        address creator;
-        uint8 sellPercentageCut;
-    }
-
-    /**
-     * @dev Emitted when new project id is created.
-     */
-    event ProjectMint(string indexed projectUrl, uint256 index);
-
-    /**
-     * @dev Emitted when new project id is created.
-     */
-    event Refill(uint256 indexed tokenId, uint64 expires);
-
-    IOSNFTApprover private _approver;
-
+contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
     mapping(uint256 => TokenInformation) internal _tokens;
     mapping(uint256 => uint256) public tokenCount;
     uint256 internal _totalSupply;
     string internal _baseTokenURI;
     address internal _nativeToken;
+    address internal _relayerAddress;
+
+    IOSNFTApprover private _approver;
 
     function totalSupply() external view returns (uint256) {
         return _totalSupply;
@@ -55,29 +39,60 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
         return _baseTokenURI;
     }
 
+    function _requireRelayer() internal view {
+        require(_msgSender() == _relayerAddress, "Invalid relayer");
+    }
+
+    function getRelayer() external view returns (address) {
+        return _relayerAddress;
+    }
+
+    function setRelayer(address relayerAddress_) external onlyOwner {
+        _relayerAddress = relayerAddress_;
+    }
+
+    function mintMeta(
+        address to,
+        string calldata projectUrl,
+        uint8 creatorCut,
+        uint64 expires
+    ) external {
+        _requireRelayer();
+
+        mintTo_(to, projectUrl, creatorCut, expires);
+    }
+
     function mint(
         string calldata projectUrl,
         uint8 creatorCut,
         uint64 expires
     ) external {
+        mintTo_(_msgSender(), projectUrl, creatorCut, expires);
+    }
+
+    function mintTo_(
+        address to,
+        string calldata projectUrl,
+        uint8 creatorPercentageCut,
+        uint64 expires
+    ) internal {
         uint256 projectHash = uint256(keccak256(abi.encodePacked(projectUrl)));
-        address caller = _msgSender();
 
         IOSNFTApprover.ProjectApprovedInfo memory projectApproveInfo = _approver
             .getApprovedProject(projectHash);
-        require(projectApproveInfo.mintTo == caller, "Project not approved");
+        require(projectApproveInfo.mintTo == to, "Project not approved");
 
         uint256 newTokenIndex = ++tokenCount[projectHash];
         uint256 tokenId = uint256(
             keccak256(abi.encode(projectUrl, newTokenIndex))
         );
-        _mint(caller, tokenId);
-        _burnProjectWorth(caller, projectApproveInfo.worth);
+        _mint(to, tokenId);
+        _burnProjectWorth(to, projectApproveInfo.worth);
         ++_totalSupply;
 
         _tokens[tokenId] = TokenInformation({
-            creator: caller,
-            sellPercentageCut: creatorCut,
+            creator: to,
+            creatorCut: creatorPercentageCut,
             expires: expires,
             user: address(0)
         });
@@ -152,9 +167,18 @@ contract OSNFT is ERC721Upgradeable, IERC4907 {
         return _tokens[tokenId].creator;
     }
 
+    function creatorCut(uint256 tokenId) external view returns (uint8) {
+        return _tokens[tokenId].creatorCut;
+    }
+
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override returns (bool) {
+    )
+        public
+        view
+        override(ERC721Upgradeable, IERC165Upgradeable)
+        returns (bool)
+    {
         return
             interfaceId == type(IERC4907).interfaceId ||
             super.supportsInterface(interfaceId);

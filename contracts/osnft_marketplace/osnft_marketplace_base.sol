@@ -47,7 +47,7 @@ contract OSNFTMarketPlaceBase is
         _requireNotListed(sellId);
 
         // should be owner
-        _transferNFT(seller, address(this), tokenId, sellData.share);
+        _transferNFT(seller, address(this), tokenId);
 
         require(sellData.price > 0, "require_price_above_zero");
 
@@ -57,7 +57,6 @@ contract OSNFTMarketPlaceBase is
 
         _sellListings[sellId] = SellListing({
             paymentToken: sellData.paymentToken,
-            share: sellData.share,
             price: sellData.price,
             tokenId: sellData.tokenId,
             sellPriority: sellData.sellPriority,
@@ -73,12 +72,7 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
-    function _buyNFT(
-        address buyer,
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) internal {
+    function _buyNFT(address buyer, bytes32 sellId, uint256 price) internal {
         SellListing memory listedItem = _requireListed(sellId);
 
         uint256 tokenId = listedItem.tokenId;
@@ -90,31 +84,11 @@ contract OSNFTMarketPlaceBase is
 
         uint256 totalPrice = price;
 
-        if (listedItem.share > 0) {
-            require(
-                share <= listedItem.share,
-                "require_input_share_less_equal_sell_share"
-            );
-
-            totalPrice = price * share;
-
-            // will not underflow  as input share is already checked
-            // share will be always less than or equal to stored share
-            SellListing storage listedSell = _sellListings[sellId];
-            unchecked {
-                listedSell.share -= share;
-            }
-            if (listedSell.share == 0) {
-                delete (_sellListings[sellId]);
-            }
-        } else {
-            delete (_sellListings[sellId]);
-        }
+        delete (_sellListings[sellId]);
 
         _processNFTSell(
             SellData({
                 tokenId: tokenId,
-                share: share,
                 buyer: buyer,
                 seller: listedItem.seller,
                 price: totalPrice,
@@ -200,7 +174,7 @@ contract OSNFTMarketPlaceBase is
         _requirePayableToken(input.paymentToken);
 
         // Lock NFT in Marketplace contract
-        _transferNFT(seller, address(this), input.tokenId, input.share);
+        _transferNFT(seller, address(this), input.tokenId);
 
         if (input.sellPriority > 0) {
             _requirePayment(
@@ -214,13 +188,10 @@ contract OSNFTMarketPlaceBase is
         // add auction to list
         _auctions[auctionId] = SellAuction({
             tokenId: tokenId,
-            share: input.share,
             seller: seller,
             paymentToken: input.paymentToken,
             currentBidOwner: address(0),
-            currentBidPrice: input.share > 0
-                ? input.initialBid * input.share
-                : input.initialBid,
+            currentBidPrice: input.initialBid,
             endAuction: input.endAuction,
             sellTimestamp: block.timestamp,
             sellPriority: input.sellPriority
@@ -237,20 +208,14 @@ contract OSNFTMarketPlaceBase is
         );
     }
 
-    function _transferNFT(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint32 share
-    ) internal {
-        _nftContract.safeTransferFrom(from, to, tokenId, share);
+    function _transferNFT(address from, address to, uint256 tokenId) internal {
+        _nftContract.safeTransferFrom(from, to, tokenId);
     }
 
     function onERC721Received(
         address operator,
         address from,
         uint256 tokenId,
-        uint32 share,
         bytes calldata data
     ) external pure returns (bytes4) {
         return IERC721ReceiverUpgradeable.onERC721Received.selector;
@@ -304,7 +269,7 @@ contract OSNFTMarketPlaceBase is
         }
 
         // transfer nft from owner to buyer
-        _transferNFT(marketplace, sellData.buyer, nftId, sellData.share);
+        _transferNFT(marketplace, sellData.buyer, nftId);
 
         address tokenCreator = _nftContract.creatorOf(nftId);
 
@@ -314,7 +279,7 @@ contract OSNFTMarketPlaceBase is
         );
         uint256 amountForSeller = price - amountForMarketplace;
 
-        if (seller != tokenCreator && !_nftContract.isShareToken(nftId)) {
+        if (seller != tokenCreator) {
             uint8 percentageOfCreator = _nftContract.creatorCut(nftId);
             if (percentageOfCreator > 0) {
                 uint256 amountForCreator = _percentageOf(

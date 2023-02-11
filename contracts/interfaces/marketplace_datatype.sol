@@ -8,7 +8,6 @@ interface IOSNFTMarketPlaceDataType {
     struct SellListingInput {
         uint256 tokenId;
         uint256 price;
-        uint32 share;
         address paymentToken;
         uint32 sellPriority;
     }
@@ -16,7 +15,6 @@ interface IOSNFTMarketPlaceDataType {
     struct AuctionListingInput {
         uint256 tokenId;
         uint256 initialBid;
-        uint32 share;
         address paymentToken;
         uint32 sellPriority;
         uint256 endAuction;
@@ -31,7 +29,6 @@ interface IOSNFTMarketPlaceDataType {
     struct SellListing {
         uint256 price;
         address seller;
-        uint32 share;
         address paymentToken;
         uint256 tokenId;
         uint32 sellPriority;
@@ -47,7 +44,6 @@ interface IOSNFTMarketPlaceDataType {
     // Structure to define auction properties
     struct SellAuction {
         uint256 tokenId;
-        uint32 share;
         address seller;
         address paymentToken; // Address of the ERC20 Payment Token contract
         address currentBidOwner; // Address of the highest bider
@@ -64,7 +60,6 @@ interface IOSNFTMarketPlaceDataType {
 
     struct SellData {
         uint256 tokenId;
-        uint32 share;
         address seller;
         address paymentToken;
         address buyer;

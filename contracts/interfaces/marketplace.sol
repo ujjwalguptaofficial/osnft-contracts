@@ -11,14 +11,9 @@ interface IOSNFTMarketPlace is IOSNFTMarketPlaceDataType {
 
     function removeSell(bytes32 sellId) external;
 
-    function buyMeta(
-        address buyer,
-        bytes32 sellId,
-        uint32 share,
-        uint256 price
-    ) external;
+    function buyMeta(address buyer, bytes32 sellId, uint256 price) external;
 
-    function buy(bytes32 sellId, uint32 share, uint256 price) external;
+    function buy(bytes32 sellId, uint256 price) external;
 
     function updateSell(
         bytes32 sellId,

@@ -22,7 +22,6 @@ interface IERC721ReceiverUpgradeable {
         address operator,
         address from,
         uint256 tokenId,
-        uint32 share,
         bytes calldata data
     ) external returns (bytes4);
 }
