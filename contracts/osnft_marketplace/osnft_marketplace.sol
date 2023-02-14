@@ -277,7 +277,7 @@ contract OSNFTMarketPlace is
                 seller: auction.seller,
                 price: auction.currentBidPrice,
                 paymentToken: auction.paymentToken,
-                sellType: SELL_TYPE.Bid
+                sellType: SELL_TYPE.Auction
             })
         );
 
@@ -358,7 +358,7 @@ contract OSNFTMarketPlace is
         _nftContract.setUser(
             tokenId,
             caller,
-            block.timestamp + (subscription.validForHours * 1 hours)
+            uint64(block.timestamp + (subscription.validForHours * 1 hours))
         );
     }
 }
