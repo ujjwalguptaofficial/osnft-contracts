@@ -2,13 +2,12 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "../interfaces/erc4907.sol";
 import "../interfaces/osnft_approver.sol";
 import "../interfaces/osd_coin.sol";
 import "../interfaces/osnft.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
+contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IOSNFT {
     mapping(uint256 => TokenInformation) internal _tokens;
     mapping(uint256 => uint256) public tokenCount;
     uint256 internal _totalSupply;
@@ -33,14 +32,6 @@ contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
         _baseTokenURI = baseTokenURI_;
         _approver = IOSNFTApprover(approver_);
         _nativeToken = nativeToken_;
-    }
-
-    function _baseURI() internal view override returns (string memory) {
-        return _baseTokenURI;
-    }
-
-    function _requireRelayer() internal view {
-        require(_msgSender() == _relayerAddress, "Invalid relayer");
     }
 
     function getRelayer() external view returns (address) {
@@ -123,12 +114,6 @@ contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
         emit UpdateUser(tokenId, user, expires);
     }
 
-    function _burnProjectWorth(address to, uint256 worth) internal {
-        IOSDCoin paymentToken = IOSDCoin(_nativeToken);
-
-        paymentToken.burnFrom(to, worth);
-    }
-
     function refill(uint256 tokenId, uint64 expires) external {
         require(
             _isApprovedOrOwner(_msgSender(), tokenId),
@@ -137,16 +122,6 @@ contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
         TokenInformation storage info = _tokens[tokenId];
         info.expires = expires;
         emit Refill(tokenId, expires);
-    }
-
-    function changeUser(uint256 tokenId, address user) public {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
-        TokenInformation storage info = _tokens[tokenId];
-        info.user = user;
-        emit UpdateUser(tokenId, user, info.expires);
     }
 
     function userOf(uint256 tokenId) public view returns (address) {
@@ -184,6 +159,12 @@ contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
             super.supportsInterface(interfaceId);
     }
 
+    function _burnProjectWorth(address to, uint256 worth) internal {
+        IOSDCoin paymentToken = IOSDCoin(_nativeToken);
+
+        paymentToken.burnFrom(to, worth);
+    }
+
     function _beforeTokenTransfer(
         address from,
         address to,
@@ -192,6 +173,14 @@ contract OSNFT is ERC721Upgradeable, OwnableUpgradeable, IERC4907, IOSNFT {
     ) internal virtual override {
         require(userOf(tokenId) == address(0), "Token is in use");
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return _baseTokenURI;
+    }
+
+    function _requireRelayer() internal view {
+        require(_msgSender() == _relayerAddress, "Invalid relayer");
     }
 
     /**

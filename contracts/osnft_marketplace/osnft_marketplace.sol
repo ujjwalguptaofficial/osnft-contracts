@@ -326,4 +326,39 @@ contract OSNFTMarketPlace is
     ) public onlyOwner {
         _requireTransferFromMarketplace(accountTo, amount, tokenAddress);
     }
+
+    function defineSubscribtion(
+        uint256 tokenId,
+        SubscriptionInfo calldata subscription
+    ) external {
+        _requirePayableToken(subscription.paymentToken);
+        require(_subscriptions[tokenId].price == 0, "require_no_subscription");
+        _subscriptions[tokenId] = subscription;
+        _transferNFT(_msgSender(), address(this), tokenId);
+    }
+
+    function buySubscription(uint256 tokenId) external {
+        SubscriptionInfo memory subscription = _requireSubscriptionExistMemory(
+            tokenId
+        );
+
+        require(
+            _nftContract.userOf(tokenId) == address(0),
+            "require_no_active_user"
+        );
+
+        address caller = _msgSender();
+
+        _requirePayment(
+            subscription.paymentToken,
+            caller,
+            address(this),
+            subscription.price
+        );
+        _nftContract.setUser(
+            tokenId,
+            caller,
+            block.timestamp + (subscription.validForHours * 1 hours)
+        );
+    }
 }

@@ -5,6 +5,12 @@ pragma solidity ^0.8.17;
  * @dev Required interface of an marketplace contract
  */
 interface IOSNFTMarketPlaceDataType {
+    struct SubscriptionInfo {
+        uint256 price;
+        address paymentToken;
+        uint64 validForHours;
+    }
+
     struct SellListingInput {
         uint256 tokenId;
         uint256 price;
@@ -55,7 +61,7 @@ interface IOSNFTMarketPlaceDataType {
 
     enum SELL_TYPE {
         Buy,
-        Bid
+        Auction
     }
 
     struct SellData {

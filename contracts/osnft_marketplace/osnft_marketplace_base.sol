@@ -35,6 +35,8 @@ contract OSNFTMarketPlaceBase is
 
     address internal _relayerAddress;
 
+    mapping(uint256 => SubscriptionInfo) internal _subscriptions;
+
     function _listOnSale(
         address seller,
         SellListingInput calldata sellData
@@ -131,6 +133,14 @@ contract OSNFTMarketPlaceBase is
         SellListing storage listing = _sellListings[sellId];
         require(listing.price > 0, "require_on_sale");
         return listing;
+    }
+
+    function _requireSubscriptionExistMemory(
+        uint256 tokenId
+    ) internal view returns (SubscriptionInfo memory) {
+        SubscriptionInfo memory subscription = _subscriptions[tokenId];
+        require(subscription.price > 0, "require_subscription_token");
+        return subscription;
     }
 
     function _requireSeller(bytes32 sellId, address seller) internal view {
