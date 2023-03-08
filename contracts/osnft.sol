@@ -6,11 +6,14 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
 contract OSNFT is
     ERC1155Upgradeable,
     OwnableUpgradeable,
-    ReentrancyGuardUpgradeable
+    ReentrancyGuardUpgradeable,
+    EIP712Upgradeable
 {
     // structs
     struct ProjectInfo {
@@ -28,6 +31,20 @@ contract OSNFT is
         mapping(address => uint256) userAmounts;
     }
 
+    struct SignatureMeta {
+        bytes signature;
+        address to;
+        uint256 validUntil;
+    }
+
+    struct ProjectTokenizeInput {
+        string projectUrl;
+        uint256 basePrice;
+        uint256 popularityFactorPrice;
+        address paymentERC20Token;
+        uint8 royality;
+    }
+
     // errors
     error AlreadyMinted();
     error PaymentFailed();
@@ -40,45 +57,80 @@ contract OSNFT is
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
     mapping(address => bool) internal _minters;
-    uint8 mintRoyality = 1;
-    uint8 burnRoyality = 2;
+    uint8 mintRoyality;
+    uint8 burnRoyality;
+    bytes32 internal _TYPE_HASH_ProjectTokenizeData;
 
     // events
     event ApproverAdded(address account);
     event ApproverRemoved(address account);
+    event ProjectTokenize(
+        uint256 indexed tokenId,
+        uint256 basePrice,
+        uint256 popularityFactorPrice,
+        address paymentToken,
+        uint8 royality,
+        string projectUrl
+    );
 
     function initialize(string memory uri_) public initializer {
         __ERC1155_init(uri_);
         __Ownable_init();
+        mintRoyality = 1;
+        burnRoyality = 2;
+        __EIP712_init("OSNFT", "1");
+        _TYPE_HASH_ProjectTokenizeData = keccak256(
+            "ProjectTokenizeData(string projectUrl,uint256 basePrice,uint256 popularityFactorPrice,address paymentToken,uint8 royality)"
+        );
     }
 
-    function createProject(
-        string memory projectUrl,
-        uint256 basePrice,
-        uint256 popularityFactorPrice,
-        address paymentERC20Token,
-        uint8 royality
+    function tokenizeProject(
+        ProjectTokenizeInput calldata input,
+        SignatureMeta calldata signatureData
     ) external onlyMinter {
-        _requireMinter();
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    _TYPE_HASH_ProjectTokenizeData,
+                    input.projectUrl,
+                    input.basePrice,
+                    input.paymentERC20Token,
+                    input.popularityFactorPrice,
+                    input.royality,
+                    signatureData.validUntil
+                )
+            )
+        );
 
-        uint256 tokenId = uint256(keccak256(abi.encodePacked(projectUrl)));
-        if (royality > 10) {
+        _requireValidSignature(digest, signatureData);
+
+        uint256 tokenId = uint256(
+            keccak256(abi.encodePacked(input.projectUrl))
+        );
+
+        if (input.royality > 10) {
             revert RoyalityLimitExceeded();
         }
         address caller = _msgSender();
 
         ProjectInfo storage project = _projects[tokenId];
-        project.creator = caller;
-        project.basePrice = basePrice;
-        project.paymentERC20Token = paymentERC20Token;
-        project.popularityFactorPrice = popularityFactorPrice;
-        project.lastMintPrice = 0;
-        project.royality = royality;
-        project.tokenCount = 0;
-        project.treasuryTotalAmount = 0;
+        project.creator = signatureData.to;
+        project.basePrice = input.basePrice;
+        project.paymentERC20Token = input.paymentERC20Token;
+        project.popularityFactorPrice = input.popularityFactorPrice;
+        project.royality = input.royality;
 
         // mint first nft to creator
         _mintTo(tokenId, caller, 1, 1);
+
+        emit ProjectTokenize(
+            tokenId,
+            input.basePrice,
+            input.popularityFactorPrice,
+            input.paymentERC20Token,
+            input.royality,
+            input.projectUrl
+        );
     }
 
     function mintTo(
@@ -238,11 +290,29 @@ contract OSNFT is
         return _minters[account];
     }
 
-    function _requireMinter() internal view {
-        if (!_isMinter(_msgSender())) {
-            revert RequireMinter();
+    error SignatureExpired();
+    error InvalidSignature();
+
+    function _requireValidSignature(
+        bytes32 digest,
+        SignatureMeta calldata signatureData
+    ) internal view {
+        if (block.timestamp < signatureData.validUntil) {
+            revert SignatureExpired();
+        }
+
+        if (
+            ECDSA.recover(digest, signatureData.signature) == signatureData.to
+        ) {
+            revert InvalidSignature();
         }
     }
+
+    // function _requireMinter() internal view {
+    //     if (!_isMinter(_msgSender())) {
+    //         revert RequireMinter();
+    //     }
+    // }
 
     modifier onlyMinter() {
         require(_isMinter(_msgSender()));

@@ -2,6 +2,7 @@ import { ethers, network } from "hardhat";
 import { BigNumber } from "ethers";
 import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
+import { testNFT } from "./nft";
 
 
 function getSellId(tokenId: BigNumber, from: string) {
@@ -57,4 +58,8 @@ describe("contracts", () => {
         payload.signer4 = signer4;
         payload.operator = operator;
     })
+
+    describe('OSNFT', () => {
+        testNFT(payload);
+    });
 });
