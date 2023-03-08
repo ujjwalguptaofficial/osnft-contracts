@@ -12,6 +12,7 @@ contract OSNFT is
     OwnableUpgradeable,
     ReentrancyGuardUpgradeable
 {
+    // structs
     struct ProjectInfo {
         uint256 basePrice;
         address creator;
@@ -27,13 +28,24 @@ contract OSNFT is
         mapping(address => uint256) userAmounts;
     }
 
+    // errors
     error AlreadyMinted();
     error PaymentFailed();
     error RoyalityLimitExceeded();
     error RequireTokenOwner();
+    error RequireMinter();
+
+    // variables
 
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
+    mapping(address => bool) internal _minters;
+    uint8 mintRoyality = 1;
+    uint8 burnRoyality = 2;
+
+    // events
+    event ApproverAdded(address account);
+    event ApproverRemoved(address account);
 
     function initialize(string memory uri_) public initializer {
         __ERC1155_init(uri_);
@@ -46,7 +58,9 @@ contract OSNFT is
         uint256 popularityFactorPrice,
         address paymentERC20Token,
         uint8 royality
-    ) external {
+    ) external onlyMinter {
+        _requireMinter();
+
         uint256 tokenId = uint256(keccak256(abi.encodePacked(projectUrl)));
         if (royality > 10) {
             revert RoyalityLimitExceeded();
@@ -67,8 +81,13 @@ contract OSNFT is
         _mintTo(tokenId, caller, 1, 1);
     }
 
-    function mint(uint256 tokenId, uint256 star, uint256 fork) external {
-        _mintTo(tokenId, _msgSender(), star, fork);
+    function mintTo(
+        uint256 tokenId,
+        address to,
+        uint256 star,
+        uint256 fork
+    ) external onlyMinter {
+        _mintTo(tokenId, to, star, fork);
     }
 
     function _mintTo(
@@ -114,7 +133,7 @@ contract OSNFT is
 
             // store money in treasury
 
-            uint256 contractRoyality = _percentageOf(mintPrice, 1);
+            uint256 contractRoyality = _percentageOf(mintPrice, mintRoyality);
 
             _earning[project.paymentERC20Token] = contractRoyality;
 
@@ -144,11 +163,18 @@ contract OSNFT is
 
         uint256 profit = returnAmount - project.userAmounts[caller];
 
+        uint256 burnRoyalityAmount = profit > 0
+            ? _percentageOf(returnAmount, burnRoyality)
+            : 0;
+        if (burnRoyalityAmount > 0) {
+            _earning[project.paymentERC20Token] += burnRoyalityAmount;
+        }
+
         _requirePayment(
             project.paymentERC20Token,
             address(this),
             caller,
-            profit > 0 ? _percentageOf(returnAmount, 100 - 2) : returnAmount
+            returnAmount - burnRoyalityAmount
         );
 
         _burn(caller, tokenId, 1);
@@ -192,6 +218,35 @@ contract OSNFT is
         uint256 amount
     ) public onlyOwner {
         _requirePayment(tokenAddress, address(this), accountTo, amount);
+    }
+
+    function isMinter(address account) external view returns (bool) {
+        return _isMinter(account);
+    }
+
+    function addMinter(address account) external onlyOwner {
+        _minters[account] = true;
+        emit ApproverAdded(account);
+    }
+
+    function removeMinter(address account) external onlyOwner {
+        delete _minters[account];
+        emit ApproverRemoved(account);
+    }
+
+    function _isMinter(address account) internal view returns (bool) {
+        return _minters[account];
+    }
+
+    function _requireMinter() internal view {
+        if (!_isMinter(_msgSender())) {
+            revert RequireMinter();
+        }
+    }
+
+    modifier onlyMinter() {
+        require(_isMinter(_msgSender()));
+        _;
     }
 
     /**

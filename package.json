@@ -1,5 +1,12 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "test": "cross-env REPORT_GAS=true hardhat test",
+    "dev": "hardhat node",
+    "deploy:test": "hardhat run --network localhost scripts/test.ts"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "hardhat": "^2.13.0"
