@@ -51,6 +51,8 @@ contract OSNFT is
     error RequireTokenOwner();
     error RequireMinter();
     error ProjectExist();
+    error SignatureExpired();
+    error InvalidSignature();
 
     // variables
 
@@ -104,17 +106,17 @@ contract OSNFT is
             keccak256(
                 abi.encode(
                     _TYPE_HASH_ProjectTokenizeData,
-                    input.projectUrl,
+                    keccak256(bytes(input.projectUrl)),
                     input.basePrice,
-                    input.paymentERC20Token,
                     input.popularityFactorPrice,
+                    input.paymentERC20Token,
                     input.royality,
                     signatureData.validUntil
                 )
             )
         );
 
-        _requireValidSignature(digest, signatureData);
+        address to = _requireValidSignature(digest, signatureData);
 
         uint256 tokenId = uint256(
             keccak256(abi.encodePacked(input.projectUrl))
@@ -130,7 +132,7 @@ contract OSNFT is
             revert ProjectExist();
         }
 
-        project.creator = signatureData.to;
+        project.creator = to;
         project.basePrice = input.basePrice;
         project.paymentERC20Token = input.paymentERC20Token;
         project.popularityFactorPrice = input.popularityFactorPrice;
@@ -321,22 +323,21 @@ contract OSNFT is
         return _minters[account];
     }
 
-    error SignatureExpired();
-    error InvalidSignature();
-
     function _requireValidSignature(
         bytes32 digest,
         SignatureMeta calldata signatureData
-    ) internal view {
+    ) internal returns (address) {
         if (block.timestamp > signatureData.validUntil) {
             revert SignatureExpired();
         }
 
-        if (
-            ECDSA.recover(digest, signatureData.signature) == signatureData.to
-        ) {
-            revert InvalidSignature();
-        }
+        return ECDSA.recover(digest, signatureData.signature);
+
+        // if (
+        //     ECDSA.recover(digest, signatureData.signature) != signatureData.to
+        // ) {
+        //     revert InvalidSignature();
+        // }
     }
 
     // function _requireMinter() internal view {

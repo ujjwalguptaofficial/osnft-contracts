@@ -8,23 +8,23 @@ import { ethers } from "hardhat";
 export function testProjectTokenize(payload: IDeployedPayload) {
 
     const signMessage = async (user: SignerWithAddress, projectUrl: string, basePrice: number, popularityFactorPrice: number, paymentToken: string, royality: number, deadline: number) => {
-        const domainType = [
-            { name: "name", type: "string" },
-            { name: "version", type: "string" },
-            { name: "chainId", type: "uint256" },
-            { name: "verifyingContract", type: "address" },
-        ];
+        // const domainType = [
+        //     { name: "name", type: "string" },
+        //     { name: "version", type: "string" },
+        //     { name: "chainId", type: "uint256" },
+        //     { name: "verifyingContract", type: "address" },
+        // ];
         const dataType = [
             { name: "projectUrl", type: "string" },
             { name: "basePrice", type: "uint256" },
             { name: "popularityFactorPrice", type: "uint256" },
             { name: "paymentToken", type: "address" },
             { name: "royality", type: "uint8" },
-            { name: "deadline", type: "uint256" },
+            { name: "validUntil", type: "uint256" },
         ];
 
         const domainData = {
-            name: "OSNFT_RELAYER",
+            name: "OSNFT",
             version: "1",
             chainId: await user.getChainId(),
             verifyingContract: payload.nft.address.toLowerCase(),
@@ -35,7 +35,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             popularityFactorPrice: popularityFactorPrice,
             paymentToken: paymentToken,
             royality: royality,
-            deadline: deadline
+            validUntil: deadline
         };
 
 
@@ -49,9 +49,59 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         return signatureResult;
     }
 
-    describe("with invalid signature", () => {
+    it('expired signature', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() - 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = payload.erc20Token1.address;
+        const royality = 5;
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
 
-    });
+        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+            popularityFactorPrice, paymentToken, royality, timestamp
+        );
+
+        const tx = nft.tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            royality: royality
+        }, {
+            signature, to: payload.operator.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'SignatureExpired');
+    })
+
+    it('royality greater than 10', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = payload.erc20Token1.address;
+        const royality = 11;
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+
+        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+            popularityFactorPrice, paymentToken, royality, timestamp
+        );
+
+        const tx = nft.tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            royality: royality
+        }, {
+            signature, to: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'RoyalityLimitExceeded');
+    })
 
     it('success jsstore', async () => {
         const nft = payload.nft;
@@ -121,10 +171,6 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const signature = signMessage(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
-
-        // allow payment token
-
-        await payload.erc20Token1.approve(nft.address, ethers.constants.MaxUint256);
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
