@@ -1,5 +1,5 @@
 import { ethers, network, upgrades } from "hardhat";
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
 import { testNFT } from "./nft";
@@ -36,6 +36,11 @@ describe("contracts", () => {
         },
         transactions: {
 
+        },
+        getPercentage(value: BigNumber, percentage: BigNumberish) {
+            return value.div(
+                100
+            ).mul(percentage)
         }
     } as IDeployedPayload;
 

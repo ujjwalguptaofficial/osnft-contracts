@@ -79,6 +79,7 @@ contract OSNFT is
         uint8 royality,
         string projectUrl
     );
+    event TokenMint(uint256 star, uint256 fork, uint256 mintPrice);
 
     function initialize(string memory uri_) public initializer {
         __ERC1155_init(uri_);
@@ -258,6 +259,7 @@ contract OSNFT is
             project.treasuryTotalAmount += treasuryAmount;
             project.lastMintPrice = mintPrice;
             _usersInvestments[tokenId][to] = mintPrice;
+            emit TokenMint(star, fork, mintPrice);
         }
         project.tokenCount++;
 

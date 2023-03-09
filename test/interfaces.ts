@@ -1,5 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 import { OSNFT } from "../typechain-types";
 import { MyToken } from "../typechain-types/contracts/erc20.sol";
 
@@ -30,7 +30,7 @@ export interface IDeployedPayload {
     getProjectId: (projectUrl: string) => BigNumber
     getSellId: (tokenId: BigNumber, from: string) => string,
     mintPrice: (star, fork, project) => BigNumber,
-
+    getPercentage: (value: BigNumber, percentage: BigNumberish) => BigNumber,
     transactions: {
         [key: string]: any
     }

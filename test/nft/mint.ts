@@ -127,7 +127,7 @@ export function testMint(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
         const star = 10;
-        const fork = 10;
+        const fork = 5;
         const to = payload.signer2.address;
         const signature = signMessage(payload.signer2, tokenId.toString(), star, fork, timestamp);
 
@@ -153,13 +153,31 @@ export function testMint(payload: IDeployedPayload) {
         expect(projectInfoAfter.tokenCount).equal(2);
         const expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
 
-        expect(projectInfoAfter.treasuryTotalAmount).equal(184);
+        const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
+
+        const contractRoyality = payload.getPercentage(
+            expectedMintPriceBN, 1
+        );
+
+        const creatorRoyality = await projectInfoAfter.royality;
+
+        const creatorRoyalityValue = payload.getPercentage(
+            ethers.BigNumber.from(expectedMintPrice), creatorRoyality
+        );
+
+        const amountForTreasury = expectedMintPriceBN.sub(contractRoyality).sub(creatorRoyality);
+
+        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury);
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
         // balance of creator
 
         const balanceOfCreator = await nft.balanceOf(to, tokenId);
         expect(balanceOfCreator).equal(1);
+
+        // check tokenmint 
+
+        expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
     })
 
     return;
