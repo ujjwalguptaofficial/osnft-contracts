@@ -32,7 +32,6 @@ contract OSNFT is
 
     struct SignatureMeta {
         bytes signature;
-        address to;
         uint256 validUntil;
     }
 
@@ -202,11 +201,11 @@ contract OSNFT is
     ) public view returns (uint256) {
         ProjectInfo memory project = _projects[tokenId];
         uint256 popularityFactor = 5 * fork + 4 * star;
-        uint256 mintPrice = project.basePrice +
+        uint256 calculatedMintPrice = project.basePrice +
             (project.popularityFactorPrice * popularityFactor);
         return
-            mintPrice > project.lastMintPrice
-                ? mintPrice
+            calculatedMintPrice > project.lastMintPrice
+                ? calculatedMintPrice
                 : project.lastMintPrice;
     }
 
@@ -223,20 +222,20 @@ contract OSNFT is
         ProjectInfo storage project = _projects[tokenId];
 
         if (project.creator != to) {
-            uint256 mintPrice = mintPrice(tokenId, star, fork);
+            uint256 calculatedMintPrice = mintPrice(tokenId, star, fork);
 
             // take full payment to the contract
             _requirePayment(
                 project.paymentERC20Token,
                 to,
                 address(this),
-                mintPrice
+                calculatedMintPrice
             );
 
             // send royality to creator
 
             uint256 creatorRoyality = _percentageOf(
-                mintPrice,
+                calculatedMintPrice,
                 project.royality
             );
 
@@ -249,18 +248,21 @@ contract OSNFT is
 
             // store money in treasury
 
-            uint256 contractRoyality = _percentageOf(mintPrice, mintRoyality);
+            uint256 contractRoyality = _percentageOf(
+                calculatedMintPrice,
+                mintRoyality
+            );
 
             _earning[project.paymentERC20Token] = contractRoyality;
 
-            uint256 treasuryAmount = mintPrice -
+            uint256 treasuryAmount = calculatedMintPrice -
                 contractRoyality -
                 creatorRoyality;
 
             project.treasuryTotalAmount += treasuryAmount;
-            project.lastMintPrice = mintPrice;
-            _usersInvestments[tokenId][to] = mintPrice;
-            emit TokenMint(star, fork, mintPrice);
+            project.lastMintPrice = calculatedMintPrice;
+            _usersInvestments[tokenId][to] = calculatedMintPrice;
+            emit TokenMint(star, fork, calculatedMintPrice);
         }
         project.tokenCount++;
 
@@ -360,25 +362,13 @@ contract OSNFT is
     function _requireValidSignature(
         bytes32 digest,
         SignatureMeta calldata signatureData
-    ) internal returns (address) {
+    ) internal view returns (address) {
         if (block.timestamp > signatureData.validUntil) {
             revert SignatureExpired();
         }
 
         return ECDSA.recover(digest, signatureData.signature);
-
-        // if (
-        //     ECDSA.recover(digest, signatureData.signature) != signatureData.to
-        // ) {
-        //     revert InvalidSignature();
-        // }
     }
-
-    // function _requireMinter() internal view {
-    //     if (!_isMinter(_msgSender())) {
-    //         revert RequireMinter();
-    //     }
-    // }
 
     modifier onlyMinter() {
         if (!_isMinter(_msgSender())) {
