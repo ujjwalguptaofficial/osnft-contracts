@@ -7,6 +7,7 @@ import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { testProjectTokenize } from "./tokenize_project";
 import { testMinter } from "./minter";
+import { testPayableToken } from "./payable_token";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -70,6 +71,10 @@ export function testNFT(payload: IDeployedPayload) {
     //         expect(addressFrom).equal(relayer);
     //     })
     // })
+
+    describe("payable token", async () => {
+        testPayableToken(payload);
+    })
 
     describe("minters", async () => {
         testMinter(payload);

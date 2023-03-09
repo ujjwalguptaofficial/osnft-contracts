@@ -53,13 +53,15 @@ contract OSNFT is
     error ProjectExist();
     error SignatureExpired();
     error InvalidSignature();
+    error PaymentTokenNotAllowed();
 
     // variables
 
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
     mapping(address => bool) internal _minters;
-    mapping(uint256 => mapping(address => uint256)) _usersInvestments;
+    mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
+    mapping(address => bool) internal _paymentTokensAllowed;
 
     uint8 mintRoyality;
     uint8 burnRoyality;
@@ -98,10 +100,28 @@ contract OSNFT is
         return _projects[tokenId];
     }
 
+    function addPayableTokens(address[] calldata tokens) external onlyOwner {
+        for (uint256 index = 0; index < tokens.length; index++) {
+            _paymentTokensAllowed[tokens[index]] = true;
+        }
+    }
+
+    function removePayableToken(address token) external onlyOwner {
+        delete _paymentTokensAllowed[token];
+    }
+
+    function isPayableToken(address token) public view returns (bool) {
+        return _paymentTokensAllowed[token];
+    }
+
     function tokenizeProject(
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata signatureData
     ) external onlyMinter {
+        if (!_paymentTokensAllowed[input.paymentERC20Token]) {
+            revert PaymentTokenNotAllowed();
+        }
+
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
@@ -138,7 +158,7 @@ contract OSNFT is
         project.popularityFactorPrice = input.popularityFactorPrice;
         project.royality = input.royality;
 
-        // mint first nft to creator
+        // mint first nft to creator free of cost
         _mintTo(tokenId, 1, 1, project.creator);
 
         emit ProjectTokenize(
