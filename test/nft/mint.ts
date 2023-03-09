@@ -96,7 +96,7 @@ export function testMint(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
     })
 
-    it('success jsstore', async () => {
+    it('mint price', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
 
@@ -120,7 +120,7 @@ export function testMint(payload: IDeployedPayload) {
         console.log("expectedMintPrice", expectedMintPrice.toString());
     })
 
-    it('success jsstore', async () => {
+    it('mint jsstore success to signer2', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
 
@@ -135,8 +135,6 @@ export function testMint(payload: IDeployedPayload) {
         await payload.erc20Token1.connect(payload.signer2).approve(nft.address, ethers.constants.MaxUint256);
 
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
-
-        console.log("allowance", allowance);
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
             signature, to, validUntil: timestamp
@@ -165,7 +163,7 @@ export function testMint(payload: IDeployedPayload) {
             ethers.BigNumber.from(expectedMintPrice), creatorRoyality
         );
 
-        const amountForTreasury = expectedMintPriceBN.sub(contractRoyality).sub(creatorRoyality);
+        const amountForTreasury = expectedMintPriceBN.sub(contractRoyality).sub(creatorRoyalityValue);
 
         expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury);
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
@@ -180,33 +178,144 @@ export function testMint(payload: IDeployedPayload) {
         expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
     })
 
-    return;
-
-    it('minting again same project', async () => {
+    it('minting to a owner', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
-        const basePrice = 100;
-        const popularityFactorPrice = 1;
-        const paymentToken = payload.erc20Token1.address;
-        const royality = 5;
+
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
+        const star = 10;
+        const fork = 5;
+        const to = payload.signer2.address;
+        const signature = signMessage(payload.signer2, tokenId.toString(), star, fork, timestamp);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
-        );
-
-        const tx = nft.tokenizeProject({
-            basePrice: basePrice,
-            paymentERC20Token: paymentToken,
-            popularityFactorPrice: popularityFactorPrice,
-            projectUrl,
-            royality: royality
-        }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
+            signature, to, validUntil: timestamp
         });
 
-        await expect(tx).revertedWithCustomError(nft, 'ProjectExist');
+        await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
     })
 
+    it('mint jsstore success to signer3', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 20;
+        const fork = 10;
+        const to = payload.signer3.address;
+        const signature = signMessage(payload.signer3, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
+
+        const allowance = await payload.erc20Token1.allowance(to, nft.address);
+
+        const projectInfoBefore = await nft.getProject(tokenId);
+
+
+        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
+            signature, to, validUntil: timestamp
+        });
+
+        // check for transfer events
+
+        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
+            payload.operator.address, ethers.constants.AddressZero, to, tokenId, 1
+        );
+
+        const projectInfoAfter = await nft.getProject(tokenId);
+
+        expect(projectInfoAfter.tokenCount).equal(3);
+        const expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
+
+        const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
+
+        const contractRoyality = payload.getPercentage(
+            expectedMintPriceBN, 1
+        );
+
+        const creatorRoyality = await projectInfoAfter.royality;
+
+        const creatorRoyalityValue = payload.getPercentage(
+            ethers.BigNumber.from(expectedMintPrice), creatorRoyality
+        );
+
+        const amountForTreasury = expectedMintPriceBN.sub(contractRoyality).sub(creatorRoyalityValue);
+
+        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryTotalAmount));
+        expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
+
+        // balance of creator
+
+        const balanceOfCreator = await nft.balanceOf(to, tokenId);
+        expect(balanceOfCreator).equal(1);
+
+        // check tokenmint 
+
+        expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
+    })
+
+    it('mint jsstore success to signer4 with less PF', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 18;
+        const fork = 10;
+        const to = payload.signer4.address;
+        const signature = signMessage(payload.signer4, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer4).approve(nft.address, ethers.constants.MaxUint256);
+
+        const allowance = await payload.erc20Token1.allowance(to, nft.address);
+
+        const projectInfoBefore = await nft.getProject(tokenId);
+
+
+        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
+            signature, to, validUntil: timestamp
+        });
+
+        // check for transfer events
+
+        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
+            payload.operator.address, ethers.constants.AddressZero, to, tokenId, 1
+        );
+
+        const projectInfoAfter = await nft.getProject(tokenId);
+
+        expect(projectInfoAfter.tokenCount).equal(4);
+        let expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
+        expectedMintPrice = expectedMintPrice > projectInfoBefore.lastMintPrice ? expectedMintPrice : projectInfoBefore.lastMintPrice;
+
+        const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
+
+        const contractRoyality = payload.getPercentage(
+            expectedMintPriceBN, 1
+        );
+
+        const creatorRoyality = await projectInfoAfter.royality;
+
+        const creatorRoyalityValue = payload.getPercentage(
+            ethers.BigNumber.from(expectedMintPrice), creatorRoyality
+        );
+
+        const amountForTreasury = expectedMintPriceBN.sub(contractRoyality).sub(creatorRoyalityValue);
+
+        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryTotalAmount));
+        expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
+
+        // balance of creator
+
+        const balanceOfCreator = await nft.balanceOf(to, tokenId);
+        expect(balanceOfCreator).equal(1);
+
+        // check tokenmint 
+
+        expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
+    })
 }

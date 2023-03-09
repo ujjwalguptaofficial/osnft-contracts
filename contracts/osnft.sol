@@ -204,7 +204,10 @@ contract OSNFT is
         uint256 popularityFactor = 5 * fork + 4 * star;
         uint256 mintPrice = project.basePrice +
             (project.popularityFactorPrice * popularityFactor);
-        return mintPrice;
+        return
+            mintPrice > project.lastMintPrice
+                ? mintPrice
+                : project.lastMintPrice;
     }
 
     function _mintTo(
@@ -227,9 +230,7 @@ contract OSNFT is
                 project.paymentERC20Token,
                 to,
                 address(this),
-                mintPrice > project.lastMintPrice
-                    ? mintPrice
-                    : project.lastMintPrice
+                mintPrice
             );
 
             // send royality to creator

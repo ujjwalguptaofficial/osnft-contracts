@@ -83,6 +83,7 @@ describe("contracts", () => {
         await payload.erc20Token1.mint(payload.deployer.address, '900000000000000000000');
         await payload.erc20Token1.mint(payload.signer4.address, 900000000000);
         await payload.erc20Token1.mint(payload.signer2.address, '900000000000000000000');
+        await payload.erc20Token1.mint(payload.signer3.address, '900000000000000000000');
     })
 
     it('deploy erc20 token 2', async () => {
