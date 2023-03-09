@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 
 export function testProjectTokenize(payload: IDeployedPayload) {
 
-    const signMessage = async (user: SignerWithAddress, projectUrl: string, basePrice: number, popularityFactorPrice: number, paymentToken: string, royality: number, deadline: number) => {
+    const signMessage = async (user: SignerWithAddress, projectUrl: string, basePrice, popularityFactorPrice: number, paymentToken: string, royality: number, deadline: number) => {
         // const domainType = [
         //     { name: "name", type: "string" },
         //     { name: "version", type: "string" },
@@ -160,8 +160,8 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     it('success jsstore', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
-        const basePrice = 100;
-        const popularityFactorPrice = 1;
+        const basePrice = ethers.utils.parseEther('100');
+        const popularityFactorPrice = ethers.utils.parseEther('1');
         const paymentToken = payload.erc20Token1.address;
         const royality = 5;
         const projectUrl = payload.projects.jsstore;

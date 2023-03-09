@@ -292,7 +292,7 @@ contract OSNFT is
         uint256 returnAmount = project.treasuryTotalAmount / project.tokenCount;
         uint256 usersInvestments = _usersInvestments[tokenId][caller];
         uint256 profit = returnAmount > usersInvestments
-            ? returnAmount - _usersInvestments[tokenId][caller]
+            ? returnAmount - usersInvestments
             : 0;
 
         project.tokenCount--;

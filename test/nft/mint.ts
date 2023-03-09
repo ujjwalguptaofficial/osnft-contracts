@@ -215,7 +215,7 @@ export function testMint(payload: IDeployedPayload) {
 
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
-        const star = 20;
+        const star = 50;
         const fork = 10;
         const to = payload.signer3.address;
         const signature = signMessage(payload.signer3, tokenId.toString(), star, fork, timestamp);
@@ -289,7 +289,7 @@ export function testMint(payload: IDeployedPayload) {
 
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
-        const star = 18;
+        const star = 45;
         const fork = 10;
         const to = payload.signer4.address;
         const signature = signMessage(payload.signer4, tokenId.toString(), star, fork, timestamp);
