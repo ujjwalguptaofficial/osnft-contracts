@@ -100,8 +100,6 @@ export function testMint(payload: IDeployedPayload) {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
 
-
-
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
         const star = 10;
@@ -131,13 +129,16 @@ export function testMint(payload: IDeployedPayload) {
         const to = payload.signer2.address;
         const signature = signMessage(payload.signer2, tokenId.toString(), star, fork, timestamp);
 
+        const projectInfoBefore = await nft.getProject(tokenId);
+        const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+
         // allow payment token
         await payload.erc20Token1.connect(payload.signer2).approve(nft.address, ethers.constants.MaxUint256);
 
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+            signature, validUntil: timestamp
         });
 
         // check for transfer events
@@ -176,7 +177,19 @@ export function testMint(payload: IDeployedPayload) {
         // check tokenmint 
 
         expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
+
+        // check contract earnings
+        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
+        expect(contractEarning).equal(contractRoyality);
+
+        //check creator earnings
+        const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+        expect(balanceOfCreatorAfter).equal(
+            creatorRoyalityValue.add(balanceOfCreatorBefore)
+        );
     })
+
+
 
     it('minting to a owner', async () => {
         const nft = payload.nft;
@@ -213,10 +226,13 @@ export function testMint(payload: IDeployedPayload) {
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
         const projectInfoBefore = await nft.getProject(tokenId);
+        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentERC20Token);
+        const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+
 
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+            signature, validUntil: timestamp
         });
 
         // check for transfer events
@@ -255,6 +271,16 @@ export function testMint(payload: IDeployedPayload) {
         // check tokenmint 
 
         expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
+
+        // check contract earnings
+        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
+        expect(contractEarning).equal(contractRoyality.add(contractEarningBefore));
+
+        //check creator earnings
+        const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+        expect(balanceOfCreatorAfter).equal(
+            creatorRoyalityValue.add(balanceOfCreatorBefore)
+        );
     })
 
     it('mint jsstore success to signer4 with less PF', async () => {
@@ -274,6 +300,8 @@ export function testMint(payload: IDeployedPayload) {
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
         const projectInfoBefore = await nft.getProject(tokenId);
+        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentERC20Token);
+        const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
@@ -317,5 +345,15 @@ export function testMint(payload: IDeployedPayload) {
         // check tokenmint 
 
         expect(tx).to.emit(nft, "TokenMint").withArgs(star, fork, expectedMintPrice);
+
+        // check contract earnings
+        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
+        expect(contractEarning).equal(contractRoyality.add(contractEarningBefore));
+
+          //check creator earnings
+          const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+          expect(balanceOfCreatorAfter).equal(
+              creatorRoyalityValue.add(balanceOfCreatorBefore)
+          );
     })
 }

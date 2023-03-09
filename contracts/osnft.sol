@@ -23,7 +23,6 @@ contract OSNFT is
         // price of one popularity factor
         uint256 popularityFactorPrice;
         // last mint price
-
         uint256 lastMintPrice;
         uint8 royality;
         uint256 tokenCount;
@@ -239,10 +238,9 @@ contract OSNFT is
                 project.royality
             );
 
-            _requirePayment(
+            _requirePaymentFromContract(
                 project.paymentERC20Token,
-                to,
-                address(this),
+                project.creator,
                 creatorRoyality
             );
 
@@ -253,7 +251,7 @@ contract OSNFT is
                 mintRoyality
             );
 
-            _earning[project.paymentERC20Token] = contractRoyality;
+            _earning[project.paymentERC20Token] += contractRoyality;
 
             uint256 treasuryAmount = calculatedMintPrice -
                 contractRoyality -
@@ -262,6 +260,9 @@ contract OSNFT is
             project.treasuryTotalAmount += treasuryAmount;
             project.lastMintPrice = calculatedMintPrice;
             _usersInvestments[tokenId][to] = calculatedMintPrice;
+
+            // send money to creator
+
             emit TokenMint(star, fork, calculatedMintPrice);
         }
         project.tokenCount++;
@@ -291,9 +292,8 @@ contract OSNFT is
             _earning[project.paymentERC20Token] += burnRoyalityAmount;
         }
 
-        _requirePayment(
+        _requirePaymentFromContract(
             project.paymentERC20Token,
-            address(this),
             caller,
             returnAmount - burnRoyalityAmount
         );
@@ -320,9 +320,20 @@ contract OSNFT is
         }
     }
 
+    function _requirePaymentFromContract(
+        address tokenAddress,
+        address to,
+        uint256 price
+    ) internal nonReentrant {
+        ERC20Upgradeable paymentToken = ERC20Upgradeable(tokenAddress);
+        if (!paymentToken.transfer(to, price)) {
+            revert PaymentFailed();
+        }
+    }
+
     function getContractEarning(
         address paymentToken
-    ) external view onlyOwner returns (uint256) {
+    ) external view returns (uint256) {
         return _earning[paymentToken];
     }
 
