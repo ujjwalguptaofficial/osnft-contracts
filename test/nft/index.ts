@@ -9,6 +9,7 @@ import { testProjectTokenize } from "./tokenize_project";
 import { testMinter } from "./minter";
 import { testPayableToken } from "./payable_token";
 import { testMint } from "./mint";
+import { testBurn } from "./burn";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -87,6 +88,10 @@ export function testNFT(payload: IDeployedPayload) {
 
     describe('mint', async () => {
         testMint(payload);
+    })
+
+    describe('burn', async () => {
+        testBurn(payload);
     })
 
 

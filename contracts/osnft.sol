@@ -270,6 +270,17 @@ contract OSNFT is
         _mint(to, tokenId, 1, "");
     }
 
+    function getInvestedAmount(
+        uint256 tokenId,
+        address owner
+    ) external view returns (uint256) {
+        if (balanceOf(owner, tokenId) == 0) {
+            revert RequireTokenOwner();
+        }
+
+        return _usersInvestments[tokenId][owner];
+    }
+
     function burn(uint256 tokenId) external {
         address caller = _msgSender();
 
@@ -279,16 +290,18 @@ contract OSNFT is
         ProjectInfo storage project = _projects[tokenId];
 
         uint256 returnAmount = project.treasuryTotalAmount / project.tokenCount;
+        uint256 usersInvestments = _usersInvestments[tokenId][caller];
+        uint256 profit = returnAmount > usersInvestments
+            ? returnAmount - _usersInvestments[tokenId][caller]
+            : 0;
 
         project.tokenCount--;
         project.treasuryTotalAmount -= returnAmount;
 
-        uint256 profit = returnAmount - _usersInvestments[tokenId][caller];
+        uint256 burnRoyalityAmount = 0;
 
-        uint256 burnRoyalityAmount = profit > 0
-            ? _percentageOf(returnAmount, burnRoyality)
-            : 0;
-        if (burnRoyalityAmount > 0) {
+        if (profit > 0) {
+            burnRoyalityAmount = _percentageOf(profit, burnRoyality);
             _earning[project.paymentERC20Token] += burnRoyalityAmount;
         }
 
