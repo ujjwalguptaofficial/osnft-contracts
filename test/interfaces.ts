@@ -29,6 +29,7 @@ export interface IDeployedPayload {
     },
     getProjectId: (projectUrl: string) => BigNumber
     getSellId: (tokenId: BigNumber, from: string) => string,
+    mintPrice: (star, fork, project) => BigNumber,
 
     transactions: {
         [key: string]: any

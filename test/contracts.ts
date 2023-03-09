@@ -27,6 +27,13 @@ describe("contracts", () => {
         },
         getProjectId,
         getSellId,
+        mintPrice(star, fork, project) {
+            const popularityFactor = 5 * fork + 4 * star;
+            const expectedMintPrice = project.basePrice.add(
+                project.popularityFactorPrice.mul(popularityFactor)
+            );
+            return expectedMintPrice;
+        },
         transactions: {
 
         }
@@ -70,7 +77,7 @@ describe("contracts", () => {
 
         await payload.erc20Token1.mint(payload.deployer.address, '900000000000000000000');
         await payload.erc20Token1.mint(payload.signer4.address, 900000000000);
-        await payload.erc20Token1.mint(payload.signer2.address, 900000000000);
+        await payload.erc20Token1.mint(payload.signer2.address, '900000000000000000000');
     })
 
     it('deploy erc20 token 2', async () => {

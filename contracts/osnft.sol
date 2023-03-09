@@ -189,9 +189,21 @@ contract OSNFT is
             )
         );
 
-        _requireValidSignature(digest, signatureData);
+        address to = _requireValidSignature(digest, signatureData);
 
-        _mintTo(tokenId, star, fork, signatureData.to);
+        _mintTo(tokenId, star, fork, to);
+    }
+
+    function mintPrice(
+        uint256 tokenId,
+        uint256 star,
+        uint256 fork
+    ) public view returns (uint256) {
+        ProjectInfo memory project = _projects[tokenId];
+        uint256 popularityFactor = 5 * fork + 4 * star;
+        uint256 mintPrice = project.basePrice +
+            (project.popularityFactorPrice * popularityFactor);
+        return mintPrice;
     }
 
     function _mintTo(
@@ -207,9 +219,7 @@ contract OSNFT is
         ProjectInfo storage project = _projects[tokenId];
 
         if (project.creator != to) {
-            uint256 popularityFactor = 5 * fork + 4 * star;
-            uint256 mintPrice = project.basePrice +
-                (project.popularityFactorPrice * popularityFactor);
+            uint256 mintPrice = mintPrice(tokenId, star, fork);
 
             // take full payment to the contract
             _requirePayment(
@@ -230,8 +240,8 @@ contract OSNFT is
 
             _requirePayment(
                 project.paymentERC20Token,
-                address(this),
                 to,
+                address(this),
                 creatorRoyality
             );
 
@@ -246,6 +256,7 @@ contract OSNFT is
                 creatorRoyality;
 
             project.treasuryTotalAmount += treasuryAmount;
+            project.lastMintPrice = mintPrice;
             _usersInvestments[tokenId][to] = mintPrice;
         }
         project.tokenCount++;

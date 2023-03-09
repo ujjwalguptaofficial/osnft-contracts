@@ -8,6 +8,7 @@ import { ethers, upgrades } from "hardhat";
 import { testProjectTokenize } from "./tokenize_project";
 import { testMinter } from "./minter";
 import { testPayableToken } from "./payable_token";
+import { testMint } from "./mint";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -84,9 +85,9 @@ export function testNFT(payload: IDeployedPayload) {
         testProjectTokenize(payload);
     })
 
-    // describe('mint', async () => {
-    //     testMint(payload);
-    // })
+    describe('mint', async () => {
+        testMint(payload);
+    })
 
 
     // describe('owner of', async () => {

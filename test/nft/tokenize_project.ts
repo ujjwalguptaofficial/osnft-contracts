@@ -130,6 +130,33 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'RequireMinter');
     })
 
+    it('not allowed payment token', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = payload.operator.address;
+        const royality = 10;
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+
+        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+            popularityFactorPrice, paymentToken, royality, timestamp
+        );
+
+        const tx = nft.connect(payload.deployer).tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            royality: royality
+        }, {
+            signature, to: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'PaymentTokenNotAllowed');
+    })
+
     it('success jsstore', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
@@ -186,7 +213,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         // check for transfer events
 
-        expect(tx).to.emit(nft, 'TransferSingle').withArgs(
+        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
             payload.deployer.address, ethers.constants.AddressZero, payload.deployer.address, tokenId, 1
         );
     })

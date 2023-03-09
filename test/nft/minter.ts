@@ -33,5 +33,20 @@ export function testMinter(payload: IDeployedPayload) {
             isMinter = await nft.isMinter(payload.deployer.address);
             expect(isMinter).equal(true);
         })
+
+        it('success', async () => {
+            const nft = payload.nft;
+
+            let isMinter = await nft.isMinter(payload.operator.address);
+            expect(isMinter).equal(false);
+
+            const tx = nft.addMinter(payload.operator.address);
+
+
+            await expect(tx).to.emit(nft, "MinterAdded").withArgs(payload.operator.address);
+
+            isMinter = await nft.isMinter(payload.operator.address);
+            expect(isMinter).equal(true);
+        })
     })
 }
