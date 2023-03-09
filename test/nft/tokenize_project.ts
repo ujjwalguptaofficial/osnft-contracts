@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 
 export function testProjectTokenize(payload: IDeployedPayload) {
 
-    const signMessage = async (user: SignerWithAddress, projectUrl: string, basePrice, popularityFactorPrice: number, paymentToken: string, royality: number, deadline: number) => {
+    const signMessage = async (user: SignerWithAddress, projectUrl: string, basePrice, popularityFactorPrice, paymentToken: string, royality: number, deadline: number) => {
         // const domainType = [
         //     { name: "name", type: "string" },
         //     { name: "version", type: "string" },
@@ -151,7 +151,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'PaymentTokenNotAllowed');
