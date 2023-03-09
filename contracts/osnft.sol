@@ -28,7 +28,6 @@ contract OSNFT is
         uint8 royality;
         uint256 tokenCount;
         uint256 treasuryTotalAmount;
-        mapping(address => uint256) userAmounts;
     }
 
     struct SignatureMeta {
@@ -51,19 +50,23 @@ contract OSNFT is
     error RoyalityLimitExceeded();
     error RequireTokenOwner();
     error RequireMinter();
+    error ProjectExist();
 
     // variables
 
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
     mapping(address => bool) internal _minters;
+    mapping(uint256 => mapping(address => uint256)) _usersInvestments;
+
     uint8 mintRoyality;
     uint8 burnRoyality;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
+    bytes32 internal _TYPE_HASH_NFTMintData;
 
     // events
-    event ApproverAdded(address account);
-    event ApproverRemoved(address account);
+    event MinterAdded(address account);
+    event MinterRemoved(address account);
     event ProjectTokenize(
         uint256 indexed tokenId,
         uint256 basePrice,
@@ -80,8 +83,17 @@ contract OSNFT is
         burnRoyality = 2;
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
-            "ProjectTokenizeData(string projectUrl,uint256 basePrice,uint256 popularityFactorPrice,address paymentToken,uint8 royality)"
+            "ProjectTokenizeData(string projectUrl,uint256 basePrice,uint256 popularityFactorPrice,address paymentToken,uint8 royality,uint256 validUntil)"
         );
+        _TYPE_HASH_NFTMintData = keccak256(
+            "NFTMintData(uint256 tokenId,uint256 star,uint256 fork,uint256 validUntil)"
+        );
+    }
+
+    function getProject(
+        uint256 tokenId
+    ) external view returns (ProjectInfo memory) {
+        return _projects[tokenId];
     }
 
     function tokenizeProject(
@@ -111,9 +123,13 @@ contract OSNFT is
         if (input.royality > 10) {
             revert RoyalityLimitExceeded();
         }
-        address caller = _msgSender();
 
         ProjectInfo storage project = _projects[tokenId];
+
+        if (project.creator != address(0)) {
+            revert ProjectExist();
+        }
+
         project.creator = signatureData.to;
         project.basePrice = input.basePrice;
         project.paymentERC20Token = input.paymentERC20Token;
@@ -121,7 +137,7 @@ contract OSNFT is
         project.royality = input.royality;
 
         // mint first nft to creator
-        _mintTo(tokenId, caller, 1, 1);
+        _mintTo(tokenId, 1, 1, project.creator);
 
         emit ProjectTokenize(
             tokenId,
@@ -135,18 +151,32 @@ contract OSNFT is
 
     function mintTo(
         uint256 tokenId,
-        address to,
         uint256 star,
-        uint256 fork
+        uint256 fork,
+        SignatureMeta calldata signatureData
     ) external onlyMinter {
-        _mintTo(tokenId, to, star, fork);
+        bytes32 digest = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    _TYPE_HASH_NFTMintData,
+                    tokenId,
+                    star,
+                    fork,
+                    signatureData.validUntil
+                )
+            )
+        );
+
+        _requireValidSignature(digest, signatureData);
+
+        _mintTo(tokenId, star, fork, signatureData.to);
     }
 
     function _mintTo(
         uint256 tokenId,
-        address to,
         uint256 star,
-        uint256 fork
+        uint256 fork,
+        address to
     ) internal {
         if (balanceOf(to, tokenId) > 0) {
             revert AlreadyMinted();
@@ -179,7 +209,7 @@ contract OSNFT is
             _requirePayment(
                 project.paymentERC20Token,
                 address(this),
-                project.creator,
+                to,
                 creatorRoyality
             );
 
@@ -193,9 +223,10 @@ contract OSNFT is
                 contractRoyality -
                 creatorRoyality;
 
-            project.tokenCount++;
             project.treasuryTotalAmount += treasuryAmount;
+            _usersInvestments[tokenId][to] = mintPrice;
         }
+        project.tokenCount++;
 
         _mint(to, tokenId, 1, "");
     }
@@ -213,7 +244,7 @@ contract OSNFT is
         project.tokenCount--;
         project.treasuryTotalAmount -= returnAmount;
 
-        uint256 profit = returnAmount - project.userAmounts[caller];
+        uint256 profit = returnAmount - _usersInvestments[tokenId][caller];
 
         uint256 burnRoyalityAmount = profit > 0
             ? _percentageOf(returnAmount, burnRoyality)
@@ -278,12 +309,12 @@ contract OSNFT is
 
     function addMinter(address account) external onlyOwner {
         _minters[account] = true;
-        emit ApproverAdded(account);
+        emit MinterAdded(account);
     }
 
     function removeMinter(address account) external onlyOwner {
         delete _minters[account];
-        emit ApproverRemoved(account);
+        emit MinterRemoved(account);
     }
 
     function _isMinter(address account) internal view returns (bool) {
@@ -297,7 +328,7 @@ contract OSNFT is
         bytes32 digest,
         SignatureMeta calldata signatureData
     ) internal view {
-        if (block.timestamp < signatureData.validUntil) {
+        if (block.timestamp > signatureData.validUntil) {
             revert SignatureExpired();
         }
 
@@ -315,7 +346,9 @@ contract OSNFT is
     // }
 
     modifier onlyMinter() {
-        require(_isMinter(_msgSender()));
+        if (!_isMinter(_msgSender())) {
+            revert RequireMinter();
+        }
         _;
     }
 

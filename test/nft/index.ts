@@ -5,6 +5,8 @@ import { IDeployedPayload } from "../interfaces";
 // import { setBaseTokenURI } from "./set_base_token_uri";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
+import { testProjectTokenize } from "./tokenize_project";
+import { testMinter } from "./minter";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -40,25 +42,17 @@ export function testNFT(payload: IDeployedPayload) {
     describe('check supports interface', () => {
         it('erc721', async () => {
             const isERC721Supported = await payload.nft.supportsInterface('0x80ac58cd');
-            expect(isERC721Supported).equal(true);
+            expect(isERC721Supported).equal(false);
         });
         it('erc1155', async () => {
             const isERC721Supported = await payload.nft.supportsInterface('0xd9b67a26');
-            expect(isERC721Supported).equal(false);
+            expect(isERC721Supported).equal(true);
         });
         it('erc721 meta data', async () => {
             const isERC721Supported = await payload.nft.supportsInterface('0x5b5e139f');
-            expect(isERC721Supported).equal(true);
+            expect(isERC721Supported).equal(false);
         });
-    })
-
-    // describe('meta data', () => {
-    //     runPublicState(payload);
-    // })
-
-    // describe('setBaseTokenURI', async () => {
-    //     setBaseTokenURI(payload);
-    // })
+    });
 
     // describe('relayer', () => {
     //     it('set relayer non admin', async () => {
@@ -76,6 +70,14 @@ export function testNFT(payload: IDeployedPayload) {
     //         expect(addressFrom).equal(relayer);
     //     })
     // })
+
+    describe("minters", async () => {
+        testMinter(payload);
+    })
+
+    describe("tokenize project", async () => {
+        testProjectTokenize(payload);
+    })
 
     // describe('mint', async () => {
     //     testMint(payload);

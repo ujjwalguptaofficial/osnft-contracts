@@ -1,4 +1,4 @@
-import { ethers, network } from "hardhat";
+import { ethers, network, upgrades } from "hardhat";
 import { BigNumber } from "ethers";
 import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
@@ -57,6 +57,32 @@ describe("contracts", () => {
         payload.signer3 = signer3;
         payload.signer4 = signer4;
         payload.operator = operator;
+    })
+
+    it('deploy erc20 token1', async () => {
+        const contract = await ethers.getContractFactory('MyToken');
+
+        const deployedContract = await upgrades.deployProxy(
+            contract, ["MyToken", "MT"], {
+            initializer: 'initialize',
+        }) as any;
+        payload.erc20Token1 = deployedContract;
+
+        await payload.erc20Token1.mint(payload.deployer.address, '900000000000000000000');
+        await payload.erc20Token1.mint(payload.signer4.address, 900000000000);
+        await payload.erc20Token1.mint(payload.signer2.address, 900000000000);
+    })
+
+    it('deploy erc20 token 2', async () => {
+        const contract = await ethers.getContractFactory('MyToken');
+
+        const deployedContract = await upgrades.deployProxy(
+            contract, ["MyToken2", "MT2"], {
+            initializer: 'initialize',
+        }) as any;
+        payload.erc20Token2 = deployedContract;
+
+        await payload.erc20Token2.mint(payload.signer2.address, ethers.constants.MaxUint256);
     })
 
     describe('OSNFT', () => {
