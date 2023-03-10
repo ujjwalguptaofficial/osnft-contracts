@@ -88,7 +88,7 @@ contract OSNFT is
         burnRoyality = 2;
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
-            "ProjectTokenizeData(string projectUrl,uint256 validUntil)"
+            "ProjectTokenizeData(string projectUrl,address creator,uint256 validUntil)"
         );
         _TYPE_HASH_NFTMintData = keccak256(
             "NFTMintData(uint256 tokenId,uint256 star,uint256 fork,uint256 validUntil)"
@@ -125,19 +125,20 @@ contract OSNFT is
 
         _requireVerifier(verifierSignatureData.to);
 
+        address creator = _msgSender();
+
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
                     _TYPE_HASH_ProjectTokenizeData,
                     keccak256(bytes(input.projectUrl)),
+                    creator,
                     verifierSignatureData.validUntil
                 )
             )
         );
 
         _requireValidSignature(digest, verifierSignatureData);
-
-        address to = _msgSender();
 
         uint256 tokenId = uint256(
             keccak256(abi.encodePacked(input.projectUrl))
@@ -153,18 +154,18 @@ contract OSNFT is
             revert ProjectExist();
         }
 
-        project.creator = to;
+        project.creator = creator;
         project.basePrice = input.basePrice;
         project.paymentERC20Token = input.paymentERC20Token;
         project.popularityFactorPrice = input.popularityFactorPrice;
         project.royality = input.royality;
 
         // mint first nft to creator free of cost
-        _mintTo(tokenId, project.creator);
+        _mintTo(tokenId, creator);
 
         emit ProjectTokenize(
             tokenId,
-            to,
+            creator,
             input.basePrice,
             input.popularityFactorPrice,
             input.paymentERC20Token,
@@ -404,7 +405,7 @@ contract OSNFT is
         }
     }
 
-    function _requireVerifier(address value) internal {
+    function _requireVerifier(address value) internal view {
         if (!_isVerifier(value)) {
             revert RequireVerifier();
         }

@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 
 export function testProjectTokenize(payload: IDeployedPayload) {
 
-    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, deadline: number) => {
+    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, to: string, deadline: number) => {
         // const domainType = [
         //     { name: "name", type: "string" },
         //     { name: "version", type: "string" },
@@ -16,6 +16,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         // ];
         const dataType = [
             { name: "projectUrl", type: "string" },
+            { name: "creator", type: "address" },
             { name: "validUntil", type: "uint256" },
         ];
 
@@ -27,7 +28,8 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         };
         const message = {
             projectUrl: projectUrl,
-            validUntil: deadline
+            validUntil: deadline,
+            creator: to
         };
 
 
@@ -51,7 +53,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address,
             timestamp
         );
 
@@ -78,7 +80,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
         );
 
         const tx = nft.tokenizeProject({
@@ -104,7 +106,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.signer4, projectUrl, timestamp
+        const signature = signMessageForProjectTokenize(payload.signer4, projectUrl, payload.deployer.address, timestamp
         );
 
         const tx = nft.connect(payload.signer4).tokenizeProject({
@@ -130,7 +132,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
         );
 
         const tx = nft.connect(payload.deployer).tokenizeProject({
@@ -161,7 +163,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         expect(projectInfoBefore.paymentERC20Token).equal(ethers.constants.AddressZero);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
         );
 
         // allow payment token
@@ -217,7 +219,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
         );
 
         const tx = nft.tokenizeProject({
