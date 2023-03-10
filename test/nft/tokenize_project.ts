@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 
 export function testProjectTokenize(payload: IDeployedPayload) {
 
-    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, basePrice, popularityFactorPrice, paymentToken: string, royality: number, deadline: number) => {
+    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, deadline: number) => {
         // const domainType = [
         //     { name: "name", type: "string" },
         //     { name: "version", type: "string" },
@@ -16,10 +16,6 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         // ];
         const dataType = [
             { name: "projectUrl", type: "string" },
-            { name: "basePrice", type: "uint256" },
-            { name: "popularityFactorPrice", type: "uint256" },
-            { name: "paymentToken", type: "address" },
-            { name: "royality", type: "uint8" },
             { name: "validUntil", type: "uint256" },
         ];
 
@@ -31,10 +27,6 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         };
         const message = {
             projectUrl: projectUrl,
-            basePrice: basePrice,
-            popularityFactorPrice: popularityFactorPrice,
-            paymentToken: paymentToken,
-            royality: royality,
             validUntil: deadline
         };
 
@@ -59,8 +51,8 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl,
+            timestamp
         );
 
         const tx = nft.tokenizeProject({
@@ -86,8 +78,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
         );
 
         const tx = nft.tokenizeProject({
@@ -113,8 +104,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
+        const signature = signMessageForProjectTokenize(payload.signer4, projectUrl, timestamp
         );
 
         const tx = nft.connect(payload.signer4).tokenizeProject({
@@ -124,7 +114,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, to: payload.signer4.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
@@ -140,8 +130,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
         );
 
         const tx = nft.connect(payload.deployer).tokenizeProject({
@@ -172,8 +161,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         expect(projectInfoBefore.paymentERC20Token).equal(ethers.constants.AddressZero);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
         );
 
         // allow payment token
@@ -229,8 +217,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
-            popularityFactorPrice, paymentToken, royality, timestamp
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, timestamp
         );
 
         const tx = nft.tokenizeProject({

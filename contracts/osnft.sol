@@ -88,7 +88,7 @@ contract OSNFT is
         burnRoyality = 2;
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
-            "ProjectTokenizeData(string projectUrl,uint256 basePrice,uint256 popularityFactorPrice,address paymentToken,uint8 royality,uint256 validUntil)"
+            "ProjectTokenizeData(string projectUrl,uint256 validUntil)"
         );
         _TYPE_HASH_NFTMintData = keccak256(
             "NFTMintData(uint256 tokenId,uint256 star,uint256 fork,uint256 validUntil)"
@@ -117,28 +117,27 @@ contract OSNFT is
 
     function tokenizeProject(
         ProjectTokenizeInput calldata input,
-        SignatureMeta calldata signatureData
-    ) external onlyVerifier {
+        SignatureMeta calldata verifierSignatureData
+    ) external {
         if (!_paymentTokensAllowed[input.paymentERC20Token]) {
             revert PaymentTokenNotAllowed();
         }
+
+        _requireVerifier(verifierSignatureData.to);
 
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
                     _TYPE_HASH_ProjectTokenizeData,
                     keccak256(bytes(input.projectUrl)),
-                    input.basePrice,
-                    input.popularityFactorPrice,
-                    input.paymentERC20Token,
-                    input.royality,
-                    signatureData.validUntil
+                    verifierSignatureData.validUntil
                 )
             )
         );
 
-        _requireValidSignature(digest, signatureData);
-        address to = signatureData.to;
+        _requireValidSignature(digest, verifierSignatureData);
+
+        address to = _msgSender();
 
         uint256 tokenId = uint256(
             keccak256(abi.encodePacked(input.projectUrl))
@@ -408,6 +407,12 @@ contract OSNFT is
             revert RequireVerifier();
         }
         _;
+    }
+
+    function _requireVerifier(address value) internal {
+        if (!_isVerifier(value)) {
+            revert RequireVerifier();
+        }
     }
 
     /**
