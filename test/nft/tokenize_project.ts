@@ -70,6 +70,81 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'SignatureExpired');
     })
 
+    it('invalid signature with diff to', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = payload.erc20Token1.address;
+        const royality = 10;
+        const projectUrl = payload.projects.jsstore;
+
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
+        );
+
+        const tx = nft.tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            royality: royality
+        }, {
+            signature, to: payload.operator.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
+    })
+
+    it('invalid signature with diff creator', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = payload.erc20Token1.address;
+        const royality = 10;
+        const projectUrl = payload.projects.jsstore;
+
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
+        );
+
+        const tx = nft.connect(payload.signer2).tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            royality: royality
+        }, {
+            signature, to: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
+    })
+
+    it('invalid signature with diff projectUrl', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = payload.erc20Token1.address;
+        const royality = 10;
+        const projectUrl = payload.projects.jsstore;
+
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
+        );
+
+        const tx = nft.connect(payload.signer2).tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl: payload.projects["godam-vue"],
+            royality: royality
+        }, {
+            signature, to: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
+    })
+
     it('royality greater than 10', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
