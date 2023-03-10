@@ -6,7 +6,7 @@ import { IDeployedPayload } from "../interfaces";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { testProjectTokenize } from "./tokenize_project";
-import { testMinter } from "./minter";
+import { testVerifier } from "./verifier";
 import { testPayableToken } from "./payable_token";
 import { testMint } from "./mint";
 import { testBurn } from "./burn";
@@ -78,8 +78,8 @@ export function testNFT(payload: IDeployedPayload) {
         testPayableToken(payload);
     })
 
-    describe("minters", async () => {
-        testMinter(payload);
+    describe("Verifier", async () => {
+        testVerifier(payload);
     })
 
     describe("tokenize project", async () => {
@@ -95,24 +95,4 @@ export function testNFT(payload: IDeployedPayload) {
     })
 
 
-    // describe('owner of', async () => {
-    //     testOwnerOf(payload);
-    // })
-
-    // describe('project meta', async () => {
-    //     testProjectMeta(payload);
-    // })
-
-
-    // describe('approve', async () => {
-    //     testApprove(payload);
-    // })
-
-    // describe('transfer from', async () => {
-    //     testTransferFrom(payload);
-    // })
-
-    // describe('burn', async () => {
-    //     testNFTBurn(payload);
-    // })
 }

@@ -58,7 +58,7 @@ contract OSNFT is
 
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
-    mapping(address => bool) internal _minters;
+    mapping(address => bool) internal _verifiers;
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
     mapping(address => bool) internal _paymentTokensAllowed;
 
@@ -68,8 +68,8 @@ contract OSNFT is
     bytes32 internal _TYPE_HASH_NFTMintData;
 
     // events
-    event MinterAdded(address account);
-    event MinterRemoved(address account);
+    event VerifierAdded(address account);
+    event VerifierRemoved(address account);
     event ProjectTokenize(
         uint256 indexed tokenId,
         address creator,
@@ -268,7 +268,6 @@ contract OSNFT is
 
         _mintTo(tokenId, to);
         emit TokenMint(star, fork, calculatedMintPrice);
-
     }
 
     function _mintTo(uint256 tokenId, address to) internal {
@@ -371,22 +370,22 @@ contract OSNFT is
         _requirePayment(tokenAddress, address(this), accountTo, amount);
     }
 
-    function isMinter(address account) external view returns (bool) {
-        return _isMinter(account);
+    function isVerifier(address account) external view returns (bool) {
+        return _isVerifier(account);
     }
 
-    function addMinter(address account) external onlyOwner {
-        _minters[account] = true;
-        emit MinterAdded(account);
+    function addVerifier(address account) external onlyOwner {
+        _verifiers[account] = true;
+        emit VerifierAdded(account);
     }
 
-    function removeMinter(address account) external onlyOwner {
-        delete _minters[account];
-        emit MinterRemoved(account);
+    function removeVerifier(address account) external onlyOwner {
+        delete _verifiers[account];
+        emit VerifierRemoved(account);
     }
 
-    function _isMinter(address account) internal view returns (bool) {
-        return _minters[account];
+    function _isVerifier(address account) internal view returns (bool) {
+        return _verifiers[account];
     }
 
     function _requireValidSignature(
@@ -405,7 +404,7 @@ contract OSNFT is
     }
 
     modifier onlyMinter() {
-        if (!_isMinter(_msgSender())) {
+        if (!_isVerifier(_msgSender())) {
             revert RequireMinter();
         }
         _;
