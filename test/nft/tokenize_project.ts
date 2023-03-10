@@ -151,7 +151,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, validUntil: timestamp
+            signature, to: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'PaymentTokenNotAllowed');

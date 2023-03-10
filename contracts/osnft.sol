@@ -32,6 +32,7 @@ contract OSNFT is
     struct SignatureMeta {
         bytes signature;
         uint256 validUntil;
+        address to;
     }
 
     struct ProjectTokenizeInput {
@@ -135,7 +136,8 @@ contract OSNFT is
             )
         );
 
-        address to = _requireValidSignature(digest, signatureData);
+        _requireValidSignature(digest, signatureData);
+        address to = signatureData.to;
 
         uint256 tokenId = uint256(
             keccak256(abi.encodePacked(input.projectUrl))
@@ -188,9 +190,9 @@ contract OSNFT is
             )
         );
 
-        address to = _requireValidSignature(digest, signatureData);
+        _requireValidSignature(digest, signatureData);
 
-        _mintTo(tokenId, star, fork, to);
+        _mintTo(tokenId, star, fork, signatureData.to);
     }
 
     function mintPrice(
@@ -386,12 +388,16 @@ contract OSNFT is
     function _requireValidSignature(
         bytes32 digest,
         SignatureMeta calldata signatureData
-    ) internal view returns (address) {
+    ) internal view {
         if (block.timestamp > signatureData.validUntil) {
             revert SignatureExpired();
         }
 
-        return ECDSA.recover(digest, signatureData.signature);
+        if (
+            ECDSA.recover(digest, signatureData.signature) != signatureData.to
+        ) {
+            revert InvalidSignature();
+        }
     }
 
     modifier onlyMinter() {

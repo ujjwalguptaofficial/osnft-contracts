@@ -79,6 +79,23 @@ export function testMint(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'RequireMinter');
     })
 
+    it('Invalid signature', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 10;
+        const fork = 10;
+        const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
+
+        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
+            signature, to: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
+    })
+
     it('minting to creator', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
@@ -90,7 +107,7 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, to: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
@@ -138,7 +155,7 @@ export function testMint(payload: IDeployedPayload) {
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, validUntil: timestamp
+            signature, to, validUntil: timestamp
         });
 
         // check for transfer events
@@ -232,7 +249,7 @@ export function testMint(payload: IDeployedPayload) {
 
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, validUntil: timestamp
+            signature, to, validUntil: timestamp
         });
 
         // check for transfer events
@@ -350,10 +367,10 @@ export function testMint(payload: IDeployedPayload) {
         const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
         expect(contractEarning).equal(contractRoyality.add(contractEarningBefore));
 
-          //check creator earnings
-          const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
-          expect(balanceOfCreatorAfter).equal(
-              creatorRoyalityValue.add(balanceOfCreatorBefore)
-          );
+        //check creator earnings
+        const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+        expect(balanceOfCreatorAfter).equal(
+            creatorRoyalityValue.add(balanceOfCreatorBefore)
+        );
     })
 }
