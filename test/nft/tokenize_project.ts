@@ -127,7 +127,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             signature, to: payload.deployer.address, validUntil: timestamp
         });
 
-        await expect(tx).revertedWithCustomError(nft, 'RequireMinter');
+        await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
     })
 
     it('not allowed payment token', async () => {

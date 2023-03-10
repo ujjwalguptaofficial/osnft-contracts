@@ -77,7 +77,7 @@ export function testMint(payload: IDeployedPayload) {
             signature, to: payload.operator.address, validUntil: timestamp
         });
 
-        await expect(tx).revertedWithCustomError(nft, 'RequireMinter');
+        await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
     })
 
     it('Invalid signature', async () => {

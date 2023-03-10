@@ -48,7 +48,7 @@ contract OSNFT is
     error PaymentFailed();
     error RoyalityLimitExceeded();
     error RequireTokenOwner();
-    error RequireMinter();
+    error RequireVerifier();
     error ProjectExist();
     error SignatureExpired();
     error InvalidSignature();
@@ -118,7 +118,7 @@ contract OSNFT is
     function tokenizeProject(
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata signatureData
-    ) external onlyMinter {
+    ) external onlyVerifier {
         if (!_paymentTokensAllowed[input.paymentERC20Token]) {
             revert PaymentTokenNotAllowed();
         }
@@ -179,7 +179,7 @@ contract OSNFT is
         uint256 star,
         uint256 fork,
         SignatureMeta calldata signatureData
-    ) external onlyMinter {
+    ) external onlyVerifier {
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
@@ -403,9 +403,9 @@ contract OSNFT is
         }
     }
 
-    modifier onlyMinter() {
+    modifier onlyVerifier() {
         if (!_isVerifier(_msgSender())) {
-            revert RequireMinter();
+            revert RequireVerifier();
         }
         _;
     }
