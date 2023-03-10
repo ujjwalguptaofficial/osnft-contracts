@@ -170,13 +170,13 @@ export function testBurn(payload: IDeployedPayload) {
         const star = 100;
         const fork = 25;
         const to = payload.deployer.address;
-        const signature = signMessageForMint.call(payload, payload.deployer, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessageForMint.call(payload, payload.operator, tokenId.toString(), star, fork, timestamp);
 
         const projectInfoBefore = await nft.getProject(tokenId);
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
         // allow payment token
-        await payload.erc20Token1.connect(payload.signer2).approve(nft.address, ethers.constants.MaxUint256);
+        await payload.erc20Token1.connect(payload.deployer).approve(nft.address, ethers.constants.MaxUint256);
 
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
@@ -185,14 +185,14 @@ export function testBurn(payload: IDeployedPayload) {
         const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentERC20Token);
 
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
 
         await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            payload.operator.address, ethers.constants.AddressZero, to, tokenId, 1
+            to, ethers.constants.AddressZero, to, tokenId, 1
         );
 
         const projectInfoAfter = await nft.getProject(tokenId);

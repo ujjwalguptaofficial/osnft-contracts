@@ -71,10 +71,10 @@ export function testMint(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(projectUrl);
         const star = 10;
         const fork = 10;
-        const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessage(payload.signer4, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, to: payload.signer4.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
@@ -91,10 +91,10 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
-        await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
+        await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
     })
 
     it('minting to creator', async () => {
@@ -105,10 +105,10 @@ export function testMint(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(projectUrl);
         const star = 10;
         const fork = 10;
-        const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
@@ -145,7 +145,7 @@ export function testMint(payload: IDeployedPayload) {
         const star = 10;
         const fork = 5;
         const to = payload.signer2.address;
-        const signature = signMessage(payload.signer2, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
         const projectInfoBefore = await nft.getProject(tokenId);
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
@@ -157,14 +157,14 @@ export function testMint(payload: IDeployedPayload) {
 
         const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
 
         await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            payload.operator.address, ethers.constants.AddressZero, to, tokenId, 1
+            to, ethers.constants.AddressZero, to, tokenId, 1
         );
 
         const projectInfoAfter = await nft.getProject(tokenId);
@@ -224,10 +224,10 @@ export function testMint(payload: IDeployedPayload) {
         const star = 10;
         const fork = 5;
         const to = payload.signer2.address;
-        const signature = signMessage(payload.signer2, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
@@ -242,7 +242,7 @@ export function testMint(payload: IDeployedPayload) {
         const star = 50;
         const fork = 10;
         const to = payload.signer3.address;
-        const signature = signMessage(payload.signer3, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
         // allow payment token
         await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
@@ -255,14 +255,14 @@ export function testMint(payload: IDeployedPayload) {
 
 
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+        const tx = nft.connect(payload.signer3).mintTo(tokenId, star, fork, {
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
 
         await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            payload.operator.address, ethers.constants.AddressZero, to, tokenId, 1
+            to, ethers.constants.AddressZero, to, tokenId, 1
         );
 
         const projectInfoAfter = await nft.getProject(tokenId);
@@ -316,7 +316,7 @@ export function testMint(payload: IDeployedPayload) {
         const star = 45;
         const fork = 10;
         const to = payload.signer4.address;
-        const signature = signMessage(payload.signer4, tokenId.toString(), star, fork, timestamp);
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
         // allow payment token
         await payload.erc20Token1.connect(payload.signer4).approve(nft.address, ethers.constants.MaxUint256);
@@ -328,14 +328,14 @@ export function testMint(payload: IDeployedPayload) {
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to, validUntil: timestamp
+        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
+            signature, to: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
 
         await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            payload.operator.address, ethers.constants.AddressZero, to, tokenId, 1
+            to, ethers.constants.AddressZero, to, tokenId, 1
         );
 
         const projectInfoAfter = await nft.getProject(tokenId);

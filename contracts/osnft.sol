@@ -177,8 +177,10 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
-        SignatureMeta calldata signatureData
-    ) external onlyVerifier {
+        SignatureMeta calldata verifierSignatureData
+    ) external {
+        _requireVerifier(verifierSignatureData.to);
+
         bytes32 digest = _hashTypedDataV4(
             keccak256(
                 abi.encode(
@@ -186,14 +188,14 @@ contract OSNFT is
                     tokenId,
                     star,
                     fork,
-                    signatureData.validUntil
+                    verifierSignatureData.validUntil
                 )
             )
         );
 
-        _requireValidSignature(digest, signatureData);
+        _requireValidSignature(digest, verifierSignatureData);
 
-        _mintAndTakePayment(tokenId, star, fork, signatureData.to);
+        _mintAndTakePayment(tokenId, star, fork, _msgSender());
     }
 
     function mintPrice(
@@ -400,13 +402,6 @@ contract OSNFT is
         ) {
             revert InvalidSignature();
         }
-    }
-
-    modifier onlyVerifier() {
-        if (!_isVerifier(_msgSender())) {
-            revert RequireVerifier();
-        }
-        _;
     }
 
     function _requireVerifier(address value) internal {
