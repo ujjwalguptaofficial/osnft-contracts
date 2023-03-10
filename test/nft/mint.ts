@@ -4,46 +4,47 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
+export async function signMessageForMint(this: IDeployedPayload, user: SignerWithAddress, tokenId: string, star: number, fork: number, deadline: number) {
+    // const domainType = [
+    //     { name: "name", type: "string" },
+    //     { name: "version", type: "string" },
+    //     { name: "chainId", type: "uint256" },
+    //     { name: "verifyingContract", type: "address" },
+    // ];
+    const dataType = [
+        { name: "tokenId", type: "uint256" },
+        { name: "star", type: "uint256" },
+        { name: "fork", type: "uint256" },
+        { name: "validUntil", type: "uint256" },
+    ];
+
+    const domainData = {
+        name: "OSNFT",
+        version: "1",
+        chainId: await user.getChainId(),
+        verifyingContract: this.nft.address.toLowerCase(),
+    };
+    const message = {
+        tokenId,
+        star,
+        fork,
+        validUntil: deadline
+    };
+
+
+
+    const signatureResult = await user._signTypedData(domainData, {
+        NFTMintData: dataType,
+    }, message);
+    // recover
+
+
+    return signatureResult;
+}
 
 export function testMint(payload: IDeployedPayload) {
 
-    const signMessage = async (user: SignerWithAddress, tokenId: string, star: number, fork: number, deadline: number) => {
-        // const domainType = [
-        //     { name: "name", type: "string" },
-        //     { name: "version", type: "string" },
-        //     { name: "chainId", type: "uint256" },
-        //     { name: "verifyingContract", type: "address" },
-        // ];
-        const dataType = [
-            { name: "tokenId", type: "uint256" },
-            { name: "star", type: "uint256" },
-            { name: "fork", type: "uint256" },
-            { name: "validUntil", type: "uint256" },
-        ];
-
-        const domainData = {
-            name: "OSNFT",
-            version: "1",
-            chainId: await user.getChainId(),
-            verifyingContract: payload.nft.address.toLowerCase(),
-        };
-        const message = {
-            tokenId,
-            star,
-            fork,
-            validUntil: deadline
-        };
-
-
-
-        const signatureResult = await user._signTypedData(domainData, {
-            NFTMintData: dataType,
-        }, message);
-        // recover
-
-
-        return signatureResult;
-    }
+    const signMessage = signMessageForMint.bind(payload);
 
     it('expired signature', async () => {
         const nft = payload.nft;
@@ -154,6 +155,8 @@ export function testMint(payload: IDeployedPayload) {
 
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
+        const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
+
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
             signature, to, validUntil: timestamp
         });
@@ -186,7 +189,7 @@ export function testMint(payload: IDeployedPayload) {
         expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury);
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
-        // balance of creator
+        // nft balance of creator
 
         const balanceOfCreator = await nft.balanceOf(to, tokenId);
         expect(balanceOfCreator).equal(1);
@@ -204,9 +207,13 @@ export function testMint(payload: IDeployedPayload) {
         expect(balanceOfCreatorAfter).equal(
             creatorRoyalityValue.add(balanceOfCreatorBefore)
         );
+
+        // check minters deducted balance
+        const balanceOfMinterAfter = await payload.erc20Token1.balanceOf(to);
+        expect(balanceOfMinterAfter).equal(
+            balanceOfMinterBefore.sub(expectedMintPriceBN)
+        );
     })
-
-
 
     it('minting to a owner', async () => {
         const nft = payload.nft;

@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 
 export function testProjectTokenize(payload: IDeployedPayload) {
 
-    const signMessage = async (user: SignerWithAddress, projectUrl: string, basePrice, popularityFactorPrice, paymentToken: string, royality: number, deadline: number) => {
+    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, basePrice, popularityFactorPrice, paymentToken: string, royality: number, deadline: number) => {
         // const domainType = [
         //     { name: "name", type: "string" },
         //     { name: "version", type: "string" },
@@ -59,7 +59,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
 
@@ -86,7 +86,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
 
@@ -113,7 +113,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
 
@@ -140,7 +140,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
 
@@ -172,7 +172,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         expect(projectInfoBefore.paymentERC20Token).equal(ethers.constants.AddressZero);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
 
@@ -229,7 +229,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
 
-        const signature = signMessage(payload.deployer, projectUrl, basePrice,
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, basePrice,
             popularityFactorPrice, paymentToken, royality, timestamp
         );
 

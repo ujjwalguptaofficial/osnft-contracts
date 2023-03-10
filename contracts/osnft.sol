@@ -161,7 +161,7 @@ contract OSNFT is
         project.royality = input.royality;
 
         // mint first nft to creator free of cost
-        _mintTo(tokenId, 1, 1, project.creator);
+        _mintTo(tokenId, project.creator);
 
         emit ProjectTokenize(
             tokenId,
@@ -194,7 +194,7 @@ contract OSNFT is
 
         _requireValidSignature(digest, signatureData);
 
-        _mintTo(tokenId, star, fork, signatureData.to);
+        _mintAndTakePayment(tokenId, star, fork, signatureData.to);
     }
 
     function mintPrice(
@@ -212,7 +212,7 @@ contract OSNFT is
                 : project.lastMintPrice;
     }
 
-    function _mintTo(
+    function _mintAndTakePayment(
         uint256 tokenId,
         uint256 star,
         uint256 fork,
@@ -224,53 +224,55 @@ contract OSNFT is
 
         ProjectInfo storage project = _projects[tokenId];
 
-        if (project.creator != to) {
-            uint256 calculatedMintPrice = mintPrice(tokenId, star, fork);
+        uint256 calculatedMintPrice = mintPrice(tokenId, star, fork);
 
-            // take full payment to the contract
-            _requirePayment(
-                project.paymentERC20Token,
-                to,
-                address(this),
-                calculatedMintPrice
-            );
+        // take full payment to the contract
+        _requirePayment(
+            project.paymentERC20Token,
+            to,
+            address(this),
+            calculatedMintPrice
+        );
 
-            // send royality to creator
+        // send royality to creator
 
-            uint256 creatorRoyality = _percentageOf(
-                calculatedMintPrice,
-                project.royality
-            );
+        uint256 creatorRoyality = _percentageOf(
+            calculatedMintPrice,
+            project.royality
+        );
 
-            _requirePaymentFromContract(
-                project.paymentERC20Token,
-                project.creator,
-                creatorRoyality
-            );
+        _requirePaymentFromContract(
+            project.paymentERC20Token,
+            project.creator,
+            creatorRoyality
+        );
 
-            // store money in treasury
+        // store money in treasury
 
-            uint256 contractRoyality = _percentageOf(
-                calculatedMintPrice,
-                mintRoyality
-            );
+        uint256 contractRoyality = _percentageOf(
+            calculatedMintPrice,
+            mintRoyality
+        );
 
-            _earning[project.paymentERC20Token] += contractRoyality;
+        _earning[project.paymentERC20Token] += contractRoyality;
 
-            uint256 treasuryAmount = calculatedMintPrice -
-                contractRoyality -
-                creatorRoyality;
+        uint256 treasuryAmount = calculatedMintPrice -
+            contractRoyality -
+            creatorRoyality;
 
-            project.treasuryTotalAmount += treasuryAmount;
-            project.lastMintPrice = calculatedMintPrice;
-            _usersInvestments[tokenId][to] = calculatedMintPrice;
+        project.treasuryTotalAmount += treasuryAmount;
+        project.lastMintPrice = calculatedMintPrice;
+        _usersInvestments[tokenId][to] = calculatedMintPrice;
 
-            // send money to creator
+        // send money to creator
 
-            emit TokenMint(star, fork, calculatedMintPrice);
-        }
-        project.tokenCount++;
+        _mintTo(tokenId, to);
+        emit TokenMint(star, fork, calculatedMintPrice);
 
+    }
+
+    function _mintTo(uint256 tokenId, address to) internal {
+        _projects[tokenId].tokenCount++;
         _mint(to, tokenId, 1, "");
     }
 
