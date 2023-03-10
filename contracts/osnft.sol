@@ -72,6 +72,7 @@ contract OSNFT is
     event MinterRemoved(address account);
     event ProjectTokenize(
         uint256 indexed tokenId,
+        address creator,
         uint256 basePrice,
         uint256 popularityFactorPrice,
         address paymentToken,
@@ -164,6 +165,7 @@ contract OSNFT is
 
         emit ProjectTokenize(
             tokenId,
+            to,
             input.basePrice,
             input.popularityFactorPrice,
             input.paymentERC20Token,

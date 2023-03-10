@@ -166,6 +166,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const royality = 5;
         const projectUrl = payload.projects.jsstore;
         const tokenId = payload.getProjectId(projectUrl);
+        const to = payload.deployer.address;
 
         const projectInfoBefore = await nft.getProject(tokenId);
 
@@ -186,12 +187,12 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, to, validUntil: timestamp
         });
 
 
         await expect(tx).to.emit(nft, "ProjectTokenize").withArgs(
-            tokenId, basePrice, popularityFactorPrice, paymentToken, royality,
+            tokenId, to, basePrice, popularityFactorPrice, paymentToken, royality,
             projectUrl
         );
 
