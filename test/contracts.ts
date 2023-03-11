@@ -1,4 +1,4 @@
-import { ethers, network, upgrades } from "hardhat";
+import { ethers, network, run, upgrades } from "hardhat";
 import { BigNumber, BigNumberish } from "ethers";
 import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
@@ -101,6 +101,12 @@ describe("contracts", () => {
     describe('OSNFT', () => {
         testNFT(payload);
     });
+
+    describe('deploy subgraph', () => {
+        it('deploy', async () => {
+            await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
+        })
+    })
 
     after(async () => {
         console.log(`------contract addresses-------------`);
