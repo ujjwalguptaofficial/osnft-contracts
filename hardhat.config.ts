@@ -6,6 +6,12 @@ import "@graphprotocol/hardhat-graph";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
+  defaultNetwork: "localhost",
+  networks: {
+    localhost: {
+      url: "http://0.0.0.0:8545",
+    },
+  },
 };
 
 export default config;

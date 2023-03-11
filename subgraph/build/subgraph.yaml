@@ -1,6 +1,6 @@
 specVersion: 0.0.4
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: OSNFT
@@ -25,7 +25,7 @@ dataSources:
         - VerifierRemoved
       abis:
         - name: OSNFT
-          file: ./abis/OSNFT.json
+          file: OSNFT/abis/OSNFT.json
       eventHandlers:
         - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
@@ -47,4 +47,4 @@ dataSources:
           handler: handleVerifierAdded
         - event: VerifierRemoved(address)
           handler: handleVerifierRemoved
-      file: ./src/osnft.ts
+      file: OSNFT/OSNFT.wasm

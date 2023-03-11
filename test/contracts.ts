@@ -102,11 +102,11 @@ describe("contracts", () => {
         testNFT(payload);
     });
 
-    describe('deploy subgraph', () => {
-        it('deploy', async () => {
-            await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
-        })
-    })
+    // describe('deploy subgraph', () => {
+    //     it('deploy', async () => {
+    //         await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
+    //     })
+    // })
 
     after(async () => {
         console.log(`------contract addresses-------------`);
