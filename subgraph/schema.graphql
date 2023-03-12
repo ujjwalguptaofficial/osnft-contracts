@@ -17,6 +17,7 @@ type Project @entity{
   tokenCount: BigInt!
   treasuryTotalAmount: BigInt!
   lastMintPrice: BigInt!
+  tokens: [ ProjectToken!]! @derivedFrom(field: "project")
 }
 
 type ProjectToken @entity{
@@ -24,6 +25,8 @@ type ProjectToken @entity{
   mintAmount: BigInt!
   star: BigInt!
   fork: BigInt!
+  project:Project! 
+  owner:Account!
 }
 
 type Account @entity{

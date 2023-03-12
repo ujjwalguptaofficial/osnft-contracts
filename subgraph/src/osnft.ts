@@ -123,7 +123,7 @@ export function handleTokenMint(event: TokenMint): void {
 
 export function handleTransferBatch(event: TransferBatch): void { }
 
-function createNewUser(to: Address) {
+function createNewUser(to: Address): Account {
   let user = Account.load(to);
   if (user == null) {
     user = new Account(to);
@@ -143,19 +143,23 @@ export function handleTransferSingle(event: TransferSingle): void {
       // project.tokenCount =1 ;.plus(BigInt.fromI32(1));
       project.save();
 
-      const projectToken = new ProjectToken(params.id.toString() + params.to.toHexString());
-      projectToken.mintAmount = BigInt.fromI32(0);
-      projectToken.star = BigInt.fromI32(1);
-      projectToken.fork = BigInt.fromI32(1);
-
-      projectToken.save();
-
       const user = createNewUser(params.to);
       user.tokenCount = user.tokenCount.plus(
         BigInt.fromI32(1)
       );
 
       user.save();
+
+      const projectToken = new ProjectToken(params.id.toString() + params.to.toHexString());
+      projectToken.mintAmount = BigInt.fromI32(0);
+      projectToken.star = BigInt.fromI32(1);
+      projectToken.fork = BigInt.fromI32(1);
+      projectToken.project = project.id;
+      projectToken.owner = user.id;
+
+      projectToken.save();
+
+
     }
     else {
       const user = createNewUser(params.to);

@@ -181,6 +181,15 @@ export class Project extends Entity {
   set lastMintPrice(value: BigInt) {
     this.set("lastMintPrice", Value.fromBigInt(value));
   }
+
+  get tokens(): Array<string> {
+    let value = this.get("tokens");
+    return value!.toStringArray();
+  }
+
+  set tokens(value: Array<string>) {
+    this.set("tokens", Value.fromStringArray(value));
+  }
 }
 
 export class ProjectToken extends Entity {
@@ -239,6 +248,24 @@ export class ProjectToken extends Entity {
 
   set fork(value: BigInt) {
     this.set("fork", Value.fromBigInt(value));
+  }
+
+  get project(): string {
+    let value = this.get("project");
+    return value!.toString();
+  }
+
+  set project(value: string) {
+    this.set("project", Value.fromString(value));
+  }
+
+  get owner(): Bytes {
+    let value = this.get("owner");
+    return value!.toBytes();
+  }
+
+  set owner(value: Bytes) {
+    this.set("owner", Value.fromBytes(value));
   }
 }
 
