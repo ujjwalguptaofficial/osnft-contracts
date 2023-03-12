@@ -79,7 +79,12 @@ contract OSNFT is
         uint8 royality,
         string projectUrl
     );
-    event TokenMint(uint256 star, uint256 fork, uint256 mintPrice);
+    event TokenMint(
+        uint256 tokenId,
+        uint256 star,
+        uint256 fork,
+        uint256 mintPrice
+    );
 
     function initialize(string memory uri_) public initializer {
         __ERC1155_init(uri_);
@@ -269,7 +274,7 @@ contract OSNFT is
         // send money to creator
 
         _mintTo(tokenId, to);
-        emit TokenMint(star, fork, calculatedMintPrice);
+        emit TokenMint(tokenId, star, fork, calculatedMintPrice);
     }
 
     function _mintTo(uint256 tokenId, address to) internal {

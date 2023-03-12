@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, JSONValue, log } from "@graphprotocol/graph-ts"
 import {
   OSNFT,
   ApprovalForAll,
@@ -12,7 +12,7 @@ import {
   VerifierAdded,
   VerifierRemoved
 } from "../generated/OSNFT/OSNFT"
-import { ExampleEntity, Project } from "../generated/schema"
+import { ExampleEntity, Project, ProjectToken } from "../generated/schema"
 
 
 export function handleApprovalForAll(event: ApprovalForAll): void {
@@ -74,10 +74,7 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void { 
 
 export function handleProjectTokenize(event: ProjectTokenize): void {
   const params = event.params;
-  // const project = new Project(Bytes.fromByteArray(Bytes.fromBigInt(event.params.tokenId)));
-  // const tokenId = ethers.BigNumber.from(event.params.tokenId);
-  // const tokenIdInBytes = ethers.utils.hexZeroPad(tokenId.toHexString(), 32);
-  // const tokenId = Bytes.fromI32(event.params.tokenId.toI32())
+
   const project = new Project(event.params.tokenId.toString());
   project.basePrice = params.basePrice;
   project.creator = params.creator;
@@ -85,14 +82,48 @@ export function handleProjectTokenize(event: ProjectTokenize): void {
   project.paymentToken = params.paymentToken;
   project.projectUrl = params.projectUrl;
   project.popularityFactorPrice = params.popularityFactorPrice;
+  project.tokenCount = BigInt.fromI32(0);
+  project.treasuryTotalAmount = BigInt.fromI32(0);
+  project.lastMintPrice = BigInt.fromI32(0);
+
   project.save();
 }
 
-export function handleTokenMint(event: TokenMint): void { }
+export function handleTokenMint(event: TokenMint): void {
+  const params = event.params;
+  // const nft = OSNFT.bind(event.address);
+  const projectToken = ProjectToken.load(params.tokenId.toString());
+  if (projectToken) {
+    projectToken.amount = params.mintPrice;
+    projectToken.fork = params.fork;
+    projectToken.star = params.star;
+    projectToken.save();
+  }
+}
 
 export function handleTransferBatch(event: TransferBatch): void { }
 
-export function handleTransferSingle(event: TransferSingle): void { }
+export function handleTransferSingle(event: TransferSingle): void {
+  event.receipt?.logs.forEach(log=>{
+    log.
+  })
+  log.warning('handleTransferSingle', [event.receipt?.logs.toString() as string]);
+  const params = event.params;
+  const project = Project.load(params.id.toString());
+  if (project) {
+    // if (params.from.equals(Address.zero())) {
+    project.tokenCount.plus(BigInt.fromI32(1));
+    project.save();
+
+    const projectToken = new ProjectToken(params.id.toString() + params.to.toHexString());
+    projectToken.amount = BigInt.fromI32(0);
+    projectToken.star = BigInt.fromI32(0);
+    projectToken.fork = BigInt.fromI32(0);
+
+    projectToken.save();
+    // }
+  }
+}
 
 export function handleURI(event: URI): void { }
 

@@ -14,4 +14,14 @@ type Project @entity{
   popularityFactorPrice:BigInt!
   paymentToken:Bytes!
   creatorRoyality:Int!
+  tokenCount: BigInt!
+  treasuryTotalAmount: BigInt!
+  lastMintPrice: BigInt!
+}
+
+type ProjectToken @entity{
+  id: ID!
+  amount: BigInt!
+  star: BigInt!
+  fork: BigInt!
 }

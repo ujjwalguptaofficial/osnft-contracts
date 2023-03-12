@@ -131,16 +131,20 @@ export class TokenMint__Params {
     this._event = event;
   }
 
-  get star(): BigInt {
+  get tokenId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get fork(): BigInt {
+  get star(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get mintPrice(): BigInt {
+  get fork(): BigInt {
     return this._event.parameters[2].value.toBigInt();
+  }
+
+  get mintPrice(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 
