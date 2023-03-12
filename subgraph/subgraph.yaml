@@ -10,7 +10,7 @@ dataSources:
       abi: OSNFT
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - ApprovalForAll
@@ -35,12 +35,13 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: ProjectTokenize(indexed uint256,address,uint256,uint256,address,uint8,string)
           handler: handleProjectTokenize
-        - event: TokenMint(uint256,uint256,uint256,uint256)
+        - event: TokenMint(uint256,address,uint256,uint256,uint256)
           handler: handleTokenMint
         - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
           handler: handleTransferBatch
         - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleTransferSingle
+          receipt: true
         - event: URI(string,indexed uint256)
           handler: handleURI
         - event: VerifierAdded(address)

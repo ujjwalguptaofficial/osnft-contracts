@@ -81,6 +81,7 @@ contract OSNFT is
     );
     event TokenMint(
         uint256 tokenId,
+        address to,
         uint256 star,
         uint256 fork,
         uint256 mintPrice
@@ -274,7 +275,7 @@ contract OSNFT is
         // send money to creator
 
         _mintTo(tokenId, to);
-        emit TokenMint(tokenId, star, fork, calculatedMintPrice);
+        emit TokenMint(tokenId, to, star, fork, calculatedMintPrice);
     }
 
     function _mintTo(uint256 tokenId, address to) internal {

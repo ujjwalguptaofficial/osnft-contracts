@@ -214,13 +214,13 @@ export class ProjectToken extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get amount(): BigInt {
-    let value = this.get("amount");
+  get mintAmount(): BigInt {
+    let value = this.get("mintAmount");
     return value!.toBigInt();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set mintAmount(value: BigInt) {
+    this.set("mintAmount", Value.fromBigInt(value));
   }
 
   get star(): BigInt {

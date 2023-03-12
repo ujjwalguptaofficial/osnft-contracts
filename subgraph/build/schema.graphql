@@ -21,7 +21,7 @@ type Project @entity{
 
 type ProjectToken @entity{
   id: ID!
-  amount: BigInt!
+  mintAmount: BigInt!
   star: BigInt!
   fork: BigInt!
 }

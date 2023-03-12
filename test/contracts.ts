@@ -103,13 +103,17 @@ describe("contracts", () => {
     });
 
     describe('deploy subgraph', () => {
-        // it('deploy', async () => {
-        //     await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
+        it('deploy', async () => {
+            await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
+        })
+
+        // it('update', async () => {
+        //     await run('update', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
         // })
 
-        it('update', async () => {
-            await run('add', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
-        })
+        // it('update', async () => {
+        //     await run('update', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
+        // })
     })
 
     after(async () => {

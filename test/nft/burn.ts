@@ -227,7 +227,7 @@ export function testBurn(payload: IDeployedPayload) {
 
         // check tokenmint 
 
-        expect(tx).to.emit(nft, "TokenMint").withArgs(tokenId, star, fork, expectedMintPrice);
+        expect(tx).to.emit(nft, "TokenMint").withArgs(tokenId, to, star, fork, expectedMintPrice);
 
         // check contract earnings
         const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);

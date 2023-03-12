@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, JSONValue, log } from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, ethereum, crypto, log, } from "@graphprotocol/graph-ts"
 import {
   OSNFT,
   ApprovalForAll,
@@ -13,7 +13,6 @@ import {
   VerifierRemoved
 } from "../generated/OSNFT/OSNFT"
 import { ExampleEntity, Project, ProjectToken } from "../generated/schema"
-
 
 export function handleApprovalForAll(event: ApprovalForAll): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -92,9 +91,16 @@ export function handleProjectTokenize(event: ProjectTokenize): void {
 export function handleTokenMint(event: TokenMint): void {
   const params = event.params;
   // const nft = OSNFT.bind(event.address);
-  const projectToken = ProjectToken.load(params.tokenId.toString());
+
+  const project = Project.load(params.tokenId.toString());
+  if (project) {
+    project.treasuryTotalAmount = project.treasuryTotalAmount.plus(params.mintPrice);
+    project.lastMintPrice = params.mintPrice;
+    project.save();
+  }
+  const projectToken = ProjectToken.load(params.tokenId.toString() + params.to.toHexString());
   if (projectToken) {
-    projectToken.amount = params.mintPrice;
+    projectToken.mintAmount = params.mintPrice;
     projectToken.fork = params.fork;
     projectToken.star = params.star;
     projectToken.save();
@@ -104,24 +110,23 @@ export function handleTokenMint(event: TokenMint): void {
 export function handleTransferBatch(event: TransferBatch): void { }
 
 export function handleTransferSingle(event: TransferSingle): void {
-  event.receipt?.logs.forEach(log=>{
-    log.
-  })
-  log.warning('handleTransferSingle', [event.receipt?.logs.toString() as string]);
+  // ethereum.decode("bytes32", "")
+
+
+
   const params = event.params;
   const project = Project.load(params.id.toString());
   if (project) {
-    // if (params.from.equals(Address.zero())) {
-    project.tokenCount.plus(BigInt.fromI32(1));
+    project.tokenCount = project.tokenCount.plus(BigInt.fromU32(1));
+    // project.tokenCount =1 ;.plus(BigInt.fromI32(1));
     project.save();
 
     const projectToken = new ProjectToken(params.id.toString() + params.to.toHexString());
-    projectToken.amount = BigInt.fromI32(0);
-    projectToken.star = BigInt.fromI32(0);
-    projectToken.fork = BigInt.fromI32(0);
+    projectToken.mintAmount = BigInt.fromI32(0);
+    projectToken.star = BigInt.fromI32(1);
+    projectToken.fork = BigInt.fromI32(1);
 
     projectToken.save();
-    // }
   }
 }
 
