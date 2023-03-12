@@ -241,3 +241,53 @@ export class ProjectToken extends Entity {
     this.set("fork", Value.fromBigInt(value));
   }
 }
+
+export class Account extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Account entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Account must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Account", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): Account | null {
+    return changetype<Account | null>(store.get("Account", id.toHexString()));
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get tokenCount(): BigInt {
+    let value = this.get("tokenCount");
+    return value!.toBigInt();
+  }
+
+  set tokenCount(value: BigInt) {
+    this.set("tokenCount", Value.fromBigInt(value));
+  }
+
+  get totalInvestedAmount(): BigInt {
+    let value = this.get("totalInvestedAmount");
+    return value!.toBigInt();
+  }
+
+  set totalInvestedAmount(value: BigInt) {
+    this.set("totalInvestedAmount", Value.fromBigInt(value));
+  }
+}

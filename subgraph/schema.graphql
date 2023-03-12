@@ -25,3 +25,9 @@ type ProjectToken @entity{
   star: BigInt!
   fork: BigInt!
 }
+
+type Account @entity{
+  id: Bytes!
+  tokenCount:BigInt!
+  totalInvestedAmount:BigInt!
+}
