@@ -4,3 +4,14 @@ type ExampleEntity @entity {
   account: Bytes! # address
   operator: Bytes! # address
 }
+
+
+type Project @entity{
+  id: ID!
+  creator:Bytes!
+  projectUrl:String!
+  basePrice: BigInt!
+  popularityFactorPrice:BigInt!
+  paymentToken:Bytes!
+  creatorRoyality:Int!
+}

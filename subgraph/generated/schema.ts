@@ -69,3 +69,89 @@ export class ExampleEntity extends Entity {
     this.set("operator", Value.fromBytes(value));
   }
 }
+
+export class Project extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Project entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Project must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Project", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Project | null {
+    return changetype<Project | null>(store.get("Project", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get creator(): Bytes {
+    let value = this.get("creator");
+    return value!.toBytes();
+  }
+
+  set creator(value: Bytes) {
+    this.set("creator", Value.fromBytes(value));
+  }
+
+  get projectUrl(): string {
+    let value = this.get("projectUrl");
+    return value!.toString();
+  }
+
+  set projectUrl(value: string) {
+    this.set("projectUrl", Value.fromString(value));
+  }
+
+  get basePrice(): BigInt {
+    let value = this.get("basePrice");
+    return value!.toBigInt();
+  }
+
+  set basePrice(value: BigInt) {
+    this.set("basePrice", Value.fromBigInt(value));
+  }
+
+  get popularityFactorPrice(): BigInt {
+    let value = this.get("popularityFactorPrice");
+    return value!.toBigInt();
+  }
+
+  set popularityFactorPrice(value: BigInt) {
+    this.set("popularityFactorPrice", Value.fromBigInt(value));
+  }
+
+  get paymentToken(): Bytes {
+    let value = this.get("paymentToken");
+    return value!.toBytes();
+  }
+
+  set paymentToken(value: Bytes) {
+    this.set("paymentToken", Value.fromBytes(value));
+  }
+
+  get creatorRoyality(): i32 {
+    let value = this.get("creatorRoyality");
+    return value!.toI32();
+  }
+
+  set creatorRoyality(value: i32) {
+    this.set("creatorRoyality", Value.fromI32(value));
+  }
+}
