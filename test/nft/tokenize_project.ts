@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 
 export function testProjectTokenize(payload: IDeployedPayload) {
 
-    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, to: string, deadline: number) => {
+    const signMessageForProjectTokenize = async (user: SignerWithAddress, projectUrl: string, by: string, deadline: number) => {
         // const domainType = [
         //     { name: "name", type: "string" },
         //     { name: "version", type: "string" },
@@ -29,7 +29,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const message = {
             projectUrl: projectUrl,
             validUntil: deadline,
-            creator: to
+            creator: by
         };
 
 
@@ -64,7 +64,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'SignatureExpired');
@@ -89,7 +89,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
@@ -114,7 +114,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, by: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
@@ -139,7 +139,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl: payload.projects["godam-vue"],
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, by: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
@@ -165,7 +165,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, by: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'RoyalityLimitExceeded');
@@ -191,7 +191,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.signer4.address, validUntil: timestamp
+            signature, by: payload.signer4.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
@@ -217,7 +217,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, by: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'PaymentTokenNotAllowed');
@@ -252,7 +252,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to, validUntil: timestamp
+            signature, by: to, validUntil: timestamp
         });
 
 
@@ -304,7 +304,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             projectUrl,
             royality: royality
         }, {
-            signature, to: payload.deployer.address, validUntil: timestamp
+            signature, by: payload.deployer.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'ProjectExist');

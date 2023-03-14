@@ -32,7 +32,7 @@ contract OSNFT is
     struct SignatureMeta {
         bytes signature;
         uint256 validUntil;
-        address to;
+        address by;
     }
 
     struct ProjectTokenizeInput {
@@ -129,7 +129,7 @@ contract OSNFT is
             revert PaymentTokenNotAllowed();
         }
 
-        _requireVerifier(verifierSignatureData.to);
+        _requireVerifier(verifierSignatureData.by);
 
         address creator = _msgSender();
 
@@ -186,7 +186,7 @@ contract OSNFT is
         uint256 fork,
         SignatureMeta calldata verifierSignatureData
     ) external {
-        _requireVerifier(verifierSignatureData.to);
+        _requireVerifier(verifierSignatureData.by);
 
         bytes32 digest = _hashTypedDataV4(
             keccak256(
@@ -405,7 +405,7 @@ contract OSNFT is
         }
 
         if (
-            ECDSA.recover(digest, signatureData.signature) != signatureData.to
+            ECDSA.recover(digest, signatureData.signature) != signatureData.by
         ) {
             revert InvalidSignature();
         }

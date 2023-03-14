@@ -57,7 +57,7 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'SignatureExpired');
@@ -74,7 +74,7 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.signer4, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
-            signature, to: payload.signer4.address, validUntil: timestamp
+            signature, by: payload.signer4.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
@@ -91,7 +91,7 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'InvalidSignature');
@@ -108,7 +108,7 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
@@ -158,7 +158,7 @@ export function testMint(payload: IDeployedPayload) {
         const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
 
         const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
@@ -227,7 +227,7 @@ export function testMint(payload: IDeployedPayload) {
         const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
         const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
@@ -256,7 +256,7 @@ export function testMint(payload: IDeployedPayload) {
 
 
         const tx = nft.connect(payload.signer3).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
@@ -329,7 +329,7 @@ export function testMint(payload: IDeployedPayload) {
 
 
         const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events

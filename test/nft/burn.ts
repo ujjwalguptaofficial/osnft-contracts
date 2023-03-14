@@ -186,7 +186,7 @@ export function testBurn(payload: IDeployedPayload) {
 
 
         const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
-            signature, to: payload.operator.address, validUntil: timestamp
+            signature, by: payload.operator.address, validUntil: timestamp
         });
 
         // check for transfer events
