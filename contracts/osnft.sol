@@ -24,7 +24,7 @@ contract OSNFT is
         uint256 popularityFactorPrice;
         // last mint price
         uint256 lastMintPrice;
-        uint8 royality;
+        uint8 creatorRoyalty;
         uint256 tokenCount;
         uint256 treasuryTotalAmount;
     }
@@ -40,13 +40,13 @@ contract OSNFT is
         uint256 basePrice;
         uint256 popularityFactorPrice;
         address paymentERC20Token;
-        uint8 royality;
+        uint8 creatorRoyalty;
     }
 
     // errors
     error AlreadyMinted();
     error PaymentFailed();
-    error RoyalityLimitExceeded();
+    error RoyaltyLimitExceeded();
     error RequireTokenOwner();
     error RequireVerifier();
     error ProjectExist();
@@ -62,8 +62,8 @@ contract OSNFT is
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
     mapping(address => bool) internal _paymentTokensAllowed;
 
-    uint8 mintRoyality;
-    uint8 burnRoyality;
+    uint8 mintRoyalty;
+    uint8 burnRoyalty;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
     bytes32 internal _TYPE_HASH_NFTMintData;
 
@@ -76,7 +76,7 @@ contract OSNFT is
         uint256 basePrice,
         uint256 popularityFactorPrice,
         address paymentToken,
-        uint8 royality,
+        uint8 Royalty,
         string projectUrl
     );
     event TokenMint(
@@ -90,8 +90,8 @@ contract OSNFT is
     function initialize(string memory uri_) public initializer {
         __ERC1155_init(uri_);
         __Ownable_init();
-        mintRoyality = 1;
-        burnRoyality = 2;
+        mintRoyalty = 1;
+        burnRoyalty = 2;
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
             "ProjectTokenizeData(string projectUrl,address creator,uint256 validUntil)"
@@ -150,8 +150,8 @@ contract OSNFT is
             keccak256(abi.encodePacked(input.projectUrl))
         );
 
-        if (input.royality > 10) {
-            revert RoyalityLimitExceeded();
+        if (input.creatorRoyalty > 10) {
+            revert RoyaltyLimitExceeded();
         }
 
         ProjectInfo storage project = _projects[tokenId];
@@ -164,7 +164,7 @@ contract OSNFT is
         project.basePrice = input.basePrice;
         project.paymentERC20Token = input.paymentERC20Token;
         project.popularityFactorPrice = input.popularityFactorPrice;
-        project.royality = input.royality;
+        project.creatorRoyalty = input.creatorRoyalty;
 
         // mint first nft to creator free of cost
         _mintTo(tokenId, creator);
@@ -175,7 +175,7 @@ contract OSNFT is
             input.basePrice,
             input.popularityFactorPrice,
             input.paymentERC20Token,
-            input.royality,
+            input.creatorRoyalty,
             input.projectUrl
         );
     }
@@ -242,31 +242,31 @@ contract OSNFT is
             calculatedMintPrice
         );
 
-        // send royality to creator
+        // send Royalty to creator
 
-        uint256 creatorRoyality = _percentageOf(
+        uint256 creatorRoyalty = _percentageOf(
             calculatedMintPrice,
-            project.royality
+            project.creatorRoyalty
         );
 
         _requirePaymentFromContract(
             project.paymentERC20Token,
             project.creator,
-            creatorRoyality
+            creatorRoyalty
         );
 
         // store money in treasury
 
-        uint256 contractRoyality = _percentageOf(
+        uint256 contractRoyalty = _percentageOf(
             calculatedMintPrice,
-            mintRoyality
+            mintRoyalty
         );
 
-        _earning[project.paymentERC20Token] += contractRoyality;
+        _earning[project.paymentERC20Token] += contractRoyalty;
 
         uint256 treasuryAmount = calculatedMintPrice -
-            contractRoyality -
-            creatorRoyality;
+            contractRoyalty -
+            creatorRoyalty;
 
         project.treasuryTotalAmount += treasuryAmount;
         project.lastMintPrice = calculatedMintPrice;
@@ -311,17 +311,17 @@ contract OSNFT is
         project.tokenCount--;
         project.treasuryTotalAmount -= returnAmount;
 
-        uint256 burnRoyalityAmount = 0;
+        uint256 burnRoyaltyAmount = 0;
 
         if (profit > 0) {
-            burnRoyalityAmount = _percentageOf(profit, burnRoyality);
-            _earning[project.paymentERC20Token] += burnRoyalityAmount;
+            burnRoyaltyAmount = _percentageOf(profit, burnRoyalty);
+            _earning[project.paymentERC20Token] += burnRoyaltyAmount;
         }
 
         _requirePaymentFromContract(
             project.paymentERC20Token,
             caller,
-            returnAmount - burnRoyalityAmount
+            returnAmount - burnRoyaltyAmount
         );
 
         _burn(caller, tokenId, 1);

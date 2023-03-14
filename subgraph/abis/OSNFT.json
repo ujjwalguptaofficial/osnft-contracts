@@ -36,7 +36,7 @@
   },
   {
     "inputs": [],
-    "name": "RoyalityLimitExceeded",
+    "name": "RoyaltyLimitExceeded",
     "type": "error"
   },
   {
@@ -137,7 +137,7 @@
       {
         "indexed": false,
         "internalType": "uint8",
-        "name": "royality",
+        "name": "Royalty",
         "type": "uint8"
       },
       {
@@ -475,7 +475,7 @@
           },
           {
             "internalType": "uint8",
-            "name": "royality",
+            "name": "creatorRoyalty",
             "type": "uint8"
           },
           {
@@ -821,7 +821,7 @@
           },
           {
             "internalType": "uint8",
-            "name": "royality",
+            "name": "creatorRoyalty",
             "type": "uint8"
           }
         ],

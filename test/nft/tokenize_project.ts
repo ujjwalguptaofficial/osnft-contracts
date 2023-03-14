@@ -62,7 +62,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
@@ -87,7 +87,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
@@ -112,7 +112,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -137,7 +137,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl: payload.projects["godam-vue"],
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -163,12 +163,12 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
 
-        await expect(tx).revertedWithCustomError(nft, 'RoyalityLimitExceeded');
+        await expect(tx).revertedWithCustomError(nft, 'RoyaltyLimitExceeded');
     })
 
     it('by address not minters', async () => {
@@ -189,7 +189,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.signer4.address, validUntil: timestamp
         });
@@ -215,7 +215,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -250,7 +250,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: to, validUntil: timestamp
         });
@@ -266,7 +266,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         expect(projectInfoAfter.paymentERC20Token).equal(paymentToken);
         expect(projectInfoAfter.basePrice).equal(basePrice);
         expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
-        expect(projectInfoAfter.royality).equal(royality);
+        expect(projectInfoAfter.creatorRoyalty).equal(royality);
         expect(projectInfoAfter.tokenCount).equal(1);
         expect(projectInfoAfter.creator).equal(payload.deployer.address);
         expect(projectInfoAfter.treasuryTotalAmount).equal(0);
@@ -302,7 +302,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentERC20Token: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            royality: royality
+            creatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });

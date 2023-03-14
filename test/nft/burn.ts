@@ -205,17 +205,17 @@ export function testBurn(payload: IDeployedPayload) {
 
         const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
 
-        const contractRoyality = payload.getPercentage(
+        const contractRoyalty = payload.getPercentage(
             expectedMintPriceBN, 1
         );
 
-        const creatorRoyality = await projectInfoAfter.royality;
+        const creatorRoyalty = await projectInfoAfter.creatorRoyalty;
 
-        const creatorRoyalityValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), creatorRoyality
+        const creatorRoyaltyValue = payload.getPercentage(
+            ethers.BigNumber.from(expectedMintPrice), creatorRoyalty
         );
 
-        const amountForTreasury = expectedMintPriceBN.sub(contractRoyality).sub(creatorRoyalityValue);
+        const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
 
         expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryTotalAmount));
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
@@ -231,13 +231,13 @@ export function testBurn(payload: IDeployedPayload) {
 
         // check contract earnings
         const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
-        expect(contractEarning).equal(contractRoyality.add(contractEarningBefore));
+        expect(contractEarning).equal(contractRoyalty.add(contractEarningBefore));
 
         //check creator earnings
         const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
         expect(balanceOfCreatorAfter).equal(
-            // creatorRoyalityValue.add(balanceOfCreatorBefore)
-            balanceOfCreatorBefore.sub(expectedMintPriceBN).add(creatorRoyalityValue)
+            // creatorRoyaltyValue.add(balanceOfCreatorBefore)
+            balanceOfCreatorBefore.sub(expectedMintPriceBN).add(creatorRoyaltyValue)
         );
     })
 
