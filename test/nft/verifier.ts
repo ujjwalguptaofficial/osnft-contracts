@@ -61,6 +61,24 @@ export function testVerifier(payload: IDeployedPayload) {
             isVerifier = await nft.isVerifier(payload.signer3.address);
             expect(isVerifier).equal(true);
         })
+
+        it('success', async () => {
+            const nft = payload.nft;
+
+            const verifierAddress = "0x17e678c6ab1080350699a0ae253bbb76f72547ae".toLowerCase();
+
+            let isVerifier = await nft.isVerifier(verifierAddress);
+            expect(isVerifier).equal(false);
+
+            const tx =  nft.addVerifier(verifierAddress);
+
+
+            await expect(tx).to.emit(nft, "VerifierAdded")
+            // .withArgs(verifierAddress);
+
+            isVerifier = await nft.isVerifier(verifierAddress);
+            expect(isVerifier).equal(true);
+        })
     })
 
     describe("remove minter", () => {

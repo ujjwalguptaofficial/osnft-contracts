@@ -76,7 +76,7 @@ contract OSNFT is
         uint256 basePrice,
         uint256 popularityFactorPrice,
         address paymentToken,
-        uint8 Royalty,
+        uint8 creatorRoyalty,
         string projectUrl
     );
     event TokenMint(
