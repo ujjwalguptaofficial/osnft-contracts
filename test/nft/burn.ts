@@ -27,11 +27,11 @@ export function testBurn(payload: IDeployedPayload) {
 
         const investedAmount = await nft.getInvestedAmount(tokenId, owner);
         const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(owner);
-        const returnAmount = projectInfoBefore.treasuryTotalAmount.div(projectInfoBefore.tokenCount);
+        const returnAmount = projectInfoBefore.treasuryAmount.div(projectInfoBefore.tokenCount);
         let profit = returnAmount.sub(investedAmount);
         // profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
 
-        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryTotalAmount.toString(), investedAmount.toString());
+        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryAmount.toString(), investedAmount.toString());
 
         const tx = nft.burn(tokenId);
 
@@ -53,7 +53,7 @@ export function testBurn(payload: IDeployedPayload) {
         // check treasure amount after
         const projectInfoAfter = await nft.getProject(tokenId);
         expect(projectInfoAfter.tokenCount).equal(projectInfoBefore.tokenCount.sub(1));
-        expect(projectInfoAfter.treasuryTotalAmount).equal(projectInfoBefore.treasuryTotalAmount.sub(returnAmount));
+        expect(projectInfoAfter.treasuryAmount).equal(projectInfoBefore.treasuryAmount.sub(returnAmount));
 
         // check contract earning
         console.log("contractEarning", contractEarning);
@@ -83,11 +83,11 @@ export function testBurn(payload: IDeployedPayload) {
         const contreactEarningBefore = await nft.getContractEarning(payload.erc20Token1.address);
         const investedAmount = await nft.getInvestedAmount(tokenId, owner);
         const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(owner);
-        const returnAmount = projectInfoBefore.treasuryTotalAmount.div(projectInfoBefore.tokenCount);
+        const returnAmount = projectInfoBefore.treasuryAmount.div(projectInfoBefore.tokenCount);
         let profit = returnAmount.sub(investedAmount);
         profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
 
-        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryTotalAmount.toString());
+        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryAmount.toString());
 
         const tx = nft.burn(tokenId);
 
@@ -109,7 +109,7 @@ export function testBurn(payload: IDeployedPayload) {
         // check treasure amount after
         const projectInfoAfter = await nft.getProject(tokenId);
         expect(projectInfoAfter.tokenCount).equal(projectInfoBefore.tokenCount.sub(1));
-        expect(projectInfoAfter.treasuryTotalAmount).equal(projectInfoBefore.treasuryTotalAmount.sub(returnAmount));
+        expect(projectInfoAfter.treasuryAmount).equal(projectInfoBefore.treasuryAmount.sub(returnAmount));
 
         // check contract earning
         console.log("contractEarning", contractEarning);
@@ -127,11 +127,11 @@ export function testBurn(payload: IDeployedPayload) {
 
         const investedAmount = await nft.getInvestedAmount(tokenId, owner);
         const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(owner);
-        const returnAmount = projectInfoBefore.treasuryTotalAmount.div(projectInfoBefore.tokenCount);
+        const returnAmount = projectInfoBefore.treasuryAmount.div(projectInfoBefore.tokenCount);
         let profit = returnAmount.sub(investedAmount);
         // profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
 
-        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryTotalAmount.toString(), investedAmount.toString());
+        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryAmount.toString(), investedAmount.toString());
 
         const tx = nft.burn(tokenId);
 
@@ -153,7 +153,7 @@ export function testBurn(payload: IDeployedPayload) {
         // check treasure amount after
         const projectInfoAfter = await nft.getProject(tokenId);
         expect(projectInfoAfter.tokenCount).equal(projectInfoBefore.tokenCount.sub(1));
-        expect(projectInfoAfter.treasuryTotalAmount).equal(projectInfoBefore.treasuryTotalAmount.sub(returnAmount));
+        expect(projectInfoAfter.treasuryAmount).equal(projectInfoBefore.treasuryAmount.sub(returnAmount));
 
         // check contract earning
         console.log("contractEarning", contractEarning);
@@ -217,7 +217,7 @@ export function testBurn(payload: IDeployedPayload) {
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
 
-        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryTotalAmount));
+        expect(projectInfoAfter.treasuryAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryAmount));
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
         // nft balance of creator

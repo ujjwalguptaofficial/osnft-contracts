@@ -186,7 +186,7 @@ export function testMint(payload: IDeployedPayload) {
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
 
-        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury);
+        expect(projectInfoAfter.treasuryAmount).equal(amountForTreasury);
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
         // nft balance of creator
@@ -284,7 +284,7 @@ export function testMint(payload: IDeployedPayload) {
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
 
-        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryTotalAmount));
+        expect(projectInfoAfter.treasuryAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryAmount));
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
         // balance of creator
@@ -358,7 +358,7 @@ export function testMint(payload: IDeployedPayload) {
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
 
-        expect(projectInfoAfter.treasuryTotalAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryTotalAmount));
+        expect(projectInfoAfter.treasuryAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryAmount));
         expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
         // balance of creator

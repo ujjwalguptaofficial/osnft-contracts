@@ -171,6 +171,32 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'RoyaltyLimitExceeded');
     })
 
+    it('zero payment address', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = 100;
+        const popularityFactorPrice = 1;
+        const paymentToken = ethers.constants.AddressZero;
+        const royality = 10;
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
+        );
+
+        const tx = nft.tokenizeProject({
+            basePrice: basePrice,
+            paymentERC20Token: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            creatorRoyalty: royality
+        }, {
+            signature, by: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'ZeroPaymentToken');
+    })
+
     it('by address not minters', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
@@ -269,7 +295,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         expect(projectInfoAfter.creatorRoyalty).equal(royality);
         expect(projectInfoAfter.tokenCount).equal(1);
         expect(projectInfoAfter.creator).equal(payload.deployer.address);
-        expect(projectInfoAfter.treasuryTotalAmount).equal(0);
+        expect(projectInfoAfter.treasuryAmount).equal(0);
         expect(projectInfoAfter.lastMintPrice).equal(0);
 
         // balance of creator

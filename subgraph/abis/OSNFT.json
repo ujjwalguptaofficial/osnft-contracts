@@ -45,6 +45,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "ZeroPaymentToken",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -485,7 +490,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "treasuryTotalAmount",
+            "name": "treasuryAmount",
             "type": "uint256"
           }
         ],

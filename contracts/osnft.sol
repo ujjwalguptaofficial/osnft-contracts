@@ -26,7 +26,7 @@ contract OSNFT is
         uint256 lastMintPrice;
         uint8 creatorRoyalty;
         uint256 tokenCount;
-        uint256 treasuryTotalAmount;
+        uint256 treasuryAmount;
     }
 
     struct SignatureMeta {
@@ -53,6 +53,7 @@ contract OSNFT is
     error SignatureExpired();
     error InvalidSignature();
     error PaymentTokenNotAllowed();
+    error ZeroPaymentToken();
 
     // variables
 
@@ -125,6 +126,9 @@ contract OSNFT is
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external {
+        if (input.paymentERC20Token == address(0)) {
+            revert ZeroPaymentToken();
+        }
         if (!_paymentTokensAllowed[input.paymentERC20Token]) {
             revert PaymentTokenNotAllowed();
         }
@@ -264,11 +268,11 @@ contract OSNFT is
 
         _earning[project.paymentERC20Token] += contractRoyalty;
 
-        uint256 treasuryAmount = calculatedMintPrice -
+        uint256 amountForTreasury = calculatedMintPrice -
             contractRoyalty -
             creatorRoyalty;
 
-        project.treasuryTotalAmount += treasuryAmount;
+        project.treasuryAmount += amountForTreasury;
         project.lastMintPrice = calculatedMintPrice;
         _usersInvestments[tokenId][to] = calculatedMintPrice;
 
@@ -302,14 +306,14 @@ contract OSNFT is
         }
         ProjectInfo storage project = _projects[tokenId];
 
-        uint256 returnAmount = project.treasuryTotalAmount / project.tokenCount;
+        uint256 returnAmount = project.treasuryAmount / project.tokenCount;
         uint256 usersInvestments = _usersInvestments[tokenId][caller];
         uint256 profit = returnAmount > usersInvestments
             ? returnAmount - usersInvestments
             : 0;
 
         project.tokenCount--;
-        project.treasuryTotalAmount -= returnAmount;
+        project.treasuryAmount -= returnAmount;
 
         uint256 burnRoyaltyAmount = 0;
 
