@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
+import "./erc2771_context.sol";
 import "./interfaces/nft.sol";
 import "./interfaces/osnft_meta.sol";
 
@@ -17,7 +18,8 @@ contract OSNFT is
     OwnableUpgradeable,
     ReentrancyGuardUpgradeable,
     EIP712Upgradeable,
-    IOSNFT
+    IOSNFT,
+    ERC2771ContextUpgradeable
 {
     // variables
 
@@ -353,6 +355,24 @@ contract OSNFT is
         if (!_metaContract.isRelayer(_msgSender())) {
             revert RequireRelayer();
         }
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(ContextUpgradeable, ERC2771ContextUpgradeable)
+        returns (address sender)
+    {
+        sender = ERC2771ContextUpgradeable._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        override(ContextUpgradeable, ERC2771ContextUpgradeable)
+        returns (bytes calldata)
+    {
+        return ERC2771ContextUpgradeable._msgData();
     }
 
     /**
