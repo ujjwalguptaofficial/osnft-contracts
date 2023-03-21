@@ -3,7 +3,7 @@ import { IDeployedPayload } from "../interfaces";
 
 export function testPayableToken(payload: IDeployedPayload) {
     it("add payable by non owner", async () => {
-        const marketplace = payload.nft;
+        const marketplace = payload.nftMeta;
         const tx = marketplace.connect(payload.signer2).addPayableTokens(
             [payload.signer2.address]
         );
@@ -11,7 +11,7 @@ export function testPayableToken(payload: IDeployedPayload) {
     })
 
     it("remove payable by non owner", async () => {
-        const marketplace = payload.nft;
+        const marketplace = payload.nftMeta;
         const tx = marketplace.connect(payload.signer2).removePayableToken(
             payload.signer2.address
         );
@@ -19,7 +19,7 @@ export function testPayableToken(payload: IDeployedPayload) {
     })
 
     it("isPayableToken by non owner", async () => {
-        const marketplace = payload.nft;
+        const marketplace = payload.nftMeta;
         const tx = await marketplace.connect(payload.signer2).isPayableToken(
             payload.signer2.address
         );
@@ -27,7 +27,7 @@ export function testPayableToken(payload: IDeployedPayload) {
     })
 
     it("add payable", async () => {
-        const marketplace = payload.nft;
+        const marketplace = payload.nftMeta;
         const tokenAddress = payload.erc20Token1.address;
         const tx = await marketplace.addPayableTokens(
             [tokenAddress]
@@ -39,7 +39,7 @@ export function testPayableToken(payload: IDeployedPayload) {
     })
 
     it("remove payable", async () => {
-        const marketplace = payload.nft;
+        const marketplace = payload.nftMeta;
         const tokenAddress = payload.signer4.address;
         let tx = await marketplace.addPayableTokens(
             [tokenAddress]
@@ -60,7 +60,7 @@ export function testPayableToken(payload: IDeployedPayload) {
     })
 
     it("add payable - token2", async () => {
-        const marketplace = payload.nft;
+        const marketplace = payload.nftMeta;
         const tokenAddress = payload.erc20Token2.address;
         const isPayableTokenBefore = await marketplace.isPayableToken(
             tokenAddress

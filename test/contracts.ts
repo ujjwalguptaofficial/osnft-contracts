@@ -3,6 +3,7 @@ import { BigNumber, BigNumberish } from "ethers";
 import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
 import { testNFT } from "./nft";
+import { testNFTMeta } from "./nft_meta";
 
 
 function getSellId(tokenId: BigNumber, from: string) {
@@ -98,14 +99,18 @@ describe("contracts", () => {
         await payload.erc20Token2.mint(payload.signer2.address, ethers.constants.MaxUint256);
     })
 
+    describe('OSNFT MEta', () => {
+        testNFTMeta(payload);
+    });
+
     describe('OSNFT', () => {
         testNFT(payload);
     });
 
     describe('deploy subgraph', () => {
-        it('deploy', async () => {
-            await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
-        })
+        // it('deploy', async () => {
+        //     await run('graph', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })
+        // })
 
         // it('update', async () => {
         //     await run('update', { contractName: 'OSNFT', address: payload.nft.address, blockNumber: 0 })

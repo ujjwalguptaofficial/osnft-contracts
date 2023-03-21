@@ -7,7 +7,7 @@ export function testVerifier(payload: IDeployedPayload) {
     describe("add minter", () => {
 
         it('not by owner', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
 
             let isVerifier = await nft.isVerifier(payload.deployer.address);
             expect(isVerifier).equal(false);
@@ -18,7 +18,7 @@ export function testVerifier(payload: IDeployedPayload) {
         })
 
         it('success', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
 
             let isVerifier = await nft.isVerifier(payload.deployer.address);
             expect(isVerifier).equal(false);
@@ -33,7 +33,7 @@ export function testVerifier(payload: IDeployedPayload) {
         })
 
         it('success', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
 
             let isVerifier = await nft.isVerifier(payload.operator.address);
             expect(isVerifier).equal(false);
@@ -48,7 +48,7 @@ export function testVerifier(payload: IDeployedPayload) {
         })
 
         it('success', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
 
             let isVerifier = await nft.isVerifier(payload.signer3.address);
             expect(isVerifier).equal(false);
@@ -63,14 +63,14 @@ export function testVerifier(payload: IDeployedPayload) {
         })
 
         it('success', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
 
             const verifierAddress = "0xcAd234A659c41A6070353D67b3A85a15FDD9Ab37".toLowerCase();
 
             let isVerifier = await nft.isVerifier(verifierAddress);
             expect(isVerifier).equal(false);
 
-            const tx =  nft.addVerifier(verifierAddress);
+            const tx = nft.addVerifier(verifierAddress);
 
 
             await expect(tx).to.emit(nft, "VerifierAdded")
@@ -84,14 +84,14 @@ export function testVerifier(payload: IDeployedPayload) {
     describe("remove minter", () => {
 
         it('not by owner', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
             const tx = nft.connect(payload.signer4).removeVerifier(payload.deployer.address);
 
             await expect(tx).to.revertedWith('Ownable: caller is not the owner')
         })
 
         it('success', async () => {
-            const nft = payload.nft;
+            const nft = payload.nftMeta;
 
             let isVerifier = await nft.isVerifier(payload.signer3.address);
             expect(isVerifier).equal(true);

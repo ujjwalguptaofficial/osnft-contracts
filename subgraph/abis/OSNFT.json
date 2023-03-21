@@ -26,6 +26,11 @@
   },
   {
     "inputs": [],
+    "name": "RequireRelayer",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "RequireTokenOwner",
     "type": "error"
   },
@@ -286,58 +291,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "VerifierAdded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "VerifierRemoved",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "tokens",
-        "type": "address[]"
-      }
-    ],
-    "name": "addPayableTokens",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "addVerifier",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -494,7 +447,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct OSNFT.ProjectInfo",
+        "internalType": "struct IOSNFT.ProjectInfo",
         "name": "",
         "type": "tuple"
       }
@@ -508,6 +461,11 @@
         "internalType": "string",
         "name": "uri_",
         "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "meta_",
+        "type": "address"
       }
     ],
     "name": "initialize",
@@ -529,44 +487,6 @@
       }
     ],
     "name": "isApprovedForAll",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "isPayableToken",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "isVerifier",
     "outputs": [
       {
         "internalType": "bool",
@@ -641,7 +561,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct OSNFT.SignatureMeta",
+        "internalType": "struct IOSNFT.SignatureMeta",
         "name": "verifierSignatureData",
         "type": "tuple"
       }
@@ -662,32 +582,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "removePayableToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "removeVerifier",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -830,7 +724,7 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct OSNFT.ProjectTokenizeInput",
+        "internalType": "struct IOSNFT.ProjectTokenizeInput",
         "name": "input",
         "type": "tuple"
       },
@@ -852,12 +746,79 @@
             "type": "address"
           }
         ],
-        "internalType": "struct OSNFT.SignatureMeta",
+        "internalType": "struct IOSNFT.SignatureMeta",
         "name": "verifierSignatureData",
         "type": "tuple"
       }
     ],
     "name": "tokenizeProject",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "projectUrl",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "basePrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "popularityFactorPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "paymentERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint8",
+            "name": "creatorRoyalty",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IOSNFT.ProjectTokenizeInput",
+        "name": "input",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes",
+            "name": "signature",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "by",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IOSNFT.SignatureMeta",
+        "name": "verifierSignatureData",
+        "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      }
+    ],
+    "name": "tokenizeProjectBy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

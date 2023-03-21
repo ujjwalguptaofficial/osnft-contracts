@@ -9,86 +9,29 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
+import "./interfaces/nft.sol";
+import "./interfaces/osnft_meta.sol";
+
 contract OSNFT is
     ERC1155Upgradeable,
     OwnableUpgradeable,
     ReentrancyGuardUpgradeable,
-    EIP712Upgradeable
+    EIP712Upgradeable,
+    IOSNFT
 {
-    // structs
-    struct ProjectInfo {
-        uint256 basePrice;
-        address creator;
-        address paymentERC20Token;
-        // price of one popularity factor
-        uint256 popularityFactorPrice;
-        // last mint price
-        uint256 lastMintPrice;
-        uint8 creatorRoyalty;
-        uint256 tokenCount;
-        uint256 treasuryAmount;
-    }
-
-    struct SignatureMeta {
-        bytes signature;
-        uint256 validUntil;
-        address by;
-    }
-
-    struct ProjectTokenizeInput {
-        string projectUrl;
-        uint256 basePrice;
-        uint256 popularityFactorPrice;
-        address paymentERC20Token;
-        uint8 creatorRoyalty;
-    }
-
-    // errors
-    error AlreadyMinted();
-    error PaymentFailed();
-    error RoyaltyLimitExceeded();
-    error RequireTokenOwner();
-    error RequireVerifier();
-    error ProjectExist();
-    error SignatureExpired();
-    error InvalidSignature();
-    error PaymentTokenNotAllowed();
-    error ZeroPaymentToken();
-
     // variables
 
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
-    mapping(address => bool) internal _verifiers;
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
-    mapping(address => bool) internal _paymentTokensAllowed;
 
     uint8 mintRoyalty;
     uint8 burnRoyalty;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
     bytes32 internal _TYPE_HASH_NFTMintData;
+    IOSNFTMeta _metaContract;
 
-    // events
-    event VerifierAdded(address account);
-    event VerifierRemoved(address account);
-    event ProjectTokenize(
-        uint256 indexed tokenId,
-        address creator,
-        uint256 basePrice,
-        uint256 popularityFactorPrice,
-        address paymentToken,
-        uint8 creatorRoyalty,
-        string projectUrl
-    );
-    event TokenMint(
-        uint256 tokenId,
-        address to,
-        uint256 star,
-        uint256 fork,
-        uint256 mintPrice
-    );
-
-    function initialize(string memory uri_) public initializer {
+    function initialize(string memory uri_, address meta_) public initializer {
         __ERC1155_init(uri_);
         __Ownable_init();
         mintRoyalty = 1;
@@ -100,6 +43,7 @@ contract OSNFT is
         _TYPE_HASH_NFTMintData = keccak256(
             "NFTMintData(uint256 tokenId,uint256 star,uint256 fork,uint256 validUntil)"
         );
+        _metaContract = IOSNFTMeta(meta_);
     }
 
     function getProject(
@@ -108,34 +52,36 @@ contract OSNFT is
         return _projects[tokenId];
     }
 
-    function addPayableTokens(address[] calldata tokens) external onlyOwner {
-        for (uint256 index = 0; index < tokens.length; index++) {
-            _paymentTokensAllowed[tokens[index]] = true;
-        }
-    }
-
-    function removePayableToken(address token) external onlyOwner {
-        delete _paymentTokensAllowed[token];
-    }
-
-    function isPayableToken(address token) public view returns (bool) {
-        return _paymentTokensAllowed[token];
-    }
-
     function tokenizeProject(
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external {
+        tokenizeProjectTo_(_msgSender(), input, verifierSignatureData);
+    }
+
+    function tokenizeProjectTo(
+        ProjectTokenizeInput calldata input,
+        SignatureMeta calldata verifierSignatureData,
+        address creator
+    ) external {
+        _requireRelayer();
+        tokenizeProjectTo_(creator, input, verifierSignatureData);
+    }
+
+    function tokenizeProjectTo_(
+        address creator,
+        ProjectTokenizeInput calldata input,
+        SignatureMeta calldata verifierSignatureData
+    ) internal {
         if (input.paymentERC20Token == address(0)) {
             revert ZeroPaymentToken();
         }
-        if (!_paymentTokensAllowed[input.paymentERC20Token]) {
+
+        if (!_metaContract.isPayableToken(input.paymentERC20Token)) {
             revert PaymentTokenNotAllowed();
         }
 
         _requireVerifier(verifierSignatureData.by);
-
-        address creator = _msgSender();
 
         bytes32 digest = _hashTypedDataV4(
             keccak256(
@@ -382,24 +328,6 @@ contract OSNFT is
         _requirePayment(tokenAddress, address(this), accountTo, amount);
     }
 
-    function isVerifier(address account) external view returns (bool) {
-        return _isVerifier(account);
-    }
-
-    function addVerifier(address account) external onlyOwner {
-        _verifiers[account] = true;
-        emit VerifierAdded(account);
-    }
-
-    function removeVerifier(address account) external onlyOwner {
-        delete _verifiers[account];
-        emit VerifierRemoved(account);
-    }
-
-    function _isVerifier(address account) internal view returns (bool) {
-        return _verifiers[account];
-    }
-
     function _requireValidSignature(
         bytes32 digest,
         SignatureMeta calldata signatureData
@@ -416,8 +344,14 @@ contract OSNFT is
     }
 
     function _requireVerifier(address value) internal view {
-        if (!_isVerifier(value)) {
+        if (!_metaContract.isVerifier(value)) {
             revert RequireVerifier();
+        }
+    }
+
+    function _requireRelayer() internal view {
+        if (!_metaContract.isRelayer(_msgSender())) {
+            revert RequireRelayer();
         }
     }
 

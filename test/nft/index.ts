@@ -6,8 +6,6 @@ import { IDeployedPayload } from "../interfaces";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { testProjectTokenize } from "./tokenize_project";
-import { testVerifier } from "./verifier";
-import { testPayableToken } from "./payable_token";
 import { testMint } from "./mint";
 import { testBurn } from "./burn";
 
@@ -18,6 +16,7 @@ export function testNFT(payload: IDeployedPayload) {
 
         const deployedContract = await upgrades.deployProxy(ct, [
             'https://osnft.app/nft/',
+            payload.nftMeta.address
         ], {
             initializer: 'initialize',
         });
@@ -38,9 +37,12 @@ export function testNFT(payload: IDeployedPayload) {
     it('call initialize', async () => {
         const tx = payload.nft.initialize(
             'https://osnft.app/nft/',
+            ethers.constants.AddressZero
         );
         await expect(tx).revertedWith(`Initializable: contract is already initialized`);
     })
+
+    // return;
 
     describe('check supports interface', () => {
         it('erc721', async () => {
@@ -74,13 +76,6 @@ export function testNFT(payload: IDeployedPayload) {
     //     })
     // })
 
-    describe("payable token", async () => {
-        testPayableToken(payload);
-    })
-
-    describe("Verifier", async () => {
-        testVerifier(payload);
-    })
 
     describe("tokenize project", async () => {
         testProjectTokenize(payload);
