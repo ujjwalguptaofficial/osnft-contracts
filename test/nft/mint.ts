@@ -227,7 +227,7 @@ export function testMint(payload: IDeployedPayload) {
         expect(tx).to.emit(nft, "TokenMint").withArgs(tokenId, to, star, fork, expectedMintPrice);
 
         // check contract earnings
-        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
+        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentToken);
         expect(contractEarning).equal(contractRoyalty);
 
         //check creator earnings
@@ -508,7 +508,7 @@ export function testMint(payload: IDeployedPayload) {
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
         const projectInfoBefore = await nft.getProject(tokenId);
-        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentERC20Token);
+        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentToken);
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
@@ -567,7 +567,7 @@ export function testMint(payload: IDeployedPayload) {
         expect(tx).to.emit(nft, "TokenMint").withArgs(tokenId, to, star, fork, expectedMintPrice);
 
         // check contract earnings
-        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
+        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentToken);
         expect(contractEarning).equal(contractRoyalty.add(contractEarningBefore));
 
         //check creator earnings
@@ -594,7 +594,7 @@ export function testMint(payload: IDeployedPayload) {
         const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
         const projectInfoBefore = await nft.getProject(tokenId);
-        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentERC20Token);
+        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentToken);
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
@@ -641,7 +641,7 @@ export function testMint(payload: IDeployedPayload) {
         expect(tx).to.emit(nft, "TokenMint").withArgs(tokenId, to, star, fork, expectedMintPrice);
 
         // check contract earnings
-        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentERC20Token);
+        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentToken);
         expect(contractEarning).equal(contractRoyalty.add(contractEarningBefore));
 
         //check creator earnings

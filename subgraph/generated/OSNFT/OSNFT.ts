@@ -287,7 +287,7 @@ export class OSNFT__getProjectResultValue0Struct extends ethereum.Tuple {
     return this[1].toAddress();
   }
 
-  get paymentERC20Token(): Address {
+  get paymentToken(): Address {
     return this[2].toAddress();
   }
 
@@ -1068,7 +1068,7 @@ export class TokenizeProjectCallInputStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get paymentERC20Token(): Address {
+  get paymentToken(): Address {
     return this[3].toAddress();
   }
 

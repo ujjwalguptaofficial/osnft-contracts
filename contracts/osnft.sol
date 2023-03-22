@@ -58,11 +58,11 @@ contract OSNFT is
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external {
-        if (input.paymentERC20Token == address(0)) {
+        if (input.paymentToken == address(0)) {
             revert ZeroPaymentToken();
         }
 
-        if (!_metaContract.isPayableToken(input.paymentERC20Token)) {
+        if (!_metaContract.isPayableToken(input.paymentToken)) {
             revert PaymentTokenNotAllowed();
         }
 
@@ -99,7 +99,7 @@ contract OSNFT is
 
         project.creator = creator;
         project.basePrice = input.basePrice;
-        project.paymentERC20Token = input.paymentERC20Token;
+        project.paymentToken = input.paymentToken;
         project.popularityFactorPrice = input.popularityFactorPrice;
         project.creatorRoyalty = input.creatorRoyalty;
 
@@ -111,7 +111,7 @@ contract OSNFT is
             creator,
             input.basePrice,
             input.popularityFactorPrice,
-            input.paymentERC20Token,
+            input.paymentToken,
             input.creatorRoyalty,
             input.projectUrl
         );
@@ -173,7 +173,7 @@ contract OSNFT is
 
         // take full payment to the contract
         _requirePayment(
-            project.paymentERC20Token,
+            project.paymentToken,
             to,
             address(this),
             calculatedMintPrice
@@ -187,7 +187,7 @@ contract OSNFT is
         );
 
         _requirePaymentFromContract(
-            project.paymentERC20Token,
+            project.paymentToken,
             project.creator,
             creatorRoyalty
         );
@@ -199,7 +199,7 @@ contract OSNFT is
             mintRoyalty
         );
 
-        _earning[project.paymentERC20Token] += contractRoyalty;
+        _earning[project.paymentToken] += contractRoyalty;
 
         uint256 amountForTreasury = calculatedMintPrice -
             contractRoyalty -
@@ -252,11 +252,11 @@ contract OSNFT is
 
         if (profit > 0) {
             burnRoyaltyAmount = _percentageOf(profit, burnRoyalty);
-            _earning[project.paymentERC20Token] += burnRoyaltyAmount;
+            _earning[project.paymentToken] += burnRoyaltyAmount;
         }
 
         _requirePaymentFromContract(
-            project.paymentERC20Token,
+            project.paymentToken,
             caller,
             returnAmount - burnRoyaltyAmount
         );

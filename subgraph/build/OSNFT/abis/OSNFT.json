@@ -460,7 +460,7 @@
           },
           {
             "internalType": "address",
-            "name": "paymentERC20Token",
+            "name": "paymentToken",
             "type": "address"
           },
           {
@@ -816,7 +816,7 @@
           },
           {
             "internalType": "address",
-            "name": "paymentERC20Token",
+            "name": "paymentToken",
             "type": "address"
           },
           {

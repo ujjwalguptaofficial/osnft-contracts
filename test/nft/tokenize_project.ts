@@ -59,7 +59,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -84,7 +84,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -109,7 +109,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.connect(payload.signer2).tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -134,7 +134,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.connect(payload.signer2).tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl: payload.projects["godam-vue"],
             creatorRoyalty: royality
@@ -160,7 +160,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -186,7 +186,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -212,7 +212,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.connect(payload.signer4).tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -238,7 +238,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.connect(payload.deployer).tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -262,7 +262,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const projectInfoBefore = await nft.getProject(tokenId);
 
-        expect(projectInfoBefore.paymentERC20Token).equal(ethers.constants.AddressZero);
+        expect(projectInfoBefore.paymentToken).equal(ethers.constants.AddressZero);
 
         const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
         );
@@ -273,7 +273,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality
@@ -289,7 +289,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const projectInfoAfter = await nft.getProject(tokenId);
 
-        expect(projectInfoAfter.paymentERC20Token).equal(paymentToken);
+        expect(projectInfoAfter.paymentToken).equal(paymentToken);
         expect(projectInfoAfter.basePrice).equal(basePrice);
         expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
         expect(projectInfoAfter.creatorRoyalty).equal(royality);
@@ -325,7 +325,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
 
         const tx = nft.tokenizeProject({
             basePrice: basePrice,
-            paymentERC20Token: paymentToken,
+            paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
             creatorRoyalty: royality

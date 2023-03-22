@@ -6,7 +6,7 @@ interface IOSNFT {
     struct ProjectInfo {
         uint256 basePrice;
         address creator;
-        address paymentERC20Token;
+        address paymentToken;
         // price of one popularity factor
         uint256 popularityFactorPrice;
         // last mint price
@@ -26,7 +26,7 @@ interface IOSNFT {
         string projectUrl;
         uint256 basePrice;
         uint256 popularityFactorPrice;
-        address paymentERC20Token;
+        address paymentToken;
         uint8 creatorRoyalty;
     }
 
