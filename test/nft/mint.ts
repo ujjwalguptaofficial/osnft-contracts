@@ -3,6 +3,7 @@ import { IDeployedPayload } from "../interfaces";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { OSNFTRelayer } from "../../typechain-types";
 
 export async function signMessageForMint(this: IDeployedPayload, user: SignerWithAddress, tokenId: string, star: number, fork: number, deadline: number) {
     // const domainType = [
@@ -41,6 +42,33 @@ export async function signMessageForMint(this: IDeployedPayload, user: SignerWit
 
     return signatureResult;
 }
+
+export async function signMessageForRelayer(this: IDeployedPayload, user: SignerWithAddress, req: OSNFTRelayer.ForwardRequestStruct) {
+    const dataType = [
+        { name: "from", type: "address" },
+        { name: "to", type: "address" },
+        { name: "value", type: "uint256" },
+        { name: "gas", type: "uint256" },
+        { name: "validUntil", type: "uint256" },
+        { name: "data", type: "bytes" },
+    ];
+
+    const domainData = {
+        name: "OSNFT_RELAYER",
+        version: "1",
+        chainId: await user.getChainId(),
+        verifyingContract: this.relayer.address.toLowerCase(),
+    };
+
+    const signatureResult = await user._signTypedData(domainData, {
+        ForwardRequest: dataType,
+    }, req);
+    // recover
+
+
+    return signatureResult;
+}
+
 
 export function testMint(payload: IDeployedPayload) {
 
@@ -215,8 +243,60 @@ export function testMint(payload: IDeployedPayload) {
         );
     })
 
+    it('minting to a owner by relayer', async () => {
+        const nft = payload.nft;
+
+        await nft.setForwarder(payload.relayer.address);
+
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 10;
+        const fork = 5;
+        const to = payload.signer2.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        // let ABI = new ethers.utils.Interface("");
+
+        // const ct = await ethers.getContractFactory('OSNFT');
+        // ct.interface.encodeFunctionData()
+
+        // ; (await nft.populateTransaction.burn()).data
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        // txData.data;
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer2.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100000,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer2, req);
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        // const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
+        //     signature, by: payload.operator.address, validUntil: timestamp
+        // });
+
+        // await expect(tx.).
+
+        await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
+    })
+
     it('minting to a owner', async () => {
         const nft = payload.nft;
+
+        await nft.setForwarder(payload.relayer.address);
+
         const timestamp = await time.latest() + 1000;
 
         const projectUrl = payload.projects.jsstore;
@@ -230,10 +310,12 @@ export function testMint(payload: IDeployedPayload) {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
+        // await expect(tx.).
+
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
     })
 
-    it('mint jsstore success to signer3', async () => {
+    it('mint jsstore success to signer3 using relayer', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
 
@@ -254,10 +336,27 @@ export function testMint(payload: IDeployedPayload) {
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
-
-        const tx = nft.connect(payload.signer3).mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer3.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 10000000,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+
+        // const tx = nft.connect(payload.signer3).mintTo(tokenId, star, fork, {
+        //     signature, by: payload.operator.address, validUntil: timestamp
+        // });
 
         // check for transfer events
 

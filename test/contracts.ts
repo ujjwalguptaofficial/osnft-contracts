@@ -87,6 +87,13 @@ describe("contracts", () => {
         await payload.erc20Token1.mint(payload.signer3.address, '900000000000000000000');
     })
 
+    it('deploy relayer', async () => {
+        const contract = await ethers.getContractFactory('OSNFTRelayer');
+
+        const deployedContract = await contract.deploy();
+        payload.relayer = deployedContract;
+    })
+
     it('deploy erc20 token 2', async () => {
         const contract = await ethers.getContractFactory('MyToken');
 

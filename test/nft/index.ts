@@ -14,6 +14,7 @@ export function testNFT(payload: IDeployedPayload) {
     it('deploy contract', async () => {
         const ct = await ethers.getContractFactory('OSNFT');
 
+
         const deployedContract = await upgrades.deployProxy(ct, [
             'https://osnft.app/nft/',
             payload.nftMeta.address

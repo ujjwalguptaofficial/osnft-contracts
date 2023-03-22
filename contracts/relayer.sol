@@ -1,64 +1,109 @@
-// // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-// pragma solidity ^0.8.17;
+// SPDX-License-Identifier: SEE LICENSE IN LICENSE
+pragma solidity ^0.8.17;
 
-// import "./interfaces/nft.sol";
+import "./interfaces/nft.sol";
 
-// contract OSNFTRelayer is IOSNFT {
-//     //variables
-//     IOSNFT internal _nft;
-//     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 
-//     constructor(address nft_) {
-//         _nft = IOSNFT(nft_);
+contract OSNFTRelayer is EIP712 {
+    using ECDSA for bytes32;
 
-//         _TYPE_HASH_ProjectTokenizeData = keccak256(
-//             "ProjectTokenizeData(string projectUrl, uint256 basePrice, uint256 popularityFactorPrice, address paymentToken, uint8 creatorRoyalty, uint256 validUntil)"
-//         );
-//     }
+    error SignatureExpired();
+    error SignatureNotMatchRequest();
 
-//     function tokenizeProject(
-//         IOSNFT.SignatureMeta calldata signatureByUser,
-//         IOSNFT.ProjectTokenizeInput calldata input,
-//         IOSNFT.SignatureMeta calldata signatureByVerifier
-//     ) external {
-//         bytes32 digest = _hashTypedDataV4(
-//             keccak256(
-//                 abi.encode(
-//                     _TYPE_HASH_NFTSellData,
-//                     input.projectUrl,
-//                     input.basePrice,
-//                     input.popularityFactorPrice,
-//                     input.paymentERC20Token,
-//                     input.creatorRoyalty,
-//                     signatureData.deadline
-//                 )
-//             )
-//         );
+    struct ForwardRequest {
+        address from;
+        address to;
+        uint256 value;
+        uint256 gas;
+        uint256 validUntil;
+        bytes data;
+    }
 
-//         _requireValidSignature(digest, signatureData);
+    //variables
 
-//         _nft.tokenizeProjectTo(signatureData.to, input);
-//     }
+    bytes32 private constant _TYPEHASH =
+        keccak256(
+            "ForwardRequest(address from,address to,uint256 value,uint256 gas,uint256 validUntil,bytes data)"
+        );
 
-//     function mint(
-//         SignatureMeta calldata signatureData,
-//         string calldata projectUrl,
-//         IOSNFT.NFT_TYPE nftType,
-//         uint32 totalShare
-//     ) external {
-//         bytes32 digest = _hashTypedDataV4(
-//             keccak256(
-//                 abi.encode(
-//                     _TYPE_HASH_NFTMintData,
-//                     keccak256(bytes(projectUrl)),
-//                     nftType,
-//                     totalShare,
-//                     signatureData.deadline
-//                 )
-//             )
-//         );
-//         _requireValidSignature(digest, signatureData);
+    constructor() EIP712("OSNFT_RELAYER", "1") {}
 
-//         _nft.mintMeta(signatureData.to, projectUrl, nftType, totalShare);
-//     }
-// }
+    function verifySignature_(
+        ForwardRequest calldata req,
+        bytes calldata signature
+    ) internal view {
+        if (block.timestamp > req.validUntil) {
+            revert SignatureExpired();
+        }
+        address signer = _hashTypedDataV4(
+            keccak256(
+                abi.encode(
+                    _TYPEHASH,
+                    req.from,
+                    req.to,
+                    req.value,
+                    req.gas,
+                    req.validUntil,
+                    keccak256(req.data)
+                )
+            )
+        ).recover(signature);
+        if (signer != req.from) {
+            revert SignatureNotMatchRequest();
+        }
+    }
+
+    function execute(
+        ForwardRequest calldata req,
+        bytes calldata signature
+    ) public returns (bool, bytes memory) {
+        verifySignature_(req, signature);
+
+        (bool success, bytes memory returndata) = req.to.call{
+            gas: req.gas,
+            value: req.value
+        }(abi.encodePacked(req.data, req.from));
+
+        // Validate that the relayer has sent enough gas for the call.
+        // See https://ronan.eth.limo/blog/ethereum-gas-dangers/
+        if (gasleft() <= req.gas / 63) {
+            // We explicitly trigger invalid opcode to consume all gas and bubble-up the effects, since
+            // neither revert or assert consume all gas since Solidity 0.8.0
+            // https://docs.soliditylang.org/en/v0.8.0/control-structures.html#panic-via-assert-and-error-via-require
+            /// @solidity memory-safe-assembly
+            assembly {
+                invalid()
+            }
+        }
+
+        // return (success, returndata);
+        _verifyCallResult(
+            success,
+            returndata,
+            "Forwarded call to destination did not succeed"
+        );
+    }
+
+    function _verifyCallResult(
+        bool success,
+        bytes memory returndata,
+        string memory errorMessage
+    ) private pure {
+        if (!success) {
+            // Look for revert reason and bubble it up if present
+            if (returndata.length > 0) {
+                // The easiest way to bubble the revert reason is using memory via assembly
+
+                // solhint-disable-next-line no-inline-assembly
+                assembly {
+                    let returndata_size := mload(returndata)
+                    revert(add(32, returndata), returndata_size)
+                }
+            } else {
+                revert(errorMessage);
+            }
+        }
+    }
+}
