@@ -11,6 +11,8 @@ contract OSNFTRelayer is EIP712 {
 
     error SignatureExpired();
     error SignatureNotMatchRequest();
+    error RequestFailed();
+    // "Forwarded call did not succeed"
 
     struct ForwardRequest {
         address from;
@@ -79,17 +81,12 @@ contract OSNFTRelayer is EIP712 {
         }
 
         // return (success, returndata);
-        _verifyCallResult(
-            success,
-            returndata,
-            "Forwarded call to destination did not succeed"
-        );
+        _verifyCallResult(success, returndata);
     }
 
     function _verifyCallResult(
         bool success,
-        bytes memory returndata,
-        string memory errorMessage
+        bytes memory returndata
     ) private pure {
         if (!success) {
             // Look for revert reason and bubble it up if present
@@ -102,7 +99,7 @@ contract OSNFTRelayer is EIP712 {
                     revert(add(32, returndata), returndata_size)
                 }
             } else {
-                revert(errorMessage);
+                revert RequestFailed();
             }
         }
     }

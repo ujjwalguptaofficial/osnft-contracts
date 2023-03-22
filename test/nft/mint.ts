@@ -315,6 +315,182 @@ export function testMint(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'AlreadyMinted');
     })
 
+    it('mint jsstore to signer3 using relayer with less gas', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 50;
+        const fork = 10;
+        const to = payload.signer3.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer3.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        expect(tx).to.revertedWithCustomError(payload.relayer, 'RequestFailed');
+    });
+
+    it('mint jsstore to signer3 using relayer with different from', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 50;
+        const fork = 10;
+        const to = payload.signer3.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer3.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
+
+        req.from = payload.operator.address;
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        expect(tx).to.revertedWithCustomError(payload.relayer, 'SignatureNotMatchRequest');
+    });
+
+    it('mint jsstore to signer3 using relayer with different to', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 50;
+        const fork = 10;
+        const to = payload.signer3.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer3.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
+        req.to = payload.operator.address;
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        expect(tx).to.revertedWithCustomError(payload.relayer, 'SignatureNotMatchRequest');
+    });
+
+    it('mint jsstore to signer3 using relayer with different deadline', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 50;
+        const fork = 10;
+        const to = payload.signer3.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer3.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
+        req.validUntil = timestamp + 1000;
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        expect(tx).to.revertedWithCustomError(payload.relayer, 'SignatureNotMatchRequest');
+    });
+
+    it('mint jsstore to signer3 using relayer with different gas', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 50;
+        const fork = 10;
+        const to = payload.signer3.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        // allow payment token
+        await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer3.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
+        req.gas = 1000000000;
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        expect(tx).to.revertedWithCustomError(payload.relayer, 'SignatureNotMatchRequest');
+    });
+
     it('mint jsstore success to signer3 using relayer', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;
@@ -352,11 +528,6 @@ export function testMint(payload: IDeployedPayload) {
         const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer3, req);
 
         const tx = payload.relayer.execute(req, signatureForRelayer);
-
-
-        // const tx = nft.connect(payload.signer3).mintTo(tokenId, star, fork, {
-        //     signature, by: payload.operator.address, validUntil: timestamp
-        // });
 
         // check for transfer events
 
