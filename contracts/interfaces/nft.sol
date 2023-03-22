@@ -65,10 +65,4 @@ interface IOSNFT {
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external;
-
-    function tokenizeProjectTo(
-        ProjectTokenizeInput calldata input,
-        SignatureMeta calldata verifierSignatureData,
-        address creator
-    ) external;
 }

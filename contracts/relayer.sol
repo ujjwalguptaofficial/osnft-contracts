@@ -60,7 +60,7 @@ contract OSNFTRelayer is EIP712 {
     function execute(
         ForwardRequest calldata req,
         bytes calldata signature
-    ) public returns (bool, bytes memory) {
+    ) external {
         verifySignature_(req, signature);
 
         (bool success, bytes memory returndata) = req.to.call{

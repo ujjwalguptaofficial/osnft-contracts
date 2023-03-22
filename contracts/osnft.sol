@@ -58,23 +58,6 @@ contract OSNFT is
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external {
-        tokenizeProjectTo_(_msgSender(), input, verifierSignatureData);
-    }
-
-    function tokenizeProjectTo(
-        ProjectTokenizeInput calldata input,
-        SignatureMeta calldata verifierSignatureData,
-        address creator
-    ) external {
-        _requireRelayer();
-        tokenizeProjectTo_(creator, input, verifierSignatureData);
-    }
-
-    function tokenizeProjectTo_(
-        address creator,
-        ProjectTokenizeInput calldata input,
-        SignatureMeta calldata verifierSignatureData
-    ) internal {
         if (input.paymentERC20Token == address(0)) {
             revert ZeroPaymentToken();
         }
@@ -84,6 +67,8 @@ contract OSNFT is
         }
 
         _requireVerifier(verifierSignatureData.by);
+
+        address creator = _msgSender();
 
         bytes32 digest = _hashTypedDataV4(
             keccak256(
