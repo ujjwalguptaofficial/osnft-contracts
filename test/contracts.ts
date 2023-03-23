@@ -4,7 +4,7 @@ import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
 import { testNFT } from "./nft";
 import { testNFTMeta } from "./nft_meta";
-
+const writeJsonFile = require("write-json");
 
 function getSellId(tokenId: BigNumber, from: string) {
     return ethers.utils.keccak256(
@@ -148,6 +148,6 @@ describe("contracts", () => {
         console.table(addresses);
         // console.table(payload.transactions);
 
-        // writeJsonFile.sync(`cache/transaction.json`, payload.transactions);
+        writeJsonFile.sync(`cache/transaction.json`, payload.transactions);
     })
 });
