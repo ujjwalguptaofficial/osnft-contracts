@@ -108,6 +108,23 @@ export function testMint(payload: IDeployedPayload) {
         await expect(tx).revertedWithCustomError(nft, 'RequireVerifier');
     })
 
+    it('minting invalid token', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects["mahal-webpack-loader"];
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 10;
+        const fork = 10;
+        const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
+
+        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
+            signature, by: payload.deployer.address, validUntil: timestamp
+        });
+
+        await expect(tx).revertedWithCustomError(nft, 'InvalidToken').withArgs(tokenId);
+    })
+
     it('Invalid signature', async () => {
         const nft = payload.nft;
         const timestamp = await time.latest() + 1000;

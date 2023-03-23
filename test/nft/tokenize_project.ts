@@ -260,9 +260,11 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(projectUrl);
         const to = payload.deployer.address;
 
-        const projectInfoBefore = await nft.getProject(tokenId);
+        const projectInfoBefore = nft.getProject(tokenId);
 
-        expect(projectInfoBefore.paymentToken).equal(ethers.constants.AddressZero);
+        await expect(projectInfoBefore).revertedWithCustomError(nft, 'InvalidToken').withArgs(tokenId);
+
+        // expect(projectInfoBefore.paymentToken).equal(ethers.constants.AddressZero);
 
         const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.deployer.address, timestamp
         );
@@ -347,9 +349,10 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         const tokenId = payload.getProjectId(projectUrl);
         const to = payload.signer2.address;
 
-        const projectInfoBefore = await nft.getProject(tokenId);
+        const projectInfoBefore = nft.getProject(tokenId);
 
-        expect(projectInfoBefore.paymentToken).equal(ethers.constants.AddressZero);
+        await expect(projectInfoBefore).revertedWithCustomError(nft, 'InvalidToken').withArgs(tokenId);
+
 
         const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.signer2.address, timestamp
         );

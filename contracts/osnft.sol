@@ -51,7 +51,11 @@ contract OSNFT is
     function getProject(
         uint256 tokenId
     ) external view returns (ProjectInfo memory) {
-        return _projects[tokenId];
+        ProjectInfo memory project = _projects[tokenId];
+        if (project.creator == address(0)) {
+            revert InvalidToken(tokenId);
+        }
+        return project;
     }
 
     function tokenizeProject(
@@ -168,6 +172,10 @@ contract OSNFT is
         }
 
         ProjectInfo storage project = _projects[tokenId];
+
+        if (project.creator == address(0)) {
+            revert InvalidToken(tokenId);
+        }
 
         uint256 calculatedMintPrice = mintPrice(tokenId, star, fork);
 

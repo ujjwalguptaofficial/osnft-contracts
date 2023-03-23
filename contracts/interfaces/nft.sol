@@ -42,6 +42,7 @@ interface IOSNFT {
     error InvalidSignature();
     error PaymentTokenNotAllowed();
     error ZeroPaymentToken();
+    error InvalidToken(uint256 tokenId);
 
     // events
     event ProjectTokenize(
