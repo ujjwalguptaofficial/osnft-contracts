@@ -258,7 +258,11 @@ export function testMint(payload: IDeployedPayload) {
         expect(balanceOfMinterAfter).equal(
             balanceOfMinterBefore.sub(expectedMintPriceBN)
         );
-    })
+
+        payload.transactions['mintNFTJsStore'].push(
+            (await tx).hash
+        )
+    });
 
     it('minting to a owner by relayer', async () => {
         const nft = payload.nft;
@@ -592,6 +596,11 @@ export function testMint(payload: IDeployedPayload) {
         expect(balanceOfCreatorAfter).equal(
             creatorRoyaltyValue.add(balanceOfCreatorBefore)
         );
+
+
+        payload.transactions['mintNFTJsStore'].push(
+            (await tx).hash
+        )
     })
 
     it('mint jsstore success to signer4 with less PF', async () => {

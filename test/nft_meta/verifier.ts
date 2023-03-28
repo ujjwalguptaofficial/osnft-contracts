@@ -65,7 +65,7 @@ export function testVerifier(payload: IDeployedPayload) {
         it('success', async () => {
             const nft = payload.nftMeta;
 
-            const verifierAddress = "0xcAd234A659c41A6070353D67b3A85a15FDD9Ab37".toLowerCase();
+            const verifierAddress = "0x07ed3763d29646612c9e2562938f04895816fc8d".toLowerCase();
 
             let isVerifier = await nft.isVerifier(verifierAddress);
             expect(isVerifier).equal(false);

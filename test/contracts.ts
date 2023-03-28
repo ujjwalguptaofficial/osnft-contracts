@@ -45,21 +45,7 @@ describe("contracts", () => {
         }
     } as IDeployedPayload;
 
-    payload.transactions['sellJsStoreExamples'] = []
-    payload.transactions['sellJsStore'] = []
-    payload.transactions['sellMahalExamples'] = []
-    payload.transactions['sellMahalWebpackLoader'] = []
-    payload.transactions['buyJsStoreExample'] = []
-    payload.transactions['buyMahalExample'] = []
-    payload.transactions['buyJsStore'] = []
-    payload.transactions['bidJsStoreExamples'] = []
-    payload.transactions['bidJsStore'] = []
-    payload.transactions['buyMahalWebpackLoader'] = []
-
-    payload.transactions['sellPriorityJsStoreExamples'] = []
-    payload.transactions['refundAuctionJsStoreExamples'] = []
-    payload.transactions['removeJsStoreExamples'] = []
-
+    payload.transactions['mintNFTJsStore'] = [];
 
     before(async () => {
         await network.provider.send("hardhat_reset")
@@ -132,10 +118,11 @@ describe("contracts", () => {
         console.log(`------contract addresses-------------`);
         const addresses = {
             nft: payload.nft.address,
+            nftMeta: payload.nftMeta.address,
             // marketplace: payload.marketplace.address,
             // osd: payload.nativeToken.address,
             // approver: payload.approver.address,
-            // relayer: payload.relayer.address,
+            relayer: payload.relayer.address,
             deployer: payload.deployer.address,
             signer2: payload.signer2.address,
             signer3: payload.signer3.address,
