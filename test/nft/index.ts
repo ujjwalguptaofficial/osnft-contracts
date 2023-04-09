@@ -60,22 +60,21 @@ export function testNFT(payload: IDeployedPayload) {
         });
     });
 
-    // describe('relayer', () => {
-    //     it('set relayer non admin', async () => {
-    //         const relayer = payload.relayer.address;
-    //         const tx = payload.nft.connect(payload.signer3)["relayer(address)"](relayer);
-    //         await expect(tx).revertedWith(`Ownable: caller is not the owner`);
-    //     })
+    describe('relayer', () => {
+        it('set relayer non admin', async () => {
+            const relayer = payload.relayer.address;
+            const tx = payload.nft.connect(payload.signer3).setForwarder(relayer);
+            await expect(tx).revertedWith(`Ownable: caller is not the owner`);
+        })
 
-    //     it('set relayer success', async () => {
-    //         const relayer = payload.relayer.address;
-    //         await payload.nft["relayer(address)"](relayer);
+        it('set relayer success', async () => {
+            const relayer = payload.relayer.address;
+            await payload.nft.setForwarder(relayer);
 
-    //         const addressFrom = await payload.nft["relayer()"]();
-
-    //         expect(addressFrom).equal(relayer);
-    //     })
-    // })
+            const addressFrom = await payload.nft.getForwarder();
+            expect(addressFrom).equal(relayer);
+        })
+    })
 
 
     describe("tokenize project", async () => {

@@ -264,10 +264,46 @@ export function testMint(payload: IDeployedPayload) {
         )
     });
 
+    it('minting to a owner by invalid relayer', async () => {
+        const nft = payload.nft;
+
+        await payload.nft.setForwarder(payload.nftMeta.address);
+
+        const timestamp = await time.latest() + 1000;
+
+        const projectUrl = payload.projects.jsstore;
+        const tokenId = payload.getProjectId(projectUrl);
+        const star = 10;
+        const fork = 5;
+        const to = payload.signer2.address;
+        const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
+
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+            signature, by: payload.operator.address, validUntil: timestamp
+        });
+
+        const req: OSNFTRelayer.ForwardRequestStruct = {
+            from: payload.signer2.address,
+            data: txData.data as string,
+            value: 0,
+            gas: 100000,
+            to: nft.address,
+            validUntil: timestamp,
+        };
+
+        const signatureForRelayer = await signMessageForRelayer.call(payload, payload.signer2, req);
+
+        const tx = payload.relayer.execute(req, signatureForRelayer);
+
+        await expect(tx).revertedWith('ERC20: insufficient allowance');
+
+        await payload.nft.setForwarder(payload.relayer.address);
+
+    })
+
     it('minting to a owner by relayer', async () => {
         const nft = payload.nft;
 
-        await nft.setForwarder(payload.relayer.address);
 
         const timestamp = await time.latest() + 1000;
 
@@ -315,8 +351,6 @@ export function testMint(payload: IDeployedPayload) {
 
     it('minting to a owner', async () => {
         const nft = payload.nft;
-
-        await nft.setForwarder(payload.relayer.address);
 
         const timestamp = await time.latest() + 1000;
 
