@@ -11,24 +11,12 @@ contract OSNFTMeta is
     ContextUpgradeable,
     OwnableUpgradeable
 {
-    address internal _relayerAddress;
     mapping(address => bool) internal _paymentTokensAllowed;
     mapping(address => bool) internal _verifiers;
+    address internal defaultMarketplace_;
 
     function initialize() public initializer {
         __Ownable_init();
-    }
-
-    function getRelayer() external view returns (address) {
-        return _relayerAddress;
-    }
-
-    function setRelayer(address relayer) external onlyOwner {
-        _relayerAddress = relayer;
-    }
-
-    function isRelayer(address value) external view returns (bool) {
-        return value == _relayerAddress;
     }
 
     function addPayableTokens(address[] calldata tokens) external onlyOwner {

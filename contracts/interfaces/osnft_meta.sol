@@ -6,12 +6,6 @@ interface IOSNFTMeta {
     event VerifierAdded(address account);
     event VerifierRemoved(address account);
 
-    function getRelayer() external view returns (address);
-
-    function setRelayer(address relayer) external;
-
-    function isRelayer(address value) external view returns (bool);
-
     function addPayableTokens(address[] calldata tokens) external;
 
     function removePayableToken(address token) external;

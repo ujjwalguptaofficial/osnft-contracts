@@ -344,12 +344,6 @@ contract OSNFT is
         }
     }
 
-    function _requireRelayer() internal view {
-        if (!_metaContract.isRelayer(_msgSender())) {
-            revert RequireRelayer();
-        }
-    }
-
     function _msgSender()
         internal
         view
