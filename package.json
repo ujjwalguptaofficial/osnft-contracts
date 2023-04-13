@@ -13,9 +13,14 @@
     "graph-local-clean": "docker-compose down -v && docker-compose rm -v && rm -rf data/ipfs data/postgres",
     "create-local": "graph create --node http://127.0.0.1:8020 osnft-contracts",
     "deploy-local": "cd ./subgraph && graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 osnft-contracts",
-    "hardhat-local": "hardhat node --hostname 0.0.0.0"
+    "hardhat-local": "hardhat node --hostname 0.0.0.0",
+    "deploy:relayer:mumbai": "hardhat run --network mumbai scripts/deploy_relayer.ts --show-stack-traces",
+    "deploy:osnft_meta:mumbai": "hardhat run --network mumbai scripts/deploy_osnft_meta.ts --show-stack-traces",
+    "deploy:osnft:mumbai": "hardhat run --network mumbai scripts/deploy_osnft.ts --show-stack-traces",
+    "add:payment_token:mumbai": "hardhat run --network mumbai scripts/deploy_relayer.ts --show-stack-traces"
   },
   "devDependencies": {
+    "@anders-t/ethers-ledger": "^1.0.4",
     "@graphprotocol/graph-cli": "^0.43.0",
     "@graphprotocol/graph-ts": "^0.29.3",
     "@graphprotocol/hardhat-graph": "https://github.com/graphprotocol/hardhat-graph",
@@ -24,6 +29,7 @@
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/hardhat-upgrades": "^1.22.1",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "hardhat": "^2.13.0",
     "hardhat-ethers": "^1.0.1"
   },
