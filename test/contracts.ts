@@ -4,6 +4,7 @@ import { IDeployedPayload } from "./interfaces";
 import { getProjectId } from "./utils";
 import { testNFT } from "./nft";
 import { testNFTMeta } from "./nft_meta";
+import { testContractEarning } from "./contract_earning";
 const writeJsonFile = require("write-json");
 
 function getSellId(tokenId: BigNumber, from: string) {
@@ -99,6 +100,10 @@ describe("contracts", () => {
     describe('OSNFT', () => {
         testNFT(payload);
     });
+
+    describe("contract earning", () => {
+        testContractEarning(payload);
+    })
 
     describe('deploy subgraph', () => {
         // it('deploy', async () => {

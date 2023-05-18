@@ -320,7 +320,9 @@ contract OSNFT is
         address tokenAddress,
         uint256 amount
     ) public onlyOwner {
-        _requirePayment(tokenAddress, address(this), accountTo, amount);
+        require(amount <= _earning[tokenAddress], "Amount exceed earning");
+        _earning[tokenAddress] -= amount;
+        _requirePaymentFromContract(tokenAddress, accountTo, amount);
     }
 
     function _requireValidSignature(

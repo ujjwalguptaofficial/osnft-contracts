@@ -3,7 +3,7 @@
   "scripts": {
     "clean": "hardhat clean",
     "compile": "hardhat compile",
-    "test": "cross-env REPORT_GAS=true hardhat test",
+    "test": "hardhat test",
     "dev": "hardhat node",
     "deploy:test": "hardhat run --network localhost scripts/test.ts",
     "graph-test": "graph test",
@@ -17,7 +17,9 @@
     "deploy:relayer:mumbai": "hardhat run --network mumbai scripts/deploy_relayer.ts --show-stack-traces",
     "deploy:osnft_meta:mumbai": "hardhat run --network mumbai scripts/deploy_osnft_meta.ts --show-stack-traces",
     "deploy:osnft:mumbai": "hardhat run --network mumbai scripts/deploy_osnft.ts --show-stack-traces",
-    "add:payment_token:mumbai": "hardhat run --network mumbai scripts/deploy_relayer.ts --show-stack-traces"
+    "add:payment_token:mumbai": "hardhat run --network mumbai scripts/add_payable_token.ts --show-stack-traces",
+    "verify:NFT:mumbai": "hardhat verify --network mumbai 0x8dE41C47D28b28269befe246160F4208ad9f6446",
+    "verify:NFTMeta:mumbai": "hardhat verify --network mumbai 0x4F0b0Ef5e039a8499CDfe7a71A0eFbA775686C76"
   },
   "devDependencies": {
     "@anders-t/ethers-ledger": "^1.0.4",
