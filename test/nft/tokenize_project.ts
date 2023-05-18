@@ -400,4 +400,65 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         );
     })
 
+    it('success jsstore-examples ', async () => {
+        const nft = payload.nft;
+        const timestamp = await time.latest() + 1000;
+        const basePrice = ethers.utils.parseEther('100');
+        const popularityFactorPrice = ethers.utils.parseEther('1');
+        const paymentToken = payload.erc20Token2.address;
+        const royality = 5;
+        const projectUrl = payload.projects["jsstore-example"];
+        const tokenId = payload.getProjectId(projectUrl);
+        const to = payload.signer2.address;
+
+        const projectInfoBefore = nft.getProject(tokenId);
+
+        await expect(projectInfoBefore).revertedWithCustomError(nft, 'InvalidToken').withArgs(tokenId);
+
+
+        const signature = signMessageForProjectTokenize(payload.deployer, projectUrl, payload.signer2.address, timestamp
+        );
+
+        // allow payment token
+
+        await payload.erc20Token1.approve(nft.address, ethers.constants.MaxUint256);
+
+        const tx = nft.connect(payload.signer2).tokenizeProject({
+            basePrice: basePrice,
+            paymentToken: paymentToken,
+            popularityFactorPrice: popularityFactorPrice,
+            projectUrl,
+            creatorRoyalty: royality
+        }, {
+            signature, by: payload.deployer.address, validUntil: timestamp
+        });
+
+
+        await expect(tx).to.emit(nft, "ProjectTokenize").withArgs(
+            tokenId, to, basePrice, popularityFactorPrice, paymentToken, royality,
+            projectUrl
+        );
+
+        const projectInfoAfter = await nft.getProject(tokenId);
+
+        expect(projectInfoAfter.paymentToken).equal(paymentToken);
+        expect(projectInfoAfter.basePrice).equal(basePrice);
+        expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
+        expect(projectInfoAfter.creatorRoyalty).equal(royality);
+        expect(projectInfoAfter.tokenCount).equal(1);
+        expect(projectInfoAfter.creator).equal(to);
+        expect(projectInfoAfter.treasuryAmount).equal(0);
+        expect(projectInfoAfter.lastMintPrice).equal(0);
+
+        // balance of creator
+
+        const balanceOfCreator = await nft.balanceOf(to, tokenId);
+        expect(balanceOfCreator).equal(1);
+
+        // check for transfer events
+
+        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
+            to, ethers.constants.AddressZero, to, tokenId, 1
+        );
+    })
 }

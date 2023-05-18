@@ -90,7 +90,8 @@ describe("contracts", () => {
         }) as any;
         payload.erc20Token2 = deployedContract;
 
-        await payload.erc20Token2.mint(payload.signer2.address, ethers.constants.MaxUint256);
+        // await payload.erc20Token2.mint(payload.signer2.address, ethers.constants.MaxUint256);
+        await payload.erc20Token2.mint(payload.signer4.address, ethers.constants.MaxUint256);
     })
 
     describe('OSNFT MEta', () => {

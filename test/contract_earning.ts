@@ -13,7 +13,7 @@ export function testContractEarning(payload: IDeployedPayload) {
             payload.erc20Token2.address
         );
         expect(earning).to.greaterThan(0);
-        // expect(earningForToken2).to.greaterThan(0);
+        expect(earningForToken2).to.greaterThan(0);
     })
 
     it('withdraw earning more than available', async () => {
@@ -30,7 +30,7 @@ export function testContractEarning(payload: IDeployedPayload) {
 
     })
 
-    it('withdraw earning successful', async () => {
+    it('withdraw earning successful for erc20token1', async () => {
         const nft = payload.nft;
 
         const earning = await nft.getContractEarning(
@@ -45,6 +45,25 @@ export function testContractEarning(payload: IDeployedPayload) {
 
         const earningAfter = await nft.getContractEarning(
             payload.erc20Token1.address
+        );
+        expect(earningAfter).equal(0);
+    })
+
+    it('withdraw earning successful for erc20token2', async () => {
+        const nft = payload.nft;
+
+        const earning = await nft.getContractEarning(
+            payload.erc20Token2.address
+        );
+
+        const tx = nft.withdrawEarning(payload.erc20Token2.address, earning);
+
+        await expect(tx).to.emit(payload.erc20Token2, `Transfer`).withArgs(
+            nft.address, payload.deployer.address, earning
+        )
+
+        const earningAfter = await nft.getContractEarning(
+            payload.erc20Token2.address
         );
         expect(earningAfter).equal(0);
     })
