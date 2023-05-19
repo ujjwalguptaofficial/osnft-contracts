@@ -121,6 +121,15 @@ contract OSNFT is
         );
     }
 
+    function isApprovedForAll(
+        address account,
+        address operator
+    ) public view virtual override returns (bool) {
+        return
+            _metaContract.isApprovedForAll(operator) ||
+            super.isApprovedForAll(account, operator);
+    }
+
     function mintTo(
         uint256 tokenId,
         uint256 star,

@@ -17,4 +17,6 @@ interface IOSNFTMeta {
     function addVerifier(address account) external;
 
     function removeVerifier(address account) external;
+
+    function isApprovedForAll(address operator) external view returns (bool);
 }

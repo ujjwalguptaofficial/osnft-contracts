@@ -14,6 +14,7 @@ contract OSNFTMeta is
     mapping(address => bool) internal _paymentTokensAllowed;
     mapping(address => bool) internal _verifiers;
     address internal defaultMarketplace_;
+    address internal defaultLoanProvider_;
 
     function initialize() public initializer {
         __Ownable_init();
@@ -45,6 +46,11 @@ contract OSNFTMeta is
     function removeVerifier(address account) external onlyOwner {
         delete _verifiers[account];
         emit VerifierRemoved(account);
+    }
+
+    function isApprovedForAll(address operator) public view returns (bool) {
+        return
+            operator == defaultMarketplace_ || operator == defaultLoanProvider_;
     }
 
     /**
