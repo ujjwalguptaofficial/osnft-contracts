@@ -8,6 +8,7 @@ import { ethers, upgrades } from "hardhat";
 import { testProjectTokenize } from "./tokenize_project";
 import { testMint } from "./mint";
 import { testBurn } from "./burn";
+import { testApproval } from "./is_approval";
 
 export function testNFT(payload: IDeployedPayload) {
 
@@ -79,6 +80,10 @@ export function testNFT(payload: IDeployedPayload) {
 
     describe("tokenize project", async () => {
         testProjectTokenize(payload);
+    })
+
+    describe("testApproval", () => {
+        testApproval(payload);
     })
 
     describe('mint', async () => {
