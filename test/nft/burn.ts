@@ -185,7 +185,7 @@ export function testBurn(payload: IDeployedPayload) {
         const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentToken);
 
 
-        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -209,10 +209,10 @@ export function testBurn(payload: IDeployedPayload) {
             expectedMintPriceBN, 1
         );
 
-        const creatorRoyalty = await projectInfoAfter.creatorRoyalty;
+        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
 
         const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), creatorRoyalty
+            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
         );
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);

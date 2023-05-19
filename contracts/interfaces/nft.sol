@@ -11,7 +11,7 @@ interface IOSNFT {
         uint256 popularityFactorPrice;
         // last mint price
         uint256 lastMintPrice;
-        uint8 creatorRoyalty;
+        uint8 minCreatorRoyalty;
         uint256 tokenCount;
         uint256 treasuryAmount;
     }
@@ -27,7 +27,7 @@ interface IOSNFT {
         uint256 basePrice;
         uint256 popularityFactorPrice;
         address paymentToken;
-        uint8 creatorRoyalty;
+        uint8 minCreatorRoyalty;
     }
 
     // errors
@@ -51,7 +51,7 @@ interface IOSNFT {
         uint256 basePrice,
         uint256 popularityFactorPrice,
         address paymentToken,
-        uint8 creatorRoyalty,
+        uint8 minCreatorRoyalty,
         string projectUrl
     );
     event TokenMint(

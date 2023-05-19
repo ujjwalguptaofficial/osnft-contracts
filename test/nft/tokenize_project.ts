@@ -62,7 +62,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
@@ -87,7 +87,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
@@ -112,7 +112,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -137,7 +137,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl: payload.projects["godam-vue"],
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -163,7 +163,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -189,7 +189,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -215,7 +215,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.signer4.address, validUntil: timestamp
         });
@@ -241,7 +241,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -278,7 +278,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: to, validUntil: timestamp
         });
@@ -294,7 +294,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         expect(projectInfoAfter.paymentToken).equal(paymentToken);
         expect(projectInfoAfter.basePrice).equal(basePrice);
         expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
-        expect(projectInfoAfter.creatorRoyalty).equal(royality);
+        expect(projectInfoAfter.minCreatorRoyalty).equal(royality);
         expect(projectInfoAfter.tokenCount).equal(1);
         expect(projectInfoAfter.creator).equal(payload.deployer.address);
         expect(projectInfoAfter.treasuryAmount).equal(0);
@@ -330,7 +330,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -366,7 +366,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -382,7 +382,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         expect(projectInfoAfter.paymentToken).equal(paymentToken);
         expect(projectInfoAfter.basePrice).equal(basePrice);
         expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
-        expect(projectInfoAfter.creatorRoyalty).equal(royality);
+        expect(projectInfoAfter.minCreatorRoyalty).equal(royality);
         expect(projectInfoAfter.tokenCount).equal(1);
         expect(projectInfoAfter.creator).equal(to);
         expect(projectInfoAfter.treasuryAmount).equal(0);
@@ -428,7 +428,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
             paymentToken: paymentToken,
             popularityFactorPrice: popularityFactorPrice,
             projectUrl,
-            creatorRoyalty: royality
+            minCreatorRoyalty: royality
         }, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
@@ -444,7 +444,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         expect(projectInfoAfter.paymentToken).equal(paymentToken);
         expect(projectInfoAfter.basePrice).equal(basePrice);
         expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
-        expect(projectInfoAfter.creatorRoyalty).equal(royality);
+        expect(projectInfoAfter.minCreatorRoyalty).equal(royality);
         expect(projectInfoAfter.tokenCount).equal(1);
         expect(projectInfoAfter.creator).equal(to);
         expect(projectInfoAfter.treasuryAmount).equal(0);

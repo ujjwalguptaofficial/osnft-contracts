@@ -84,7 +84,7 @@ export function testMint(payload: IDeployedPayload) {
         const fork = 10;
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.mintTo(tokenId, star, fork, {
+        const tx = nft.mintTo(tokenId, star, fork, 10, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -101,7 +101,7 @@ export function testMint(payload: IDeployedPayload) {
         const fork = 10;
         const signature = signMessage(payload.signer4, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, 10, {
             signature, by: payload.signer4.address, validUntil: timestamp
         });
 
@@ -118,7 +118,7 @@ export function testMint(payload: IDeployedPayload) {
         const fork = 10;
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, 10, {
             signature, by: payload.deployer.address, validUntil: timestamp
         });
 
@@ -135,7 +135,7 @@ export function testMint(payload: IDeployedPayload) {
         const fork = 10;
         const signature = signMessage(payload.deployer, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.operator).mintTo(tokenId, star, fork, 10, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -152,7 +152,7 @@ export function testMint(payload: IDeployedPayload) {
         const fork = 10;
         const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, 20, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -202,7 +202,7 @@ export function testMint(payload: IDeployedPayload) {
 
         const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
 
-        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, 20, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -223,10 +223,10 @@ export function testMint(payload: IDeployedPayload) {
             expectedMintPriceBN, 1
         );
 
-        const creatorRoyalty = await projectInfoAfter.creatorRoyalty;
+        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
 
         const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), creatorRoyalty
+            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
         );
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
@@ -278,7 +278,7 @@ export function testMint(payload: IDeployedPayload) {
         const to = payload.signer2.address;
         const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 20, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -321,7 +321,7 @@ export function testMint(payload: IDeployedPayload) {
 
         // ; (await nft.populateTransaction.burn()).data
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 20, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -361,7 +361,7 @@ export function testMint(payload: IDeployedPayload) {
         const to = payload.signer2.address;
         const signature = signMessage(payload.operator, tokenId.toString(), star, fork, timestamp);
 
-        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, 20, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -384,7 +384,7 @@ export function testMint(payload: IDeployedPayload) {
         // allow payment token
         await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 20, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -418,7 +418,7 @@ export function testMint(payload: IDeployedPayload) {
         // allow payment token
         await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 15, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -455,7 +455,7 @@ export function testMint(payload: IDeployedPayload) {
         // allow payment token
         await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 10, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -490,7 +490,7 @@ export function testMint(payload: IDeployedPayload) {
         // allow payment token
         await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 10, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -525,7 +525,7 @@ export function testMint(payload: IDeployedPayload) {
         // allow payment token
         await payload.erc20Token1.connect(payload.signer3).approve(nft.address, ethers.constants.MaxUint256);
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, 10, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -567,7 +567,7 @@ export function testMint(payload: IDeployedPayload) {
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
-        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, {
+        const txData = await nft.populateTransaction.mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -601,10 +601,10 @@ export function testMint(payload: IDeployedPayload) {
             expectedMintPriceBN, 1
         );
 
-        const creatorRoyalty = await projectInfoAfter.creatorRoyalty;
+        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
 
         const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), creatorRoyalty
+            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
         );
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
@@ -658,7 +658,7 @@ export function testMint(payload: IDeployedPayload) {
         const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
 
 
-        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -680,10 +680,10 @@ export function testMint(payload: IDeployedPayload) {
             expectedMintPriceBN, 1
         );
 
-        const creatorRoyalty = await projectInfoAfter.creatorRoyalty;
+        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
 
         const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), creatorRoyalty
+            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
         );
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
@@ -732,7 +732,7 @@ export function testMint(payload: IDeployedPayload) {
         const balanceOfCreatorBefore = await payload.erc20Token2.balanceOf(projectInfoBefore.creator);
 
 
-        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, {
+        const tx = nft.connect(payload.signer4).mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -754,10 +754,10 @@ export function testMint(payload: IDeployedPayload) {
             expectedMintPriceBN, 1
         );
 
-        const creatorRoyalty = await projectInfoAfter.creatorRoyalty;
+        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
 
         const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), creatorRoyalty
+            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
         );
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);

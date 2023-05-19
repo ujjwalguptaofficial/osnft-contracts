@@ -91,7 +91,7 @@ contract OSNFT is
             keccak256(abi.encodePacked(input.projectUrl))
         );
 
-        if (input.creatorRoyalty > 10) {
+        if (input.minCreatorRoyalty > 10) {
             revert RoyaltyLimitExceeded();
         }
 
@@ -105,7 +105,7 @@ contract OSNFT is
         project.basePrice = input.basePrice;
         project.paymentToken = input.paymentToken;
         project.popularityFactorPrice = input.popularityFactorPrice;
-        project.creatorRoyalty = input.creatorRoyalty;
+        project.minCreatorRoyalty = input.minCreatorRoyalty;
 
         // mint first nft to creator free of cost
         _mintTo(tokenId, creator);
@@ -116,7 +116,7 @@ contract OSNFT is
             input.basePrice,
             input.popularityFactorPrice,
             input.paymentToken,
-            input.creatorRoyalty,
+            input.minCreatorRoyalty,
             input.projectUrl
         );
     }
@@ -134,6 +134,7 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
+        uint8 royalty,
         SignatureMeta calldata verifierSignatureData
     ) external {
         _requireVerifier(verifierSignatureData.by);
@@ -152,7 +153,7 @@ contract OSNFT is
 
         _requireValidSignature(digest, verifierSignatureData);
 
-        _mintAndTakePayment(tokenId, star, fork, _msgSender());
+        _mintAndTakePayment(tokenId, star, fork, royalty, _msgSender());
     }
 
     function mintPrice(
@@ -174,6 +175,7 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
+        uint8 royalty,
         address to
     ) internal {
         if (balanceOf(to, tokenId) > 0) {
@@ -198,15 +200,16 @@ contract OSNFT is
 
         // send Royalty to creator
 
-        uint256 creatorRoyalty = _percentageOf(
+        uint8 creatorRoyalty = project.minCreatorRoyalty;
+        uint256 minCreatorRoyalty = _percentageOf(
             calculatedMintPrice,
-            project.creatorRoyalty
+            creatorRoyalty
         );
 
         _requirePaymentFromContract(
             project.paymentToken,
             project.creator,
-            creatorRoyalty
+            minCreatorRoyalty
         );
 
         // store money in treasury
@@ -220,7 +223,7 @@ contract OSNFT is
 
         uint256 amountForTreasury = calculatedMintPrice -
             contractRoyalty -
-            creatorRoyalty;
+            minCreatorRoyalty;
 
         project.treasuryAmount += amountForTreasury;
         project.lastMintPrice = calculatedMintPrice;
