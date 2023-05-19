@@ -203,7 +203,7 @@ contract OSNFT is
         uint8 creatorRoyalty = project.minCreatorRoyalty;
         uint256 minCreatorRoyalty = _percentageOf(
             calculatedMintPrice,
-            creatorRoyalty
+            royalty > creatorRoyalty ? royalty : creatorRoyalty
         );
 
         _requirePaymentFromContract(

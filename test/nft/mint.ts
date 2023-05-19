@@ -202,7 +202,9 @@ export function testMint(payload: IDeployedPayload) {
 
         const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
 
-        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, 20, {
+        const royaltyGiven = 20;
+
+        const tx = nft.connect(payload.signer2).mintTo(tokenId, star, fork, royaltyGiven, {
             signature, by: payload.operator.address, validUntil: timestamp
         });
 
@@ -223,10 +225,10 @@ export function testMint(payload: IDeployedPayload) {
             expectedMintPriceBN, 1
         );
 
-        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
+        // const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
 
         const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
+            ethers.BigNumber.from(expectedMintPrice), royaltyGiven
         );
 
         const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
