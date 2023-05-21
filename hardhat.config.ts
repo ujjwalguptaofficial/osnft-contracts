@@ -13,9 +13,9 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 2000,
-      }
-    }
+        runs: 1000000,
+      },
+    },
   },
   defaultNetwork: "localhost",
   networks: {
@@ -32,8 +32,8 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: process.env.POLYGONSCAN_API_KEY
-  }
+    apiKey: process.env.POLYGONSCAN_API_KEY,
+  },
 };
 
 export default config;

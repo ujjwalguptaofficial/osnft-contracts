@@ -22,7 +22,6 @@ contract OSNFT is
     ERC2771ContextUpgradeable
 {
     // variables
-
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
@@ -62,10 +61,6 @@ contract OSNFT is
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external {
-        if (input.paymentToken == address(0)) {
-            revert ZeroPaymentToken();
-        }
-
         if (!_metaContract.isPayableToken(input.paymentToken)) {
             revert PaymentTokenNotAllowed();
         }
