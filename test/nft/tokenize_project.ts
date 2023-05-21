@@ -190,7 +190,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     const basePrice = 100;
     const popularityFactorPrice = 1;
     const paymentToken = payload.erc20Token1.address;
-    const royality = 11;
+    const royality = 101;
     const projectUrl = payload.projects.jsstore;
     const tokenId = payload.getProjectId(projectUrl);
 

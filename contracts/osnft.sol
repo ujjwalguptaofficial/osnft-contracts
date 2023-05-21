@@ -27,8 +27,10 @@ contract OSNFT is
     // tokenId => contributor => initial contribution to project pool
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
 
-    uint8 internal mintRoyalty;
-    uint8 internal burnRoyalty;
+    // percentage scaled by 10, ie 1% = 10
+    uint16 internal mintRoyalty;
+    // percentage scaled by 10, ie 1% = 10
+    uint16 internal burnRoyalty;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
     bytes32 internal _TYPE_HASH_NFTMintData;
     IOSNFTMeta internal _metaContract;
@@ -36,8 +38,8 @@ contract OSNFT is
     function initialize(string memory uri_, address meta_) public initializer {
         __ERC1155_init(uri_);
         __Ownable_init();
-        mintRoyalty = 1;
-        burnRoyalty = 2;
+        mintRoyalty = 10;
+        burnRoyalty = 20;
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
             "ProjectTokenizeData(string projectUrl,address creator,uint256 validUntil)"
@@ -87,7 +89,7 @@ contract OSNFT is
             keccak256(abi.encodePacked(input.projectUrl))
         );
 
-        if (input.minCreatorRoyalty > 10) {
+        if (input.minCreatorRoyalty > 100) {
             revert RoyaltyLimitExceeded();
         }
 
@@ -117,6 +119,7 @@ contract OSNFT is
         );
     }
 
+    // @todo check what is this
     function isApprovedForAll(
         address account,
         address operator
@@ -130,7 +133,7 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
-        uint8 royalty,
+        uint16 royalty,
         SignatureMeta calldata verifierSignatureData
     ) external {
         _requireVerifier(verifierSignatureData.by);
@@ -171,7 +174,7 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
-        uint8 royalty,
+        uint16 royalty,
         address to
     ) internal {
         if (balanceOf(to, tokenId) > 0) {
@@ -196,7 +199,7 @@ contract OSNFT is
 
         // send Royalty to creator
 
-        uint8 creatorRoyalty = project.minCreatorRoyalty;
+        uint16 creatorRoyalty = project.minCreatorRoyalty;
         uint256 minCreatorRoyalty = _percentageOf(
             calculatedMintPrice,
             royalty > creatorRoyalty ? royalty : creatorRoyalty
@@ -282,9 +285,9 @@ contract OSNFT is
 
     function _percentageOf(
         uint256 value,
-        uint8 percentage
+        uint16 percentage
     ) internal pure returns (uint256) {
-        return (value / 100) * percentage;
+        return (value * percentage) / 1000;
     }
 
     function _requirePayment(

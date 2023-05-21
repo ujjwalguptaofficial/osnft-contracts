@@ -6,7 +6,7 @@ interface IOSNFT {
     struct ProjectInfo {
         uint256 basePrice;
         address creator;
-        uint8 minCreatorRoyalty;
+        uint16 minCreatorRoyalty;
         address paymentToken;
         // price of one popularity factor
         uint256 popularityFactorPrice;
