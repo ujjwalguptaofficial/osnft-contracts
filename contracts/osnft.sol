@@ -38,8 +38,12 @@ contract OSNFT is
     function initialize(string memory uri_, address meta_) public initializer {
         __ERC1155_init(uri_);
         __Ownable_init();
+
         mintRoyalty = 10;
+        emit MintRoyaltyUpdated(10);
         burnRoyalty = 20;
+        emit BurnRoyaltyUpdated(20);
+
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
             "ProjectTokenizeData(string projectUrl,address creator,uint256 validUntil)"
@@ -212,7 +216,6 @@ contract OSNFT is
         );
 
         // store money in treasury
-
         uint256 contractRoyalty = _percentageOf(
             calculatedMintPrice,
             mintRoyalty
@@ -319,23 +322,6 @@ contract OSNFT is
         return _earning[paymentToken];
     }
 
-    function withdrawEarning(
-        address tokenAddress,
-        uint256 amount
-    ) external onlyOwner {
-        withdrawEarningTo(owner(), tokenAddress, amount);
-    }
-
-    function withdrawEarningTo(
-        address accountTo,
-        address tokenAddress,
-        uint256 amount
-    ) public onlyOwner {
-        require(amount <= _earning[tokenAddress], "Amount exceed earning");
-        _earning[tokenAddress] -= amount;
-        _requirePaymentFromContract(tokenAddress, accountTo, amount);
-    }
-
     function _requireValidSignature(
         bytes32 digest,
         SignatureMeta calldata signatureData
@@ -357,6 +343,35 @@ contract OSNFT is
         }
     }
 
+    // Owner Functions
+    function updateMintRoyalty(uint16 newMintRoyalty) external onlyOwner {
+        mintRoyalty = newMintRoyalty;
+        emit MintRoyaltyUpdated(newMintRoyalty);
+    }
+
+    function updateBurnRoyalty(uint16 newBurnRoyalty) external onlyOwner {
+        burnRoyalty = newBurnRoyalty;
+        emit BurnRoyaltyUpdated(newBurnRoyalty);
+    }
+
+    function withdrawEarning(
+        address tokenAddress,
+        uint256 amount
+    ) external onlyOwner {
+        withdrawEarningTo(owner(), tokenAddress, amount);
+    }
+
+    function withdrawEarningTo(
+        address accountTo,
+        address tokenAddress,
+        uint256 amount
+    ) public onlyOwner {
+        require(amount <= _earning[tokenAddress], "Amount exceed earning");
+        _earning[tokenAddress] -= amount;
+        _requirePaymentFromContract(tokenAddress, accountTo, amount);
+    }
+
+    // Overrides
     function _msgSender()
         internal
         view

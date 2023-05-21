@@ -60,6 +60,8 @@ interface IOSNFT {
         uint256 fork,
         uint256 mintPrice
     );
+    event MintRoyaltyUpdated(uint16 newMintRoyalty);
+    event BurnRoyaltyUpdated(uint16 newBurnRoyalty);
 
     function tokenizeProject(
         ProjectTokenizeInput calldata input,
