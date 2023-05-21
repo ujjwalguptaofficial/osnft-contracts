@@ -33,6 +33,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "hardhat": "^2.13.0",
+    "hardhat-contract-sizer": "^2.8.0",
     "hardhat-ethers": "^1.0.1"
   },
   "dependencies": {

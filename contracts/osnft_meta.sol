@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 import "./interfaces/osnft_meta.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+// @audit this import is not needed as there's no function in this contract that needs the msg.sender context
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 contract OSNFTMeta is

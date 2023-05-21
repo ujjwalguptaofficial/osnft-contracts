@@ -24,13 +24,14 @@ contract OSNFT is
     // variables
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
+    // tokenId => contributor => initial contribution to project pool
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
 
-    uint8 mintRoyalty;
-    uint8 burnRoyalty;
+    uint8 internal mintRoyalty;
+    uint8 internal burnRoyalty;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
     bytes32 internal _TYPE_HASH_NFTMintData;
-    IOSNFTMeta _metaContract;
+    IOSNFTMeta internal _metaContract;
 
     function initialize(string memory uri_, address meta_) public initializer {
         __ERC1155_init(uri_);
