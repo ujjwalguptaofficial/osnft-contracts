@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -15,7 +15,7 @@ import "./interfaces/osnft_meta.sol";
 
 contract OSNFT is
     ERC1155Upgradeable,
-    OwnableUpgradeable,
+    Ownable2StepUpgradeable,
     ReentrancyGuardUpgradeable,
     EIP712Upgradeable,
     IOSNFT,
@@ -37,7 +37,7 @@ contract OSNFT is
 
     function initialize(string memory uri_, address meta_) public initializer {
         __ERC1155_init(uri_);
-        __Ownable_init();
+        __Ownable2Step_init();
 
         mintRoyalty = 10;
         emit MintRoyaltyUpdated(10);
@@ -378,7 +378,7 @@ contract OSNFT is
         override(ContextUpgradeable, ERC2771ContextUpgradeable)
         returns (address sender)
     {
-        sender = ERC2771ContextUpgradeable._msgSender();
+        sender = super._msgSender();
     }
 
     function _msgData()
@@ -387,7 +387,24 @@ contract OSNFT is
         override(ContextUpgradeable, ERC2771ContextUpgradeable)
         returns (bytes calldata)
     {
-        return ERC2771ContextUpgradeable._msgData();
+        return super._msgData();
+    }
+
+    function transferOwnership(
+        address newOwner
+    )
+        public
+        virtual
+        override(Ownable2StepUpgradeable, OwnableUpgradeable)
+        onlyOwner
+    {
+        super.transferOwnership(newOwner);
+    }
+
+    function _transferOwnership(
+        address newOwner
+    ) internal virtual override(Ownable2StepUpgradeable, OwnableUpgradeable) {
+        super._transferOwnership(newOwner);
     }
 
     /**

@@ -5,6 +5,7 @@ import { getProjectId } from "./utils";
 import { testNFT } from "./nft";
 import { testNFTMeta } from "./nft_meta";
 import { testContractEarning } from "./contract_earning";
+import { testMetaOwnershipTransfer } from "./nft_meta/transferOwnership.test";
 const writeJsonFile = require("write-json");
 
 function getSellId(tokenId: BigNumber, from: string) {
@@ -122,6 +123,10 @@ describe("contracts", () => {
 
   describe("contract earning", () => {
     testContractEarning(payload);
+  });
+
+  describe("test meta ownership transfer", () => {
+    testMetaOwnershipTransfer(payload);
   });
 
   describe("deploy subgraph", () => {
