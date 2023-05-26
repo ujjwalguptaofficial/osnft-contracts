@@ -3,7 +3,7 @@
   "scripts": {
     "clean": "hardhat clean",
     "compile": "hardhat compile",
-    "test": "hardhat test",
+    "test": "hardhat test --parallel",
     "dev": "hardhat node",
     "deploy:test": "hardhat run --network localhost scripts/test.ts",
     "graph-test": "graph test",

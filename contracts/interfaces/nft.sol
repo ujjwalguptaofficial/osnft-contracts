@@ -34,6 +34,7 @@ interface IOSNFT {
     error AlreadyMinted();
     error PaymentFailed();
     error RoyaltyLimitExceeded();
+    error InadequateRoyalty();
     error RequireTokenOwner();
     error RequireVerifier();
     error RequireRelayer();
@@ -58,7 +59,8 @@ interface IOSNFT {
         address to,
         uint256 star,
         uint256 fork,
-        uint256 mintPrice
+        uint256 mintPrice,
+        uint16 royaltyOpted
     );
     event MintRoyaltyUpdated(uint16 newMintRoyalty);
     event BurnRoyaltyUpdated(uint16 newBurnRoyalty);

@@ -996,6 +996,47 @@ export function testMint(payload: IDeployedPayload) {
     );
   });
 
+  it("should revert if royalty paid is less than minRoyalty for the project", async () => {
+    const nft = payload.nft;
+    const timestamp = (await time.latest()) + 1000;
+
+    const projectUrl = payload.projects["jsstore-example"];
+    const tokenId = payload.getProjectId(projectUrl);
+    const star = 45;
+    const fork = 10;
+    const to = payload.signer4.address;
+    const signature = signMessage(
+      payload.operator,
+      tokenId.toString(),
+      star,
+      fork,
+      timestamp
+    );
+
+    // allow payment token
+    await payload.erc20Token2
+      .connect(payload.signer4)
+      .approve(nft.address, ethers.constants.MaxUint256);
+
+    const projectInfoBefore = await nft.getProject(tokenId);
+    const contractEarningBefore = await nft.getContractEarning(
+      projectInfoBefore.paymentToken
+    );
+    const balanceOfCreatorBefore = await payload.erc20Token2.balanceOf(
+      projectInfoBefore.creator
+    );
+
+    const tx = nft
+      .connect(payload.signer4)
+      .mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty - 1, {
+        signature,
+        by: payload.operator.address,
+        validUntil: timestamp,
+      });
+
+    await expect(tx).to.be.revertedWithCustomError(nft, "InadequateRoyalty");
+  });
+
   it("mint jsstore example success to signer4", async () => {
     const nft = payload.nft;
     const timestamp = (await time.latest()) + 1000;
@@ -1072,12 +1113,10 @@ export function testMint(payload: IDeployedPayload) {
     expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
     // balance of creator
-
     const balanceOfCreator = await nft.balanceOf(to, tokenId);
     expect(balanceOfCreator).equal(1);
 
-    // check tokenmint
-
+    // check token mint
     expect(tx)
       .to.emit(nft, "TokenMint")
       .withArgs(tokenId, to, star, fork, expectedMintPrice);

@@ -1,8 +1,5 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { IDeployedPayload } from "../interfaces";
-import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
 
 export function testMintRoyaltyUpdate(payload: IDeployedPayload) {
   it("lets owner update mintRoyalty", async () => {

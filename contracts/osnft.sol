@@ -187,6 +187,10 @@ contract OSNFT is
 
         ProjectInfo storage project = _projects[tokenId];
 
+        if (project.minCreatorRoyalty > royalty) {
+            revert InadequateRoyalty();
+        }
+
         if (project.creator == address(0)) {
             revert InvalidToken(tokenId);
         }
@@ -202,12 +206,7 @@ contract OSNFT is
         );
 
         // send Royalty to creator
-
-        uint16 creatorRoyalty = project.minCreatorRoyalty;
-        uint256 minCreatorRoyalty = _percentageOf(
-            calculatedMintPrice,
-            royalty > creatorRoyalty ? royalty : creatorRoyalty
-        );
+        uint256 minCreatorRoyalty = _percentageOf(calculatedMintPrice, royalty);
 
         _requirePaymentFromContract(
             project.paymentToken,
@@ -234,7 +233,7 @@ contract OSNFT is
         // send money to creator
 
         _mintTo(tokenId, to);
-        emit TokenMint(tokenId, to, star, fork, calculatedMintPrice);
+        emit TokenMint(tokenId, to, star, fork, calculatedMintPrice, royalty);
     }
 
     function _mintTo(uint256 tokenId, address to) internal {
