@@ -12,8 +12,8 @@ contract OSNFTMeta is
     ContextUpgradeable,
     Ownable2StepUpgradeable
 {
-    mapping(address => bool) internal _paymentTokensAllowed;
-    mapping(address => bool) internal _verifiers;
+    mapping(address => uint256) internal _paymentTokensAllowed;
+    mapping(address => uint256) internal _verifiers;
     address internal defaultMarketplace_;
     address internal defaultLoanProvider_;
 
@@ -23,7 +23,7 @@ contract OSNFTMeta is
 
     function addPayableTokens(address[] calldata tokens) external onlyOwner {
         for (uint256 index = 0; index < tokens.length; index++) {
-            _paymentTokensAllowed[tokens[index]] = true;
+            _paymentTokensAllowed[tokens[index]] = 1;
         }
     }
 
@@ -32,15 +32,15 @@ contract OSNFTMeta is
     }
 
     function isPayableToken(address token) public view returns (bool) {
-        return _paymentTokensAllowed[token];
+        return _paymentTokensAllowed[token] == 1 ? true : false;
     }
 
     function isVerifier(address account) external view returns (bool) {
-        return _verifiers[account];
+        return _verifiers[account] == 1 ? true : false;
     }
 
     function addVerifier(address account) external onlyOwner {
-        _verifiers[account] = true;
+        _verifiers[account] = 1;
         emit VerifierAdded(account);
     }
 
