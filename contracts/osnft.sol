@@ -123,7 +123,6 @@ contract OSNFT is
         );
     }
 
-    // @todo check what is this
     function isApprovedForAll(
         address account,
         address operator

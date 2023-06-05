@@ -32,11 +32,11 @@ contract OSNFTMeta is
     }
 
     function isPayableToken(address token) public view returns (bool) {
-        return _paymentTokensAllowed[token] == 1 ? true : false;
+        return _paymentTokensAllowed[token] == 1;
     }
 
     function isVerifier(address account) external view returns (bool) {
-        return _verifiers[account] == 1 ? true : false;
+        return _verifiers[account] == 1;
     }
 
     function addVerifier(address account) external onlyOwner {
