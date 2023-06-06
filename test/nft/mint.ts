@@ -994,6 +994,10 @@ export function testMint(payload: IDeployedPayload) {
     expect(balanceOfCreatorAfter).equal(
       creatorRoyaltyValue.add(balanceOfCreatorBefore)
     );
+
+    payload.transactions['mintNFTJsStore'].push(
+        (await tx).hash
+    )
   });
 
   it("should revert if royalty paid is less than minRoyalty for the project", async () => {
