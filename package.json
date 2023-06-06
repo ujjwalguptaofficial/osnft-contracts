@@ -3,7 +3,7 @@
   "scripts": {
     "clean": "hardhat clean",
     "compile": "hardhat compile",
-    "test": "hardhat test",
+    "test": "hardhat test --parallel",
     "dev": "hardhat node",
     "deploy:test": "hardhat run --network localhost scripts/test.ts",
     "graph-test": "graph test",
@@ -33,6 +33,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "hardhat": "^2.13.0",
+    "hardhat-contract-sizer": "^2.8.0",
     "hardhat-ethers": "^1.0.1"
   },
   "dependencies": {

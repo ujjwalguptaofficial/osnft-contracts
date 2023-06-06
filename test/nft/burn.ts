@@ -5,240 +5,326 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { signMessageForMint } from "./mint";
 
-
 export function testBurn(payload: IDeployedPayload) {
+  it("not owner", async () => {
+    const nft = payload.nft;
+    const projectUrl = payload.projects.jsstore;
+    const tokenId = payload.getProjectId(projectUrl);
+    const tx = nft.connect(payload.operator).burn(tokenId);
 
-    it('not owner', async () => {
-        const nft = payload.nft;
-        const projectUrl = payload.projects.jsstore;
-        const tokenId = payload.getProjectId(projectUrl);
-        const tx = nft.connect(payload.operator).burn(tokenId);
+    await expect(tx).revertedWithCustomError(nft, "RequireTokenOwner");
+  });
 
-        await expect(tx).revertedWithCustomError(nft, 'RequireTokenOwner');
-    })
+  it("success by first investor", async () => {
+    const nft = payload.nft.connect(payload.signer2);
+    const owner = payload.signer2.address;
+    const projectUrl = payload.projects.jsstore;
+    const tokenId = payload.getProjectId(projectUrl);
+    const projectInfoBefore = await nft.getProject(tokenId);
+    const contreactEarningBefore = await nft.getContractEarning(
+      payload.erc20Token1.address
+    );
 
-    it('success by first investor', async () => {
-        const nft = payload.nft.connect(payload.signer2);
-        const owner = payload.signer2.address;
-        const projectUrl = payload.projects.jsstore;
-        const tokenId = payload.getProjectId(projectUrl);
-        const projectInfoBefore = await nft.getProject(tokenId);
-        const contreactEarningBefore = await nft.getContractEarning(payload.erc20Token1.address);
+    const investedAmount = await nft.getInvestedAmount(tokenId, owner);
+    const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(
+      owner
+    );
+    const returnAmount = projectInfoBefore.treasuryAmount.div(
+      projectInfoBefore.tokenCount
+    );
+    let profit = returnAmount.sub(investedAmount);
+    // profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
 
-        const investedAmount = await nft.getInvestedAmount(tokenId, owner);
-        const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(owner);
-        const returnAmount = projectInfoBefore.treasuryAmount.div(projectInfoBefore.tokenCount);
-        let profit = returnAmount.sub(investedAmount);
-        // profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
+    console.log(
+      "profit",
+      profit.toString(),
+      returnAmount.toString(),
+      projectInfoBefore.treasuryAmount.toString(),
+      investedAmount.toString()
+    );
 
-        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryAmount.toString(), investedAmount.toString());
+    const tx = nft.burn(tokenId);
 
-        const tx = nft.burn(tokenId);
+    await expect(tx)
+      .to.emit(nft, "TransferSingle")
+      .withArgs(owner, owner, ethers.constants.AddressZero, tokenId, 1);
 
-        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            owner, owner, ethers.constants.AddressZero, tokenId, 1
-        );
+    // balance should be zero
+    const nftBalanceAfter = await nft.balanceOf(owner, tokenId);
+    expect(nftBalanceAfter).equal(0);
 
-        // balance should be zero
-        const nftBalanceAfter = await nft.balanceOf(owner, tokenId);
-        expect(nftBalanceAfter).equal(0);
+    // check payment transfer to owner
+    const contractEarning = payload.getPercentage(profit, 20);
+    const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
+    expect(paymentTokenBalanceAfter).equal(
+      paymentTokenBalanceBefore.add(returnAmount.sub(contractEarning))
+    );
 
-        // check payment transfer to owner
-        const contractEarning = payload.getPercentage(profit, 2);
-        const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
-        expect(paymentTokenBalanceAfter).equal(
-            paymentTokenBalanceBefore.add(returnAmount.sub(contractEarning))
-        );
+    // check treasure amount after
+    const projectInfoAfter = await nft.getProject(tokenId);
+    expect(projectInfoAfter.tokenCount).equal(
+      projectInfoBefore.tokenCount.sub(1)
+    );
+    expect(projectInfoAfter.treasuryAmount).equal(
+      projectInfoBefore.treasuryAmount.sub(returnAmount)
+    );
 
-        // check treasure amount after
-        const projectInfoAfter = await nft.getProject(tokenId);
-        expect(projectInfoAfter.tokenCount).equal(projectInfoBefore.tokenCount.sub(1));
-        expect(projectInfoAfter.treasuryAmount).equal(projectInfoBefore.treasuryAmount.sub(returnAmount));
+    // check contract earning
+    console.log("contractEarning", contractEarning);
+    const contreactEarningAfter = await nft.getContractEarning(
+      payload.erc20Token1.address
+    );
+    expect(contreactEarningAfter).equal(
+      contreactEarningBefore.add(contractEarning)
+    );
+  });
 
-        // check contract earning
-        console.log("contractEarning", contractEarning);
-        const contreactEarningAfter = await nft.getContractEarning(payload.erc20Token1.address);
-        expect(contreactEarningAfter).equal(contreactEarningBefore.add(contractEarning));
-    })
+  it("exit again by first investor", async () => {
+    const nft = payload.nft.connect(payload.signer2);
+    const owner = payload.signer2.address;
+    const projectUrl = payload.projects.jsstore;
+    const tokenId = payload.getProjectId(projectUrl);
+    const investedAmount = nft.getInvestedAmount(tokenId, owner);
+    await expect(investedAmount).revertedWithCustomError(
+      nft,
+      "RequireTokenOwner"
+    );
 
-    it('exit again by first investor', async () => {
-        const nft = payload.nft.connect(payload.signer2);
-        const owner = payload.signer2.address;
-        const projectUrl = payload.projects.jsstore;
-        const tokenId = payload.getProjectId(projectUrl);
-        const investedAmount = nft.getInvestedAmount(tokenId, owner);
-        await expect(investedAmount).revertedWithCustomError(nft, 'RequireTokenOwner');
+    const tx = nft.burn(tokenId);
 
-        const tx = nft.burn(tokenId);
+    await expect(tx).revertedWithCustomError(nft, "RequireTokenOwner");
+  });
 
-        await expect(tx).revertedWithCustomError(nft, 'RequireTokenOwner');
-    })
+  it("success by last investor", async () => {
+    const nft = payload.nft.connect(payload.signer4);
+    const owner = payload.signer4.address;
+    const projectUrl = payload.projects.jsstore;
+    const tokenId = payload.getProjectId(projectUrl);
+    const projectInfoBefore = await nft.getProject(tokenId);
+    const contreactEarningBefore = await nft.getContractEarning(
+      payload.erc20Token1.address
+    );
+    const investedAmount = await nft.getInvestedAmount(tokenId, owner);
+    const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(
+      owner
+    );
+    const returnAmount = projectInfoBefore.treasuryAmount.div(
+      projectInfoBefore.tokenCount
+    );
+    let profit = returnAmount.sub(investedAmount);
+    profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
 
-    it('success by last investor', async () => {
-        const nft = payload.nft.connect(payload.signer4);
-        const owner = payload.signer4.address;
-        const projectUrl = payload.projects.jsstore;
-        const tokenId = payload.getProjectId(projectUrl);
-        const projectInfoBefore = await nft.getProject(tokenId);
-        const contreactEarningBefore = await nft.getContractEarning(payload.erc20Token1.address);
-        const investedAmount = await nft.getInvestedAmount(tokenId, owner);
-        const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(owner);
-        const returnAmount = projectInfoBefore.treasuryAmount.div(projectInfoBefore.tokenCount);
-        let profit = returnAmount.sub(investedAmount);
-        profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
+    console.log(
+      "profit",
+      profit.toString(),
+      returnAmount.toString(),
+      projectInfoBefore.treasuryAmount.toString()
+    );
 
-        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryAmount.toString());
+    const tx = nft.burn(tokenId);
 
-        const tx = nft.burn(tokenId);
+    await expect(tx)
+      .to.emit(nft, "TransferSingle")
+      .withArgs(owner, owner, ethers.constants.AddressZero, tokenId, 1);
 
-        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            owner, owner, ethers.constants.AddressZero, tokenId, 1
-        );
+    // balance should be zero
+    const nftBalanceAfter = await nft.balanceOf(owner, tokenId);
+    expect(nftBalanceAfter).equal(0);
 
-        // balance should be zero
-        const nftBalanceAfter = await nft.balanceOf(owner, tokenId);
-        expect(nftBalanceAfter).equal(0);
+    // check payment transfer to owner
+    const contractEarning = payload.getPercentage(profit, 20);
+    const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
+    expect(paymentTokenBalanceAfter).equal(
+      paymentTokenBalanceBefore.add(returnAmount.sub(contractEarning))
+    );
 
-        // check payment transfer to owner
-        const contractEarning = payload.getPercentage(profit, 2);
-        const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
-        expect(paymentTokenBalanceAfter).equal(
-            paymentTokenBalanceBefore.add(returnAmount.sub(contractEarning))
-        );
+    // check treasure amount after
+    const projectInfoAfter = await nft.getProject(tokenId);
+    expect(projectInfoAfter.tokenCount).equal(
+      projectInfoBefore.tokenCount.sub(1)
+    );
+    expect(projectInfoAfter.treasuryAmount).equal(
+      projectInfoBefore.treasuryAmount.sub(returnAmount)
+    );
 
-        // check treasure amount after
-        const projectInfoAfter = await nft.getProject(tokenId);
-        expect(projectInfoAfter.tokenCount).equal(projectInfoBefore.tokenCount.sub(1));
-        expect(projectInfoAfter.treasuryAmount).equal(projectInfoBefore.treasuryAmount.sub(returnAmount));
+    // check contract earning
+    console.log("contractEarning", contractEarning);
+    const contreactEarningAfter = await nft.getContractEarning(
+      payload.erc20Token1.address
+    );
+    expect(contreactEarningAfter).equal(
+      contreactEarningBefore.add(contractEarning)
+    );
+  });
 
-        // check contract earning
-        console.log("contractEarning", contractEarning);
-        const contreactEarningAfter = await nft.getContractEarning(payload.erc20Token1.address);
-        expect(contreactEarningAfter).equal(contreactEarningBefore.add(contractEarning));
-    })
+  it("burn by creator", async () => {
+    const nft = payload.nft.connect(payload.deployer);
+    const owner = payload.deployer.address;
+    const projectUrl = payload.projects.jsstore;
+    const tokenId = payload.getProjectId(projectUrl);
+    const projectInfoBefore = await nft.getProject(tokenId);
+    const contreactEarningBefore = await nft.getContractEarning(
+      payload.erc20Token1.address
+    );
 
-    it('burn by creator', async () => {
-        const nft = payload.nft.connect(payload.deployer);
-        const owner = payload.deployer.address;
-        const projectUrl = payload.projects.jsstore;
-        const tokenId = payload.getProjectId(projectUrl);
-        const projectInfoBefore = await nft.getProject(tokenId);
-        const contreactEarningBefore = await nft.getContractEarning(payload.erc20Token1.address);
+    const investedAmount = await nft.getInvestedAmount(tokenId, owner);
+    const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(
+      owner
+    );
+    const returnAmount = projectInfoBefore.treasuryAmount.div(
+      projectInfoBefore.tokenCount
+    );
+    let profit = returnAmount.sub(investedAmount);
+    // profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
 
-        const investedAmount = await nft.getInvestedAmount(tokenId, owner);
-        const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(owner);
-        const returnAmount = projectInfoBefore.treasuryAmount.div(projectInfoBefore.tokenCount);
-        let profit = returnAmount.sub(investedAmount);
-        // profit = profit.gt(0) ? profit : ethers.BigNumber.from(0);
+    console.log(
+      "profit",
+      profit.toString(),
+      returnAmount.toString(),
+      projectInfoBefore.treasuryAmount.toString(),
+      investedAmount.toString()
+    );
 
-        console.log("profit", profit.toString(), returnAmount.toString(), projectInfoBefore.treasuryAmount.toString(), investedAmount.toString());
+    const tx = nft.burn(tokenId);
 
-        const tx = nft.burn(tokenId);
+    await expect(tx)
+      .to.emit(nft, "TransferSingle")
+      .withArgs(owner, owner, ethers.constants.AddressZero, tokenId, 1);
 
-        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            owner, owner, ethers.constants.AddressZero, tokenId, 1
-        );
+    // balance should be zero
+    const nftBalanceAfter = await nft.balanceOf(owner, tokenId);
+    expect(nftBalanceAfter).equal(0);
 
-        // balance should be zero
-        const nftBalanceAfter = await nft.balanceOf(owner, tokenId);
-        expect(nftBalanceAfter).equal(0);
+    // check payment transfer to owner
+    const contractEarning = payload.getPercentage(profit, 20);
+    const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
+    expect(paymentTokenBalanceAfter).equal(
+      paymentTokenBalanceBefore.add(returnAmount.sub(contractEarning))
+    );
 
-        // check payment transfer to owner
-        const contractEarning = payload.getPercentage(profit, 2);
-        const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
-        expect(paymentTokenBalanceAfter).equal(
-            paymentTokenBalanceBefore.add(returnAmount.sub(contractEarning))
-        );
+    // check treasure amount after
+    const projectInfoAfter = await nft.getProject(tokenId);
+    expect(projectInfoAfter.tokenCount).equal(
+      projectInfoBefore.tokenCount.sub(1)
+    );
+    expect(projectInfoAfter.treasuryAmount).equal(
+      projectInfoBefore.treasuryAmount.sub(returnAmount)
+    );
 
-        // check treasure amount after
-        const projectInfoAfter = await nft.getProject(tokenId);
-        expect(projectInfoAfter.tokenCount).equal(projectInfoBefore.tokenCount.sub(1));
-        expect(projectInfoAfter.treasuryAmount).equal(projectInfoBefore.treasuryAmount.sub(returnAmount));
+    // check contract earning
+    console.log("contractEarning", contractEarning);
+    const contreactEarningAfter = await nft.getContractEarning(
+      payload.erc20Token1.address
+    );
+    expect(contreactEarningAfter).equal(
+      contreactEarningBefore.add(contractEarning)
+    );
+  });
 
-        // check contract earning
-        console.log("contractEarning", contractEarning);
-        const contreactEarningAfter = await nft.getContractEarning(payload.erc20Token1.address);
-        expect(contreactEarningAfter).equal(contreactEarningBefore.add(contractEarning));
-    })
+  it("mint after burn by creator", async () => {
+    const nft = payload.nft;
+    const timestamp = (await time.latest()) + 1000;
 
-    it('mint after burn by creator', async () => {
-        const nft = payload.nft;
-        const timestamp = await time.latest() + 1000;
+    const projectUrl = payload.projects.jsstore;
+    const tokenId = payload.getProjectId(projectUrl);
+    const star = 100;
+    const fork = 25;
+    const to = payload.deployer.address;
+    const signature = signMessageForMint.call(
+      payload,
+      payload.operator,
+      tokenId.toString(),
+      star,
+      fork,
+      timestamp
+    );
 
-        const projectUrl = payload.projects.jsstore;
-        const tokenId = payload.getProjectId(projectUrl);
-        const star = 100;
-        const fork = 25;
-        const to = payload.deployer.address;
-        const signature = signMessageForMint.call(payload, payload.operator, tokenId.toString(), star, fork, timestamp);
+    const projectInfoBefore = await nft.getProject(tokenId);
+    const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(
+      projectInfoBefore.creator
+    );
 
-        const projectInfoBefore = await nft.getProject(tokenId);
-        const balanceOfCreatorBefore = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
+    // allow payment token
+    await payload.erc20Token1
+      .connect(payload.deployer)
+      .approve(nft.address, ethers.constants.MaxUint256);
 
-        // allow payment token
-        await payload.erc20Token1.connect(payload.deployer).approve(nft.address, ethers.constants.MaxUint256);
+    const allowance = await payload.erc20Token1.allowance(to, nft.address);
 
-        const allowance = await payload.erc20Token1.allowance(to, nft.address);
+    const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
 
-        const balanceOfMinterBefore = await payload.erc20Token1.balanceOf(to);
+    const contractEarningBefore = await nft.getContractEarning(
+      projectInfoBefore.paymentToken
+    );
 
-        const contractEarningBefore = await nft.getContractEarning(projectInfoBefore.paymentToken);
+    const tx = nft
+      .connect(payload.deployer)
+      .mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty, {
+        signature,
+        by: payload.operator.address,
+        validUntil: timestamp,
+      });
 
+    // check for transfer events
 
-        const tx = nft.connect(payload.deployer).mintTo(tokenId, star, fork, projectInfoBefore.minCreatorRoyalty, {
-            signature, by: payload.operator.address, validUntil: timestamp
-        });
+    await expect(tx)
+      .to.emit(nft, "TransferSingle")
+      .withArgs(to, ethers.constants.AddressZero, to, tokenId, 1);
 
-        // check for transfer events
+    const projectInfoAfter = await nft.getProject(tokenId);
 
-        await expect(tx).to.emit(nft, 'TransferSingle').withArgs(
-            to, ethers.constants.AddressZero, to, tokenId, 1
-        );
+    expect(projectInfoAfter.tokenCount).equal(2);
 
-        const projectInfoAfter = await nft.getProject(tokenId);
+    let expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
+    expectedMintPrice =
+      expectedMintPrice > projectInfoBefore.lastMintPrice
+        ? expectedMintPrice
+        : projectInfoBefore.lastMintPrice;
 
-        expect(projectInfoAfter.tokenCount).equal(2);
+    const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
 
-        let expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
-        expectedMintPrice = expectedMintPrice > projectInfoBefore.lastMintPrice ? expectedMintPrice : projectInfoBefore.lastMintPrice;
+    const contractRoyalty = payload.getPercentage(expectedMintPriceBN, 10);
 
+    const minCreatorRoyalty = projectInfoAfter.minCreatorRoyalty;
 
-        const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
+    const creatorRoyaltyValue = payload.getPercentage(
+      ethers.BigNumber.from(expectedMintPrice),
+      minCreatorRoyalty
+    );
 
-        const contractRoyalty = payload.getPercentage(
-            expectedMintPriceBN, 1
-        );
+    const amountForTreasury = expectedMintPriceBN
+      .sub(contractRoyalty)
+      .sub(creatorRoyaltyValue);
 
-        const minCreatorRoyalty = await projectInfoAfter.minCreatorRoyalty;
+    expect(projectInfoAfter.treasuryAmount).equal(
+      amountForTreasury.add(projectInfoBefore.treasuryAmount)
+    );
+    expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
 
-        const creatorRoyaltyValue = payload.getPercentage(
-            ethers.BigNumber.from(expectedMintPrice), minCreatorRoyalty
-        );
+    // nft balance of creator
 
-        const amountForTreasury = expectedMintPriceBN.sub(contractRoyalty).sub(creatorRoyaltyValue);
+    const balanceOfCreator = await nft.balanceOf(to, tokenId);
+    expect(balanceOfCreator).equal(1);
 
-        expect(projectInfoAfter.treasuryAmount).equal(amountForTreasury.add(projectInfoBefore.treasuryAmount));
-        expect(projectInfoAfter.lastMintPrice).equal(expectedMintPrice);
+    // check tokenmint
 
-        // nft balance of creator
+    expect(tx)
+      .to.emit(nft, "TokenMint")
+      .withArgs(tokenId, to, star, fork, expectedMintPrice);
 
-        const balanceOfCreator = await nft.balanceOf(to, tokenId);
-        expect(balanceOfCreator).equal(1);
+    // check contract earnings
+    const contractEarning = await nft.getContractEarning(
+      projectInfoAfter.paymentToken
+    );
+    expect(contractEarning).equal(contractRoyalty.add(contractEarningBefore));
 
-        // check tokenmint 
-
-        expect(tx).to.emit(nft, "TokenMint").withArgs(tokenId, to, star, fork, expectedMintPrice);
-
-        // check contract earnings
-        const contractEarning = await nft.getContractEarning(projectInfoAfter.paymentToken);
-        expect(contractEarning).equal(contractRoyalty.add(contractEarningBefore));
-
-        //check creator earnings
-        const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(projectInfoBefore.creator);
-        expect(balanceOfCreatorAfter).equal(
-            // creatorRoyaltyValue.add(balanceOfCreatorBefore)
-            balanceOfCreatorBefore.sub(expectedMintPriceBN).add(creatorRoyaltyValue)
-        );
-    })
-
+    //check creator earnings
+    const balanceOfCreatorAfter = await payload.erc20Token1.balanceOf(
+      projectInfoBefore.creator
+    );
+    expect(balanceOfCreatorAfter).equal(
+      // creatorRoyaltyValue.add(balanceOfCreatorBefore)
+      balanceOfCreatorBefore.sub(expectedMintPriceBN).add(creatorRoyaltyValue)
+    );
+  });
 }

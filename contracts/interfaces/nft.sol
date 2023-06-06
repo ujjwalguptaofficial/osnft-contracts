@@ -6,12 +6,12 @@ interface IOSNFT {
     struct ProjectInfo {
         uint256 basePrice;
         address creator;
+        uint16 minCreatorRoyalty;
         address paymentToken;
         // price of one popularity factor
         uint256 popularityFactorPrice;
         // last mint price
         uint256 lastMintPrice;
-        uint8 minCreatorRoyalty;
         uint256 tokenCount;
         uint256 treasuryAmount;
     }
@@ -34,6 +34,7 @@ interface IOSNFT {
     error AlreadyMinted();
     error PaymentFailed();
     error RoyaltyLimitExceeded();
+    error InadequateRoyalty();
     error RequireTokenOwner();
     error RequireVerifier();
     error RequireRelayer();
@@ -41,7 +42,6 @@ interface IOSNFT {
     error SignatureExpired();
     error InvalidSignature();
     error PaymentTokenNotAllowed();
-    error ZeroPaymentToken();
     error InvalidToken(uint256 tokenId);
 
     // events
@@ -59,8 +59,11 @@ interface IOSNFT {
         address to,
         uint256 star,
         uint256 fork,
-        uint256 mintPrice
+        uint256 mintPrice,
+        uint16 royaltyOpted
     );
+    event MintRoyaltyUpdated(uint16 newMintRoyalty);
+    event BurnRoyaltyUpdated(uint16 newBurnRoyalty);
 
     function tokenizeProject(
         ProjectTokenizeInput calldata input,

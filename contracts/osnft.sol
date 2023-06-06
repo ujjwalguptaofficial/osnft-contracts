@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -15,29 +15,35 @@ import "./interfaces/osnft_meta.sol";
 
 contract OSNFT is
     ERC1155Upgradeable,
-    OwnableUpgradeable,
+    Ownable2StepUpgradeable,
     ReentrancyGuardUpgradeable,
     EIP712Upgradeable,
     IOSNFT,
     ERC2771ContextUpgradeable
 {
     // variables
-
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
+    // tokenId => contributor => initial contribution to project pool
     mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
 
-    uint8 mintRoyalty;
-    uint8 burnRoyalty;
+    // percentage scaled by 10, ie 1% = 10
+    uint16 internal mintRoyalty;
+    // percentage scaled by 10, ie 1% = 10
+    uint16 internal burnRoyalty;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
     bytes32 internal _TYPE_HASH_NFTMintData;
-    IOSNFTMeta _metaContract;
+    IOSNFTMeta internal _metaContract;
 
     function initialize(string memory uri_, address meta_) public initializer {
         __ERC1155_init(uri_);
-        __Ownable_init();
-        mintRoyalty = 1;
-        burnRoyalty = 2;
+        __Ownable2Step_init();
+
+        mintRoyalty = 10;
+        emit MintRoyaltyUpdated(10);
+        burnRoyalty = 20;
+        emit BurnRoyaltyUpdated(20);
+
         __EIP712_init("OSNFT", "1");
         _TYPE_HASH_ProjectTokenizeData = keccak256(
             "ProjectTokenizeData(string projectUrl,address creator,uint256 validUntil)"
@@ -62,10 +68,6 @@ contract OSNFT is
         ProjectTokenizeInput calldata input,
         SignatureMeta calldata verifierSignatureData
     ) external {
-        if (input.paymentToken == address(0)) {
-            revert ZeroPaymentToken();
-        }
-
         if (!_metaContract.isPayableToken(input.paymentToken)) {
             revert PaymentTokenNotAllowed();
         }
@@ -91,7 +93,7 @@ contract OSNFT is
             keccak256(abi.encodePacked(input.projectUrl))
         );
 
-        if (input.minCreatorRoyalty > 10) {
+        if (input.minCreatorRoyalty > 100) {
             revert RoyaltyLimitExceeded();
         }
 
@@ -134,7 +136,7 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
-        uint8 royalty,
+        uint16 royalty,
         SignatureMeta calldata verifierSignatureData
     ) external {
         _requireVerifier(verifierSignatureData.by);
@@ -175,7 +177,7 @@ contract OSNFT is
         uint256 tokenId,
         uint256 star,
         uint256 fork,
-        uint8 royalty,
+        uint16 royalty,
         address to
     ) internal {
         if (balanceOf(to, tokenId) > 0) {
@@ -183,6 +185,10 @@ contract OSNFT is
         }
 
         ProjectInfo storage project = _projects[tokenId];
+
+        if (project.minCreatorRoyalty > royalty) {
+            revert InadequateRoyalty();
+        }
 
         if (project.creator == address(0)) {
             revert InvalidToken(tokenId);
@@ -199,12 +205,7 @@ contract OSNFT is
         );
 
         // send Royalty to creator
-
-        uint8 creatorRoyalty = project.minCreatorRoyalty;
-        uint256 minCreatorRoyalty = _percentageOf(
-            calculatedMintPrice,
-            royalty > creatorRoyalty ? royalty : creatorRoyalty
-        );
+        uint256 minCreatorRoyalty = _percentageOf(calculatedMintPrice, royalty);
 
         _requirePaymentFromContract(
             project.paymentToken,
@@ -213,7 +214,6 @@ contract OSNFT is
         );
 
         // store money in treasury
-
         uint256 contractRoyalty = _percentageOf(
             calculatedMintPrice,
             mintRoyalty
@@ -232,7 +232,7 @@ contract OSNFT is
         // send money to creator
 
         _mintTo(tokenId, to);
-        emit TokenMint(tokenId, to, star, fork, calculatedMintPrice);
+        emit TokenMint(tokenId, to, star, fork, calculatedMintPrice, royalty);
     }
 
     function _mintTo(uint256 tokenId, address to) internal {
@@ -286,9 +286,9 @@ contract OSNFT is
 
     function _percentageOf(
         uint256 value,
-        uint8 percentage
+        uint16 percentage
     ) internal pure returns (uint256) {
-        return (value / 100) * percentage;
+        return (value * percentage) / 1000;
     }
 
     function _requirePayment(
@@ -320,23 +320,6 @@ contract OSNFT is
         return _earning[paymentToken];
     }
 
-    function withdrawEarning(
-        address tokenAddress,
-        uint256 amount
-    ) external onlyOwner {
-        withdrawEarningTo(owner(), tokenAddress, amount);
-    }
-
-    function withdrawEarningTo(
-        address accountTo,
-        address tokenAddress,
-        uint256 amount
-    ) public onlyOwner {
-        require(amount <= _earning[tokenAddress], "Amount exceed earning");
-        _earning[tokenAddress] -= amount;
-        _requirePaymentFromContract(tokenAddress, accountTo, amount);
-    }
-
     function _requireValidSignature(
         bytes32 digest,
         SignatureMeta calldata signatureData
@@ -358,13 +341,42 @@ contract OSNFT is
         }
     }
 
+    // Owner Functions
+    function updateMintRoyalty(uint16 newMintRoyalty) external onlyOwner {
+        mintRoyalty = newMintRoyalty;
+        emit MintRoyaltyUpdated(newMintRoyalty);
+    }
+
+    function updateBurnRoyalty(uint16 newBurnRoyalty) external onlyOwner {
+        burnRoyalty = newBurnRoyalty;
+        emit BurnRoyaltyUpdated(newBurnRoyalty);
+    }
+
+    function withdrawEarning(
+        address tokenAddress,
+        uint256 amount
+    ) external onlyOwner {
+        withdrawEarningTo(owner(), tokenAddress, amount);
+    }
+
+    function withdrawEarningTo(
+        address accountTo,
+        address tokenAddress,
+        uint256 amount
+    ) public onlyOwner {
+        require(amount <= _earning[tokenAddress], "Amount exceed earning");
+        _earning[tokenAddress] -= amount;
+        _requirePaymentFromContract(tokenAddress, accountTo, amount);
+    }
+
+    // Overrides
     function _msgSender()
         internal
         view
         override(ContextUpgradeable, ERC2771ContextUpgradeable)
         returns (address sender)
     {
-        sender = ERC2771ContextUpgradeable._msgSender();
+        sender = super._msgSender();
     }
 
     function _msgData()
@@ -373,7 +385,24 @@ contract OSNFT is
         override(ContextUpgradeable, ERC2771ContextUpgradeable)
         returns (bytes calldata)
     {
-        return ERC2771ContextUpgradeable._msgData();
+        return super._msgData();
+    }
+
+    function transferOwnership(
+        address newOwner
+    )
+        public
+        virtual
+        override(Ownable2StepUpgradeable, OwnableUpgradeable)
+        onlyOwner
+    {
+        super.transferOwnership(newOwner);
+    }
+
+    function _transferOwnership(
+        address newOwner
+    ) internal virtual override(Ownable2StepUpgradeable, OwnableUpgradeable) {
+        super._transferOwnership(newOwner);
     }
 
     /**

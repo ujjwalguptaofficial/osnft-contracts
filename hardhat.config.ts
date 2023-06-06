@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomicfoundation/hardhat-toolbox";
+import "hardhat-contract-sizer";
 // import "@graphprotocol/hardhat-graph";
 import dotenv from "dotenv";
 
@@ -13,9 +14,9 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 2000,
-      }
-    }
+        runs: 1000000,
+      },
+    },
   },
   defaultNetwork: "localhost",
   networks: {
@@ -32,8 +33,11 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: process.env.POLYGONSCAN_API_KEY
-  }
+    apiKey: process.env.POLYGONSCAN_API_KEY,
+  },
+  contractSizer: {
+    runOnCompile: true,
+  },
 };
 
 export default config;
