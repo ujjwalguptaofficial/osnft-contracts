@@ -24,8 +24,6 @@ contract OSNFT is
     // variables
     mapping(uint256 => ProjectInfo) internal _projects;
     mapping(address => uint256) internal _earning;
-    // tokenId => contributor => initial contribution to project pool
-    mapping(uint256 => mapping(address => uint256)) internal _usersInvestments;
 
     // percentage scaled by 10, ie 1% = 10
     uint16 internal mintRoyalty;
@@ -227,7 +225,6 @@ contract OSNFT is
 
         project.treasuryAmount += amountForTreasury;
         project.lastMintPrice = calculatedMintPrice;
-        _usersInvestments[tokenId][to] = calculatedMintPrice;
 
         // send money to creator
 
@@ -240,17 +237,6 @@ contract OSNFT is
         _mint(to, tokenId, 1, "");
     }
 
-    function getInvestedAmount(
-        uint256 tokenId,
-        address owner
-    ) external view returns (uint256) {
-        if (balanceOf(owner, tokenId) == 0) {
-            revert RequireTokenOwner();
-        }
-
-        return _usersInvestments[tokenId][owner];
-    }
-
     function burn(uint256 tokenId) external {
         address caller = _msgSender();
 
@@ -260,26 +246,11 @@ contract OSNFT is
         ProjectInfo storage project = _projects[tokenId];
 
         uint256 returnAmount = project.treasuryAmount / project.tokenCount;
-        uint256 usersInvestments = _usersInvestments[tokenId][caller];
-        uint256 profit = returnAmount > usersInvestments
-            ? returnAmount - usersInvestments
-            : 0;
 
         project.tokenCount--;
         project.treasuryAmount -= returnAmount;
 
-        uint256 burnRoyaltyAmount = 0;
-
-        if (profit > 0) {
-            burnRoyaltyAmount = _percentageOf(profit, burnRoyalty);
-            _earning[project.paymentToken] += burnRoyaltyAmount;
-        }
-
-        _requirePaymentFromContract(
-            project.paymentToken,
-            caller,
-            returnAmount - burnRoyaltyAmount
-        );
+        _requirePaymentFromContract(project.paymentToken, caller, returnAmount);
 
         _burn(caller, tokenId, 1);
     }
