@@ -281,10 +281,6 @@ contract OSNFT is
         return (value * percentage) / 1000;
     }
 
-    function underflow() public returns (uint256) {
-        return type(uint256).max + 1;
-    }
-
     function _requirePayment(
         address tokenAddress,
         address from,
