@@ -5,32 +5,31 @@ type ExampleEntity @entity {
   operator: Bytes! # address
 }
 
-
-type Project @entity{
+type Project @entity {
   id: ID!
-  creator:Bytes!
-  projectUrl:String!
+  creator: Bytes!
+  projectUrl: String!
   basePrice: BigInt!
-  popularityFactorPrice:BigInt!
-  paymentToken:Bytes!
-  creatorRoyality:Int!
-  tokenCount: BigInt!
+  popularityFactorPrice: BigInt!
+  paymentToken: Bytes!
+  creatorRoyality: Int!
+  contributors: BigInt!
   treasuryTotalAmount: BigInt!
   lastMintPrice: BigInt!
-  tokens: [ ProjectToken!]! @derivedFrom(field: "project")
+  tokens: [ProjectToken!]! @derivedFrom(field: "project")
 }
 
-type ProjectToken @entity{
+type ProjectToken @entity {
   id: ID!
   mintAmount: BigInt!
   star: BigInt!
   fork: BigInt!
-  project:Project! 
-  owner:Account!
+  project: Project!
+  owner: Account!
 }
 
-type Account @entity{
+type Account @entity {
   id: Bytes!
-  tokenCount:BigInt!
-  totalInvestedAmount:BigInt!
+  contributors: BigInt!
+  totalInvestedAmount: BigInt!
 }

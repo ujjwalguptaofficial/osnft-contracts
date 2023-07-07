@@ -370,7 +370,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     );
 
     await expect(tx)
-      .to.emit(nft, "ProjectTokenize")
+      .to.emit(nft, "ProjectTokenized")
       .withArgs(
         tokenId,
         to,
@@ -387,7 +387,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     expect(projectInfoAfter.basePrice).equal(basePrice);
     expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
     expect(projectInfoAfter.minCreatorRoyalty).equal(royality);
-    expect(projectInfoAfter.tokenCount).equal(1);
+    expect(projectInfoAfter.contributors).equal(1);
     expect(projectInfoAfter.creator).equal(payload.deployer.address);
     expect(projectInfoAfter.treasuryAmount).equal(0);
     expect(projectInfoAfter.lastMintPrice).equal(0);
@@ -492,7 +492,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     );
 
     await expect(tx)
-      .to.emit(nft, "ProjectTokenize")
+      .to.emit(nft, "ProjectTokenized")
       .withArgs(
         tokenId,
         to,
@@ -509,7 +509,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     expect(projectInfoAfter.basePrice).equal(basePrice);
     expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
     expect(projectInfoAfter.minCreatorRoyalty).equal(royality);
-    expect(projectInfoAfter.tokenCount).equal(1);
+    expect(projectInfoAfter.contributors).equal(1);
     expect(projectInfoAfter.creator).equal(to);
     expect(projectInfoAfter.treasuryAmount).equal(0);
     expect(projectInfoAfter.lastMintPrice).equal(0);
@@ -570,7 +570,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     );
 
     await expect(tx)
-      .to.emit(nft, "ProjectTokenize")
+      .to.emit(nft, "ProjectTokenized")
       .withArgs(
         tokenId,
         to,
@@ -587,7 +587,7 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     expect(projectInfoAfter.basePrice).equal(basePrice);
     expect(projectInfoAfter.popularityFactorPrice).equal(popularityFactorPrice);
     expect(projectInfoAfter.minCreatorRoyalty).equal(royality);
-    expect(projectInfoAfter.tokenCount).equal(1);
+    expect(projectInfoAfter.contributors).equal(1);
     expect(projectInfoAfter.creator).equal(to);
     expect(projectInfoAfter.treasuryAmount).equal(0);
     expect(projectInfoAfter.lastMintPrice).equal(0);

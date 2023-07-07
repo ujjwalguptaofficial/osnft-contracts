@@ -21,16 +21,25 @@ export function testBurn(payload: IDeployedPayload) {
     const projectUrl = payload.projects.jsstore;
     const tokenId = payload.getProjectId(projectUrl);
     const projectInfoBefore = await nft.getProject(tokenId);
-    const contreactEarningBefore = await nft.getContractEarning(
+    const contractEarningBefore = await nft.getContractEarning(
       payload.erc20Token1.address
     );
 
     const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(
       owner
     );
-    const returnAmount = projectInfoBefore.treasuryAmount.div(
-      projectInfoBefore.tokenCount
+
+    const paidCreatorRoyalty = await nft.getPaidCreatorRoyalty(tokenId, owner);
+
+    const paidPortion = ethers.BigNumber.from(1000).sub(paidCreatorRoyalty);
+    const maxPortion = ethers.BigNumber.from(1000).sub(
+      projectInfoBefore.minCreatorRoyalty
     );
+
+    const returnAmount = projectInfoBefore.treasuryAmount
+      .mul(paidPortion)
+      .div(maxPortion)
+      .div(projectInfoBefore.contributors);
 
     const tx = nft.burn(tokenId);
 
@@ -44,26 +53,27 @@ export function testBurn(payload: IDeployedPayload) {
 
     // check payment transfer to owner
     const paymentTokenBalanceAfter = await payload.erc20Token1.balanceOf(owner);
+    // console.log(
+    //   `balAfter: ${paymentTokenBalanceAfter}, balBefore ${paymentTokenBalanceBefore}, returnAmt ${returnAmount}, treasury ${projectInfoBefore.treasuryAmount} paidCreatorRoy ${paidCreatorRoyalty} minCreatorRoy ${projectInfoBefore.minCreatorRoyalty} paidPortion ${paidPortion} maxPortion ${maxPortion} `
+    // );
     expect(paymentTokenBalanceAfter).equal(
       paymentTokenBalanceBefore.add(returnAmount)
     );
 
     // check treasure amount after
     const projectInfoAfter = await nft.getProject(tokenId);
-    expect(projectInfoAfter.tokenCount).equal(
-      projectInfoBefore.tokenCount.sub(1)
+    expect(projectInfoAfter.contributors).equal(
+      projectInfoBefore.contributors.sub(1)
     );
     expect(projectInfoAfter.treasuryAmount).equal(
       projectInfoBefore.treasuryAmount.sub(returnAmount)
     );
 
     // check contract earning
-    const contreactEarningAfter = await nft.getContractEarning(
+    const contractEarningAfter = await nft.getContractEarning(
       payload.erc20Token1.address
     );
-    expect(contreactEarningAfter).equal(
-      contreactEarningBefore
-    );
+    expect(contractEarningAfter).equal(contractEarningBefore);
   });
 
   it("exit again by first investor", async () => {
@@ -89,7 +99,7 @@ export function testBurn(payload: IDeployedPayload) {
       owner
     );
     const returnAmount = projectInfoBefore.treasuryAmount.div(
-      projectInfoBefore.tokenCount
+      projectInfoBefore.contributors
     );
 
     const tx = nft.burn(tokenId);
@@ -110,8 +120,8 @@ export function testBurn(payload: IDeployedPayload) {
 
     // check treasure amount after
     const projectInfoAfter = await nft.getProject(tokenId);
-    expect(projectInfoAfter.tokenCount).equal(
-      projectInfoBefore.tokenCount.sub(1)
+    expect(projectInfoAfter.contributors).equal(
+      projectInfoBefore.contributors.sub(1)
     );
     expect(projectInfoAfter.treasuryAmount).equal(
       projectInfoBefore.treasuryAmount.sub(returnAmount)
@@ -121,9 +131,7 @@ export function testBurn(payload: IDeployedPayload) {
     const contreactEarningAfter = await nft.getContractEarning(
       payload.erc20Token1.address
     );
-    expect(contreactEarningAfter).equal(
-      contreactEarningBefore
-    );
+    expect(contreactEarningAfter).equal(contreactEarningBefore);
   });
 
   it("burn by creator", async () => {
@@ -139,9 +147,19 @@ export function testBurn(payload: IDeployedPayload) {
     const paymentTokenBalanceBefore = await payload.erc20Token1.balanceOf(
       owner
     );
-    const returnAmount = projectInfoBefore.treasuryAmount.div(
-      projectInfoBefore.tokenCount
+
+    const paidCreatorRoyalty = await nft.getPaidCreatorRoyalty(tokenId, owner);
+
+    const paidPortion = ethers.BigNumber.from(1000).sub(paidCreatorRoyalty);
+    const maxPortion = ethers.BigNumber.from(1000).sub(
+      projectInfoBefore.minCreatorRoyalty
     );
+
+    const returnAmount = projectInfoBefore.treasuryAmount
+      .mul(paidPortion)
+      .div(maxPortion)
+      .div(projectInfoBefore.contributors);
+
     const tx = nft.burn(tokenId);
 
     await expect(tx)
@@ -160,8 +178,8 @@ export function testBurn(payload: IDeployedPayload) {
 
     // check treasure amount after
     const projectInfoAfter = await nft.getProject(tokenId);
-    expect(projectInfoAfter.tokenCount).equal(
-      projectInfoBefore.tokenCount.sub(1)
+    expect(projectInfoAfter.contributors).equal(
+      projectInfoBefore.contributors.sub(1)
     );
     expect(projectInfoAfter.treasuryAmount).equal(
       projectInfoBefore.treasuryAmount.sub(returnAmount)
@@ -171,9 +189,7 @@ export function testBurn(payload: IDeployedPayload) {
     const contreactEarningAfter = await nft.getContractEarning(
       payload.erc20Token1.address
     );
-    expect(contreactEarningAfter).equal(
-      contreactEarningBefore
-    );
+    expect(contreactEarningAfter).equal(contreactEarningBefore);
   });
 
   it("mint after burn by creator", async () => {
@@ -228,7 +244,7 @@ export function testBurn(payload: IDeployedPayload) {
 
     const projectInfoAfter = await nft.getProject(tokenId);
 
-    expect(projectInfoAfter.tokenCount).equal(2);
+    expect(projectInfoAfter.contributors).equal(2);
 
     let expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
     expectedMintPrice =
@@ -264,7 +280,7 @@ export function testBurn(payload: IDeployedPayload) {
     // check tokenmint
 
     expect(tx)
-      .to.emit(nft, "TokenMint")
+      .to.emit(nft, "TokenMinted")
       .withArgs(tokenId, to, star, fork, expectedMintPrice);
 
     // check contract earnings

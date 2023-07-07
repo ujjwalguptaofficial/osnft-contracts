@@ -285,7 +285,7 @@ export function testMint(payload: IDeployedPayload) {
 
     const projectInfoAfter = await nft.getProject(tokenId);
 
-    expect(projectInfoAfter.tokenCount).equal(2);
+    expect(projectInfoAfter.contributors).equal(2);
     const expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
 
     const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
@@ -314,7 +314,7 @@ export function testMint(payload: IDeployedPayload) {
     // check tokenmint
 
     expect(tx)
-      .to.emit(nft, "TokenMint")
+      .to.emit(nft, "TokenMinted")
       .withArgs(tokenId, to, star, fork, expectedMintPrice);
 
     // check contract earnings
@@ -844,7 +844,7 @@ export function testMint(payload: IDeployedPayload) {
 
     const projectInfoAfter = await nft.getProject(tokenId);
 
-    expect(projectInfoAfter.tokenCount).equal(3);
+    expect(projectInfoAfter.contributors).equal(3);
     const expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
 
     const expectedMintPriceBN = ethers.BigNumber.from(expectedMintPrice);
@@ -875,7 +875,7 @@ export function testMint(payload: IDeployedPayload) {
     // check tokenmint
 
     expect(tx)
-      .to.emit(nft, "TokenMint")
+      .to.emit(nft, "TokenMinted")
       .withArgs(tokenId, to, star, fork, expectedMintPrice);
 
     // check contract earnings
@@ -943,7 +943,7 @@ export function testMint(payload: IDeployedPayload) {
 
     const projectInfoAfter = await nft.getProject(tokenId);
 
-    expect(projectInfoAfter.tokenCount).equal(4);
+    expect(projectInfoAfter.contributors).equal(4);
     let expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
     expectedMintPrice =
       expectedMintPrice > projectInfoBefore.lastMintPrice
@@ -978,7 +978,7 @@ export function testMint(payload: IDeployedPayload) {
     // check tokenmint
 
     expect(tx)
-      .to.emit(nft, "TokenMint")
+      .to.emit(nft, "TokenMinted")
       .withArgs(tokenId, to, star, fork, expectedMintPrice);
 
     // check contract earnings
@@ -995,9 +995,7 @@ export function testMint(payload: IDeployedPayload) {
       creatorRoyaltyValue.add(balanceOfCreatorBefore)
     );
 
-    payload.transactions['mintNFTJsStore'].push(
-        (await tx).hash
-    )
+    payload.transactions["mintNFTJsStore"].push((await tx).hash);
   });
 
   it("should revert if royalty paid is less than minRoyalty for the project", async () => {
@@ -1089,7 +1087,7 @@ export function testMint(payload: IDeployedPayload) {
 
     const projectInfoAfter = await nft.getProject(tokenId);
 
-    expect(projectInfoAfter.tokenCount).equal(2);
+    expect(projectInfoAfter.contributors).equal(2);
     let expectedMintPrice = payload.mintPrice(star, fork, projectInfoAfter);
     expectedMintPrice =
       expectedMintPrice > projectInfoBefore.lastMintPrice
@@ -1122,7 +1120,7 @@ export function testMint(payload: IDeployedPayload) {
 
     // check token mint
     expect(tx)
-      .to.emit(nft, "TokenMint")
+      .to.emit(nft, "TokenMinted")
       .withArgs(tokenId, to, star, fork, expectedMintPrice);
 
     // check contract earnings
