@@ -16,8 +16,8 @@ dataSources:
         - ApprovalForAll
         - Initialized
         - OwnershipTransferred
-        - ProjectTokenize
-        - TokenMint
+        - ProjectTokenized
+        - TokenMinted
         - TransferBatch
         - TransferSingle
         - URI
@@ -33,9 +33,9 @@ dataSources:
           handler: handleInitialized
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event: ProjectTokenize(indexed uint256,address,uint256,uint256,address,uint8,string)
+        - event: ProjectTokenized(indexed uint256,address,uint256,uint256,address,uint8,string)
           handler: handleProjectTokenize
-        - event: TokenMint(uint256,address,uint256,uint256,uint256)
+        - event: TokenMinted(uint256,address,uint256,uint256,uint256)
           handler: handleTokenMint
         - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
           handler: handleTransferBatch

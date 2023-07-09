@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class ApprovalForAll extends ethereum.Event {
@@ -76,16 +76,16 @@ export class OwnershipTransferred__Params {
   }
 }
 
-export class ProjectTokenize extends ethereum.Event {
+export class ProjectTokenized extends ethereum.Event {
   get params(): ProjectTokenize__Params {
     return new ProjectTokenize__Params(this);
   }
 }
 
 export class ProjectTokenize__Params {
-  _event: ProjectTokenize;
+  _event: ProjectTokenized;
 
-  constructor(event: ProjectTokenize) {
+  constructor(event: ProjectTokenized) {
     this._event = event;
   }
 
@@ -118,16 +118,16 @@ export class ProjectTokenize__Params {
   }
 }
 
-export class TokenMint extends ethereum.Event {
+export class TokenMinted extends ethereum.Event {
   get params(): TokenMint__Params {
     return new TokenMint__Params(this);
   }
 }
 
 export class TokenMint__Params {
-  _event: TokenMint;
+  _event: TokenMinted;
 
-  constructor(event: TokenMint) {
+  constructor(event: TokenMinted) {
     this._event = event;
   }
 
@@ -303,7 +303,7 @@ export class OSNFT__getProjectResultValue0Struct extends ethereum.Tuple {
     return this[5].toI32();
   }
 
-  get tokenCount(): BigInt {
+  get contributors(): BigInt {
     return this[6].toBigInt();
   }
 
@@ -323,7 +323,7 @@ export class OSNFT extends ethereum.SmartContract {
       "balanceOf(address,uint256):(uint256)",
       [
         ethereum.Value.fromAddress(account),
-        ethereum.Value.fromUnsignedBigInt(id)
+        ethereum.Value.fromUnsignedBigInt(id),
       ]
     );
 
@@ -336,7 +336,7 @@ export class OSNFT extends ethereum.SmartContract {
       "balanceOf(address,uint256):(uint256)",
       [
         ethereum.Value.fromAddress(account),
-        ethereum.Value.fromUnsignedBigInt(id)
+        ethereum.Value.fromUnsignedBigInt(id),
       ]
     );
     if (result.reverted) {
@@ -352,7 +352,7 @@ export class OSNFT extends ethereum.SmartContract {
       "balanceOfBatch(address[],uint256[]):(uint256[])",
       [
         ethereum.Value.fromAddressArray(accounts),
-        ethereum.Value.fromUnsignedBigIntArray(ids)
+        ethereum.Value.fromUnsignedBigIntArray(ids),
       ]
     );
 
@@ -368,7 +368,7 @@ export class OSNFT extends ethereum.SmartContract {
       "balanceOfBatch(address[],uint256[]):(uint256[])",
       [
         ethereum.Value.fromAddressArray(accounts),
-        ethereum.Value.fromUnsignedBigIntArray(ids)
+        ethereum.Value.fromUnsignedBigIntArray(ids),
       ]
     );
     if (result.reverted) {
@@ -407,7 +407,7 @@ export class OSNFT extends ethereum.SmartContract {
       "getInvestedAmount(uint256,address):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromAddress(owner)
+        ethereum.Value.fromAddress(owner),
       ]
     );
 
@@ -423,7 +423,7 @@ export class OSNFT extends ethereum.SmartContract {
       "getInvestedAmount(uint256,address):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromAddress(owner)
+        ethereum.Value.fromAddress(owner),
       ]
     );
     if (result.reverted) {
@@ -466,7 +466,7 @@ export class OSNFT extends ethereum.SmartContract {
       "isApprovedForAll(address,address):(bool)",
       [
         ethereum.Value.fromAddress(account),
-        ethereum.Value.fromAddress(operator)
+        ethereum.Value.fromAddress(operator),
       ]
     );
 
@@ -482,7 +482,7 @@ export class OSNFT extends ethereum.SmartContract {
       "isApprovedForAll(address,address):(bool)",
       [
         ethereum.Value.fromAddress(account),
-        ethereum.Value.fromAddress(operator)
+        ethereum.Value.fromAddress(operator),
       ]
     );
     if (result.reverted) {
@@ -517,7 +517,7 @@ export class OSNFT extends ethereum.SmartContract {
 
   isVerifier(account: Address): boolean {
     let result = super.call("isVerifier", "isVerifier(address):(bool)", [
-      ethereum.Value.fromAddress(account)
+      ethereum.Value.fromAddress(account),
     ]);
 
     return result[0].toBoolean();
@@ -525,7 +525,7 @@ export class OSNFT extends ethereum.SmartContract {
 
   try_isVerifier(account: Address): ethereum.CallResult<boolean> {
     let result = super.tryCall("isVerifier", "isVerifier(address):(bool)", [
-      ethereum.Value.fromAddress(account)
+      ethereum.Value.fromAddress(account),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -541,7 +541,7 @@ export class OSNFT extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
         ethereum.Value.fromUnsignedBigInt(star),
-        ethereum.Value.fromUnsignedBigInt(fork)
+        ethereum.Value.fromUnsignedBigInt(fork),
       ]
     );
 
@@ -559,7 +559,7 @@ export class OSNFT extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(tokenId),
         ethereum.Value.fromUnsignedBigInt(star),
-        ethereum.Value.fromUnsignedBigInt(fork)
+        ethereum.Value.fromUnsignedBigInt(fork),
       ]
     );
     if (result.reverted) {
@@ -609,7 +609,7 @@ export class OSNFT extends ethereum.SmartContract {
 
   uri(param0: BigInt): string {
     let result = super.call("uri", "uri(uint256):(string)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
+      ethereum.Value.fromUnsignedBigInt(param0),
     ]);
 
     return result[0].toString();
@@ -617,7 +617,7 @@ export class OSNFT extends ethereum.SmartContract {
 
   try_uri(param0: BigInt): ethereum.CallResult<string> {
     let result = super.tryCall("uri", "uri(uint256):(string)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
+      ethereum.Value.fromUnsignedBigInt(param0),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();

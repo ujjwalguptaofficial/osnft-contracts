@@ -8,7 +8,7 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal
+  BigDecimal,
 } from "@graphprotocol/graph-ts";
 
 export class ExampleEntity extends Entity {
@@ -155,13 +155,13 @@ export class Project extends Entity {
     this.set("creatorRoyality", Value.fromI32(value));
   }
 
-  get tokenCount(): BigInt {
-    let value = this.get("tokenCount");
+  get contributors(): BigInt {
+    let value = this.get("contributors");
     return value!.toBigInt();
   }
 
-  set tokenCount(value: BigInt) {
-    this.set("tokenCount", Value.fromBigInt(value));
+  set contributors(value: BigInt) {
+    this.set("contributors", Value.fromBigInt(value));
   }
 
   get treasuryTotalAmount(): BigInt {
@@ -300,13 +300,13 @@ export class Account extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
-  get tokenCount(): BigInt {
-    let value = this.get("tokenCount");
+  get contributors(): BigInt {
+    let value = this.get("contributors");
     return value!.toBigInt();
   }
 
-  set tokenCount(value: BigInt) {
-    this.set("tokenCount", Value.fromBigInt(value));
+  set contributors(value: BigInt) {
+    this.set("contributors", Value.fromBigInt(value));
   }
 
   get totalInvestedAmount(): BigInt {

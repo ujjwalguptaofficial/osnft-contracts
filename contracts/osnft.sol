@@ -22,12 +22,16 @@ contract OSNFT is
     ERC2771ContextUpgradeable
 {
     // variables
+    // tokenId => ProjectInfo
     mapping(uint256 => ProjectInfo) internal _projects;
+    // payableTokenAddress => amountEarned
     mapping(address => uint256) internal _earning;
+    // tokenId => contributor => creator royalty paid in percentage with base 1000, ie 1% = 10
+    mapping(uint256 => mapping(address => uint16)) internal _paidCreatorRoyalty;
 
-    // percentage scaled by 10, ie 1% = 10
+    // percentage with base 1000, ie 1% = 10
     uint16 internal mintRoyalty;
-    // percentage scaled by 10, ie 1% = 10
+    // percentage with base 1000, ie 1% = 10
     uint16 internal burnRoyalty;
     bytes32 internal _TYPE_HASH_ProjectTokenizeData;
     bytes32 internal _TYPE_HASH_NFTMintData;
@@ -110,7 +114,7 @@ contract OSNFT is
         // mint first nft to creator free of cost
         _mintTo(tokenId, creator);
 
-        emit ProjectTokenize(
+        emit ProjectTokenized(
             tokenId,
             creator,
             input.basePrice,
@@ -203,12 +207,12 @@ contract OSNFT is
         );
 
         // send Royalty to creator
-        uint256 minCreatorRoyalty = _percentageOf(calculatedMintPrice, royalty);
+        uint256 creatorRoyalty = _percentageOf(calculatedMintPrice, royalty);
 
         _requirePaymentFromContract(
             project.paymentToken,
             project.creator,
-            minCreatorRoyalty
+            creatorRoyalty
         );
 
         // store money in treasury
@@ -221,19 +225,27 @@ contract OSNFT is
 
         uint256 amountForTreasury = calculatedMintPrice -
             contractRoyalty -
-            minCreatorRoyalty;
+            creatorRoyalty;
 
         project.treasuryAmount += amountForTreasury;
         project.lastMintPrice = calculatedMintPrice;
+        _paidCreatorRoyalty[tokenId][to] = royalty;
 
         // send money to creator
 
         _mintTo(tokenId, to);
-        emit TokenMint(tokenId, to, star, fork, calculatedMintPrice, royalty);
+        emit TokenMinted(tokenId, to, star, fork, calculatedMintPrice, royalty);
+    }
+
+    function getPaidCreatorRoyalty(
+        uint256 tokenId,
+        address holder
+    ) public view returns (uint16) {
+        return _paidCreatorRoyalty[tokenId][holder];
     }
 
     function _mintTo(uint256 tokenId, address to) internal {
-        _projects[tokenId].tokenCount++;
+        _projects[tokenId].contributors++;
         _mint(to, tokenId, 1, "");
     }
 
@@ -243,12 +255,18 @@ contract OSNFT is
         if (balanceOf(caller, tokenId) == 0) {
             revert RequireTokenOwner();
         }
+
         ProjectInfo storage project = _projects[tokenId];
+        uint16 paidCreatorRoyalty = _paidCreatorRoyalty[tokenId][caller];
 
-        uint256 returnAmount = project.treasuryAmount / project.tokenCount;
+        uint256 returnAmount = ((project.treasuryAmount *
+            (1000 - paidCreatorRoyalty)) / (1000 - project.minCreatorRoyalty)) /
+            project.contributors;
 
-        project.tokenCount--;
+        project.contributors--;
         project.treasuryAmount -= returnAmount;
+
+        delete _paidCreatorRoyalty[tokenId][caller];
 
         _requirePaymentFromContract(project.paymentToken, caller, returnAmount);
 
@@ -259,6 +277,7 @@ contract OSNFT is
         uint256 value,
         uint16 percentage
     ) internal pure returns (uint256) {
+        if (percentage > 1000) revert InvalidPercentage();
         return (value * percentage) / 1000;
     }
 

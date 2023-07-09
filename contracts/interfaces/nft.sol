@@ -12,7 +12,7 @@ interface IOSNFT {
         uint256 popularityFactorPrice;
         // last mint price
         uint256 lastMintPrice;
-        uint256 tokenCount;
+        uint256 contributors;
         uint256 treasuryAmount;
     }
 
@@ -43,9 +43,10 @@ interface IOSNFT {
     error InvalidSignature();
     error PaymentTokenNotAllowed();
     error InvalidToken(uint256 tokenId);
+    error InvalidPercentage();
 
     // events
-    event ProjectTokenize(
+    event ProjectTokenized(
         uint256 indexed tokenId,
         address creator,
         uint256 basePrice,
@@ -54,7 +55,7 @@ interface IOSNFT {
         uint8 minCreatorRoyalty,
         string projectUrl
     );
-    event TokenMint(
+    event TokenMinted(
         uint256 tokenId,
         address to,
         uint256 star,

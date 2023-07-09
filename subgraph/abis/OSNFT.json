@@ -157,7 +157,7 @@
         "type": "string"
       }
     ],
-    "name": "ProjectTokenize",
+    "name": "ProjectTokenized",
     "type": "event"
   },
   {
@@ -194,7 +194,7 @@
         "type": "uint256"
       }
     ],
-    "name": "TokenMint",
+    "name": "TokenMinted",
     "type": "event"
   },
   {
@@ -438,7 +438,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "tokenCount",
+            "name": "contributors",
             "type": "uint256"
           },
           {
