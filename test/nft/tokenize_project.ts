@@ -411,6 +411,11 @@ export function testProjectTokenize(payload: IDeployedPayload) {
         tokenId,
         1
       );
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(1);
+    expect(totalSupplyOfTokenId).equal(1);
   });
 
   it("minting again same project", async () => {
@@ -524,6 +529,11 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     await expect(tx)
       .to.emit(nft, "TransferSingle")
       .withArgs(to, ethers.constants.AddressZero, to, tokenId, 1);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(2);
+    expect(totalSupplyOfTokenId).equal(1);
   });
 
   it("success jsstore-examples ", async () => {
@@ -602,5 +612,10 @@ export function testProjectTokenize(payload: IDeployedPayload) {
     await expect(tx)
       .to.emit(nft, "TransferSingle")
       .withArgs(to, ethers.constants.AddressZero, to, tokenId, 1);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(3);
+    expect(totalSupplyOfTokenId).equal(1);
   });
 }

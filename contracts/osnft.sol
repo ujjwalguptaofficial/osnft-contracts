@@ -10,11 +10,12 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 
 import "./erc2771_context.sol";
+import "./erc1155_supply.sol";
 import "./interfaces/nft.sol";
 import "./interfaces/osnft_meta.sol";
 
 contract OSNFT is
-    ERC1155Upgradeable,
+    ERC1155SupplyUpgradeable,
     Ownable2StepUpgradeable,
     ReentrancyGuardUpgradeable,
     EIP712Upgradeable,
@@ -54,6 +55,10 @@ contract OSNFT is
             "NFTMintData(uint256 tokenId,uint256 star,uint256 fork,uint256 validUntil)"
         );
         _metaContract = IOSNFTMeta(meta_);
+    }
+
+    function name() public pure returns (string memory) {
+        return "OSNFT";
     }
 
     function getProject(

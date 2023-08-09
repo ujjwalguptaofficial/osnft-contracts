@@ -74,6 +74,12 @@ export function testBurn(payload: IDeployedPayload) {
       payload.erc20Token1.address
     );
     expect(contractEarningAfter).equal(contractEarningBefore);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+
+    expect(totalSupply).equal(6);
+    expect(totalSupplyOfTokenId).equal(3);
   });
 
   it("exit again by first investor", async () => {
@@ -132,6 +138,12 @@ export function testBurn(payload: IDeployedPayload) {
       payload.erc20Token1.address
     );
     expect(contreactEarningAfter).equal(contreactEarningBefore);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+
+    expect(totalSupply).equal(5);
+    expect(totalSupplyOfTokenId).equal(2);
   });
 
   it("burn by creator", async () => {
@@ -190,6 +202,12 @@ export function testBurn(payload: IDeployedPayload) {
       payload.erc20Token1.address
     );
     expect(contreactEarningAfter).equal(contreactEarningBefore);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+
+    expect(totalSupply).equal(4);
+    expect(totalSupplyOfTokenId).equal(1);
   });
 
   it("mint after burn by creator", async () => {
@@ -297,5 +315,12 @@ export function testBurn(payload: IDeployedPayload) {
       // creatorRoyaltyValue.add(balanceOfCreatorBefore)
       balanceOfCreatorBefore.sub(expectedMintPriceBN).add(creatorRoyaltyValue)
     );
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+
+    expect(totalSupply).equal(5);
+    expect(totalSupplyOfTokenId).equal(2);
+
   });
 }

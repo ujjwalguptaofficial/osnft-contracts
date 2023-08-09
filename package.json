@@ -37,7 +37,7 @@
     "hardhat-ethers": "^1.0.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts-upgradeable": "^4.8.2",
+    "@openzeppelin/contracts-upgradeable": "^4.9.3",
     "write-json": "^3.0.1"
   }
 }

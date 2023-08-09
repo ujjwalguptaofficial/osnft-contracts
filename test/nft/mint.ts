@@ -338,6 +338,11 @@ export function testMint(payload: IDeployedPayload) {
     );
 
     payload.transactions["mintNFTJsStore"].push((await tx).hash);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(4);
+    expect(totalSupplyOfTokenId).equal(2);
   });
 
   it("minting to a owner by invalid relayer", async () => {
@@ -893,6 +898,11 @@ export function testMint(payload: IDeployedPayload) {
     );
 
     payload.transactions["mintNFTJsStore"].push((await tx).hash);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(5);
+    expect(totalSupplyOfTokenId).equal(3);
   });
 
   it("mint jsstore success to signer4 with less PF", async () => {
@@ -996,6 +1006,11 @@ export function testMint(payload: IDeployedPayload) {
     );
 
     payload.transactions["mintNFTJsStore"].push((await tx).hash);
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(6);
+    expect(totalSupplyOfTokenId).equal(4);
   });
 
   it("should revert if royalty paid is less than minRoyalty for the project", async () => {
@@ -1136,5 +1151,10 @@ export function testMint(payload: IDeployedPayload) {
     expect(balanceOfCreatorAfter).equal(
       creatorRoyaltyValue.add(balanceOfCreatorBefore)
     );
+
+    const totalSupply = await nft["totalSupply()"]();
+    const totalSupplyOfTokenId = await nft["totalSupply(uint256)"](tokenId);
+    expect(totalSupply).equal(7);
+    expect(totalSupplyOfTokenId).equal(2);
   });
 }
