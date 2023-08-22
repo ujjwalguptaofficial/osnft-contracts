@@ -1,0 +1,98 @@
+// SPDX-License-Identifier: MIT
+// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC1155/extensions/ERC1155Supply.sol)
+
+pragma solidity ^0.8.17;
+
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+/**
+ * @dev Extension of ERC1155 that adds tracking of total supply per id.
+ *
+ * Useful for scenarios where Fungible and Non-fungible tokens have to be
+ * clearly identified. Note: While a totalSupply of 1 might mean the
+ * corresponding is an NFT, there is no guarantees that no other token with the
+ * same id are not going to be minted.
+ */
+abstract contract ERC1155SupplyUpgradeable is
+    Initializable,
+    ERC1155Upgradeable
+{
+    mapping(uint256 => uint256) private _totalSupply;
+    uint256 private _totalSupplyAll;
+
+    /**
+     * @dev Total amount of tokens in with a given id.
+     */
+    function totalSupply(uint256 id) public view virtual returns (uint256) {
+        return _totalSupply[id];
+    }
+
+    /**
+     * @dev Total value of tokens.
+     */
+    function totalSupply() public view virtual returns (uint256) {
+        return _totalSupplyAll;
+    }
+
+    /**
+     * @dev Indicates whether any token exist with a given id, or not.
+     */
+    function exists(uint256 id) public view virtual returns (bool) {
+        return ERC1155SupplyUpgradeable.totalSupply(id) > 0;
+    }
+
+    /**
+     * @dev See {ERC1155-_beforeTokenTransfer}.
+     */
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+        if (from == address(0)) {
+            uint256 totalMintValue = 0;
+            for (uint256 i = 0; i < ids.length; ++i) {
+                uint256 amount = amounts[i];
+                _totalSupply[ids[i]] += amount;
+                totalMintValue += amount;
+            }
+
+            // Overflow check required: The rest of the code assumes that totalSupplyAll never overflows
+            _totalSupplyAll += totalMintValue;
+        }
+
+        if (to == address(0)) {
+            uint256 totalBurnValue = 0;
+            for (uint256 i = 0; i < ids.length; ++i) {
+                uint256 id = ids[i];
+                uint256 amount = amounts[i];
+                uint256 supply = _totalSupply[id];
+                require(
+                    supply >= amount,
+                    "ERC1155: burn amount exceeds totalSupply"
+                );
+                unchecked {
+                    _totalSupply[id] = supply - amount;
+                    totalBurnValue += amount;
+                }
+
+                unchecked {
+                    // Overflow not possible: totalBurnValue = sum_i(values[i]) <= sum_i(totalSupply(ids[i])) <= totalSupplyAll
+                    _totalSupplyAll -= totalBurnValue;
+                }
+            }
+        }
+    }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
+}

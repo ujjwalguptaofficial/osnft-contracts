@@ -48,6 +48,11 @@ export function testNFT(payload: IDeployedPayload) {
     );
   });
 
+  it("name", async () => {
+    const name = await payload.nft.name();
+    await expect(name).equal(`OSNFT`);
+  });
+
   // return;
 
   describe("check supports interface", () => {
