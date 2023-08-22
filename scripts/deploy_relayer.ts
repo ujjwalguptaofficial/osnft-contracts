@@ -10,7 +10,7 @@ async function main() {
 
     const deployedContract = await contractFactory.deploy(
         {
-            maxPriorityFeePerGas: 30000000000
+            // maxPriorityFeePerGas: 30000000000
         }
     );
 
